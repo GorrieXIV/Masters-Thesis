@@ -1,18 +1,35 @@
-\BOOKMARK [0][-]{chapter.1}{Problem Definition}{}% 1
-\BOOKMARK [0][-]{chapter.2}{Introduction}{}% 2
-\BOOKMARK [1][-]{section.2.1}{Background and Recent Research}{chapter.2}% 3
-\BOOKMARK [2][-]{subsection.2.1.1}{<any sub section here>}{section.2.1}% 4
-\BOOKMARK [2][-]{subsection.2.1.2}{Literature Survey}{section.2.1}% 5
-\BOOKMARK [1][-]{section.2.2}{Motivation}{chapter.2}% 6
-\BOOKMARK [0][-]{chapter.3}{Work Done}{}% 7
-\BOOKMARK [1][-]{section.3.1}{<Section title>}{chapter.3}% 8
-\BOOKMARK [2][-]{subsection.3.1.1}{<Sub-section title>}{section.3.1}% 9
-\BOOKMARK [2][-]{subsection.3.1.2}{<Sub-section title>}{section.3.1}% 10
-\BOOKMARK [2][-]{subsection.3.1.3}{<Sub-section title>}{section.3.1}% 11
-\BOOKMARK [2][-]{subsection.3.1.4}{<Sub-section title>}{section.3.1}% 12
-\BOOKMARK [2][-]{subsection.3.1.5}{<Sub-section title>}{section.3.1}% 13
-\BOOKMARK [1][-]{section.3.2}{<Section title>}{chapter.3}% 14
-\BOOKMARK [0][-]{chapter.4}{Future Work}{}% 15
-\BOOKMARK [0][-]{chapter.5}{Conclusion}{}% 16
-\BOOKMARK [0][-]{section*.5}{Acknowledgements}{}% 17
-\BOOKMARK [0][-]{section*.7}{References}{}% 18
+\BOOKMARK [0][-]{chapter.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.1.1}{Background and Recent Research}{chapter.1}% 2
+\BOOKMARK [2][-]{subsection.1.1.1}{<any sub section here>}{section.1.1}% 3
+\BOOKMARK [2][-]{subsection.1.1.2}{Literature Survey}{section.1.1}% 4
+\BOOKMARK [1][-]{section.1.2}{Layout of Paper}{chapter.1}% 5
+\BOOKMARK [1][-]{section.1.3}{Motivation}{chapter.1}% 6
+\BOOKMARK [0][-]{chapter.2}{Technical Background}{}% 7
+\BOOKMARK [1][-]{section.2.1}{Isogenies}{chapter.2}% 8
+\BOOKMARK [2][-]{subsection.2.1.1}{<Sub-section title>}{section.2.1}% 9
+\BOOKMARK [2][-]{subsection.2.1.2}{<Sub-section title>}{section.2.1}% 10
+\BOOKMARK [2][-]{subsection.2.1.3}{<Sub-section title>}{section.2.1}% 11
+\BOOKMARK [2][-]{subsection.2.1.4}{<Sub-section title>}{section.2.1}% 12
+\BOOKMARK [1][-]{section.2.2}{SIDH}{chapter.2}% 13
+\BOOKMARK [2][-]{subsection.2.2.1}{<Sub-section title>}{section.2.2}% 14
+\BOOKMARK [1][-]{section.2.3}{Fiat-Shamir}{chapter.2}% 15
+\BOOKMARK [1][-]{section.2.4}{Isogeny Based Signatures}{chapter.2}% 16
+\BOOKMARK [0][-]{chapter.3}{Batching Operations for Isogenies}{}% 17
+\BOOKMARK [1][-]{section.3.1}{Batching Procedure in Detail}{chapter.3}% 18
+\BOOKMARK [1][-]{section.3.2}{Implementation}{chapter.3}% 19
+\BOOKMARK [1][-]{section.3.3}{Results}{chapter.3}% 20
+\BOOKMARK [0][-]{chapter.4}{Compressed Signatures}{}% 21
+\BOOKMARK [1][-]{section.4.1}{Compression of Public Keys}{chapter.4}% 22
+\BOOKMARK [2][-]{subsection.4.1.1}{<Sub-section title>}{section.4.1}% 23
+\BOOKMARK [2][-]{subsection.4.1.2}{<Sub-section title>}{section.4.1}% 24
+\BOOKMARK [2][-]{subsection.4.1.3}{<Sub-section title>}{section.4.1}% 25
+\BOOKMARK [2][-]{subsection.4.1.4}{<Sub-section title>}{section.4.1}% 26
+\BOOKMARK [2][-]{subsection.4.1.5}{<Sub-section title>}{section.4.1}% 27
+\BOOKMARK [1][-]{section.4.2}{Implementation}{chapter.4}% 28
+\BOOKMARK [1][-]{section.4.3}{Results}{chapter.4}% 29
+\BOOKMARK [0][-]{chapter.5}{Discussion \046 Conclusion}{}% 30
+\BOOKMARK [1][-]{section.5.1}{Results \046 Comparisons}{chapter.5}% 31
+\BOOKMARK [1][-]{section.5.2}{Additional Opportunities for Batching}{chapter.5}% 32
+\BOOKMARK [1][-]{section.5.3}{Future Work}{chapter.5}% 33
+\BOOKMARK [0][-]{section*.5}{Acknowledgements}{}% 34
+\BOOKMARK [0][-]{section*.7}{References}{}% 35
