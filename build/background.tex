@@ -21,5 +21,78 @@ Refer figure \ref{fig:label}.
 
 \section{Fiat-Shamir Heuristic}
 
+\subsection{Unruh's Construction}
+
 \section{Isogeny Based Signatures}
 
+\begin{algorithm}
+\caption{KeyGen($\lambda$)}\label{euclid}
+\begin{algorithmic}[1]
+\State Pick a random point S of order $\ell^{e_{A}}_{A}$
+\State Compute the isogeny $\phi: E \rightarrow E/\langle S \rangle$
+\State pk $\gets (E/\langle S \rangle, \phi(P_{B}), \phi(Q_{B}))$
+\State sk $\gets S$
+\State \Return (pk,sk)
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Sign(sk, $m$)}\label{euclid}
+\begin{algorithmic}[1]
+\For{\texttt{i = 1..2$\lambda$}}
+	\State Pick a random point R of order $\ell^{e_{B}}_{B}$
+	\State Compute the isogeny $\psi: E \rightarrow E/\langle R \rangle$
+	\State Compute either $\phi' : E/\langle R \rangle \rightarrow E/\langle R,S \rangle$ or $\psi' : E/\langle S \rangle \rightarrow E/\langle R,S \rangle$
+	\State $(E_{1},E_{2}) \gets (E/\langle R \rangle, E/\langle R,S \rangle)$
+	\State $\texttt{com}_{i} \gets (E_{1}, E_{2})$
+	\State $\texttt{ch}_{i,0} \gets_{R} \{0,1\}$
+	\State $(\texttt{resp}_{i,0}, \texttt{resp}_{i,1}) \gets ((R,\phi(R)), \psi(S))$
+	\If{$\texttt{ch}_{i,0} = 1$}
+		\State $\texttt{swap}(\texttt{resp}_{i,0},\texttt{resp}_{i,1})$
+	\EndIf
+	\State $h_{i,j} \gets G(\texttt{resp}_{i,j})$
+\EndFor
+
+\State $J_{1} \parallel ... \parallel J_{2\lambda} \gets H(pk, m, (\texttt{com}_{i})_{i},(\texttt{ch}_{i,j})_{i,j},(h_{i,j})_{i,j})$
+
+\State \Return $\sigma \gets ((\texttt{com}_{i})_{i}, (\texttt{ch}_{i,j})_{i,j}, (h_{i,j})_{i,j}, (\texttt{resp}_{i,J_{i}})_{i})$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{Verify(pk, $m$, $\sigma$)}\label{euclid}
+\begin{algorithmic}[1]
+\State $J_{1} \parallel ... \parallel J_{2\lambda} \gets H(pk, m, (\texttt{com}_{i})_{i},(\texttt{ch}_{i,j})_{i,j},(h_{i,j})_{i,j})$
+\For{\texttt{i = 0..2$\lambda$}}
+	\State \textbf{check} $h_{i,J_{i}} = G(\texttt{resp}_{i,J_{i}})$
+	\If{$\texttt{ch}_{i,J_{i}} = 0$}
+		\State Parse $(R,\phi(R)) \gets \texttt{resp}_{i,J_{i}}$
+		\State \textbf{check} $(R, \phi(R))$ have order $\ell^{e_{B}}_{B}$
+		\State \textbf{check} $R$ generates the kernel of the isogeny $E \rightarrow E_{1}$
+		\State \textbf{check} $\phi(R)$ generates the kernel of the isogeny $E/\langle S \rangle \rightarrow E_{2}$
+	\Else
+		\State Parse $\psi(S) \gets \texttt{resp}_{i,J_{i}}$
+		\State \textbf{check} $\psi(S)$ has order $\ell^{e_{A}}_{A}$
+		\State \textbf{check} $\psi(S)$ generates the kernel of the isogeny $E_{1} \rightarrow E_{2}$
+	\EndIf
+\EndFor
+
+\If{all checks succeed}
+	\State \Return 1
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
+The following chart maps potentially ambiguous lines of the algorithms above to functions in the Yoo et. al C implementation.\\
+
+\begin{center}
+\begin{tabular}{@{}lllll@{}}
+	\toprule
+	Algorithm & Line Number(s) & Function Call\\
+	\midrule
+	Keygen & 1, 2 & KeyGenerationB\\
+	Sign & 1, 2 & KeyGenerationA\\
+	Verify & & \\
+	\bottomrule
+\end{tabular}
+\end{center}
