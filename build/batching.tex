@@ -2,7 +2,19 @@
 
 \section{Batching Procedure in Detail}
 
-This section will outline one of the two main procedures implemented in our work. The algorithm in question reduces arbitrarily many unrelated/potentially parallel $\mathbb{F}_{p^{2}}$ inversions to a sequence of $\mathbb{F}_{p}$ multiplications \& additions, as well as one $\mathbb{F}_{p}$ inversion.\\
+One of our main contributions is the embedding of a low-level $\mathbb{F}_{p^{2}}$ procedure into Microsofts pre-existing SIDH library. The procedure in question reduces arbitrarily many unrelated/potentially parallel $\mathbb{F}_{p^{2}}$ inversions to a sequence of $\mathbb{F}_{p}$ multiplications \& additions, as well as one $\mathbb{F}_{p}$ inversion.\\
+
+More specifically, the procedure takes us from \textit{n} $\mathbb{F}_{p^{2}}$  inversions to: 
+\begin{center}
+\begin{itemize}
+\item 2\textit{n} $\mathbb{F}_{p}$ squarings
+\item \textit{n} $\mathbb{F}_{p}$ additions
+\item 1 $\mathbb{F}_{p}$ inversion
+\item 3(\textit{n}-1) $\mathbb{F}_{p}$ multiplications
+\item 2\textit{n} $\mathbb{F}_{p}$ multiplications
+\end{itemize}
+\end{center}
+
 
 The procedure is as follows:\\
 
@@ -50,7 +62,12 @@ This means that in the signing procedure there are 2 opportunities for implement
 
 \section{Implementation}
 
-
+\begin{figure}[htb]
+\centering
+\includegraphics[scale=0.5]{signandverifycall} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
+\caption{<Caption here>}
+\label{fig:label} % insert suitable label, this is used to refer to a fig from within the text as shown above
+\end{figure}
 
 \section{Results}
 
