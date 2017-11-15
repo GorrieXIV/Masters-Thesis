@@ -16,7 +16,7 @@ Refer figure \ref{fig:label}.
 
 
 
-\subsection{<Sub-section title>}
+\subsection{Zero-Knowledge Proof of Identity}
 
 
 \section{Fiat-Shamir Heuristic}
@@ -83,16 +83,37 @@ Refer figure \ref{fig:label}.
 \end{algorithmic}
 \end{algorithm}
 
-The following chart maps potentially ambiguous lines of the algorithms above to functions in the Yoo et. al C implementation.\\
+If we transcribe the above to the language of the Microsoft SIDH API, we have in essense the following:\\
 
-\begin{center}
-\begin{tabular}{@{}lllll@{}}
-	\toprule
-	Algorithm & Line Number(s) & Function Call\\
-	\midrule
-	Keygen & 1, 2 & KeyGenerationB\\
-	Sign & 1, 2 & KeyGenerationA\\
-	Verify & & \\
-	\bottomrule
-\end{tabular}
-\end{center}
+\begin{algorithm}
+\caption{KeyGen($\lambda$)}\label{euclid}
+\begin{algorithmic}[1]
+\State (pk, sk) $\gets \texttt{KeyGeneration\_B()}$
+\State \Return (pk,sk)
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Sign(sk, $m$)}\label{euclid}
+\begin{algorithmic}[1]
+\For{\texttt{i = 1..2$\lambda$}}
+	\State $(, R, \psi) \gets \texttt{KeyGeneration\_A(E)}$
+	\State $E_{1} \gets E/\langle R \rangle$
+	\State $(E_{2},E/\langle R,S \rangle) \gets \texttt{SecretAgreement\_B()}$
+	\State $(E_{1},E_{2}) \gets (E/\langle R \rangle, E/\langle R,S \rangle)$
+	\State $\texttt{com}[i] \gets (E_{1}, E_{2})$
+	\State $\texttt{ch}[i] \gets_{R} \{0,1\}$
+	\State $(\texttt{resp}[i]_{0}, \texttt{resp}[i]_{1}) \gets ((R,\phi(R)), \psi(S))$
+	
+%% this portion was skipped?	
+%%	\If{$\texttt{ch}[i] = 1$}
+%%		\State $\texttt{swap}(\texttt{resp}[i]_{0},\texttt{resp}[i]_{1})$
+%%	\EndIf
+%%	\State $h_{i,j} \gets G(\texttt{resp}[i]_{j})$
+\EndFor
+
+\State $J_{1} \parallel ... \parallel J_{2\lambda} \gets H(pk, m, (\texttt{com}_{i})_{i},(\texttt{ch}_{i})_{i},(h_{i,j})_{i,j})$
+
+\State \Return $\sigma \gets ((\texttt{com}_{i})_{i}, (\texttt{ch}_{i,j})_{i,j}, (h_{i,j})_{i,j}, ((\texttt{resp})[J_{i}])$
+\end{algorithmic}
+\end{algorithm}
