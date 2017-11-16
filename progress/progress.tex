@@ -112,12 +112,15 @@ Consider now the following method for reducing one $\mathbb{F}_{p^{2}}$ inversio
 \begin{center}
 \begin{algorithm}[H]
 \begin{algorithmic}[1]
+	\Procedure{Partial $\mathbb{F}_{p^{2}}$ Inversion}{$a: (a_0,a_1)$} 
 	\State $t_0 \gets a_{0}^{2}$
 	\State $t_1 \gets a_{1}^{2}$
 	\State $den \gets t_0 + t_1$
 	\State $den \gets den^{-1}$
 	\State $a_{0} \gets a_{0} * den$
 	\State $a_{1} \gets a_{1} * den$
+	\State \Return $a^{-1} \gets (a_{0},a_{1})$
+	\EndProcedure
 \end{algorithmic}
 \end{algorithm}
 \end{center}
