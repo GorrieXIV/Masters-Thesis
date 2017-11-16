@@ -38,14 +38,28 @@
 
 \begin{frame}
 \frametitle{Current Performance of SIDH}
-\includegraphics[scale=0.43]{sigcomparison.png}
+\begin{center}
+\begin{tabular}{@{}lllll@{}}
+	Key Exchange Protocol & Speed & Overhead\\
+	\midrule
+	Code-based & ~0.5 ms & 360 KiB\\
+	NTRU & 0.3-1.2 ms & 1 KiB\\
+	Ring-LWE & 0.2-1.5 ms & 2-4 KiB\\
+	LWE & 1.4 ms & v11 KiB\\
+	\midrule
+	SIDH & 15-400 ms & 0.5 KiB\\
+\end{tabular}
+\begingroup \fontsize{8pt}{8pt}\selectfont
+https://s3.amazonaws.com/files.douglas.stebila.ca/files/research/presentations/20170918-QCrypt.pdf
+\endgroup
+\end{center}
 \end{frame}
 
 \begin{frame}
 \frametitle{Isogeny Based Signatures}
 \begin{itemize}
 \item Yoo et. al provide an isogeny based signature scheme built off the Microsoft SIDH 1.0 Library.
-\item The scheme is constructed using the ZKPoI protocol provided in the original SIDH paper in tandem with Unruh's PQ secure Fiat-Shamir transform.
+\item The scheme is constructed using the Zero Knowledge Proof of Identity protocol provided in the original SIDH paper in tandem with Unruh's PQ secure Fiat-Shamir transform.
 \item The scheme involves performing 248 (seperate) instances of SIDH key exchange with an arbitrary thirdparty
 \item These instances are parallelizable but overall extremely computationally expensive
 \end{itemize}
@@ -64,24 +78,39 @@
 	\midrule
 	Isogeny-base & 768 & 48 & 141,312\\
 \end{tabular}\\
+\begin{center}
+\begingroup \fontsize{8pt}{8pt}\selectfont
+https://eprint.iacr.org/2017/186.pdf
+\endgroup
+\end{center}
 \end{frame}
 
 \section{Inversion Batching}
 
 %slide with each main point/part of the procedure 3 slides
-\begin{frame}
+\begin{frame}[fragile]
 \frametitle{Batched Partial Inversions}
+Inversions are traditionally one of the most expensive operations in modular arithmetic. We implement a procedure that further reduces the inversion count in this signature scheme.\\~\\
+
+Our procedure utilizes three things:
+\begin{itemize}
+\item<1 -> The underlying parallel structure of the isogeny signature scheme
+\item<2 -> Inversion batching
+\item<3 -> Partial inversion of $\mathbb{F}_{p^{2}}$ elements
+\end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{Batching Inversions}
+Consider first how we can restructure $n$ $\mathbb{F}_{p^{2}}$ inversions so that they can be done with 1 $\mathbb{F}_{p^{2}}$ inversion and roughly $3n$ $\mathbb{F}_{p^{2}}$ multiplications.
 \end{frame}
 
 %before this, background on inversions in sidh/sig
 \begin{frame}[fragile]
 \frametitle{Partial Inversion Procedure}
-%center with input and output
+Consider now the following method for reducing one $\mathbb{F}_{p^{2}}$ inversion to 4 $\mathbb{F}_{p}$ multiplications and 1 $\mathbb{F}_{p}$ inversion.
 \begin{center}
+\begin{algorithm}[H]
 \begin{algorithmic}[1]
 	\State $t_0 \gets a_{0}^{2}$
 	\State $t_1 \gets a_{1}^{2}$
@@ -90,6 +119,7 @@
 	\State $a_{0} \gets a_{0} * den$
 	\State $a_{1} \gets a_{1} * den$
 \end{algorithmic}
+\end{algorithm}
 \end{center}
 %equation for inverting two elements, shamir?
 %operation count reduction
@@ -132,26 +162,47 @@ The following are measured in billions of clock cycles
 
 \begin{frame}
 \frametitle{SIDH Key Compression}
-A recent paper from Microsoft Research showed that SIDH public keys could be compressed to 330 bytes while retaining 128 bits of security in the quantum setting.  
+A recent paper from Microsoft Research showed that SIDH public keys could be compressed to 330 bytes while retaining 128 bits of security in the quantum setting.\\~\\
+
+These results, along with other changes, we're implemented in the second installment of the Microsoft SIDH library, which Yoo's signature scheme has yet to be subjected to.\\
 \end{frame}
 
 \begin{frame}
 %goal
 \frametitle{Signature Compression}
+Because isogeny signatures are composed largely of SIDH public keys, Microsofts recently published techniques can offer further compression of these signatures.\\~\\
+
+$$
+\sigma \cong (\texttt{pk}_i, \texttt{sk}_i, h_i)
+$$
+\begin{center}for $1 \leq i \leq 248$\end{center}
+
+Because public keys are distinctly seperate, we can use the same batched partial inversion procedure to cut down on time spent inverting $\mathbb{F}_{p^{2}}$ elements in compression and decompression.
 \end{frame}
 
-%preliminary results
+\section{Additional/Future Work}
+
 \begin{frame}
-\frametitle{Results}
+\frametitle{Other Possible Performance Increases}
+\begin{itemize}
+\item Bos \& Friedberger have shown that using different parameters in the calculation of the underlying modulus can yield more efficient implementations for base field arithmetic.
+\item Costello \& Hisil have recently published algorithms for efficiently computing arbitrary degree isogenies.
+\item We hope to, through application of Costello and Hisil's work, explore the implications of Bos and Friedbergers findings on the SIDH library.\\
+\end{itemize}
 \end{frame}
 
-\section{Additional Work}
+\begin{frame}
+\frametitle{Preparing SIDH 2.0 for Open Quantum Safe}
+\begin{itemize}
+\item Restructure and reorganize codebase with more ephasis on readability.
+\item Further work to improve the efficiency of signing, verifying, compression, and decompression algorithms
+\item We hope to work the protocol into an environment where it's practicality can more easily and assuredly be tested
+\end{itemize}
+\end{frame}
 
 \begin{frame}
-\frametitle{}
-
 \begin{center}
-%\includegraphics[scale=0.65]{code5.png}
+SIDH 2.0 Fork with Signatures: https://github.com/GorrieXIV/PQCrypto-SIDH-gxivFork
 \end{center}
 \end{frame}
 
