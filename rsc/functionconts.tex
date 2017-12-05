@@ -1,0 +1,176 @@
+\documentclass[10pt]{article}
+
+% Packages
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{enumerate}
+\usepackage{colortbl}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
+\newcommand\VRule[1][\arrayrulewidth]{\vrule width #1}
+
+% === Begin Document === %
+\begin{document}
+
+\begin{center}
+\large {\sffamily {\textbf{SIDH/Isogeny Signature Function Contracts}}}\\
+\normalsize {Robert Gorrie -- McMaster University -- \today}\\
+\end{center}
+\hline
+\pagenumbering{arabic}
+
+
+% === Content === %
+\section{Key Exchange}
+
+\subsection{Ephemeral Key Generation -- Alice}
+\begin{center}
+Key Generation for Alice
+\end{center}
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+	\toprule
+	Location & Efficient Algo's Appendix A \\
+	\midrule
+	Input & $x_{P_{B}}, x_{P_{A}}, y_{P_{A}}$,\\
+	& $SK_{Alice}$ = $m_{A} \cdot l_{A}$\\
+	\midrule
+	Output & $PK_{Alice}$ = $[x_{\Phi_{A}}(P_{B}), x_{\Phi_{A}}(Q_{B}), x_{\Phi_{A}}(Q_{B} - P_{B})]$\\
+	\bottomrule
+\end{tabular}
+\end{center}
+
+\\
+
+\begin{center}
+EphemeralKeyGeneration\_A
+\end{center}
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+	\toprule
+	Location & kex.c \\
+	\midrule
+	Input & unsigned char* PrivateKeyA,\\
+	& unsigned char* PublicKeyA,\\
+	& PCurveIsogenyStruct CurveIsogeny,\\
+	& invBatch* batch\\
+	\midrule
+	Output & publickey\_t PublicKeyA,\\
+	& digit\_t PrivateKeyA\\
+	\bottomrule
+\end{tabular}
+\end{center}
+
+\parbox[t]{.45\linewidth}{
+\centering
+Key Generation for Alice
+\begin{tabular}{@{}ll@{}}
+	\toprule
+	Location & Efficient Algo's Appendix A \\
+	\midrule
+	Input & $x_{P_{B}}, x_{P_{A}}, y_{P_{A}}$,\\
+	& $SK_{Alice}$ = $m_{A} \cdot l_{A}$\\
+	\midrule
+	Output & $PK_{Alice}$ = $[x_{\Phi_{A}}(P_{B}), x_{\Phi_{A}}(Q_{B}), x_{\Phi_{A}}(Q_{B} - P_{B})]$\\
+	\bottomrule
+\end{tabular}}
+\hfill
+\parbox[t]{.45\linewidth}{
+\centering
+EphemeralKeyGeneration\_A
+\begin{tabular}{@{}ll@{}}
+	\toprule
+	Location & kex.c \\
+	\midrule
+	Input & unsigned char* PrivateKeyA,\\
+	& unsigned char* PublicKeyA,\\
+	& PCurveIsogenyStruct CurveIsogeny,\\
+	& invBatch* batch\\
+	\midrule
+	Output & publickey\_t PublicKeyA,\\
+	& digit\_t PrivateKeyA\\
+	\bottomrule
+\end{tabular}}
+
+\subsection{Ephemeral Key Generation -- Bob}
+
+\subsection{Ephemeral Secret Agreement -- Alice}
+
+\subsection{Ephemeral Secret Agreement -- Bob}
+
+\section{Signature Scheme}
+
+\subsection{Keygen}
+
+\parbox{.45\linewidth}{
+\centering
+KeyGeneration\_A
+\begin{tabular}{@{}ll@{}}
+	\toprule
+	Location & kex.c \\
+	\midrule
+	Input & unsigned char* PrivateKeyA,\\
+	& unsigned char* PublicKeyA,\\
+	& PCurveIsogenyStruct CurveIsogeny,\\
+	& invBatch* batch\\
+	\midrule
+	Output & publickey\_t PublicKeyA,\\
+	& digit\_t PrivateKeyA\\
+	\bottomrule
+\end{tabular}}
+\hfill
+\parbox{.45\linewidth}{
+\centering
+KeyGeneration\_B
+\begin{tabular}{@{}ll@{}}
+	\toprule
+	Location & kex.c \\
+	\midrule
+	Input & unsigned char* PrivateKeyA,\\
+	& unsigned char* PublicKeyA,\\
+	& PCurveIsogenyStruct CurveIsogeny,\\
+	& invBatch* batch\\
+	\midrule
+	Output & publickey\_t PublicKeyA,\\
+	& digit\_t PrivateKeyA\\
+	\bottomrule
+\end{tabular}}
+
+\subsection{Sign}
+
+\subsection{Verify}
+
+\section{Elliptic Curve Operations}
+
+\section{Field Operations}
+
+\section{Type Definitions}
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+	\toprule
+	alias & definition \\
+	\midrule
+	digit\_t & uint64\_t\\
+	felm\_t & digit\_t[NWORDS\_FIELD]\\
+	f2elm\_t & felm\_t[2]\\
+	publickey\_t & f2elm\_t[3]\\
+	\bottomrule
+\end{tabular}
+\end{center}
+
+\end{document}
+%\includegraphics[width=\linewidth]{IMG_20160124_143724.jpg}
+
