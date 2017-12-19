@@ -36,83 +36,157 @@
 \section{Key Exchange}
 
 \subsection{Ephemeral Key Generation -- Alice}
-\begin{center}
-Key Generation for Alice
-\end{center}
-\begin{center}
-\begin{tabular}{@{}ll@{}}
-	\toprule
-	Location & Efficient Algo's Appendix A \\
-	\midrule
-	Input & $x_{P_{B}}, x_{P_{A}}, y_{P_{A}}$,\\
-	& $SK_{Alice}$ = $m_{A} \cdot l_{A}$\\
-	\midrule
-	Output & $PK_{Alice}$ = $[x_{\Phi_{A}}(P_{B}), x_{\Phi_{A}}(Q_{B}), x_{\Phi_{A}}(Q_{B} - P_{B})]$\\
-	\bottomrule
-\end{tabular}
-\end{center}
 
-\\
-
-\begin{center}
-EphemeralKeyGeneration\_A
-\end{center}
-\begin{center}
-\begin{tabular}{@{}ll@{}}
-	\toprule
-	Location & kex.c \\
-	\midrule
-	Input & unsigned char* PrivateKeyA,\\
-	& unsigned char* PublicKeyA,\\
-	& PCurveIsogenyStruct CurveIsogeny,\\
-	& invBatch* batch\\
-	\midrule
-	Output & publickey\_t PublicKeyA,\\
-	& digit\_t PrivateKeyA\\
-	\bottomrule
-\end{tabular}
-\end{center}
-
-\parbox[t]{.45\linewidth}{
-\centering
-Key Generation for Alice
-\begin{tabular}{@{}ll@{}}
-	\toprule
-	Location & Efficient Algo's Appendix A \\
-	\midrule
-	Input & $x_{P_{B}}, x_{P_{A}}, y_{P_{A}}$,\\
-	& $SK_{Alice}$ = $m_{A} \cdot l_{A}$\\
-	\midrule
-	Output & $PK_{Alice}$ = $[x_{\Phi_{A}}(P_{B}), x_{\Phi_{A}}(Q_{B}), x_{\Phi_{A}}(Q_{B} - P_{B})]$\\
-	\bottomrule
-\end{tabular}}
-\hfill
-\parbox[t]{.45\linewidth}{
-\centering
-EphemeralKeyGeneration\_A
-\begin{tabular}{@{}ll@{}}
-	\toprule
-	Location & kex.c \\
-	\midrule
-	Input & unsigned char* PrivateKeyA,\\
-	& unsigned char* PublicKeyA,\\
-	& PCurveIsogenyStruct CurveIsogeny,\\
-	& invBatch* batch\\
-	\midrule
-	Output & publickey\_t PublicKeyA,\\
-	& digit\_t PrivateKeyA\\
-	\bottomrule
-\end{tabular}}
+	\parbox[t]{.35\linewidth}{
+	\centering
+	Key generation for Alice
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Location & Efficient Algo's Appendix A \\
+		\midrule
+		Input & $x_{P_{B}}, x_{P_{A}}, y_{P_{A}}$,\\
+		& $SK_{Alice}$ = $m_{A} \cdot l_{A}$\\
+		\midrule
+		Output & $PK_{Alice}$ = $[x_{\Phi_{A}}(P_{B}), x_{\Phi_{A}}(Q_{B}), x_{\Phi_{A}}(Q_{B} - P_{B})]$\\
+		\bottomrule
+	\end{tabular}}
+	\hfill
+	\parbox[t]{.35\linewidth}{
+	\centering
+	EphemeralKeyGeneration\_A
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Location & kex.c \\
+		\midrule
+		Input & unsigned char* PrivateKeyA,\\
+		& unsigned char* PublicKeyA,\\
+		& PCurveIsogenyStruct CurveIsogeny,\\
+		& invBatch* batch\\
+		\midrule
+		Output & publickey\_t PublicKeyA,\\
+		& digit\_t PrivateKeyA\\
+		\bottomrule
+	\end{tabular}}
 
 \subsection{Ephemeral Key Generation -- Bob}
 
+	\parbox[t]{.35\linewidth}{
+	\centering
+	Key generation for Bob
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Location & Efficient Algo's Appendix A \\
+		\midrule
+		Input & $x_{P_{A}}, x_{P_{B}}, y_{P_{B}}$,\\
+		& $SK_{Bob}$ = $m_{B} \cdot l_{B}$\\
+		\midrule
+		Output & $PK_{Bob}$ = $[x_{\Phi_{B}}(P_{A}), x_{\Phi_{B}}(Q_{A}), x_{\Phi_{B}}(Q_{A} - P_{A})]$\\
+		\bottomrule
+	\end{tabular}}
+	\hfill
+	\parbox[t]{.35\linewidth}{
+	\centering
+	EphemeralKeyGeneration\_B
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Location & kex.c \\
+		\midrule
+		Input & unsigned char* PrivateKeyB,\\
+		& unsigned char* PublicKeyB,\\
+		& PCurveIsogenyStruct CurveIsogeny,\\
+		& invBatch* batch\\
+		\midrule
+		Output & publickey\_t PublicKeyB,\\
+		& digit\_t PrivateKeyB\\
+		\bottomrule
+	\end{tabular}}
+
 \subsection{Ephemeral Secret Agreement -- Alice}
 
+	\parbox[t]{.35\linewidth}{
+	\centering
+	Shared secret algorithm for Alice
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Location & Efficient Algo's Appendix A \\
+		\midrule
+		Input & $PK_{Bob}$ = $[x_{\Phi_{B}}(P_{A}), x_{\Phi_{B}}(Q_{A}), x_{\Phi_{B}}(Q_{A} - P_{A})]$\\
+		& $SK_{Alice}$ = $m_{A} \cdot l_{A}$\\
+		\midrule
+		Output & A shared secret j-invariant of an elliptic curve\\
+		\bottomrule
+	\end{tabular}}
+	\hfill
+	\parbox[t]{.35\linewidth}{
+	\centering
+	EphemeralSecretAgreement\_A
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Location & kex.c \\
+		\midrule
+		Input & const unsigned char* PrivateKeyA,\\
+		& const unsigned char* PublicKeyB,\\
+		& unsigned char* SharedSecretA,\\
+		& PCurveIsogenyStruct CurveIsogeny,\\
+		& invBatch* batch\\
+		\midrule
+		Output & f2elm\_t SharedSecretA,\\
+		\bottomrule
+	\end{tabular}}
+
 \subsection{Ephemeral Secret Agreement -- Bob}
+
+	\parbox[t]{.35\linewidth}{
+	\centering
+	Shared secret algorithm for Bob
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Location & Efficient Algo's Appendix A \\
+		\midrule
+		Input & $PK_{Alice}$ = $[x_{\Phi_{A}}(P_{B}), x_{\Phi_{A}}(Q_{B}), x_{\Phi_{A}}(Q_{B} - P_{B})]$\\
+		& $SK_{Bob}$ = $m_{B} \cdot l_{B}$\\
+		\midrule
+		Output & A shared secret j-invariant of an elliptic curve\\
+		\bottomrule
+	\end{tabular}}
+	\hfill
+	\parbox[t]{.35\linewidth}{
+	\centering
+	EphemeralSecretAgreement\_B
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Location & kex.c \\
+		\midrule
+		Input & const unsigned char* PrivateKeyB,\\
+		& const unsigned char* PublicKeyA,\\
+		& unsigned char* SharedSecretB,\\
+		& PCurveIsogenyStruct CurveIsogeny,\\
+		& invBatch* batch\\
+		\midrule
+		Output & f2elm\_t SharedSecretB,\\
+		\bottomrule
+	\end{tabular}}
 
 \section{Signature Scheme}
 
 \subsection{Keygen}
+
+\parbox{\linewidth}{
+\centering
+Keygen
+\begin{tabular}{@{}ll@{}}
+	\toprule
+	Location & Yoo et. al section 4 \\
+	\midrule
+	Input & security parameter $\lambda$\\
+	\midrule
+	Output & sk = $S$,\\
+	& pk = $(E/\langle S \rangle, \Phi(P_B), \Phi(Q_B))$\\
+	\bottomrule
+\end{tabular}}
+\hfill
+
+\vspace{5mm}
 
 \parbox{.45\linewidth}{
 \centering
@@ -121,13 +195,13 @@ KeyGeneration\_A
 	\toprule
 	Location & kex.c \\
 	\midrule
-	Input & unsigned char* PrivateKeyA,\\
-	& unsigned char* PublicKeyA,\\
+	Input & unsigned char* PrivateKeyB,\\
+	& unsigned char* PublicKeyB,\\
 	& PCurveIsogenyStruct CurveIsogeny,\\
 	& invBatch* batch\\
 	\midrule
-	Output & publickey\_t PublicKeyA,\\
-	& digit\_t PrivateKeyA\\
+	Output & publickey\_t PublicKeyB,\\
+	& digit\_t PrivateKeyB\\
 	\bottomrule
 \end{tabular}}
 \hfill
@@ -150,13 +224,73 @@ KeyGeneration\_B
 
 \subsection{Sign}
 
+\parbox[t]{.40\linewidth}{
+\centering
+Sign
+\begin{tabular}{@{}ll@{}}
+	\toprule
+	Location & Yoo et. al section 4 \\
+	\midrule
+	Input & sk = $S$ with order $\ell^{e_{A}}_{A}$,\\
+	& message $m$\\
+	\midrule
+	Output & $\sigma$ = $((\texttt{com}_{i})_{i}, (\texttt{ch}_{i,j})_{i,j}, (h_{i,j})_{i,j}, ((\texttt{resp})[J_{i}])$\\
+	\bottomrule
+\end{tabular}}
+\hfill
+\parbox[t]{.40\linewidth}{
+\centering
+isogny\_sign
+\begin{tabular}{@{}ll@{}}
+	\toprule
+	Location & SIDH\_signature.c \\
+	\midrule
+	Input & PCurveIsogenyStaticData CurveIsogenyData,\\
+	& unsigned char* PrivateKey,\\
+	& unsigned char* PublicKey,\\
+	& struct Signature* sig\\
+	\midrule
+	Output & Signature* sig\\
+	\bottomrule
+\end{tabular}}
+
 \subsection{Verify}
+
+\parbox[t]{.40\linewidth}{
+\centering
+Sign
+\begin{tabular}{@{}ll@{}}
+	\toprule
+	Location & Yoo et. al ection 4 \\
+	\midrule
+	Input & pk = $(E/\langle S \rangle, \Phi(P_B), \Phi(Q_B))$, \\
+	& message $m$,\\
+	& $\sigma$ = $((\texttt{com}_{i})_{i}, (\texttt{ch}_{i,j})_{i,j}, (h_{i,j})_{i,j}, ((\texttt{resp})[J_{i}])$\\
+	\midrule
+	Output & true or false\\
+	\bottomrule
+\end{tabular}}
+\hfill
+\parbox[t]{.40\linewidth}{
+\centering
+isogny\_verify
+\begin{tabular}{@{}ll@{}}
+	\toprule
+	Location & SIDH\_signature.c \\
+	\midrule
+	Input & PCurveIsogenyStaticData CurveIsogenyData,\\
+	& unsigned char* PublicKey,\\
+	& struct Signature* sig\\
+	\midrule
+	Output & CRYPTO\_STATUS Status\\
+	\bottomrule
+\end{tabular}}
 
 \section{Elliptic Curve Operations}
 
 \section{Field Operations}
 
-\section{Type Definitions}
+\section{Type Definitions \& Structs}
 
 \begin{center}
 \begin{tabular}{@{}ll@{}}
@@ -167,6 +301,38 @@ KeyGeneration\_B
 	felm\_t & digit\_t[NWORDS\_FIELD]\\
 	f2elm\_t & felm\_t[2]\\
 	publickey\_t & f2elm\_t[3]\\
+	\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+	struct & contents & description\\
+	\toprule
+	signature & unsigned char* Commitments1[NUM\_ROUNDS] &\\
+	& unsigned char* Commitments2[NUM\_ROUNDS] &\\
+	& unsigned char* HashResp &\\
+	& unsigned char* Randoms[NUM\_RUNDS] &\\
+	& point\_proj* psiS[NUM\_ROUNDS] &\\
+	\midrule
+	PCurveIsogenyStaticData & CurveIsogeny\_ID CurveIsogeny &\\
+	& unsigned int pwordbits &\\
+	& unsigned int owordbits &\\
+	& unsigned int pbits &\\
+	& digit\_t* prime &\\
+	& digit\_t* A &\\
+	& digit\_t* C &\\
+	& unsigned int oBbits &\\
+	& unsigned int eB &\\
+	& digit\_t* Border &\\
+	& digit\_t* PA &\\
+	& digit\_t* PB &\\
+	& unsigned int BigMont\_A24 &\\
+	& digit\_t* BigMont\_order &\\
+	& digit\_t* Montgomery\_R2 &\\
+	& digit\_t* Montgomery\_pp &\\
+	& digit\_t* Montgomery\_one &\\
+	& RandomBytes RandomBytesFunction &\\
 	\bottomrule
 \end{tabular}
 \end{center}
