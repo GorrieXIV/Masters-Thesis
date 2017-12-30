@@ -286,6 +286,60 @@ isogny\_verify
 	\bottomrule
 \end{tabular}}
 
+\section{Public Key Compression}
+
+\subsection{Compression}
+
+\begin{center}PK Compression\end{center}
+\parbox{\linewidth}{
+\centering
+\begin{tabular}{@{}ll@{}}
+	\toprule
+	Location & Costello, Jao et. Al (no algorithm)\\
+	\midrule
+	Input & PK = $(E,P,Q)$\\
+	\midrule
+	Output & ($\mathbb{F}_{p^2}$, $\mathbb{Z}[\ell_{B}^{e_B}]^{4}$),\\
+	\bottomrule
+\end{tabular}}
+\hfill
+
+\vspace{5mm}
+
+\parbox[t]{.40\linewidth}{
+\centering
+\small
+PublicKeyCompression\_A
+\begin{tabular}{@{}ll@{}}
+	\toprule
+	Location & kex.c \\
+	\midrule
+	Input & PublicKeyA = $(\phi_{A}(P_B),\phi_{A}(Q_B),\phi_{A}(P_B-Q_B))$,\\
+	& unsigned char* CompressedPKA,\\
+	& PCurveIsogenyStruct CurveIsogeny\\
+	\midrule
+	Output & CompressedPKA = ($\mathbb{F}_{p^2}$, $\mathbb{Z}[\ell_{B}^{e_B}]^{4}$)\\
+	\bottomrule
+\end{tabular}}
+\hfill
+\parbox[t]{.40\linewidth}{
+\centering
+\small
+PublicKeyCompression\_B
+\begin{tabular}{@{}ll@{}}
+	\toprule
+	Location & kex.c \\
+	\midrule
+	Input & PublicKeyB = $(\phi_{B}(P_A),\phi_{B}(Q_A),\phi_{B}(P_A-Q_A))$,\\
+	& unsigned char* CompressedPKB,\\
+	& PCurveIsogenyStruct CurveIsogeny,\\
+	\midrule
+	Output & CompressedPKB = ($\mathbb{F}_{p^2}$, $\mathbb{Z}[\ell_{A}^{e_A}]^{4}$)\\
+	\bottomrule
+\end{tabular}}
+
+\subsection{Decompression}
+
 \section{Elliptic Curve Operations}
 
 \section{Field Operations}
