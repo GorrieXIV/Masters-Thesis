@@ -67,7 +67,7 @@ For an isogeny $h: E_{1} \rightarrow E_{2}$ defined over elliptic curves $E_1$ a
 
 \section{Supersingular Isogeny Diffie-Hellman}
 
-This section will aim to accomplish two things. First, we will briefly explain the isogeny-level procedures of the SIDH protocol. Second, we will illuminate how these procedures map onto Microsoft's C library for SIDH. In this regard, this section can be considered an attempt to meld two domains of SIDH functions \& procedures, in hopes of easing the process of navigation from the SIDH scheme to Microsoft's C implementation, and vice versa.
+This section will aim to accomplish two things. First, we will briefly explain the isogeny-level \& key-exchange-level procedures of the SIDH protocol. Second, we will illuminate how these procedures map onto Microsoft's C library for SIDH. In this regard, this section can be considered an attempt to meld two domains of SIDH functions \& procedures, in hopes of easing the process of navigation from the SIDH scheme to Microsoft's C implementation, and vice versa.
 
 SIDH protocols, as the name suggests, work over supersingular curves of smooth order. Let $\mathbb{F}_q = \mathbb{F}_{p^2}$ be the finite field over which our curve is defined. $p$ is a prime defined as follows:
 $$
@@ -77,7 +77,7 @@ Wherein $\ell_{A}$ and $\ell_{B}$ are small primes (typically 2 \& 3, respective
 
 \subsection{Modular Breakdown}
 
-	Before drawing parallels between the SIDH protocol and its C implementation, we will first offer a brief digest of the libraries unit organization.\\
+Before drawing parallels between the SIDH protocol and its C implementation, we will first offer a brief digest of the libraries unit organization.\\
 
 \begin{center}
 Header files:\\
