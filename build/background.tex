@@ -9,13 +9,15 @@ Our discussion of Isogenies will begin with some basic coverage of the underlyin
 Once we have presented the necessary algebra, we will illustrate the specifics of the supersingular isogeny Diffie-Hellman key-exchange protocol. We will spend most of this time dedicated to a modular deconstruction of the protocol, laying bare the underlying isogeny-level procedures and algorithms that will be necessary for understanding the protocols to come in detail. Another task of this section will be to introduce the SIDH C library released by Microsoft Research, on top of which the core contributions of this thesis are implemented. This subsection will end with a thorough briefing and analysis of the closely related zero-knowledge proof of identity isogeny protocol proposed in the original JDP paper, as it is necessary for understanding the isogeny based signature scheme presented by Yoo et. Al.\\
 
 \section{Algebraic Geometry \& Isogenies}
+\emph{Groups \& Varieties}. Let us begin with some group $G$. $G$ is said to be an $abelian$ group if, in addition to the four traditional group axioms, $G$ satisfies the condition of commutitiviy. More formally: for some group $G$ with group operation $\cdot$, we say $G$ is an abelian group iff $x \cdot y = y \cdot x$ $\forall x, y \in G$.
 
-Let us begin with some group $G$. $G$ is said to be an $abelian$ group if, in addition to the four traditional group axioms, $G$ satisfies the condition of commutitiviy. More formally: for some group $G$ with group operation $\cdot$, we say $G$ is an abelian group iff $x \cdot y = y \cdot x$ $\forall x, y \in G$.\\
+An algebraic group $G_a$ is defined over a field $K$ if each element $e \in G_a$ is defined over $K$ and $f_G$,$\phi_G$ are also defined over $K$. To show that a particular algebraic group $G_a$ is defined over some field $K$ we whill henceforth denote the group/field pairing as $G_a(K)$.\\
 
-A \emph{morphism} is the somewhat general notion of a structure-preserving map. Morphisms can be thought of as functions from some mathematical structure ($A$) to another ($B$). More specifically, in the domain of algebraic geometry, we will be dealing with the notion of a \emph{group homomorphism}, defined as follows:
+\noindent
+\emph{Morphisms}. A \emph{morphism} is a structure-preserving map. Morphisms can be thought of as functions from some mathematical structure ($A$) to another ($B$). More specifically, in the domain of algebraic geometry, we will be dealing with the notion of a \emph{group homomorphism}, defined as follows:
 \begin{definition}[Group Homomorphism]
 \label{defn:homomorphism}
-For two groups $G$ and $H$ with group operations $*$ and $\cdot$ respectively, a \emph{group homomorphism} is a mapping $h: G \rightarrow H$ such that $\forall u, v \in G$ the following holds:
+For two groups $G$ and $H$ with respective group operations $*$ and $\cdot$, a \emph{group homomorphism} is a mapping $h: G \rightarrow H$ such that $\forall u, v \in G$ the following holds:
 $$h(u * v) = h(u) \cdot h(v)$$
 \end{definition}
 From this simple definition, two more properties of homomorphisms are easily deducible. Namely, for some homomorphism $h: G \rightarrow H$, the following properties hold:
@@ -27,8 +29,7 @@ Furthermore, an \emph{endomorphism} is a special type of morphism in which the d
 
 \subsection{Elliptic Curves}
 
-geometry stuff:
-An elliptic curve is an algebraic curve defineable by an equation of the form $y^2 = x^3 + ax + b$.
+An elliptic curve is an algebraic curve defineable by an equation of the form $y^2 = x^3 + ax + b$. We will see later other possible algebraic representations of  elliptic curves which have varying benefits.
 The point at infinity.
 
 algebra stuff:
@@ -52,11 +53,17 @@ For the remainder of this paper, unless otherwise noted, all elliptic curves in 
 
 \subsection{Isogenies \& Their Properties}
 
-An isogeny is a certain sort of \emph{function} or \emph{map} which is defined in relation to the earlier discussed concept of a homomorphism[link]. The formal definition is as follows:\\
+An isogeny is a type of function or map which is defined in relation to the earlier discussed concept of a homomorphism[link]. The formal definition is as follows:\\
 \begin{definition}[Isogeny]
 \label{defn:isogeny}
-Let $G$ and $H$ be abelian varieties[ref]. An isogeny is a homomorphism[ref] $h: G \rightarrow H$ possessing a finite kernel.
+Let $G$ and $H$ be algebraic groups[ref]. An isogeny is a morphism[ref] $h: G \rightarrow H$ possessing a finite kernel.
 \end{definition}
+In the case of the above definition where $G$ and $H$ are abelian varieties (such as elliptic curves,) the isogeny $h$ is \emph{homomorphic}[ref] between $G$ and $H$. Because of this, isogenies over elliptic curves (and other abelian varieties) inherit certain characteristics.\\
+For an isogeny $h: E_{1} \rightarrow E_{2}$ defined over elliptic curves $E_1$ and $E_2$, the following holds:
+\begin{itemize}
+\item $h(\mathcal{O}) = \mathcal{O}$
+\item $h(u^{-1}) = h(u)^{-1}, \forall u \in G$
+\end{itemize}
 
 \section{Supersingular Isogeny Diffie-Hellman}
 
@@ -66,7 +73,7 @@ SIDH protocols, as the name suggests, work over supersingular curves of smooth o
 $$
 p = \ell_{A}^{e_A}\ell_{B}^{e_B} \cdot f \pm 1
 $$
-Wherein $\ell_{A}$ and $\ell_{B}$ are small primes (typically 2 \& 3, respectively) and $f$ is a cofactor ensuring the primality of $p$.
+Wherein $\ell_{A}$ and $\ell_{B}$ are small primes (typically 2 \& 3, respectively) and $f$ is a cofactor ensuring the primality of $p$. 
 
 \subsection{Modular Breakdown}
 

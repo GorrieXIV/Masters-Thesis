@@ -10,11 +10,11 @@
 \contentsline {section}{\numberline {2.1}Algebraic Geometry \& Isogenies}{2}{section.2.1}
 \contentsline {subsection}{\numberline {2.1.1}Elliptic Curves}{3}{subsection.2.1.1}
 \contentsline {subsection}{\numberline {2.1.2}Supersingular Curves}{3}{subsection.2.1.2}
-\contentsline {subsection}{\numberline {2.1.3}Isogenies \& Their Properties}{3}{subsection.2.1.3}
+\contentsline {subsection}{\numberline {2.1.3}Isogenies \& Their Properties}{4}{subsection.2.1.3}
 \contentsline {section}{\numberline {2.2}Supersingular Isogeny Diffie-Hellman}{4}{section.2.2}
 \contentsline {subsection}{\numberline {2.2.1}Modular Breakdown}{4}{subsection.2.2.1}
-\contentsline {subsection}{\numberline {2.2.2}Security Assumptions}{5}{subsection.2.2.2}
-\contentsline {subsection}{\numberline {2.2.3}Zero-Knowledge Proof of Identity}{5}{subsection.2.2.3}
+\contentsline {subsection}{\numberline {2.2.2}Security Assumptions}{6}{subsection.2.2.2}
+\contentsline {subsection}{\numberline {2.2.3}Zero-Knowledge Proof of Identity}{6}{subsection.2.2.3}
 \contentsline {section}{\numberline {2.3}Fiat-Shamir Construction}{6}{section.2.3}
 \contentsline {subsection}{\numberline {2.3.1}Unruh's Post-Quantum Adaptation}{6}{subsection.2.3.1}
 \contentsline {section}{\numberline {2.4}Isogeny Based Signatures}{6}{section.2.4}
