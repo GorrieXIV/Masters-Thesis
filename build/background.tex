@@ -155,12 +155,21 @@ The Fiat-Shamir construction (sometimes referred to as the Fiat-Shamir heuristic
 
 Now that we've introduced the zero-knowledge proof of identity scheme from [REFERENCE] as well as Unruh's quantum-safe Fiat-Shamir adaption, the isogeny based signature scheme presented by Yoo et. Al is a near-trivial application of the latter to the former. 
 
-\subsection{Modular Breakdown}
-
 The isogeny based signature scheme presented by Yoo et. Al is defined, in the traditional manner, by a tuple of algorithms. Namely, the scheme is defined by the tuple (KeyGen, Sign, Verify) with each algorithm loosely defined as follows:\\
 \textbf{KeyGen(}\textbf{)}: Select a random point $S$ of order $\ell_{A}^{e_A}$, compute the isogeny $\phi: E \rightarrow E/ \langle S \rangle$. Return (pk, sk) where pk = $(E/ \langle S \rangle, \phi(P_B), \phi(Q_B))$ and sk = $S$.\\
 \textbf{Sign()}:\\
 \textbf{Verify()}:\\
+
+
+\subsection{Modular Breakdown}
+
+\begin{figure}[htb]
+\centering
+\includegraphics[scale=0.7]{fullmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
+\caption{Relationship between SIDH key exchange \& MR SIDH C library}
+\label{fig:halfmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
+\end{figure}
+
 
 Shortly after, the following, more in-depth algorithms are given as definitions: 
 

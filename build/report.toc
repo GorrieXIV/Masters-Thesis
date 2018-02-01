@@ -19,7 +19,7 @@
 \contentsline {section}{\numberline {2.3}Fiat-Shamir Construction}{6}{section.2.3}
 \contentsline {subsection}{\numberline {2.3.1}Unruh's Post-Quantum Adaptation}{6}{subsection.2.3.1}
 \contentsline {section}{\numberline {2.4}Isogeny Based Signatures}{6}{section.2.4}
-\contentsline {subsection}{\numberline {2.4.1}Modular Breakdown}{6}{subsection.2.4.1}
+\contentsline {subsection}{\numberline {2.4.1}Modular Breakdown}{7}{subsection.2.4.1}
 \contentsline {chapter}{\numberline {3}Batching Operations for Isogenies}{9}{chapter.3}
 \contentsline {section}{\numberline {3.1}Batching Procedure in Detail}{9}{section.3.1}
 \contentsline {subsection}{\numberline {3.1.1}Projective Space}{9}{subsection.3.1.1}
