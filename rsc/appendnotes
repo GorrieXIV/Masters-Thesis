@@ -1,0 +1,175 @@
+\begin{center}
+Header files:\\
+	\begin{tabular}{@{}ll@{}}
+		File & Description of contents\\
+		\toprule
+		SIDH.h & \\
+		\midrule
+		SIDH\_internal.h & \\
+		\midrule
+		SIDH\_api.h & \\
+		\midrule
+		keccak.h & \\
+		\bottomrule
+	\end{tabular}\\
+	
+Source files:\\
+	\begin{tabular}{@{}ll@{}}
+		File & Description of contents\\
+		\toprule
+		SIDH.c & \\
+		\midrule
+		kex.c & \\
+		\midrule
+		ec\_isogeny.c & \\
+		\midrule
+		fpx.c & \\
+		\midrule
+		keccak.c & \\
+		\midrule
+		sha256.c & \\
+		\bottomrule
+	\end{tabular}\\
+	
+Test files:\\
+	\begin{tabular}{@{}ll@{}}
+		File & Description of contents\\
+		\toprule
+		kex\_tests.c & Correctness \& performance tests for key exchange\\
+		\midrule
+		arith\_tests.c & Correctness \& performance testing of field arithmetic\\
+		\bottomrule
+	\end{tabular}
+\end{center}
+
+\textbf{Ephemeral Key Generation -- Alice}:
+
+	\parbox[t]{.35\linewidth}{
+	\centering
+	Key generation for Alice
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Location & Efficient Algo's Appendix A \\
+		\midrule
+		Input & $x_{P_{B}}, x_{P_{A}}, y_{P_{A}}$,\\
+		& $SK_{Alice}$ = $m_{A} \cdot l_{A}$\\
+		\midrule
+		Output & $PK_{Alice}$ = $[x_{\Phi_{A}}(P_{B}), x_{\Phi_{A}}(Q_{B}), x_{\Phi_{A}}(Q_{B} - P_{B})]$\\
+		\bottomrule
+	\end{tabular}}
+	\hfill
+	\parbox[t]{.35\linewidth}{
+	\centering
+	EphemeralKeyGeneration\_A
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Location & kex.c \\
+		\midrule
+		Input & unsigned char* PrivateKeyA,\\
+		& unsigned char* PublicKeyA,\\
+		& PCurveIsogenyStruct CurveIsogeny,\\
+		& invBatch* batch\\
+		\midrule
+		Output & publickey\_t PublicKeyA,\\
+		& digit\_t PrivateKeyA\\
+		\bottomrule
+	\end{tabular}}
+
+\textbf{Ephemeral Key Generation -- Bob}:
+
+	\parbox[t]{.35\linewidth}{
+	\centering
+	Key generation for Bob
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Location & Efficient Algo's Appendix A \\
+		\midrule
+		Input & $x_{P_{A}}, x_{P_{B}}, y_{P_{B}}$,\\
+		& $SK_{Bob}$ = $m_{B} \cdot l_{B}$\\
+		\midrule
+		Output & $PK_{Bob}$ = $[x_{\Phi_{B}}(P_{A}), x_{\Phi_{B}}(Q_{A}), x_{\Phi_{B}}(Q_{A} - P_{A})]$\\
+		\bottomrule
+	\end{tabular}}
+	\hfill
+	\parbox[t]{.35\linewidth}{
+	\centering
+	EphemeralKeyGeneration\_B
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Location & kex.c \\
+		\midrule
+		Input & unsigned char* PrivateKeyB,\\
+		& unsigned char* PublicKeyB,\\
+		& PCurveIsogenyStruct CurveIsogeny,\\
+		& invBatch* batch\\
+		\midrule
+		Output & publickey\_t PublicKeyB,\\
+		& digit\_t PrivateKeyB\\
+		\bottomrule
+	\end{tabular}}
+
+\textbf{Ephemeral Secret Agreement -- Alice}:
+
+	\parbox[t]{.35\linewidth}{
+	\centering
+	Shared secret algorithm for Alice
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Location & Efficient Algo's Appendix A \\
+		\midrule
+		Input & $PK_{Bob}$ = $[x_{\Phi_{B}}(P_{A}), x_{\Phi_{B}}(Q_{A}), x_{\Phi_{B}}(Q_{A} - P_{A})]$\\
+		& $SK_{Alice}$ = $m_{A} \cdot l_{A}$\\
+		\midrule
+		Output & A shared secret j-invariant of an elliptic curve\\
+		\bottomrule
+	\end{tabular}}
+	\hfill
+	\parbox[t]{.35\linewidth}{
+	\centering
+	EphemeralSecretAgreement\_A
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Location & kex.c \\
+		\midrule
+		Input & const unsigned char* PrivateKeyA,\\
+		& const unsigned char* PublicKeyB,\\
+		& unsigned char* SharedSecretA,\\
+		& PCurveIsogenyStruct CurveIsogeny,\\
+		& invBatch* batch\\
+		\midrule
+		Output & f2elm\_t SharedSecretA,\\
+		\bottomrule
+	\end{tabular}}
+
+\textbf{Ephemeral Secret Agreement -- Bob}:
+
+	\parbox[t]{.35\linewidth}{
+	\centering
+	Shared secret algorithm for Bob
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Location & Efficient Algo's Appendix A \\
+		\midrule
+		Input & $PK_{Alice}$ = $[x_{\Phi_{A}}(P_{B}), x_{\Phi_{A}}(Q_{B}), x_{\Phi_{A}}(Q_{B} - P_{B})]$\\
+		& $SK_{Bob}$ = $m_{B} \cdot l_{B}$\\
+		\midrule
+		Output & A shared secret j-invariant of an elliptic curve\\
+		\bottomrule
+	\end{tabular}}
+	\hfill
+	\parbox[t]{.35\linewidth}{
+	\centering
+	EphemeralSecretAgreement\_B
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Location & kex.c \\
+		\midrule
+		Input & const unsigned char* PrivateKeyB,\\
+		& const unsigned char* PublicKeyA,\\
+		& unsigned char* SharedSecretB,\\
+		& PCurveIsogenyStruct CurveIsogeny,\\
+		& invBatch* batch\\
+		\midrule
+		Output & f2elm\_t SharedSecretB,\\
+		\bottomrule
+	\end{tabular}}
