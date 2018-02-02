@@ -73,12 +73,33 @@ E: y^2 = x^3 + ax + b
 $$
 Wherein $E$ denotes the group in question, the elements of which are all the points (solutions) of the curve. The corresponding group operation is better understood geometrically than algebraically. Consider the following.
 
-\begin{figure}[htb]
-\centering
-\includegraphics[scale=0.3]{signandverifycall.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
-\caption{Temporary. To be replaced with illustration of EC group operation.}
-\label{fig:label} % insert suitable label, this is used to refer to a fig from within the text as shown above
-\end{figure}
+\begin{center}
+\begin{tikzpicture}
+  \draw[very thin,color=gray] (-1.9,-3.9) grid (3.9,3.9);
+  \draw[->] (-2,0) -- (4.2,0) node[right] {$x$};
+  \draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};
+  \draw plot[id=curve, raw gnuplot, smooth] function{
+    f(x,y) = y**2 - x**3 + x;
+    set xrange [-4:4];
+    set yrange [-4:4];
+    set view 0,0;
+    set isosample 1000,1000;
+    set table;
+    set size square;
+    set cont base;
+    set cntrparam levels incre 0,0.1,0;
+    unset surface;
+    splot f(x,y)
+  };
+\end{tikzpicture}
+\end{center}
+
+%\begin{figure}[htb]
+%\centering
+%\includegraphics[scale=0.3]{signandverifycall.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
+%\caption{Temporary. To be replaced with illustration of EC group operation.}
+%\label{fig:label} % insert suitable label, this is used to refer to a fig from within the text as shown above
+%\end{figure}
 And so our group consists of $(E,+)$. This group operation is referred to as \emph{pointwise addition}. Additionally, we shorthand $n$-many applications of the group operation of a point $P$ to itself as $nP$, analogous to scalar multiplication. 
 
 Moreover, groups defined over elliptic curves in this fashion constitute abelian varieties[ref]. We will see later other possible algebraic representations of elliptic curves which have varying benefits.
