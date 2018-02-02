@@ -45,8 +45,8 @@ $$
 A \textbf{morphism} is simply the most general notion of a structure preserving map. More specifically, in the domain of algebraic geometry, we will be dealing with the notion of a \textbf{group homomorphism}, defined as follows:
 \begin{definition}[Group Homomorphism]
 \label{defn:homomorphism}
-For two groups $G$ and $H$ with respective group operations $*$ and $\cdot$, a \underline{group homomorphism} is a structure preserving map $h: G \rightarrow H$ such that $\forall u, v \in G$ the following holds:
-$$h(u * v) = h(u) \cdot h(v)$$
+For two groups $G$ and $H$ with respective group operations $\cdot$ and $*$, a \underline{group homomorphism} is a structure preserving map $h: G \rightarrow H$ such that $\forall u, v \in G$ the following holds:
+$$h(u \cdot v) = h(u) * h(v)$$
 \end{definition}
 From this simple definition, two more properties of homomorphisms are easily deducible. Namely, for some homomorphism $h: G \rightarrow H$, the following properties hold:
 \begin{itemize}
@@ -73,34 +73,49 @@ E: y^2 = x^3 + ax + b
 $$
 Wherein $E$ denotes the group in question, the elements of which are all the points (solutions) of the curve. The corresponding group operation is better understood geometrically than algebraically. Consider the following.
 
+Given two elements $P$ and $Q$ of some elliptic curve group $E(\mathbb{F}_q)$, we define the group operation $+$ geometrically as follows: drawing the line formed by points $P$ and $Q$, we follow this line to its third intersection on the curve, which we will denote as $R = (x_R, y_R)$. We then take $P + Q$ to be equal to $-R$, which we define as (and will soon see good reason for doing so) $(x_R, -y_R)$. Consider the curve $E$ below with point $P$ and $Q$.
 \begin{center}
 \begin{tikzpicture}
-  \draw[very thin,color=gray] (-1.9,-3.9) grid (3.9,3.9);
-  \draw[->] (-2,0) -- (4.2,0) node[right] {$x$};
-  \draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};
-  \draw plot[id=curve, raw gnuplot, smooth] function{
-    f(x,y) = y**2 - x**3 + x;
-    set xrange [-4:4];
-    set yrange [-4:4];
-    set view 0,0;
-    set isosample 1000,1000;
-    set table;
-    set size square;
-    set cont base;
-    set cntrparam levels incre 0,0.1,0;
-    unset surface;
-    splot f(x,y)
-  };
+  \draw[very thin,color=gray] (-3.9,-3.9) grid (3.9,3.9);  %background grid
+  \draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};         %x-axis
+  \draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};         %y-axis
+  
+  \plotcurve{-2}{2}
+  
+  \draw[fill] (-1.73,0.531) circle (0.1) node[right] {$P$};
+  \draw[fill] (0.28,1.209) circle (0.1) node[right] {$Q$};
 \end{tikzpicture}
 \end{center}
 
-%\begin{figure}[htb]
-%\centering
-%\includegraphics[scale=0.3]{signandverifycall.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
-%\caption{Temporary. To be replaced with illustration of EC group operation.}
-%\label{fig:label} % insert suitable label, this is used to refer to a fig from within the text as shown above
-%\end{figure}
-And so our group consists of $(E,+)$. This group operation is referred to as \emph{pointwise addition}. Additionally, we shorthand $n$-many applications of the group operation of a point $P$ to itself as $nP$, analogous to scalar multiplication. 
+Now, through application of $+$, we note the $R'$ and the intermediary point $R$.
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[very thin,color=gray] (-3.9,-3.9) grid (3.9,3.9);  %background grid
+  \draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};         %x-axis
+  \draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};         %y-axis
+  
+  \plotcurve{-2}{2}
+  
+  \draw [] (-1.73,0.531) -- (1.564,1.642);
+  \draw [dashed] (1.564,1.642) -- (1.564,-1.642);
+  
+  \draw[fill] (-1.73,0.531) circle (0.1) node[right] {$P$};
+  \draw[fill] (0.28,1.209) circle (0.1) node[right] {$Q$};
+  \draw[fill] (1.564,1.642) circle (0.1) node[right] {$R$};
+  \draw[fill] (1.564,-1.642) circle (0.1) node[right] {$R' = P+Q$};
+\end{tikzpicture}
+\end{center}
+
+The group operation $+$ is referred to as \emph{pointwise addition}. In order for $E$ to properly form a group under pointwise addition, it must satisfy the four group axioms.
+\begin{itemize}
+\item \emph{Closure}: 
+\item \emph{Associativity}:
+\item \emph{Identity}:
+\item \emph{Inverse}: Because elliptic curves are symmetrical about the x-axis, we can take the inverse element of $P$ to be $-P$, defined the same as above. It is easy to see that $P+(-P) = \mathcal{O}$
+\end{itemize}
+
+Additionally, we shorthand $n$-many applications of the group operation of a point $P$ to itself as $nP$, analogous to scalar multiplication. 
 
 Moreover, groups defined over elliptic curves in this fashion constitute abelian varieties[ref]. We will see later other possible algebraic representations of elliptic curves which have varying benefits.
 The point at infinity.
@@ -127,6 +142,8 @@ For an isogeny $h: E_{1} \rightarrow E_{2}$ defined over elliptic curves $E_1$ a
 \item $h(\mathcal{O}) = \mathcal{O}$, and
 \item $h(u^{-1}) = h(u)^{-1}, \forall u \in G$
 \end{itemize}
+
+We denote $End(E)$ to denote the ring formed by all the isogenies acting over $E$ which are also endomorphisms.
 
 \section{Supersingular Isogeny Diffie-Hellman}
 

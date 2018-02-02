@@ -24,14 +24,40 @@
 \usepackage[noend]{algpseudocode}
 \usepackage{mathtools}
 \usepackage{tikz}
+\usepackage{pgfplots}
 
 \usepackage[bookmarks, colorlinks=false, pdfborder={0 0 0}, pdftitle={title goes here}, pdfauthor={Robert W.V. Gorrie}, pdfsubject={<subject here>}, pdfkeywords={<keywords here>}]{hyperref} %for creating links in the pdf version and other additional pdf attributes, no effect on the printed document
+
+\usetikzlibrary{intersections,decorations.markings}
+
+\newcommand{\comment}[1]{}            %command for multiline comments for testing purposes
 
 \theoremstyle{theorem}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemme}{Lemma}
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
+
+\newcommand{\plotcurve}[3][thick, every plot/.style={smooth}]{
+  % plot curve y^2 = x^3 + a x + b in range [-3,3]^2
+  % parameter 1 (optional): style options for curve (color, etc)
+  % parameter 2: curve parameter a
+  % parameter 3: curve parameter b
+  \draw[gray] (-3,-3) rectangle (3,3);
+  \draw[->,>=latex,gray] (-3,0) -- (3,0);
+  \draw[->,>=latex,gray] (0,-3) -- (0,3);
+  \draw[name path=curve, #1] plot[id=curve#2#3, raw gnuplot] function {
+    f(x,y) = y**2 - x**3 - #2*x - #3;
+    set xrange [-3:3];
+    set yrange [-3:3];
+    set view 0,0;
+    set isosample 500,500;
+    set cont base;
+    set cntrparam levels incre 0,0.1,0;
+    unset surface;
+    splot f(x,y);
+  };
+}
 
 \begin{document}
 \renewcommand\bibname{References} %Renames "Bibliography" to "References" on ref page
