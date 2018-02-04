@@ -13,6 +13,7 @@
 \documentclass[12pt,a4paper]{report}
 
 \usepackage[pdftex]{graphicx}        %for embedding images
+\usepackage{xcolor}                 %for colouring in math mode
 \usepackage{url}                     %for proper url entries
 %\usepackage{hyperref}
 \usepackage{amssymb}                 %extended symbols
@@ -28,7 +29,7 @@
 
 \usepackage[bookmarks, colorlinks=false, pdfborder={0 0 0}, pdftitle={title goes here}, pdfauthor={Robert W.V. Gorrie}, pdfsubject={<subject here>}, pdfkeywords={<keywords here>}]{hyperref} %for creating links in the pdf version and other additional pdf attributes, no effect on the printed document
 
-\usetikzlibrary{intersections,decorations.markings}
+\usetikzlibrary{intersections,decorations.markings,matrix}
 
 \newcommand{\comment}[1]{}            %command for multiline comments for testing purposes
 
@@ -37,6 +38,13 @@
 \newtheorem{lemme}{Lemma}
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
+
+\newcommand{\laea}[0]{\textcolor{blue}{\ell_{A}^{e_A}}}
+\newcommand{\la}[0]{\textcolor{blue}{\ell_{A}}}
+\newcommand{\ea}[0]{\textcolor{blue}{e_A}}
+\newcommand{\lbeb}[0]{\textcolor{red}{\ell_{B}^{e_B}}}
+\newcommand{\lb}[0]{\textcolor{red}{\ell_{B}}}
+\newcommand{\eb}[0]{\textcolor{red}{e_B}}
 
 \newcommand{\plotcurve}[3][thick, every plot/.style={smooth}]{
   % plot curve y^2 = x^3 + a x + b in range [-3,3]^2

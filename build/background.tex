@@ -73,7 +73,7 @@ E: y^2 = x^3 + ax + b
 $$
 Wherein $E$ denotes the group in question, the elements of which are all the points (solutions) of the curve. The corresponding group operation is better understood geometrically than algebraically. Consider the following.
 
-Given two elements $P$ and $Q$ of some elliptic curve group $E(\mathbb{F}_q)$, we define the group operation $+$ geometrically as follows: drawing the line formed by points $P$ and $Q$, we follow this line to its third intersection on the curve, which we will denote as $R = (x_R, y_R)$. We then take $P + Q$ to be equal to $-R$, which we define as (and will soon see good reason for doing so) $(x_R, -y_R)$. Consider the curve $E$ below with point $P$ and $Q$.
+Given two elements $P$ and $Q$ of some arbitrary elliptic curve group $E(\mathbb{F}_q)$ defined over some arbitrary finite field $\mathbb{F}_q$, we define the group operation $+$ geometrically as follows: drawing the line formed by points $P$ and $Q$, we follow this line to its third intersection on the curve, which we will denote as $R = (x_R, y_R)$. We then take $P + Q$ to be equal to $-R$, which we define as (and will soon see good reason for doing so) $(x_R, -y_R)$. Consider the curve $E$ below with point $P$ and $Q$.
 \begin{center}
 \begin{tikzpicture}
   \draw[very thin,color=gray] (-3.9,-3.9) grid (3.9,3.9);  %background grid
@@ -109,7 +109,7 @@ Now, through application of $+$, we note the $R'$ and the intermediary point $R$
 
 The group operation $+$ is referred to as \emph{pointwise addition}. In order for $E$ to properly form a group under pointwise addition, it must satisfy the four group axioms.
 \begin{itemize}
-\item \emph{Closure}: 
+\item \emph{Closure}: Because elliptics curves are polynomials of degree of 3, we know any given line passing through two points $P$ and $Q$ of $E$ will pass through exactly 3 points on $E$. The exceptions here are 1. when $P = Q$ and thus our line is tangent to $E$ and 2. when $Q = -P$ and our line is parallel with the y-axis. We resolve case 1. nicely by definig $P + P$ by means of taking the line tangent to $E$ at point $P$. In case 2, $P + (-P)$ should yield the identity element of the group. We will define this element and resolve this issue below.  
 \item \emph{Associativity}:
 \item \emph{Identity}:
 \item \emph{Inverse}: Because elliptic curves are symmetrical about the x-axis, we can take the inverse element of $P$ to be $-P$, defined the same as above. It is easy to see that $P+(-P) = \mathcal{O}$
@@ -117,10 +117,10 @@ The group operation $+$ is referred to as \emph{pointwise addition}. In order fo
 
 Additionally, we shorthand $n$-many applications of the group operation of a point $P$ to itself as $nP$, analogous to scalar multiplication. 
 
-Moreover, groups defined over elliptic curves in this fashion constitute abelian varieties[ref]. We will see later other possible algebraic representations of elliptic curves which have varying benefits.
+Moreover, because groups defined over elliptic curves in this fashion are commutitive, they also constitute abelian varieties[ref]. We will see later other possible algebraic representations of elliptic curves which have varying benefits.
 The point at infinity.
 
-When referring to curves as abelian varieties defined over a field, we will write them as $E_{\alpha}(K)$, for some $\alpha$ instance of a curve and some field $K$. If we are only concerned with the geometric properties of the curve, or curves as distinct elements of some group structure, it will suffice to write $E_{\alpha}$. Moving forward from here, we will assume all general curves discussed are defined over some finite field $\mathbb{F}_q$\\
+When referring to curves as abelian varieties defined over a field, we will write them as $E_{\alpha}(K)$, for some $\alpha$ instance of a curve and some field $K$. If we are only concerned with the geometric properties of the curve, or curves as distinct elements of some group structure, it will suffice to write $E_{\alpha}$. Moving forward from here, we will assume all general curves discussed are capable of definition over some finite field $\mathbb{F}_q$.\\
 
 \noindent
 \emph{Torsion Groups}. The $r$-\emph{torsion group} of $E$ is the set of all points $P \in E(\overline{\mathbb{F}}_q)$ such that $[r]P = \mathcal{O}$. We denote the $r$-torsion group of some curve as $E[r]$.
@@ -147,19 +147,53 @@ We denote $End(E)$ to denote the ring formed by all the isogenies acting over $E
 
 \section{Supersingular Isogeny Diffie-Hellman}
 
+There have been several stabs at a
+
 This section will aim to accomplish two things. First, we will briefly explain the isogeny-level \& key-exchange-level procedures of the SIDH protocol. Second, we will illuminate how these procedures map onto Microsoft Research's C implementation of SIDH. In this regard, this section can be considered an attempt to meld two domains of SIDH functions \& procedures, in hopes of easing the navigation from the SIDH protocol to Microsoft's C implementation, and vice versa.
 
 The original work of De Feo, Jao, and Plut outlines three different isogeny-based cryptographic primitives: Diffie-Hellman-esque key exchange, public key encryption, and the aforementioned zero-knowledge proof of identity. Because all three of these protocols require the same initialization and public parameters, we will begin by covering these parameters in detail. Immediately after, we will analyze the key exchange at a relatively high level. Our goal of this section is to explain in detail the algorithmic and cryptographic aspects of the ZKPoI scheme, as this forms the conceptual basis for the signature scheme we will be investigating. We begin with the key exchange protocol because its sub-routines are integral to the Yoo et. Al signature implementation.
+
+In SIDH protocols, secret keys are composed of by isogenies 
 
 \subsection{Public Parameters}
 
 As the name suggests, SIDH protocols work over supersingular curves (of a smooth order). Let $\mathbb{F}_q = \mathbb{F}_{p^2}$ be the finite field over which our curves are defined, $\mathbb{F}_{p^2}$ denoting the quadratic extension field of $\mathbb{F}_{p}$.  $p$ is a prime defined as follows:
 $$
-p = \ell_{A}^{e_A}\ell_{B}^{e_B} \cdot f \pm 1
+p = \laea \lbeb \cdot f \pm 1
 $$
-Wherein $\ell_{A}$ and $\ell_{B}$ are small primes (typically 2 \& 3, respectively) and $f$ is a cofactor ensuring the primality of $p$. We then define a global parameter curve $E$ with cardinality $(\ell_{A}^{e_A}\ell_{B}^{e_B}f)^2$.
+Wherein $\la$ and $\lb$ are small primes (typically \textcolor{blue}{2} \& \textcolor{red}{3}, respectively) and $f$ is a cofactor ensuring the primality of $p$. We then define a global parameter curve $E$ defined over $\mathbb{F}_q$ with cardinality $(\laea \lbeb f)^2$. Consequently, the torsion group $E[\laea]$ is $\mathbb{F}_q$-rational and has $\la^{\ea - 1} (\la + 1)$ cyclic subgroups of order $\laea$, with the analogous statement being true for $E[\lbeb]$.
+
+Additionally, we include in the public parameters the bases $\{P_A,Q_A\}$ and $\{P_B,Q_B\}$, generating $E[\laea]$ and $E[\lbeb]$ respectively.\\
 
 \subsection{SIDH Key Exchange}
+
+In a key exchange between party members \textcolor{blue}{Alice} and \textcolor{red}{Bob}.
+
+\noindent
+\textit{Key Generation}.
+
+\noindent
+\text{PK Exchange}.
+
+\noindent
+\textit{Secret Agreement}.
+
+\begin{center}
+\begin{tikzpicture}
+  \matrix (m) [matrix of math nodes,
+               row sep=4em,
+               column sep=4em,
+               minimum width=2em] {
+    E                     & E / \langle A \rangle    \\
+    E / \langle B \rangle & E / \langle A, B \rangle \\
+  };
+  \path[-stealth]
+    (m-1-1) edge node [above] {$\phi_A$}  (m-1-2)
+    (m-1-1) edge node [left]  {$\phi_B$}  (m-2-1)
+    (m-2-1) edge node [below] {$\phi_A'$} (m-2-2)
+    (m-1-2) edge node [right] {$\phi_B'$} (m-2-2);
+\end{tikzpicture}
+\end{center}
 
 \subsection{Modular Breakdown}
 
