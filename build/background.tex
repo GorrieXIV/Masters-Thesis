@@ -143,17 +143,15 @@ For an isogeny $h: E_{1} \rightarrow E_{2}$ defined over elliptic curves $E_1$ a
 \item $h(u^{-1}) = h(u)^{-1}, \forall u \in G$
 \end{itemize}
 
-We denote $End(E)$ to denote the ring formed by all the isogenies acting over $E$ which are also endomorphisms.
+We denote $End(E)$ to denote the ring formed by all the isogenies acting over $E$ which are also endomorphisms. Note that $m$-repeated pointwise addition of a point with itself can equivalently be modelled by an endomorphism, we denote the application of such an endomorphism to a point $P$ as $[m]P$, such that $[m]: E \rightarrow E$ and $[m]P = mP$.
 
 \section{Supersingular Isogeny Diffie-Hellman}
-
-There have been several stabs at a
 
 This section will aim to accomplish two things. First, we will briefly explain the isogeny-level \& key-exchange-level procedures of the SIDH protocol. Second, we will illuminate how these procedures map onto Microsoft Research's C implementation of SIDH. In this regard, this section can be considered an attempt to meld two domains of SIDH functions \& procedures, in hopes of easing the navigation from the SIDH protocol to Microsoft's C implementation, and vice versa.
 
 The original work of De Feo, Jao, and Plut outlines three different isogeny-based cryptographic primitives: Diffie-Hellman-esque key exchange, public key encryption, and the aforementioned zero-knowledge proof of identity. Because all three of these protocols require the same initialization and public parameters, we will begin by covering these parameters in detail. Immediately after, we will analyze the key exchange at a relatively high level. Our goal of this section is to explain in detail the algorithmic and cryptographic aspects of the ZKPoI scheme, as this forms the conceptual basis for the signature scheme we will be investigating. We begin with the key exchange protocol because its sub-routines are integral to the Yoo et. Al signature implementation.
 
-In SIDH protocols, secret keys are composed of by isogenies 
+For the discussion that follows, we will assume every instance of an SIDH protocol occurs between two parties, \textcolor{blue}{A} and \textcolor{red}{B} (eg. \textcolor{blue}{Alice} \& \textcolor{red}{Bob},) for which we will colorize information particular to \textcolor{blue}{A} in \textcolor{blue}{blue} and \textcolor{red}{B} in \textcolor{red}{red}. This will include private keys \& public keys as well as the variables and constants used in their generation.
 
 \subsection{Public Parameters}
 
@@ -167,16 +165,7 @@ Additionally, we include in the public parameters the bases $\{P_A,Q_A\}$ and $\
 
 \subsection{SIDH Key Exchange}
 
-In a key exchange between party members \textcolor{blue}{Alice} and \textcolor{red}{Bob}.
-
-\noindent
-\textit{Key Generation}.
-
-\noindent
-\text{PK Exchange}.
-
-\noindent
-\textit{Secret Agreement}.
+This subsection will illustrate an SIDH key exchange run between party members \textcolor{blue}{Alice} and \textcolor{red}{Bob}. The general idea of the protocol can be surmised by the diagram below. In the scheme, \textbf{private keys} take the form of isogenies[ref] defined with domain $E$, and \textbf{public keys} are the associated co-domain curve of said isogenies.
 
 \begin{center}
 \begin{tikzpicture}
@@ -184,16 +173,28 @@ In a key exchange between party members \textcolor{blue}{Alice} and \textcolor{r
                row sep=4em,
                column sep=4em,
                minimum width=2em] {
-    E                     & E / \langle A \rangle    \\
-    E / \langle B \rangle & E / \langle A, B \rangle \\
+    E                     & E / \langle \textcolor{blue}{A} \rangle    \\
+    E / \langle \textcolor{red}{B} \rangle & E / \langle \textcolor{blue}{A}, \textcolor{red}{B} \rangle \\
   };
   \path[-stealth]
-    (m-1-1) edge node [above] {$\phi_A$}  (m-1-2)
-    (m-1-1) edge node [left]  {$\phi_B$}  (m-2-1)
-    (m-2-1) edge node [below] {$\phi_A'$} (m-2-2)
-    (m-1-2) edge node [right] {$\phi_B'$} (m-2-2);
+    (m-1-1) edge node [above] {$\phi_{\textcolor{blue}{A}}$}  (m-1-2)
+    (m-1-1) edge node [left]  {$\phi_{\textcolor{red}{B}}$}  (m-2-1)
+    (m-2-1) edge node [below] {$\phi_{\textcolor{blue}{A'}}$} (m-2-2)
+    (m-1-2) edge node [right] {$\phi_{\textcolor{red}{B'}}$} (m-2-2);
 \end{tikzpicture}
 \end{center}
+
+\noindent
+\textit{Key Generation}. \textcolor{blue}{Alice} chooses two random numbers $m_A, n_A \in \mathbb{Z}/\laea\mathbb{Z}$ such that $(\la \nmid m_A) \lor (\la \nmid n_A)$. Following this, \textcolor{blue}{Alice} computes the isogeny $\phi_A: E \rightarrow E_A$ with kernel $K_A := \langle [m_A]P_A, [n_A]Q_A\rangle$.\\
+
+
+\noindent
+\textit{PK Exchange}. In addition to sending their respective isogenies,\\
+
+\noindent
+\textit{Secret Agreement}.\\
+
+
 
 \subsection{Modular Breakdown}
 
