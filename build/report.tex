@@ -26,12 +26,18 @@
 \usepackage{mathtools}
 \usepackage{tikz}
 \usepackage{pgfplots}
+\usepackage{tcolorbox}
+
+%for editing purposes
+%\usepackage{setspace}
+%\doublespacing
+%%%%%%%%%%%%%%%%%%%%
 
 \usepackage[bookmarks, colorlinks=false, pdfborder={0 0 0}, pdftitle={title goes here}, pdfauthor={Robert W.V. Gorrie}, pdfsubject={<subject here>}, pdfkeywords={<keywords here>}]{hyperref} %for creating links in the pdf version and other additional pdf attributes, no effect on the printed document
 
 \usetikzlibrary{intersections,decorations.markings,matrix}
 
-\newcommand{\comment}[1]{}            %command for multiline comments for testing purposes
+\newcommand{\commentblock}[1]{}            %command for multiline comments for testing purposes
 
 \theoremstyle{theorem}
 \newtheorem{theorem}{Theorem}
@@ -54,7 +60,7 @@
   % parameter 1 (optional): style options for curve (color, etc)
   % parameter 2: curve parameter a
   % parameter 3: curve parameter b
-  \draw[gray] (-3,-3) rectangle (3,3);
+  %\draw[gray] (-3,-3) rectangle (3,3);
   \draw[->,>=latex,gray] (-3,0) -- (3,0);
   \draw[->,>=latex,gray] (0,-3) -- (0,3);
   \draw[name path=curve, #1] plot[id=curve#2#3, raw gnuplot] function {

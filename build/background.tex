@@ -1,36 +1,35 @@
 \chapter{Technical Background}
 
-Over the course of the past decade, elliptic curve cryptography (ECC) has proven itself a mainstay in the wide world of applied cryptology. While isogeny based cryptography does build itself up from the same underlying field of mathematics as ECC, it simultaneously draws from a slightly more complicated space of niche algebraic notions. Much of this chapter will be dedicated to illuminating these notions in a manner that should be digestable for those without serious background in algebraic geometry, or abstract algebra in general.
+Over the course of the past decade, elliptic curve cryptography (ECC) has proven itself a mainstay in the wide world of applied cryptology. While isogeny based cryptography does build itself up from the same underlying field of mathematics as ECC, it simultaneously draws from a slightly more complicated space of algebraic notions. Much of this chapter will be dedicated to illuminating these notions in a manner that should be digestable for those without serious background in algebraic geometry, or abstract algebra in general.
 
-This chapter will cover the following preliminary topics: isogenies and their relevant properties, Supersingular Isogeny Diffie-Hellman and its related procotols, the Fiat-Shamir construction and its quantum-safe adaptation, and finally the current landscape of isogeny based signature schemes.
+This chapter will cover the following preliminary topics: isogenies and their relevant properties, supersingular isogeny Diffie-Hellman (SIDH) and related procotols, the Fiat-Shamir construction for digital signatures (and its quantum-safe adaptation), and finally the current landscape of isogeny based signature schemes.
 
-Our discussion of Isogenies will begin with some basic coverage of the underlying algebra. We will provide the material necessary for the remaining sections as we build up in the level of abstraction; working our way through groups, finite fields, elliptic curves, and finally isogenies and their properties.
+Our discussion of isogenies will begin with some basic coverage of the underlying algebra. We will provide the material necessary for the remaining sections as we build up in the level of abstraction; working our way through groups, finite fields, elliptic curves, and finally isogenies and their properties.
 
-Once we have presented the necessary algebra, we will illustrate the specifics of the supersingular isogeny Diffie-Hellman key-exchange protocol. We will spend most of this time dedicated to a modular deconstruction of the protocol, laying bare the underlying isogeny-level procedures and algorithms which will be necessary for understanding in detail the signature protocol to come. Another task of this section will be to introduce the SIDH C library released by Microsoft Research, on top of which the core contributions of this thesis are implemented. This subsection will end with a thorough briefing and analysis of the closely related zero-knowledge proof of identity (ZKPoI) isogeny protocol proposed in the original JDP paper, as it is necessary for understanding the isogeny based signature scheme presented by Yoo et. Al.
+Once we have presented the necessary algebra, we will illustrate the specifics of the supersingular isogeny Diffie-Hellman key-exchange protocol. We will spend most of this time dedicated to a modular deconstruction of the protocol, reviewing the underlying isogeny-level procedures and algorithms which will be necessary for understanding in detail the signature protocol to come. Another task of this section will be to introduce the SIDH C library released by Microsoft Research, on top of which the core contributions of this thesis are implemented. This subsection will end with a briefing and analysis of the closely related zero-knowledge proof of identity (ZKPoI) isogeny protocol proposed in the original De Feo et al. paper[ref], as it is necessary for understanding the isogeny based signature scheme presented by Yoo et al[ref].
 
-In section 2.3 we will discuss the Fiat-Shamir transformation; a technique which, given a secure interactive proof of knowledge (/proof of identity), creates a secure digital signature scheme. We will also look at the quantum-secure adaptation published by Unruh, for applying a non-quantum-resistant transform to a quantum-resistant primitive would be rather frivolous.
+In section 2.3 we will discuss the Fiat-Shamir transformation; a technique which, given a secure interactive proof of knowledge, creates a secure digital signature scheme. We will also look at the quantum-secure adaptation published by Unruh, for applying a non-quantum-resistant transform to a quantum-resistant primitive would be rather frivolous.
 
-Finally, the last section of this chapter will be dedicated to covering current isogeny-based signature schemes - the topic of which this dissertation is mainly concerned. We will primarily discuss the signature scheme of Yoo et. Al, which is a near direct application of Unruh's Fiat-Shamir adaptation to the SIDH zero-knowledge proof of identity to be discussed at the end of section 2.2.\\
+Finally, the last section of this chapter will be dedicated to covering current isogeny-based signature schemes - the topic of which this dissertation is mainly concerned. We will primarily discuss the signature scheme of Yoo et al., which is a near direct application of Unruh's Fiat-Shamir adaptation to the SIDH zero-knowledge proof of identity to be discussed at the end of section 2.2.\\
 
 \section{Algebraic Geometry \& Isogenies}
-\emph{Groups \& Varieties}. A \textbf{group} is a 2-tuple composed of a set of elements and a corresponding group operation. Given some group defined by the set $G$ and the group operation $\cdot$ (written as $(G,\cdot)$) it is typical to refer to the group simply as "$G$". If $\cdot$ is equivalent to some rational mapping[footnote about rational mappings] $f_G: G \rightarrow G$, then the group $(G,\cdot)$ is said to form an \textit{algebraic variety}[footnote about the inverse function]. A group which is also an algebraic variety is referred to as an \textbf{algebraic group}.
+\emph{Groups \& Varieties}. A \textbf{group} is a 2-tuple composed of a set of elements and a corresponding group operation. Given some group defined by the set $G$ and the group operation $\cdot$ (written as $(G,\cdot)$) it is typical to refer to the group simply as $G$. If $\cdot$ is equivalent to some rational mapping[footnote about rational mappings] $f_G: G \rightarrow G$, then the group $(G,\cdot)$ is said to form an \textit{algebraic variety}[footnote about the inverse function]. A group which is also an algebraic variety is referred to as an \textbf{algebraic group}.
 
 $G$ is said to be an \emph{abelian} group if, in addition to the four traditional group axioms (closure, associativity, existence of an identity, existence of an inverse), $G$ satisfies the condition of commutitiviy. More formally, for some group $G$ with group operation $\cdot$, we say $G$ is an abelian group iff $x \cdot y = y \cdot x$ $\forall x, y \in G$. An algebraic group which is also abelian is referred to as an \textbf{abelian variety}.
 
+\begin{tcolorbox}
 \begin{definition}[Abelian Variety]
 \label{defn:abelianvariety}
 for some algebraic group $G$ with operation $\cdot$, we say $G$ is an \underline{abelian variety} iff $x \cdot y = y \cdot x$ $\forall x, y \in G$. 
 \end{definition}
+\end{tcolorbox}
 
-For some group $(G,\cdot)$, some $x,y \in G$, and some rational mapping $f_G: G \rightarrow G$, let the following sequence of implications denote the structure of $(G,\cdot)$:
+For some group $(G,\cdot)$, some $x,y \in G$, and some rational mapping $f_G: G \rightarrow G$, let the following sequence of implications denote the classification of $(G,\cdot)$:
 
 $$
 \text{group } \xRightarrow[]{x\cdot y = f_G(x,y)} \text{algebraic group } \xRightarrow[]{x\cdot y = y\cdot x} \text{abelian variety }
 $$
 
-An algebraic group $G_a$ is defined over a field $K$ if each element $e \in G_a$ is defined over $K$ and the corresponding $f_{G_a}$ is also defined over $K$. To show that a particular algebraic group $G_a$ is defined over some field $K$ we whill henceforth denote the group/field pairing as $G_a(K)$.
-
-These algebraic structures are all important for building up to the concept of an \emph{isogeny}. The lowest-level structure we will be concerned with when discussing the forthcoming isogeny-based protocols will typically be abelian varieties. The lowest-level structure in the SIDH C codebase is a finite field element.\\\\
 
 \noindent
 \emph{Morphisms}. Let us again take for example some group $(G,\cdot)$. Let's also define some set $S_{(G,\cdot)}$ which contains every tuple $(x,y,z)$ for group elements $x,y,z$ which satisfy $x\cdot y = z$.
@@ -60,52 +59,61 @@ For two groups $G$ and $H$, an \underline{endomorphism} is a morphism $\psi: G \
 \end{definition}
 
 \noindent
-\emph{Field Extensions}.
+\emph{Fields \& Field Extensions}. An algebraic group $G_a$ is defined over a field $K$ if each element $e \in G_a$ is defined over $K$ and the corresponding $f_{G_a}$ is also defined over $K$. To show that a particular algebraic group $G_a$ is defined over some field $K$ we will henceforth denote the group/field pairing as $G_a(K)$.\\
 
 \noindent
 \emph{Quotient Groups}.
 
+These algebraic structures are all important for building up to the concept of an \emph{isogeny}. The lowest-level structure we will be concerned with when discussing the forthcoming isogeny-based protocols will typically be abelian varieties. The lowest-level structure in the SIDH C codebase is a finite field element.\\
+
 \subsection{Elliptic Curves}
 
-An elliptic curve is an algebraic curve defineable by an equation of the form $y^2 = x^3 + ax + b$. Within algebraic geometry, it is common practice to define a group structure over elliptic curves (and any other smooth cubic curve). If we wish to define a group in accordance to a particular curve, we do so with the following notation:
+An elliptic curve is an algebraic curve defined over some field $K$, the most general representation of which is given by
+$$
+y^2 + a_{1}xy + a_{3}y = x^3 + a_{2}x^2 + a_{4}x + a_6.
+$$
+This representation encapsulates elliptic curves defined over any field. If, however, we are in the dicussion of curves defined over some field $K$ such that $\text{char}(K) > 3$[ref], then the more compact form $y^2 = x^3 + ax + b$ can be applied. In this dissertation we will default to this second representation, as the schemes with which we are concerned will always be defined over $\mathbb{F}_p$ for some large prime $p$.
+
+Within algebraic geometry, it is common practice to define a group structure over the points of a given elliptic curve (or any other smooth cubic curve). If we wish to define a group in accordance to a particular curve, we do so with the following notation:
 $$
 E: y^2 = x^3 + ax + b
 $$
-Wherein $E$ denotes the group in question, the elements of which are all the points (solutions) of the curve. The corresponding group operation is better understood geometrically than algebraically. Consider the following.
+Wherein $E$ denotes the group in question, the elements of which are all the points (solutions) of the curve. The corresponding group operation $+$ is better understood geometrically than algebraically. Consider the following.
 
-Given two elements $P$ and $Q$ of some arbitrary elliptic curve group $E(\mathbb{F}_q)$ defined over some arbitrary finite field $\mathbb{F}_q$, we define the group operation $+$ geometrically as follows: drawing the line formed by points $P$ and $Q$, we follow this line to its third intersection on the curve, which we will denote as $R = (x_R, y_R)$. We then take $P + Q$ to be equal to $-R$, which we define as (and will soon see good reason for doing so) $(x_R, -y_R)$. Consider the curve $E$ below with points $P$ and $Q$.
-\begin{center}
-\begin{tikzpicture}
-  \draw[very thin,color=gray] (-3.9,-3.9) grid (3.9,3.9);  %background grid
-  \draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};         %x-axis
-  \draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};         %y-axis
-  
-  \plotcurve{-2}{2}
-  
-  \draw[fill] (-1.73,0.531) circle (0.1) node[right] {$P$};
-  \draw[fill] (0.28,1.209) circle (0.1) node[right] {$Q$};
+Given two elements $P$ and $Q$ of some arbitrary elliptic curve group $E(\mathbb{F}_q)$ defined over some arbitrary finite field $\mathbb{F}_q$, we define $+$ geometrically as follows: drawing the line formed by points $P$ and $Q$, we follow this line to its third intersection on the curve, which we will denote as $R = (x_R, y_R)$. We then set $P + Q = -R$. $-R$ is necessarily defined as $(x_R, -y_R)$. Direct your attention to figure [fig] for an illustrated representation of this process.
+
+\begin{figure}[!h]
+\begin{tikzpicture}[scale=.75]
+	\begin{scope}[xshift=5cm]
+		%\draw[very thin,color=gray] (-3.9,-3.9) grid (3.9,3.9);  %background grid
+		\draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};         %x-axis
+		\draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};         %y-axis
+		
+		\plotcurve{-2}{2}
+		
+		\draw[fill] (-1.73,0.531) circle (0.1) node[right] {$P$};
+		\draw[fill] (0.28,1.209) circle (0.1) node[right] {$Q$};
+	\end{scope}
+	
+	\begin{scope}[xshift=17cm]
+		%\draw[very thin,color=gray] (-3.9,-3.9) grid (3.9,3.9);  %background grid
+		\draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};         %x-axis
+		\draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};         %y-axis
+		
+		\plotcurve{-2}{2}
+		
+		\draw [] (-1.73,0.531) -- (1.564,1.642);
+		\draw [dashed] (1.564,1.642) -- (1.564,-1.642);
+		
+		\draw[fill] (-1.73,0.531) circle (0.1) node[right] {$P$};
+		\draw[fill] (0.28,1.209) circle (0.1) node[right] {$Q$};
+		\draw[fill] (1.564,1.642) circle (0.1) node[right] {$R$};
+		\draw[fill] (1.564,-1.642) circle (0.1) node[right] {$R' = P+Q$};
+  \end{scope}
 \end{tikzpicture}
-\end{center}
-
-Now, through application of $+$, we note the $R'$ and the intermediary point $R$.
-
-\begin{center}
-\begin{tikzpicture}
-  \draw[very thin,color=gray] (-3.9,-3.9) grid (3.9,3.9);  %background grid
-  \draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};         %x-axis
-  \draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};         %y-axis
-  
-  \plotcurve{-2}{2}
-  
-  \draw [] (-1.73,0.531) -- (1.564,1.642);
-  \draw [dashed] (1.564,1.642) -- (1.564,-1.642);
-  
-  \draw[fill] (-1.73,0.531) circle (0.1) node[right] {$P$};
-  \draw[fill] (0.28,1.209) circle (0.1) node[right] {$Q$};
-  \draw[fill] (1.564,1.642) circle (0.1) node[right] {$R$};
-  \draw[fill] (1.564,-1.642) circle (0.1) node[right] {$R' = P+Q$};
-\end{tikzpicture}
-\end{center}
+\caption{$+$ acting over points $P$ and $Q$ of some curve $E$.}
+\label{fig:groupop}
+\end{figure}
 
 The group operation $+$ is referred to as \emph{pointwise addition}. In order for $E$ to properly form a group under pointwise addition, it must satisfy the four group axioms.
 \begin{itemize}
@@ -120,7 +128,7 @@ Additionally, we shorthand $n$-many applications of the group operation of a poi
 Moreover, because groups defined over elliptic curves in this fashion are commutitive, they also constitute abelian varieties[ref]. We will see later other possible algebraic representations of elliptic curves which have varying benefits.
 The point at infinity.
 
-When referring to curves as abelian varieties defined over a field, we will write them as $E_{\alpha}(K)$, for some $\alpha$ instance of a curve and some field $K$. If we are only concerned with the geometric properties of the curve, or curves as distinct elements of some group structure, it will suffice to write $E_{\alpha}$. Moving forward from here, we will assume all general curves discussed are capable of definition over some finite field $\mathbb{F}_q$.\\
+When referring to curves as abelian varieties defined over a field, we will write them as $E_{\alpha}(K)$, for some curve $E_{\alpha}$ and some field $K$. If we are only concerned with the geometric properties of the curve, or curves as distinct elements of some group structure, it will suffice to write $E_{\alpha}$. Moving forward from here, we will assume all general curves discussed are capable of definition over some finite field $\mathbb{F}_q$.\\
 
 \noindent
 \emph{Torsion Groups}. The $r$-\emph{torsion group} of $E$ is the set of all points $P \in E(\overline{\mathbb{F}}_q)$ such that $[r]P = \mathcal{O}$. We denote the $r$-torsion group of some curve as $E[r]$.
@@ -194,7 +202,12 @@ This subsection will illustrate an SIDH key exchange run between party members \
 \noindent
 \textit{Secret Agreement}.\\
 
-
+\begin{figure}[htb]
+\centering
+\includegraphics[scale=0.7]{halfmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
+\caption{Relationship between SIDH key exchange \& MR SIDH C library}
+\label{fig:halfmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
+\end{figure}
 
 \subsection{Modular Breakdown}
 
@@ -202,9 +215,9 @@ Figure [ref] illustrates the relationship between abstraction levels of the SIDH
 
 \begin{figure}[htb]
 \centering
-\includegraphics[scale=0.7]{halfmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
-\caption{Relationship between SIDH key exchange \& MR SIDH C library}
-\label{fig:halfmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
+\includegraphics[scale=0.5]{keyexchange.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
+\caption{SIDH key exchange between \textcolor{blue}{Alice} \& \textcolor{red}{Bob}}
+\label{fig:kex} % insert suitable label, this is used to refer to a fig from within the text as shown above
 \end{figure}
 
 
@@ -233,14 +246,13 @@ The isogeny based signature scheme presented by Yoo et. Al is defined, in the tr
 \textbf{Sign()}:\\
 \textbf{Verify()}:\\
 
-
 \subsection{Modular Breakdown}
 
 \begin{figure}[htb]
 \centering
 \includegraphics[scale=0.7]{fullmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
-\caption{Relationship between SIDH key exchange \& MR SIDH C library}
-\label{fig:halfmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
+\caption{Relationship between SIDH based signatures \& Our fork of the SIDH C library}
+\label{fig:fullmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
 \end{figure}
 
 
