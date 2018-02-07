@@ -124,13 +124,54 @@ Given two elements $P$ and $Q$ of some arbitrary elliptic curve group $E$, we de
 \label{fig:groupop}
 \end{figure}
 
-The group operation $+$ is referred to as \emph{pointwise addition}. In order for $E$ to properly form a group under pointwise addition, it must satisfy the four group axioms:
+The group operation $+$ is referred to as \emph{pointwise addition}. In order for $(E,+)$ to properly form a group under pointwise addition, it must satisfy the four group axioms:
 \begin{itemize}
 \item \emph{Closure}: Because elliptics curves are polynomials of degree of 3, we know any given line passing through two points $P$ and $Q$ of $E$ will pass through a third point $R$. The exceptions here are twofold. First, when $P = Q$ and thus our line is tangent to $E$, and second, when $Q = -P$ and our line is parallel with the y-axis. We resolve the first case nicely by defining $P + P$ by means of taking $L$ to be the line tangent to $E$ at point $P$. In the second case, $P + (-P)$, by group axiom, should yield the identity element of the group. We will define this element and resolve this issue below.  
-\item \emph{Identity}: The identity element of elliptic curve groups, denoted as $\mathcal{O}$, is a specially defined point satisfying $P + \mathcal{O} = \mathcal{O} + P = P$, $\forall P \in E$. Because of the inclusion of this special element, we have that $\#(E(K))$ is equal to $1$ $+$ the number geometric points on $E$ defined over $K$. This of course is only a noteworthy claim when $K$ is a finite field.
-\item \emph{Associativity}: To show that associativity holds for geometrically defined points $P$, $Q$, and $R$ in $E$ ($(P + Q) + R = P + (Q + R)$) is rather simple (see figure [fig]). We can also show that this holds when any combination of $P$, $Q$, and $R$ are $\mathcall{O}$ by simply applying the axiom of the identity.
+\item \emph{Identity}: The identity element of elliptic curve groups, denoted as $\mathcal{O}$, is a specially defined point satisfying $P + \mathcal{O} = \mathcal{O} + P = P$, $\forall P \in E$. Because of the inclusion of this special element, we have that $\#(E(K))$ is equal to $1$ $+$ the number geometric points on $E$ defined over $K$. This of course is only a noteworthy claim when $K$ is a finite field (otherwise there are already infinitely many elements in $E$).
+\item \emph{Associativity}: To show that associativity holds for geometrically defined points $P$, $Q$, and $R$ in $E$ ($(P + Q) + R = P + (Q + R)$) is rather simple (see figure [fig]). We can also show that this holds when any combination of $P$, $Q$, and $R$ are $\mathcal{O}$ by simply applying the axiom of the identity.
 \item \emph{Inverse}: Because elliptic curves are symmetrical about the x-axis, every point $P$ of $E$ inverse element of $P$ to be $-P$, defined the same as above. It is easy to see that $P+(-P) = \mathcal{O}$ Because of this, $\mathcal{O}$ can be thought of as a point residing infinitely far in both the positive and negative directions of the y-axis. $\mathcal{O}$ is equivalently referred to as the \emph{point at infinity}.
 \end{itemize}
+
+\begin{figure}[!h]
+\begin{tikzpicture}[scale=.60]
+	\begin{scope}[xshift=0cm]
+		%\draw[very thin,color=gray] (-3.9,-3.9) grid (3.9,3.9);  %background grid
+		\draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};         %x-axis
+		\draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};         %y-axis
+		
+		\plotcurve{-3}{0}
+		
+		\draw[fill] (-1.73,0.531) circle (0.1) node[right] {$P$};
+		\draw[fill] (0.28,1.209) circle (0.1) node[right] {$Q$};
+	\end{scope}
+	
+	\begin{scope}[xshift=10cm]
+		%\draw[very thin,color=gray] (-3.9,-3.9) grid (3.9,3.9);  %background grid
+		\draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};         %x-axis
+		\draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};         %y-axis
+		
+		\plotcurve{-3}{0}
+		
+		\draw[fill] (-1.73,0.531) circle (0.1) node[right] {$P$};
+		\draw[fill] (0.28,1.209) circle (0.1) node[right] {$Q$};
+	\end{scope}
+	
+	\begin{scope}[xshift=20cm]
+		%\draw[very thin,color=gray] (-3.9,-3.9) grid (3.9,3.9);  %background grid
+		\draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};         %x-axis
+		\draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};         %y-axis
+		
+		\plotcurve{1}{1}
+		
+		\draw [dashed] (0.73,-4.492) -- (0.73,4.492);
+		
+		\draw[fill] (0.73,1.492) circle (0.1) node[right] {$P$};
+		\draw[fill] (0.73,-1.492) circle (0.1) node[right] {$-P$};
+  \end{scope}
+\end{tikzpicture}
+\caption{associativity illustrated on $y^2 = x^3 - 3x$ (left \& center) and $P + (-P) = \mathcal{O}$ illustrated for $y^2 = x^3 + x + 1$ (right).}
+\label{fig:groupop}
+\end{figure}
 
 Additionally, we shorthand $\overbrace{P + P + ... + P}^{n}$ as $nP$, analogous to scalar multiplication.\\
 
@@ -162,7 +203,7 @@ For an isogeny $h: E_{1} \rightarrow E_{2}$ defined over elliptic curves $E_1$ a
 \item $h(u^{-1}) = h(u)^{-1}, \forall u \in G$
 \end{itemize}
 
-We denote $End(E)$ to denote the ring formed by all the isogenies acting over $E$ which are also endomorphisms. Note that $m$-repeated pointwise addition of a point with itself can equivalently be modelled by an endomorphism, we denote the application of such an endomorphism to a point $P$ as $[m]P$, such that $[m]: E \rightarrow E$ and $[m]P = mP$.
+We write $\text{End}(E)$ to denote the ring formed by all the isogenies acting over $E$ which are also endomorphisms. Note that $m$-repeated pointwise addition of a point with itself can equivalently be modelled by an endomorphism, we denote the application of such an endomorphism to a point $P$ as $[m]P$, such that $[m]: E \rightarrow E$ and $[m]P = mP$.
 
 \section{Supersingular Isogeny Diffie-Hellman}
 
@@ -196,10 +237,10 @@ This subsection will illustrate an SIDH key exchange run between party members \
     E / \langle \textcolor{red}{B} \rangle & E / \langle \textcolor{blue}{A}, \textcolor{red}{B} \rangle \\
   };
   \path[-stealth]
-    (m-1-1) edge node [above] {$\phi_{\textcolor{blue}{A}}$}  (m-1-2)
-    (m-1-1) edge node [left]  {$\phi_{\textcolor{red}{B}}$}  (m-2-1)
-    (m-2-1) edge node [below] {$\phi_{\textcolor{blue}{A'}}$} (m-2-2)
-    (m-1-2) edge node [right] {$\phi_{\textcolor{red}{B'}}$} (m-2-2);
+    (m-1-1) edge node [above] {$\pa$}  (m-1-2)
+    (m-1-1) edge node [left]  {$\pb$}  (m-2-1)
+    (m-2-1) edge node [below] {$\pap$} (m-2-2)
+    (m-1-2) edge node [right] {$\pbp$} (m-2-2);
 \end{tikzpicture}
 \end{center}
 
