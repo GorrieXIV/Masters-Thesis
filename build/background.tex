@@ -13,7 +13,7 @@ In section 2.3 we will discuss the Fiat-Shamir transformation; a technique which
 Finally, the last section of this chapter will be dedicated to covering current isogeny-based signature schemes - the topic of which this dissertation is mainly concerned. We will primarily discuss the signature scheme of Yoo et al., which is a near direct application of Unruh's Fiat-Shamir adaptation to the SIDH zero-knowledge proof of identity to be discussed at the end of section 2.2.\\
 
 \section{Algebraic Geometry \& Isogenies}
-\emph{Groups \& Varieties}. A \textbf{group} is a 2-tuple composed of a set of elements and a corresponding group operation. Given some group defined by the set $G$ and the group operation $\cdot$ (written as $(G,\cdot)$) it is typical to refer to the group simply as $G$. If $\cdot$ is equivalent to some rational mapping[footnote about rational mappings] $f_G: G \rightarrow G$, then the group $(G,\cdot)$ is said to form an \textit{algebraic variety}[footnote about the inverse function]. A group which is also an algebraic variety is referred to as an \textbf{algebraic group}.
+\emph{Groups \& Varieties}. A \textbf{group} is a 2-tuple composed of a set of elements and a corresponding group operation (also referred to as the group \emph{law}). Given some group defined by the set $G$ and the operation $\cdot$ (written as $(G,\cdot)$) it is typical to refer to the group simply as $G$. If $\cdot$ is equivalent to some rational mapping[footnote about rational mappings] $f_G: G \rightarrow G$, then the group $(G,\cdot)$ is said to form an \textit{algebraic variety}[footnote about the inverse function]. A group which is also an algebraic variety is referred to as an \textbf{algebraic group}.
 
 $G$ is said to be an \emph{abelian} group if, in addition to the four traditional group axioms (closure, associativity, existence of an identity, existence of an inverse), $G$ satisfies the condition of commutitiviy. More formally, for some group $G$ with group operation $\cdot$, we say $G$ is an abelian group iff $x \cdot y = y \cdot x$ $\forall x, y \in G$. An algebraic group which is also abelian is referred to as an \textbf{abelian variety}.
 
@@ -42,21 +42,27 @@ $$
 $$
 
 A \textbf{morphism} is simply the most general notion of a structure preserving map. More specifically, in the domain of algebraic geometry, we will be dealing with the notion of a \textbf{group homomorphism}, defined as follows:
+\begin{tcolorbox}
 \begin{definition}[Group Homomorphism]
 \label{defn:homomorphism}
 For two groups $G$ and $H$ with respective group operations $\cdot$ and $*$, a \underline{group homomorphism} is a structure preserving map $h: G \rightarrow H$ such that $\forall u, v \in G$ the following holds:
 $$h(u \cdot v) = h(u) * h(v)$$
 \end{definition}
+\end{tcolorbox}
+
 From this simple definition, two more properties of homomorphisms are easily deducible. Namely, for some homomorphism $h: G \rightarrow H$, the following properties hold:
 \begin{itemize}
 \item $h$ maps the identity element of $G$ onto the identity element of $H$, and
 \item $h(u^{-1}) = h(u)^{-1}, \forall u \in G$
 \end{itemize}
+
 Furthermore, an \textbf{endomorphism} is a special type of morphism in which the domain and the codomain are the same groups.
+\begin{tcolorbox}
 \begin{definition}[Endomorphism]
 \label{defn:endomorphism}
 For two groups $G$ and $H$, an \underline{endomorphism} is a morphism $\psi: G \rightarrow H$ wherein $G = H$
 \end{definition}
+\end{tcolorbox}
 
 \noindent
 \emph{Fields \& Field Extensions}. An algebraic group $G_a$ is defined over a field $K$ if each element $e \in G_a$ is defined over $K$ and the corresponding $f_{G_a}$ is also defined over $K$. To show that a particular algebraic group $G_a$ is defined over some field $K$ we will henceforth denote the group/field pairing as $G_a(K)$.\\
@@ -72,15 +78,18 @@ An elliptic curve is an algebraic curve defined over some field $K$, the most ge
 $$
 y^2 + a_{1}xy + a_{3}y = x^3 + a_{2}x^2 + a_{4}x + a_6.
 $$
-This representation encapsulates elliptic curves defined over any field. If, however, we are in the dicussion of curves defined over some field $K$ such that $\text{char}(K) > 3$[ref], then the more compact form $y^2 = x^3 + ax + b$ can be applied. In this dissertation we will default to this second representation, as the schemes with which we are concerned will always be defined over $\mathbb{F}_p$ for some large prime $p$.
+This representation encapsulates elliptic curves defined over any field. If, however, we are dicussing curves defined specifically over a field $K$ such that $\text{char}(K) > 3$[ref], then the more compact form $y^2 = x^3 + ax + b$ can be applied. In this dissertation we will default to this second representation, as the schemes with which we are concerned will always be defined over $\mathbb{F}_p$ for some large prime $p$.
 
 Within algebraic geometry, it is common practice to define a group structure over the points of a given elliptic curve (or any other smooth cubic curve). If we wish to define a group in accordance to a particular curve, we do so with the following notation:
 $$
 E: y^2 = x^3 + ax + b
 $$
-Wherein $E$ denotes the group in question, the elements of which are all the points (solutions) of the curve. The corresponding group operation $+$ is better understood geometrically than algebraically. Consider the following.
+Wherein $E$ denotes the group in question, the elements of which are all the points (solutions) of the curve. Throughout much of this section, the words \emph{point} and \emph{element} can be used interchangeably.\\
 
-Given two elements $P$ and $Q$ of some arbitrary elliptic curve group $E(\mathbb{F}_q)$ defined over some arbitrary finite field $\mathbb{F}_q$, we define $+$ geometrically as follows: drawing the line formed by points $P$ and $Q$, we follow this line to its third intersection on the curve, which we will denote as $R = (x_R, y_R)$. We then set $P + Q = -R$. $-R$ is necessarily defined as $(x_R, -y_R)$. Direct your attention to figure [fig] for an illustrated representation of this process.
+\noindent
+\emph{The Group Law}. The group operation we define for $E$, denoted $+$, is better understood geometrically than algebraically. Consider the following.
+
+Given two elements $P$ and $Q$ of some arbitrary elliptic curve group $E$, we define $+$ geometrically as follows: drawing the line $L$ formed by points $P$ and $Q$, we follow $L$ to its third intersection on the curve, which we will denote as $R = (x_R, y_R)$. We then set $P + Q = -R$, where $-R$ is the reflection of $R$ over the x-axis: $(x_R, -y_R)$. See figure [fig] for an illustrated representation of this process.
 
 \begin{figure}[!h]
 \begin{tikzpicture}[scale=.75]
@@ -111,27 +120,26 @@ Given two elements $P$ and $Q$ of some arbitrary elliptic curve group $E(\mathbb
 		\draw[fill] (1.564,-1.642) circle (0.1) node[right] {$R' = P+Q$};
   \end{scope}
 \end{tikzpicture}
-\caption{$+$ acting over points $P$ and $Q$ of some curve $E$.}
+\caption{$+$ acting over points $P$ and $Q$ of $y^2 = x^3 - 2x + 2$.}
 \label{fig:groupop}
 \end{figure}
 
-The group operation $+$ is referred to as \emph{pointwise addition}. In order for $E$ to properly form a group under pointwise addition, it must satisfy the four group axioms.
+The group operation $+$ is referred to as \emph{pointwise addition}. In order for $E$ to properly form a group under pointwise addition, it must satisfy the four group axioms:
 \begin{itemize}
-\item \emph{Closure}: Because elliptics curves are polynomials of degree of 3, we know any given line passing through two points $P$ and $Q$ of $E$ will pass through a third point $R$. The exceptions here are twofold. First, when $P = Q$ and thus our line is tangent to $E$, and second, when $Q = -P$ and our line is parallel with the y-axis. We resolve the first case nicely by defining $P + P$ as the resulting $-R$ given the second intersection, $R$, of the tangent line with $E$. In the second case, $P + (-P)$ should yield the identity element of the group. We will define this element and resolve this issue below.  
-\item \emph{Identity}:
-\item \emph{Associativity}: Assumin
-\item \emph{Inverse}: Because elliptic curves are symmetrical about the x-axis, we can take the inverse element of $P$ to be $-P$, defined the same as above. It is easy to see that $P+(-P) = \mathcal{O}$
+\item \emph{Closure}: Because elliptics curves are polynomials of degree of 3, we know any given line passing through two points $P$ and $Q$ of $E$ will pass through a third point $R$. The exceptions here are twofold. First, when $P = Q$ and thus our line is tangent to $E$, and second, when $Q = -P$ and our line is parallel with the y-axis. We resolve the first case nicely by defining $P + P$ by means of taking $L$ to be the line tangent to $E$ at point $P$. In the second case, $P + (-P)$, by group axiom, should yield the identity element of the group. We will define this element and resolve this issue below.  
+\item \emph{Identity}: The identity element of elliptic curve groups, denoted as $\mathcal{O}$, is a specially defined point satisfying $P + \mathcal{O} = \mathcal{O} + P = P$, $\forall P \in E$. Because of the inclusion of this special element, we have that $\#(E(K))$ is equal to $1$ $+$ the number geometric points on $E$ defined over $K$. This of course is only a noteworthy claim when $K$ is a finite field.
+\item \emph{Associativity}: To show that associativity holds for geometrically defined points $P$, $Q$, and $R$ in $E$ ($(P + Q) + R = P + (Q + R)$) is rather simple (see figure [fig]). We can also show that this holds when any combination of $P$, $Q$, and $R$ are $\mathcall{O}$ by simply applying the axiom of the identity.
+\item \emph{Inverse}: Because elliptic curves are symmetrical about the x-axis, every point $P$ of $E$ inverse element of $P$ to be $-P$, defined the same as above. It is easy to see that $P+(-P) = \mathcal{O}$ Because of this, $\mathcal{O}$ can be thought of as a point residing infinitely far in both the positive and negative directions of the y-axis. $\mathcal{O}$ is equivalently referred to as the \emph{point at infinity}.
 \end{itemize}
 
-Additionally, we shorthand $n$-many applications of the group operation of a point $P$ to itself as $nP$, analogous to scalar multiplication. 
+Additionally, we shorthand $\overbrace{P + P + ... + P}^{n}$ as $nP$, analogous to scalar multiplication.\\
 
-Moreover, because groups defined over elliptic curves in this fashion are commutitive, they also constitute abelian varieties[ref]. We will see later other possible algebraic representations of elliptic curves which have varying benefits.
-The point at infinity.
+Consequently, because groups defined over elliptic curves in this fashion are commutitive, they also constitute abelian varieties[ref].
 
-When referring to curves as abelian varieties defined over a field, we will write them as $E_{\alpha}(K)$, for some curve $E_{\alpha}$ and some field $K$. If we are only concerned with the geometric properties of the curve, or curves as distinct elements of some group structure, it will suffice to write $E_{\alpha}$. Moving forward from here, we will assume all general curves discussed are capable of definition over some finite field $\mathbb{F}_q$.\\
+When referring to curves as abelian varieties defined over a field, we will write them as $E_{\alpha}(K)$, for some curve $E_{\alpha}$ and some field $K$. If we are only concerned with the geometric properties of the curve, or curves as distinct elements of some group structure, it will suffice to write $E_{\alpha}$. Moving forward from here, we will assume all general curves discussed are capable of definition over some finite field $\mathbb{F}_p$.\\
 
 \noindent
-\emph{Torsion Groups}. The $r$-\emph{torsion group} of $E$ is the set of all points $P \in E(\overline{\mathbb{F}}_q)$ such that $[r]P = \mathcal{O}$. We denote the $r$-torsion group of some curve as $E[r]$.
+\emph{Torsion Groups}. The $r$-\emph{torsion group} of $E$ is the set of all points $P \in E(\overline{\mathbb{F}}_q)$ such that $[r]P = \mathcal{O}$. We denote the $r$-torsion group of some curve as $E[r]$.\\
 
 \noindent
 \emph{Supersingular Curves}. An elliptic curve can be either \emph{ordinary} or \emph{supersingular}. There are several equivalent ways to define supersingular curves (and thus the distinction between them and ordinary curves,)
@@ -140,10 +148,13 @@ For the remainder of this paper, unless otherwise noted, all elliptic curves in 
 
 \subsection{Isogenies \& Their Properties}
 
+\begin{tcolorbox}
 \begin{definition}[Isogeny]
 \label{defn:isogeny}
 Let $G$ and $H$ be algebraic groups[ref]. An \underline{isogeny} is a morphism[ref] $h: G \rightarrow H$ possessing a finite kernel.
 \end{definition}
+\end{tcolorbox}
+
 In the case of the above definition where $G$ and $H$ are abelian varieties (such as elliptic curves,) the isogeny $h$ is homomorphic[ref] between $G$ and $H$. Because of this, isogenies over elliptic curves (and other abelian varieties) inherit certain characteristics.\\
 For an isogeny $h: E_{1} \rightarrow E_{2}$ defined over elliptic curves $E_1$ and $E_2$, the following holds:
 \begin{itemize}
