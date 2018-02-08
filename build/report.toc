@@ -13,13 +13,13 @@
 \contentsline {section}{\numberline {2.2}Supersingular Isogeny Diffie-Hellman}{7}{section.2.2}
 \contentsline {subsection}{\numberline {2.2.1}Public Parameters}{7}{subsection.2.2.1}
 \contentsline {subsection}{\numberline {2.2.2}SIDH Key Exchange}{7}{subsection.2.2.2}
-\contentsline {subsection}{\numberline {2.2.3}Mapping to the C Implementation}{8}{subsection.2.2.3}
+\contentsline {subsection}{\numberline {2.2.3}Microsoft Research C Implementation}{9}{subsection.2.2.3}
 \contentsline {subsection}{\numberline {2.2.4}Security Assumptions}{9}{subsection.2.2.4}
 \contentsline {subsection}{\numberline {2.2.5}Zero-Knowledge Proof of Identity}{9}{subsection.2.2.5}
 \contentsline {section}{\numberline {2.3}Fiat-Shamir Construction}{9}{section.2.3}
 \contentsline {subsection}{\numberline {2.3.1}Unruh's Post-Quantum Adaptation}{9}{subsection.2.3.1}
 \contentsline {section}{\numberline {2.4}Isogeny Based Signatures}{9}{section.2.4}
-\contentsline {subsection}{\numberline {2.4.1}Modular Breakdown}{9}{subsection.2.4.1}
+\contentsline {subsection}{\numberline {2.4.1}Yoo et al. C Implementation}{10}{subsection.2.4.1}
 \contentsline {chapter}{\numberline {3}Batching Operations for Isogenies}{12}{chapter.3}
 \contentsline {section}{\numberline {3.1}Batching Procedure in Detail}{12}{section.3.1}
 \contentsline {subsection}{\numberline {3.1.1}Projective Space}{12}{subsection.3.1.1}
