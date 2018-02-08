@@ -133,16 +133,26 @@ The group operation $+$ is referred to as \emph{pointwise addition}. In order fo
 \end{itemize}
 
 \begin{figure}[!h]
-\begin{tikzpicture}[scale=.60]
+\begin{tikzpicture}[scale=.55]
 	\begin{scope}[xshift=0cm]
 		%\draw[very thin,color=gray] (-3.9,-3.9) grid (3.9,3.9);  %background grid
 		\draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};         %x-axis
 		\draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};         %y-axis
 		
+		\draw[] (-1.65,0.677) -- (2.00,1.414); 
+		\draw[dashed] (-0.309,0.948) -- (-0.309,-0.948);
+		\draw[] (-1.400,-1.207) -- (1.765,-0.454); 
+		\draw[dashed] (1.765,-0.454) -- (1.765,0.454);
+		
 		\plotcurve{-3}{0}
 		
-		\draw[fill] (-1.73,0.531) circle (0.1) node[right] {$P$};
-		\draw[fill] (0.28,1.209) circle (0.1) node[right] {$Q$};
+		\draw[fill] (-1.65,0.677) circle (0.1) node[left] {$P$};
+		\draw[fill] (2.00,1.414) circle (0.1) node[right] {$Q$};
+		\draw[fill] (-0.309,0.948) circle (0.1) node[right] {};
+		\draw[fill] (-0.309,-0.948) circle (0.1) node[right] {};
+		\draw[fill] (-1.400,-1.207) circle (0.1) node[below] {$R$};
+		\draw[fill] (1.765,-0.454) circle (0.1) node[right] {};
+		\draw[fill] (1.765,0.454) circle (0.1) node[right] {$(P + Q) + R$};
 	\end{scope}
 	
 	\begin{scope}[xshift=10cm]
@@ -150,10 +160,21 @@ The group operation $+$ is referred to as \emph{pointwise addition}. In order fo
 		\draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};         %x-axis
 		\draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};         %y-axis
 		
+		\draw[] (2.00,1.414) -- (-1.400,-1.207);
+		\draw[dashed] (-0.006,-0.132) -- (-0.006,0.132);
+		\draw[] (-1.65,0.677) -- (1.765,-0.454);
+		\draw[dashed] (1.765,-0.454) -- (1.765,0.454);
+		
 		\plotcurve{-3}{0}
 		
-		\draw[fill] (-1.73,0.531) circle (0.1) node[right] {$P$};
-		\draw[fill] (0.28,1.209) circle (0.1) node[right] {$Q$};
+		\draw[fill] (-1.65,0.677) circle (0.1) node[left] {$P$};
+		\draw[fill] (2.00,1.414) circle (0.1) node[right] {$Q$};
+		\draw[fill] (-1.400,-1.207) circle (0.1) node[below] {$R$};
+		\draw[fill] (-0.006,-0.132) circle (0.1) node[right] {};
+		\draw[fill] (-0.006,0.132) circle (0.1) node[right] {};
+		\draw[fill] (1.765,-0.454) circle (0.1) node[right] {};
+		\draw[fill] (1.765,0.454) circle (0.1) node[right] {$P + (Q + R)$};
+		
 	\end{scope}
 	
 	\begin{scope}[xshift=20cm]
@@ -163,7 +184,7 @@ The group operation $+$ is referred to as \emph{pointwise addition}. In order fo
 		
 		\plotcurve{1}{1}
 		
-		\draw [dashed] (0.73,-4.492) -- (0.73,4.492);
+		\draw[dashed] (0.73,-4.492) -- (0.73,4.492);
 		
 		\draw[fill] (0.73,1.492) circle (0.1) node[right] {$P$};
 		\draw[fill] (0.73,-1.492) circle (0.1) node[right] {$-P$};
@@ -185,7 +206,10 @@ When referring to curves as abelian varieties defined over a field, we will writ
 \noindent
 \emph{Supersingular Curves}. An elliptic curve can be either \emph{ordinary} or \emph{supersingular}. There are several equivalent ways to define supersingular curves (and thus the distinction between them and ordinary curves,)
 
-For the remainder of this paper, unless otherwise noted, all elliptic curves in discussion will be of the supersingular variety.
+For the remainder of this paper, unless otherwise noted, all elliptic curves in discussion will be of the supersingular variety.\\
+
+\noindent
+\emph{Montgomery Arithmetic}.
 
 \subsection{Isogenies \& Their Properties}
 
@@ -209,7 +233,7 @@ We write $\text{End}(E)$ to denote the ring formed by all the isogenies acting o
 
 This section will aim to accomplish two things. First, we will briefly explain the isogeny-level \& key-exchange-level procedures of the SIDH protocol. Second, we will illuminate how these procedures map onto Microsoft Research's C implementation of SIDH. In this regard, this section can be considered an attempt to meld two domains of SIDH functions \& procedures, in hopes of easing the navigation from the SIDH protocol to Microsoft's C implementation, and vice versa.
 
-The original work of De Feo, Jao, and Plut outlines three different isogeny-based cryptographic primitives: Diffie-Hellman-esque key exchange, public key encryption, and the aforementioned zero-knowledge proof of identity. Because all three of these protocols require the same initialization and public parameters, we will begin by covering these parameters in detail. Immediately after, we will analyze the key exchange at a relatively high level. Our goal of this section is to explain in detail the algorithmic and cryptographic aspects of the ZKPoI scheme, as this forms the conceptual basis for the signature scheme we will be investigating. We begin with the key exchange protocol because its sub-routines are integral to the Yoo et. Al signature implementation.
+The original work of De Feo, Jao, and Plut outlines three different isogeny-based cryptographic primitives: Diffie-Hellman-esque key exchange, public key encryption, and the aforementioned zero-knowledge proof of identity. Because all three of these protocols require the same initialization and public parameters, we will begin by covering these parameters in detail. Immediately after, we will analyze the key exchange at a relatively high level. Our goal of this section is to explain in detail the algorithmic and cryptographic aspects of the ZKPoI scheme, as this forms the conceptual basis for the signature scheme we will be investigating. We begin with the key exchange protocol because its sub-routines are integral to the Yoo et al. signature implementation.
 
 For the discussion that follows, we will assume every instance of an SIDH protocol occurs between two parties, \textcolor{blue}{A} and \textcolor{red}{B} (eg. \textcolor{blue}{Alice} \& \textcolor{red}{Bob},) for which we will colorize information particular to \textcolor{blue}{A} in \textcolor{blue}{blue} and \textcolor{red}{B} in \textcolor{red}{red}. This will include private keys \& public keys as well as the variables and constants used in their generation.
 
@@ -219,9 +243,14 @@ As the name suggests, SIDH protocols work over supersingular curves (of a smooth
 $$
 p = \laea \lbeb \cdot f \pm 1
 $$
-Wherein $\la$ and $\lb$ are small primes (typically \textcolor{blue}{2} \& \textcolor{red}{3}, respectively) and $f$ is a cofactor ensuring the primality of $p$. We then define a global parameter curve $E$ defined over $\mathbb{F}_q$ with cardinality $(\laea \lbeb f)^2$. Consequently, the torsion group $E[\laea]$ is $\mathbb{F}_q$-rational and has $\la^{\ea - 1} (\la + 1)$ cyclic subgroups of order $\laea$, with the analogous statement being true for $E[\lbeb]$.
+Wherein $\la$ and $\lb$ are small primes (typically \textcolor{blue}{2} \& \textcolor{red}{3}, respectively) and $f$ is a cofactor ensuring the primality of $p$. We then define globally a supersingular curve $E_0$ defined over $\mathbb{F}_q$ with cardinality $(\laea \lbeb f)^2$. Consequently, the torsion group $E_0[\laea]$ is $\mathbb{F}_q$-rational and has $\la^{\ea - 1} (\la + 1)$ cyclic subgroups of order $\laea$, with the analogous statement being true for $E_0[\lbeb]$. Additionally, we include in the public parameters the bases $\agens$ and $\bgens$, generating $E[\laea]$ and $E[\lbeb]$ respectively. 
 
-Additionally, we include in the public parameters the bases $\{P_A,Q_A\}$ and $\{P_B,Q_B\}$, generating $E[\laea]$ and $E[\lbeb]$ respectively.\\
+This brings our set of global parameters, G, to the following:\\
+$$
+G = \{p,E_0,\la,\lb,\ea,\eb,\agens,\bgens\}
+$$
+
+
 
 \subsection{SIDH Key Exchange}
 
@@ -233,8 +262,8 @@ This subsection will illustrate an SIDH key exchange run between party members \
                row sep=4em,
                column sep=4em,
                minimum width=2em] {
-    E                     & E / \langle \textcolor{blue}{A} \rangle    \\
-    E / \langle \textcolor{red}{B} \rangle & E / \langle \textcolor{blue}{A}, \textcolor{red}{B} \rangle \\
+    E_0                     & E_0 / \langle \textcolor{blue}{A} \rangle    \\
+    E_0 / \langle \textcolor{red}{B} \rangle & E_0 / \langle \textcolor{blue}{A}, \textcolor{red}{B} \rangle \\
   };
   \path[-stealth]
     (m-1-1) edge node [above] {$\pa$}  (m-1-2)
@@ -244,26 +273,24 @@ This subsection will illustrate an SIDH key exchange run between party members \
 \end{tikzpicture}
 \end{center}
 
-\noindent
-\textit{Key Generation}. \textcolor{blue}{Alice} chooses two random numbers $m_A, n_A \in \mathbb{Z}/\laea\mathbb{Z}$ such that $(\la \nmid m_A) \lor (\la \nmid n_A)$. Following this, \textcolor{blue}{Alice} computes the isogeny $\phi_A: E \rightarrow E_A$ with kernel $K_A := \langle [m_A]P_A, [n_A]Q_A\rangle$.\\
+The premise of the protocol is that both parties generate some random point (\textcolor{blue}{A} or \textcolor{red}{B} in the diagram,) which, according to theorem [ref], indicates some distinct isogeny $\phi_{\ba}: E_0 \rightarrow E/ \langle \ba \rangle$ (or equivalent for \rb). \textcolor{blue}{Alice} and \textcolor{red}{Bob} then exchange codomain curves and compute
+\begin{center}
+$\pa(E_0/\langle \rb \rangle)$\\
+$\text{OR}$\\
+$\pb(E_0/\langle \ba \rangle)$
+\end{center}
+To come to the shared secret agreement, the codomain curve of their composed isogenies, denoted $E_{\ba\rb}$. Below we've outli\\
 
+\noindent
+\textit{Key Generation}. \textcolor{blue}{Alice} chooses two random numbers $\ma, \na \in \mathbb{Z}/\laea\mathbb{Z}$ such that $(\la \nmid \ma) \lor (\la \nmid \na)$. \textcolor{blue}{Alice} then computes the isogeny $\pa: E_0 \rightarrow \ea$ with kernel $K_A := \langle [\ma]\genpa, [\na]\genqa\rangle$. \textcolor{red}{Bob} undergoes the same procedure for random elements $\mb, \nb \in \mathbb{Z}/\lbeb\mathbb{Z}$. After completion 
+
+\textcolor{blue}{Alice} then applies her isogeny to the points which \textcolor{red}{Bob} will use in the creation of of his isogeny: $\{\pa(\genqb),\pa(\genqb)\}$. \\
 
 \noindent
-\textit{PK Exchange}. In addition to sending their respective isogenies,\\
+\textit{PK Exchange}. After \textcolor{blue}{Alice} and \textcolor{red}{Bob} successfully complete their key generation\\
 
 \noindent
 \textit{Secret Agreement}.\\
-
-\begin{figure}[htb]
-\centering
-\includegraphics[scale=0.7]{halfmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
-\caption{Relationship between SIDH key exchange \& MR SIDH C library}
-\label{fig:halfmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
-\end{figure}
-
-\subsection{Modular Breakdown}
-
-Figure [ref] illustrates the relationship between abstraction levels of the SIDH protocol and modules of the SIDH C library.
 
 \begin{figure}[htb]
 \centering
@@ -272,6 +299,20 @@ Figure [ref] illustrates the relationship between abstraction levels of the SIDH
 \label{fig:kex} % insert suitable label, this is used to refer to a fig from within the text as shown above
 \end{figure}
 
+
+\subsection{Microsoft Research C Implementation}
+
+Figure [ref] illustrates the relationship between abstraction levels of the SIDH protocol and modules of the SIDH C library.\\
+
+\noindent
+\emph{Key Representation}.
+
+\begin{figure}[htb]
+\centering
+\includegraphics[scale=0.7]{halfmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
+\caption{Relationship between SIDH key exchange \& MR SIDH C library}
+\label{fig:halfmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
+\end{figure}
 
 \subsection{Security Assumptions}
 
@@ -298,7 +339,7 @@ The isogeny based signature scheme presented by Yoo et. Al is defined, in the tr
 \textbf{Sign()}:\\
 \textbf{Verify()}:\\
 
-\subsection{Modular Breakdown}
+\subsection{Yoo et al. C Implementation}
 
 \begin{figure}[htb]
 \centering
