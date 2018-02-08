@@ -84,7 +84,9 @@ Within algebraic geometry, it is common practice to define a group structure ove
 $$
 E: y^2 = x^3 + ax + b
 $$
-Wherein $E$ denotes the group in question, the elements of which are all the points (solutions) of the curve. Throughout much of this section, the words \emph{point} and \emph{element} can be used interchangeably.\\
+Wherein $E$ denotes the group in question, the elements of which are all the points (solutions) of the curve. Throughout much of this section, the words \emph{point} and \emph{element} can be used interchangeably.
+
+A given curve $E$ has a \emph{smooth order} if $math$.\\
 
 \noindent
 \emph{The Group Law}. The group operation we define for $E$, denoted $+$, is better understood geometrically than algebraically. Consider the following.
@@ -282,12 +284,20 @@ $\pb(E_0/\langle \ba \rangle)$
 To come to the shared secret agreement, the codomain curve of their composed isogenies, denoted $E_{\ba\rb}$. Below we've outli\\
 
 \noindent
-\textit{Key Generation}. \textcolor{blue}{Alice} chooses two random numbers $\ma, \na \in \mathbb{Z}/\laea\mathbb{Z}$ such that $(\la \nmid \ma) \lor (\la \nmid \na)$. \textcolor{blue}{Alice} then computes the isogeny $\pa: E_0 \rightarrow \ea$ with kernel $K_A := \langle [\ma]\genpa, [\na]\genqa\rangle$. \textcolor{red}{Bob} undergoes the same procedure for random elements $\mb, \nb \in \mathbb{Z}/\lbeb\mathbb{Z}$. After completion 
+\textit{Key Generation}. \textcolor{blue}{Alice} chooses two random numbers $\ma, \na \in \mathbb{Z}/\laea\mathbb{Z}$ such that $(\la \nmid \ma) \lor (\la \nmid \na)$. \textcolor{blue}{Alice} then computes the isogeny $\pa: E_0 \rightarrow E_{\langle [\ma]\genpa, [\na]\genqa\rangle}$ with kernel $\text{Ker}_A := \langle [\ma]\genpa, [\na]\genqa\rangle$. \textcolor{red}{Bob} undergoes the same procedure for random elements $\mb, \nb \in \mathbb{Z}/\lbeb\mathbb{Z}$. After completion, \textcolor{blue}{Alice} and \textcolor{red}{Bob} hold their respective key pairs:
+\begin{center}
+$(sk_A, pk_A) = (\{\ma,\na\}, E_{\langle [\ma]\genpa, [\na]\genqa\rangle})$\\
+$(sk_B, pk_B) = (\{\mb,\nb\}, )$
+\end{center}
 
 \textcolor{blue}{Alice} then applies her isogeny to the points which \textcolor{red}{Bob} will use in the creation of of his isogeny: $\{\pa(\genqb),\pa(\genqb)\}$. \\
 
 \noindent
-\textit{PK Exchange}. After \textcolor{blue}{Alice} and \textcolor{red}{Bob} successfully complete their key generation\\
+\textit{PK Exchange}. After \textcolor{blue}{Alice} and \textcolor{red}{Bob} successfully complete their key generation, they perform the following over an insecure channel:\\
+\begin{itemize}
+\item \textcolor{blue}{Alice} sends \textcolor{red}{Bob}
+\item
+\end{itemize}
 
 \noindent
 \textit{Secret Agreement}.\\
