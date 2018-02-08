@@ -1,16 +1,51 @@
 \chapter{Technical Background}
 
-Over the course of the past decade, elliptic curve cryptography (ECC) has proven itself a mainstay in the wide world of applied cryptology. While isogeny based cryptography does build itself up from the same underlying field of mathematics as ECC, it simultaneously draws from a slightly more complicated space of algebraic notions. Much of this chapter will be dedicated to illuminating these notions in a manner that should be digestable for those without serious background in algebraic geometry, or abstract algebra in general.
+This chapter will cover the following preliminary topics: cryptographic primitives, isogenies and their relevant properties, supersingular isogeny Diffie-Hellman (SIDH), the Fiat-Shamir construction for digital signatures (and its quantum-safe adaptation), current landscape of isogeny based signature schemes, and finally the C implementations of isogeny based schemes with which we are concerned.
 
-This chapter will cover the following preliminary topics: isogenies and their relevant properties, supersingular isogeny Diffie-Hellman (SIDH) and related procotols, the Fiat-Shamir construction for digital signatures (and its quantum-safe adaptation), and finally the current landscape of isogeny based signature schemes.
+In the first section of this chapter we will introduce a few cryptographic schemes for the readers who may not be entirely familiar with modern cryptography. We will cover key exchange, identification schemes, and signature schemes - all at as high of an abstraction level as possible. Readers familiar with these topics can skip this section without harm. 
 
 Our discussion of isogenies will begin with some basic coverage of the underlying algebra. We will provide the material necessary for the remaining sections as we build up in the level of abstraction; working our way through groups, finite fields, elliptic curves, and finally isogenies and their properties.
 
-Once we have presented the necessary algebra, we will illustrate the specifics of the supersingular isogeny Diffie-Hellman key-exchange protocol. We will spend most of this time dedicated to a modular deconstruction of the protocol, reviewing the underlying isogeny-level procedures and algorithms which will be necessary for understanding in detail the signature protocol to come. Another task of this section will be to introduce the SIDH C library released by Microsoft Research, on top of which the core contributions of this thesis are implemented. This subsection will end with a briefing and analysis of the closely related zero-knowledge proof of identity (ZKPoI) isogeny protocol proposed in the original De Feo et al. paper[ref], as it is necessary for understanding the isogeny based signature scheme presented by Yoo et al[ref].
+Once we have presented the necessary algebra, we will illustrate the specifics of the supersingular isogeny Diffie-Hellman key-exchange protocol. We will spend most of this time dedicated to a modular deconstruction of the protocol, looking at the high-level procedures and algorithms which will be necessary for understanding in detail the signature protocol to come. This subsection will end with a briefing and analysis of the closely related zero-knowledge proof of identity (ZKPoI) isogeny protocol proposed in the original De Feo et al. paper\cite{djp}, as it is the foundation for the isogeny based signature scheme presented by Yoo et al\cite{yoo}.
 
-In section 2.3 we will discuss the Fiat-Shamir transformation; a technique which, given a secure interactive proof of knowledge, creates a secure digital signature scheme. We will also look at the quantum-secure adaptation published by Unruh, for applying a non-quantum-resistant transform to a quantum-resistant primitive would be rather frivolous.
+In section 2.3 we will discuss the Fiat-Shamir transformation\cite{sigs}; a technique which, given a secure interactive proof of knowledge (\emph{identification scheme}), creates a secure digital signature scheme. We will also look at the quantum-secure adaptation published by Unruh\cite{unruh}, for applying a non-quantum-resistant transform to a quantum-resistant primitive would be rather frivolous.
 
-Finally, the last section of this chapter will be dedicated to covering current isogeny-based signature schemes - the topic of which this dissertation is mainly concerned. We will primarily discuss the signature scheme of Yoo et al., which is a near direct application of Unruh's Fiat-Shamir adaptation to the SIDH zero-knowledge proof of identity to be discussed at the end of section 2.2.\\
+Section 2.4 will be dedicated to covering current isogeny-based signature schemes - the topic of which this dissertation is mainly concerned. We will discuss the signature scheme of Yoo et al., which is a near direct application of Unruh's work to the SIDH zero-knowledge proof of identity.
+
+Finally, the last section of this chapter will introduce the SIDH C library released by Microsoft Research, on top of which the core contributions of this thesis are implemented. We will also look at the implementation of the to-be-discussed signature scheme, which is a sort of proof-of-concept built ontop of the Microsoft API.\\
+
+
+\section{Cryptographic Primitives Background}
+
+Cryptographic primitives can be thought of as the basic building blocks used in the design of cryptographically secure applications. The idea of which being that if individual primitives are proven (or believeably) secure, we can be more confident in the security of the application as a whole.
+
+To quickly recap some basic information security, there are serveral different security properties a cryptographic primitive may aim to offer:
+\begin{itemize}
+\item \emph{Confidentiality}:
+The notion that the information in question is kept private from unauthorized individuals.
+\item \emph{Integrity}:
+The notion that the information in question is accurate and complete.
+\item \emph{Availability}:
+The notion that the information in question is available to authorized individuals when requested.
+\item \emph{Authenticity}:
+The notion that the source of the information in question is verified.
+\item \emph{Non-repudiation}:
+The notion that the source of the information in question \textbf{cannot} deny having originally produced the information.
+\end{itemize}
+
+Cryptography is primarily about communication. Each of the primitives to come are designed to offer some utility in the communication between a given pair of entities. We will refer to these entities as Alice and Bob.
+
+The first class of primitives we will discuss, \emph{key exchange} protocols, provide a means by which Alice and Bob can come to the agreement of some secret value. The goal of a key exchange protocol is for Alice \& Bob, communicating over some open, insecure channel, to reach mutual agreement of the secret value while also ensuring the \emph{confidentiality} of that value. The secret value is reffered to as a \emph{secret key} (denoted $sk$,) and is intended for use in other cryptographic primitives. 
+
+Identification schemes are a class of primitives that aim to ensure \emph{authenticity} of a given entity. If Alice is communicating with Bob and she wants to verify that Bob is who he claims to be, the two can utilize a secure identification scheme.
+
+Signature schemes
+
+\subsection{Key Exchange}
+
+\subsection{Identification Schemes}
+
+\subsection{Signature Schemes}
 
 \section{Algebraic Geometry \& Isogenies}
 \emph{Groups \& Varieties}. A \textbf{group} is a 2-tuple composed of a set of elements and a corresponding group operation (also referred to as the group \emph{law}). Given some group defined by the set $G$ and the operation $\cdot$ (written as $(G,\cdot)$) it is typical to refer to the group simply as $G$. If $\cdot$ is equivalent to some rational mapping[footnote about rational mappings] $f_G: G \rightarrow G$, then the group $(G,\cdot)$ is said to form an \textit{algebraic variety}[footnote about the inverse function]. A group which is also an algebraic variety is referred to as an \textbf{algebraic group}.
@@ -309,8 +344,30 @@ $(sk_B, pk_B) = (\{\mb,\nb\}, )$
 \label{fig:kex} % insert suitable label, this is used to refer to a fig from within the text as shown above
 \end{figure}
 
+\subsection{Zero-Knowledge Proof of Identity}
 
-\subsection{Microsoft Research C Implementation}
+Recall the notion of a simple identification scheme:
+
+\section{Fiat-Shamir Construction}
+
+The Fiat-Shamir construction (sometimes referred to as the Fiat-Shamir heuristic or transform) is used
+
+\subsection{Unruh's Post-Quantum Adaptation}
+
+
+\section{Isogeny Based Signatures}
+
+Now that we've introduced the zero-knowledge proof of identity scheme from [REFERENCE] as well as Unruh's quantum-safe Fiat-Shamir adaption, the isogeny based signature scheme presented by Yoo et. Al is a near-trivial application of the latter to the former. 
+
+The isogeny based signature scheme presented by Yoo et. Al is defined, in the traditional manner, by a tuple of algorithms. Namely, the scheme is defined by the tuple (KeyGen, Sign, Verify) with each algorithm loosely defined as follows:\\
+\textbf{KeyGen(}\textbf{)}: Select a random point $S$ of order $\ell_{A}^{e_A}$, compute the isogeny $\phi: E \rightarrow E/ \langle S \rangle$. Return (pk, sk) where pk = $(E/ \langle S \rangle, \phi(P_B), \phi(Q_B))$ and sk = $S$.\\
+\textbf{Sign()}:\\
+\textbf{Verify()}:\\
+
+
+\section{Implementations of Isogeny Based Schemes}
+
+\subsection{Microsoft Research SIDH Library}
 
 Figure [ref] illustrates the relationship between abstraction levels of the SIDH protocol and modules of the SIDH C library.\\
 
@@ -324,32 +381,7 @@ Figure [ref] illustrates the relationship between abstraction levels of the SIDH
 \label{fig:halfmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
 \end{figure}
 
-\subsection{Security Assumptions}
-
-
-
-\subsection{Zero-Knowledge Proof of Identity}
-
-Recall the notion of a simple identification scheme:
-
-\section{Fiat-Shamir Construction}
-
-The Fiat-Shamir construction (sometimes referred to as the Fiat-Shamir heuristic or transform) is used
-
-\subsection{Unruh's Post-Quantum Adaptation}
-
-
-
-\section{Isogeny Based Signatures}
-
-Now that we've introduced the zero-knowledge proof of identity scheme from [REFERENCE] as well as Unruh's quantum-safe Fiat-Shamir adaption, the isogeny based signature scheme presented by Yoo et. Al is a near-trivial application of the latter to the former. 
-
-The isogeny based signature scheme presented by Yoo et. Al is defined, in the traditional manner, by a tuple of algorithms. Namely, the scheme is defined by the tuple (KeyGen, Sign, Verify) with each algorithm loosely defined as follows:\\
-\textbf{KeyGen(}\textbf{)}: Select a random point $S$ of order $\ell_{A}^{e_A}$, compute the isogeny $\phi: E \rightarrow E/ \langle S \rangle$. Return (pk, sk) where pk = $(E/ \langle S \rangle, \phi(P_B), \phi(Q_B))$ and sk = $S$.\\
-\textbf{Sign()}:\\
-\textbf{Verify()}:\\
-
-\subsection{Yoo et al. C Implementation}
+\subsection{Yoo et al. Signature Layer}
 
 \begin{figure}[htb]
 \centering
@@ -453,3 +485,4 @@ If we transcribe the above to the language of the Microsoft SIDH API, we have in
 \State \Return $\sigma \gets ((\texttt{com}_{i})_{i}, (\texttt{ch}_{i,j})_{i,j}, (h_{i,j})_{i,j}, ((\texttt{resp})[J_{i}])$
 \end{algorithmic}
 \end{algorithm}
+

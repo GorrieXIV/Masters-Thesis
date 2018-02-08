@@ -1,0 +1,13 @@
+\begin{thebibliography}{LDF}
+
+\bibitem[LDF]{djp}
+Jerome~Plut Luca De~Feo, David~Jao.
+\newblock Towards quantum-resistant cryptosystems from supersingular elliptic
+  curvce isogenies.
+
+\bibitem[YY]{yoo}
+Amir Jalali David Jao Vladimir~Soukharev Youngho~Yoo, Reza~Azarderakhsh.
+\newblock A post-quantum digital signature scheme based on supersingular
+  isogenies.
+
+\end{thebibliography}
