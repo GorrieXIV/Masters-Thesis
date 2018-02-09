@@ -4,41 +4,41 @@
 \contentsline {subsection}{\numberline {1.2.1}Literature Survey}{1}{subsection.1.2.1}
 \contentsline {section}{\numberline {1.3}Layout of Paper}{1}{section.1.3}
 \contentsline {chapter}{\numberline {2}Technical Background}{2}{chapter.2}
-\contentsline {section}{\numberline {2.1}Cryptographic Primitives Background}{3}{section.2.1}
+\contentsline {section}{\numberline {2.1}Cryptographic Primitives}{3}{section.2.1}
 \contentsline {subsection}{\numberline {2.1.1}Key Exchange}{3}{subsection.2.1.1}
-\contentsline {subsection}{\numberline {2.1.2}Identification Schemes}{3}{subsection.2.1.2}
-\contentsline {subsection}{\numberline {2.1.3}Signature Schemes}{3}{subsection.2.1.3}
-\contentsline {section}{\numberline {2.2}Algebraic Geometry \& Isogenies}{3}{section.2.2}
+\contentsline {subsection}{\numberline {2.1.2}Identification Schemes}{4}{subsection.2.1.2}
+\contentsline {subsection}{\numberline {2.1.3}Signature Schemes}{4}{subsection.2.1.3}
+\contentsline {section}{\numberline {2.2}Algebraic Geometry \& Isogenies}{4}{section.2.2}
 \contentsline {subsection}{\numberline {2.2.1}Elliptic Curves}{5}{subsection.2.2.1}
-\contentsline {subsection}{\numberline {2.2.2}Isogenies \& Their Properties}{7}{subsection.2.2.2}
-\contentsline {section}{\numberline {2.3}Supersingular Isogeny Diffie-Hellman}{7}{section.2.3}
+\contentsline {subsection}{\numberline {2.2.2}Isogenies \& Their Properties}{8}{subsection.2.2.2}
+\contentsline {section}{\numberline {2.3}Supersingular Isogeny Diffie-Hellman}{8}{section.2.3}
 \contentsline {subsection}{\numberline {2.3.1}Public Parameters}{8}{subsection.2.3.1}
-\contentsline {subsection}{\numberline {2.3.2}SIDH Key Exchange}{8}{subsection.2.3.2}
-\contentsline {subsection}{\numberline {2.3.3}Zero-Knowledge Proof of Identity}{9}{subsection.2.3.3}
-\contentsline {section}{\numberline {2.4}Fiat-Shamir Construction}{9}{section.2.4}
+\contentsline {subsection}{\numberline {2.3.2}SIDH Key Exchange}{9}{subsection.2.3.2}
+\contentsline {subsection}{\numberline {2.3.3}Zero-Knowledge Proof of Identity}{10}{subsection.2.3.3}
+\contentsline {section}{\numberline {2.4}Fiat-Shamir Construction}{10}{section.2.4}
 \contentsline {subsection}{\numberline {2.4.1}Unruh's Post-Quantum Adaptation}{10}{subsection.2.4.1}
 \contentsline {section}{\numberline {2.5}Isogeny Based Signatures}{10}{section.2.5}
-\contentsline {section}{\numberline {2.6}Implementations of Isogeny Based Schemes}{10}{section.2.6}
-\contentsline {subsection}{\numberline {2.6.1}Microsoft Research SIDH Library}{10}{subsection.2.6.1}
-\contentsline {subsection}{\numberline {2.6.2}Yoo et al. Signature Layer}{10}{subsection.2.6.2}
-\contentsline {chapter}{\numberline {3}Batching Operations for Isogenies}{13}{chapter.3}
-\contentsline {section}{\numberline {3.1}Batching Procedure in Detail}{13}{section.3.1}
-\contentsline {subsection}{\numberline {3.1.1}Projective Space}{13}{subsection.3.1.1}
-\contentsline {subsection}{\numberline {3.1.2}Remaining Opportunities}{13}{subsection.3.1.2}
-\contentsline {section}{\numberline {3.2}Implementation}{14}{section.3.2}
-\contentsline {section}{\numberline {3.3}Results}{14}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}Analysis}{15}{subsection.3.3.1}
-\contentsline {chapter}{\numberline {4}Compressed Signatures}{16}{chapter.4}
-\contentsline {section}{\numberline {4.1}Compression of Public Keys}{16}{section.4.1}
-\contentsline {subsection}{\numberline {4.1.1}<Sub-section title>}{16}{subsection.4.1.1}
-\contentsline {subsection}{\numberline {4.1.2}<Sub-section title>}{16}{subsection.4.1.2}
-\contentsline {subsection}{\numberline {4.1.3}<Sub-section title>}{16}{subsection.4.1.3}
-\contentsline {subsection}{\numberline {4.1.4}<Sub-section title>}{16}{subsection.4.1.4}
-\contentsline {subsection}{\numberline {4.1.5}<Sub-section title>}{16}{subsection.4.1.5}
-\contentsline {section}{\numberline {4.2}Implementation}{16}{section.4.2}
-\contentsline {section}{\numberline {4.3}Results}{16}{section.4.3}
-\contentsline {chapter}{\numberline {5}Discussion \& Conclusion}{17}{chapter.5}
-\contentsline {section}{\numberline {5.1}Results \& Comparisons}{17}{section.5.1}
-\contentsline {section}{\numberline {5.2}Additional Opportunities for Batching}{17}{section.5.2}
-\contentsline {section}{\numberline {5.3}Future Work}{17}{section.5.3}
-\contentsline {chapter}{Acknowledgements}{18}{section*.3}
+\contentsline {section}{\numberline {2.6}Implementations of Isogeny Based Schemes}{11}{section.2.6}
+\contentsline {subsection}{\numberline {2.6.1}Microsoft Research SIDH Library}{11}{subsection.2.6.1}
+\contentsline {subsection}{\numberline {2.6.2}Yoo et al. Signature Layer}{11}{subsection.2.6.2}
+\contentsline {chapter}{\numberline {3}Batching Operations for Isogenies}{14}{chapter.3}
+\contentsline {section}{\numberline {3.1}Batching Procedure in Detail}{14}{section.3.1}
+\contentsline {subsection}{\numberline {3.1.1}Projective Space}{14}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}Remaining Opportunities}{14}{subsection.3.1.2}
+\contentsline {section}{\numberline {3.2}Implementation}{15}{section.3.2}
+\contentsline {section}{\numberline {3.3}Results}{15}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Analysis}{16}{subsection.3.3.1}
+\contentsline {chapter}{\numberline {4}Compressed Signatures}{17}{chapter.4}
+\contentsline {section}{\numberline {4.1}Compression of Public Keys}{17}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}<Sub-section title>}{17}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}<Sub-section title>}{17}{subsection.4.1.2}
+\contentsline {subsection}{\numberline {4.1.3}<Sub-section title>}{17}{subsection.4.1.3}
+\contentsline {subsection}{\numberline {4.1.4}<Sub-section title>}{17}{subsection.4.1.4}
+\contentsline {subsection}{\numberline {4.1.5}<Sub-section title>}{17}{subsection.4.1.5}
+\contentsline {section}{\numberline {4.2}Implementation}{17}{section.4.2}
+\contentsline {section}{\numberline {4.3}Results}{17}{section.4.3}
+\contentsline {chapter}{\numberline {5}Discussion \& Conclusion}{18}{chapter.5}
+\contentsline {section}{\numberline {5.1}Results \& Comparisons}{18}{section.5.1}
+\contentsline {section}{\numberline {5.2}Additional Opportunities for Batching}{18}{section.5.2}
+\contentsline {section}{\numberline {5.3}Future Work}{18}{section.5.3}
+\contentsline {chapter}{Acknowledgements}{19}{section*.3}

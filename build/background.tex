@@ -15,7 +15,7 @@ Section 2.4 will be dedicated to covering current isogeny-based signature scheme
 Finally, the last section of this chapter will introduce the SIDH C library released by Microsoft Research, on top of which the core contributions of this thesis are implemented. We will also look at the implementation of the to-be-discussed signature scheme, which is a sort of proof-of-concept built ontop of the Microsoft API.\\
 
 
-\section{Cryptographic Primitives Background}
+\section{Cryptographic Primitives}
 
 Cryptographic primitives can be thought of as the basic building blocks used in the design of cryptographically secure applications. The idea of which being that if individual primitives are proven (or believeably) secure, we can be more confident in the security of the application as a whole.
 
@@ -30,18 +30,31 @@ The notion that the information in question is available to authorized individua
 \item \emph{Authenticity}:
 The notion that the source of the information in question is verified.
 \item \emph{Non-repudiation}:
-The notion that the source of the information in question \textbf{cannot} deny having originally produced the information.
+The notion that the source of the information in question \textbf{cannot} deny having originally provided the information.
 \end{itemize}
 
-Cryptography is primarily about communication. Each of the primitives to come are designed to offer some utility in the communication between a given pair of entities. We will refer to these entities as Alice and Bob.
+Each of the primitives to come are designed to offer some utility in the communication between a given pair of entities. We will refer to these entities as Alice and Bob. The schemes we are concerned with in this paper are strictly \emph{public key} (also known as \emph{asymmetric key}) schemes.
 
-The first class of primitives we will discuss, \emph{key exchange} protocols, provide a means by which Alice and Bob can come to the agreement of some secret value. The goal of a key exchange protocol is for Alice \& Bob, communicating over some open, insecure channel, to reach mutual agreement of the secret value while also ensuring the \emph{confidentiality} of that value. The secret value is reffered to as a \emph{secret key} (denoted $sk$,) and is intended for use in other cryptographic primitives. 
+The first class of primitives we will discuss, \emph{key exchange} protocols, provide a means by which Alice and Bob can come to the agreement of some secret value. The goal of a key exchange protocol is for Alice \& Bob, communicating over some open, insecure channel, to reach mutual agreement of the secret value while also ensuring the \emph{confidentiality} of that value. The secret value is reffered to as a \emph{secret} or \emph{shared} key and is intended for use in other cryptographic primitives. 
 
-Identification schemes are a class of primitives that aim to ensure \emph{authenticity} of a given entity. If Alice is communicating with Bob and she wants to verify that Bob is who he claims to be, the two can utilize a secure identification scheme.
-
-Signature schemes
+Identification schemes are a class of primitives that aim to ensure \emph{authenticity} of a given entity. If Alice is communicating with Bob and she wants to verify that Bob is who he claims to be, the two can utilize a secure identification scheme. After identification protocols we will look at signature schemes, which are somewhat of an extension of the former. Signature schemes aim to provide \emph{authenticity} on every message sent from Bob to Alice, as well as \emph{non-repudiability} \& \emph{integrity} of those messages.\\
 
 \subsection{Key Exchange}
+
+A given key exchange protocol, which we'll denote as $\Pi$, is specified by a pair of algorithms \textbf{KeyGen} and \textbf{SecAgr}: $\Pi = (\textbf{KeyGen},\textbf{SecAgr})$. Alice and Bob will each run both of these procedures. The first they will run on the same input, $1^\lambda$, a bit string of $\lambda$ 1's. The second, short for ``secret agreement'', they will run on the output of $KeyGen$.\\
+
+From the perspective of some entity $X$ executing $\Pi$ with $Y$, the procedure looks like the following:\\
+
+\noindent
+$\textbf{KeyGen}(1^\lambda)$: A probabilistic algorithm with input $1^\lambda$ and output $(sk_X,pk_X)$. Typically $pk$ is the image of $g(sk)$, where $g$ is some \emph{one-way} function.\\ 
+
+\noindent
+In between execution of $\textbf{KeyGen}$ and $\textbf{SecAgr}$, Alice will send Bob her computed value $pk_{Alice}$ and Bob will send Alice $pk_{Bob}$.\\
+
+\noindent
+$\textbf{SecAgr}(sk_X, pk_Y)$: A deterministic algorith with input $sk_X$ and $pk_Y$ and output $k_X \in \{0,1\}^\lambda$.\\
+
+$\Pi$ is said to uphold \emph{correctness} if $k_X = k_Y$. Because we deal only with correct $\Pi$, we refer to the output of $\Pi$ as simply $k$.\\
 
 \subsection{Identification Schemes}
 
@@ -100,7 +113,29 @@ For two groups $G$ and $H$, an \underline{endomorphism} is a morphism $\psi: G \
 \end{tcolorbox}
 
 \noindent
-\emph{Fields \& Field Extensions}. An algebraic group $G_a$ is defined over a field $K$ if each element $e \in G_a$ is defined over $K$ and the corresponding $f_{G_a}$ is also defined over $K$. To show that a particular algebraic group $G_a$ is defined over some field $K$ we will henceforth denote the group/field pairing as $G_a(K)$.\\
+\emph{Fields \& Field Extensions}. A \textbf{field} is a mathematical structure rather analogous to a group. Fields are defined by some set $F$ and two operations: \emph{addition} and \emph{multiplication}. In order for some tuple $(F,+,\cdot)$ to constitute a field, it must satisfy an assortment of axioms:\\
+
+\noindent
+\emph{addition axioms}:
+\begin{itemize}
+\item If $x \in F$ and $y \in F$, then $x + y \in F$.
+\item $+$ is commutative.
+\item $+$ is associative.
+\item $F$ contains an element 0 such that $\forall x \in F$ we have $0 + x = x$.
+\item $\forall x \in F$ there is a corresponding element $-x \in F$ such that $x + (-x) = 0$.
+\end{itemize}
+
+\noindent
+\emph{multiplication axioms}:
+\begin{itemize}
+\item If $x \in F$ and $y \in F$, then $x + y \in F$.
+\item $+$ is commutative.
+\item $+$ is associative.
+\item $F$ contains an element 0 such that $\forall x \in F$ we have $0 + x = x$.
+\item $\forall x \in F$ there is a corresponding element $-x \in F$ such that $x + (-x) = 0$.
+\end{itemize}
+
+ An algebraic group $G_a$ is defined over a field $K$ if each element $e \in G_a$ is defined over $K$ and the corresponding $f_{G_a}$ is also defined over $K$. To show that a particular algebraic group $G_a$ is defined over some field $K$ we will henceforth denote the group/field pairing as $G_a(K)$.\\
 
 \noindent
 \emph{Quotient Groups}.
