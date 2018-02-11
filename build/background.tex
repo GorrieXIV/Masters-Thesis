@@ -43,16 +43,12 @@ Identification schemes are a class of primitives that aim to ensure \emph{authen
 
 A given key exchange protocol, which we'll denote as $\Pi_{kex}$, is specified by a pair of polynomial time algorithms \textbf{KeyGen} and \textbf{SecAgr}: $\Pi_{kex} = (\textbf{KeyGen},\textbf{SecAgr})$. Alice and Bob will each run both of these procedures. The first they will run on the same input, $1^\lambda$, a bit string of $\lambda$ 1's. The second, short for ``secret agreement'', they will run on the output of $KeyGen$.\\
 
-From the perspective of Alice executing $\Pi_{kex}$ with Bob, the procedure looks like the following:\\
-
-\noindent
-$\textbf{KeyGen}(1^\lambda)$: A probabilistic algorithm with input $1^\lambda$ and output $(sk_{Alice},pk_{Alice})$. Typically $pk_{Alice}$ is the image of $g(sk_{Alice})$, where $h$ is some \emph{one-way} function.\\ 
-
-\noindent
-In between execution of $\textbf{KeyGen}$ and $\textbf{SecAgr}$, Alice will send Bob her computed value $pk_{Alice}$ and Bob will send $pk_{Bob}$ over an insecure channel.\\
-
-\noindent
-$\textbf{SecAgr}(sk_{Alice}, pk_{Bob})$: A deterministic algorithm with input $sk_{Alice}$ and $pk_{Bob}$ and output $k_{Alice} \in \{0,1\}^\lambda$.\\
+Execution of $\Pi_{kex}$ between Alice and Bob involves the following:
+\begin{enumerate}[label=(\roman*)]
+\item Alice and Bob run $\textbf{KeyGen}(1^\lambda)$: A probabilistic algorithm with input $1^\lambda$ and output $(sk,pk)$. Typically $pk$ is the image of $g(sk)$, where $h$ is some \emph{one-way} function.
+\item Alice and Bob exchange (over an insecure channel) their public keys $pk_{\text{Alice}}$ and $pk_{\text{Bob}}$.
+\item Alice runs $\textbf{SecAgr}(sk_{\text{Alice}}, pk_{\text{Bob}})$: A deterministic algorithm with input $sk_{\text{Alice}}$ and $pk_{\text{Bob}}$ and output $k_{\text{Alice}} \in \{0,1\}^\lambda$. Bob runs $\textbf{SecAgr}(sk_{\text{Bob}}, pk_{\text{Alice}})$.
+\end{enumerate}
 
 $\Pi_{kex}$ is said to uphold \emph{correctness} if $k_{Alice} = k_{Bob}$. Because we deal only with correct $\Pi_{kex}$, we refer to the output of $\Pi_{kex}$ as simply $k$. Figure \ref{fig:diffiehellman} illustrates an execution of the Diffie-Hellman key exchange protocol which relies on the difficulty of the \emph{discrete logarithm} problem for its one-way function $h$.\\
 
@@ -92,25 +88,33 @@ $\Pi_{kex}$ is said to uphold \emph{correctness} if $k_{Alice} = k_{Bob}$. Becau
 
 \subsection{Interactive Identification Schemes}
 
-Assume Alice wishes to confirm the identity of Bob. The idea behind interactive identification protocols is to offer Bob some way of proving to Alice (or anyone) that he has knowledge of some secret which \textbf{only} Bob could possess. The goal, of course, being to accomplish this without openly revealing this secret, so that it can continue to be used as an identifier for Bob. 
+Imagine Alice wishes to confirm the identity of Bob. The idea behind interactive identification protocols is to offer Bob some way of proving to Alice (or anyone) that he has knowledge of some secret which \textbf{only} Bob could possess. The goal, of course, being to accomplish this without openly revealing the secret, so that it can continue to be used as an identifier for Bob. 
 
-An identification scheme (or otherwise ``proof of knowledge" or ``proof of identity") $\Pi_{id}$ is composed of by the tuple of polynomial-time algorithms (\textbf{KeyGen}, \textbf{Prove}, \textbf{Verify}). $\Pi_{id}$ is an interactive protocol, wherein the \emph{prover} (Bob, for example) executes \textbf{Prove} and the \emph{verifier} (Alice) executes \textbf{Verify}.
+An identification scheme (or otherwise ``proof of knowledge" or ``proof of identity") $\Pi_{id}$ is composed of by the tuple of polynomial-time algorithms (\textbf{KeyGen}, \textbf{Prove}, \textbf{Verify}). $\Pi_{id}$ is an interactive protocol, wherein the \emph{prover} (Bob, for example) 
+executes \textbf{Prove} and the \emph{verifier} (Alice) executes \textbf{Verify}.
 
-\noindent
-$\textbf{KeyGen}(1^\lambda)$: A probabilistic algorithm with input $1^\lambda$ and output $(sk,pk)$.\\ 
+Execution of $\Pi_{id}$ between Alice and Bob involves the following:
+\begin{enumerate}[label=(\roman*)]
+\item Bob runs $\textbf{KeyGen}(1^\lambda)$: A probabilistic algorithm with input $1^\lambda$ and output $(sk,pk)$. 
+\item Bob sends to Alice his public key $pk$ and Alice will respond with a \emph{challenge} value $ch$.
+\item Bob runs $\textbf{Prove}(sk, ch)$: A deterministic algorithm with input $sk$ (Bob's secret key) and $ch$ (challenge) and output $resp$.
+\item Alice runs $\textbf{Verify}(pk, ch, resp)$: A deterministic algorithm with input $pk$ (Bob's public key), $ch$, and $resp$ and output $b \in {0,1}$. Bob has successfully proven his identity to Alice if $b = 1$.
+\end{enumerate}
 
-\noindent
-At this point, Bob will send the Alice his public key $pk$ and Alice will respond with a \emph{challenge} value $ch$.\\
-
-\noindent
-$\textbf{Prove}(sk, ch)$: A deterministic algorithm run by Bob with input $sk$ (Bob's secret key) and $ch$ (challenge) and output $resp$.\\
-
-\noindent
-$\textbf{Verify}(pk, ch, resp)$: A deterministic algorithm run by Alice with input $pk$ (Bob's public key), $ch$, and $resp$ and output $b \in {0,1}$. Bob has successfully proven his identity to Alice if $b = 1$.\\
+There exist variations upon this type of primitive wherein Alice is not required to send Bob a specific challenge value. These are known as \emph{non-interactive} identification schemes, or non-interactive proofs of identity (NIPoI). These non-interactive approaches to solving the problem of identity and \emph{authentication} further bridge the gap between identification protocols and signature schemes. 
 
 \subsection{Signature Schemes}
 
-There are two main differences between signature schemes and identification schemes. First, because we wish to authenticate Bob on every message sent to Alice we need to include Bob's message $m$ in
+There are two main differences between signature schemes and interactive identification schemes. The first is equivalent to the difference between Second, because we wish to authenticate Bob on every message, our scheme needs to be run every time Bob wishes to send a message to Alice. We must also include Bob's message $m$ in our execution of \textbf{Verify} (which in the context of signatures, we call \textbf{Sign}). And so, a signature scheme can be thought of as an NIPoI executed with respect to a particular message. We define a signature scheme as the tuple of algorithms $\Pi_{sig}$ = (\textbf{KeyGen}, \textbf{Sign}, \textbf{Verify}).
+
+Execution of $\Pi_{sig}$ between Alice and Bob for a particular message $m$ sent from Bob to Alice involves the following:
+\begin{enumerate}[label=(\roman*)]
+\item Bob runs $\textbf{KeyGen}(1^\lambda)$: A probabilistic algorithm with input $1^\lambda$ and output $(sk,pk)$.
+\item Bob sends his public key to Alice.
+\item Bob runs $\textbf{Sign}(sk, m)$: A deterministic algorithm with input $sk$ (Bob's secret key) and $m$ (the message Bob wishes to authorize) and output $\sigma$, known as a \emph{signature}.
+\item Bob sends $m$ and $\sigma$ to Alice.
+\item Alice runs $\textbf{Verify}(pk, m, \sigma)$: A deterministic algorithm with input $pk$ (Bob's public key), $m$, and $\sigma$ and output $b \in {0,1}$. Alice has confidence in the \emph{integrity} and origin \emph{authenticity} of $m$ if $b = 1$.
+\end{enumerate}
 
 \section{Algebraic Geometry \& Isogenies}
 \emph{Groups \& Varieties}. A \textbf{group} is a 2-tuple composed of a set of elements and a corresponding group operation (also referred to as the group \emph{law}). Given some group defined by the set $G$ and the operation $\cdot$ (written as $(G,\cdot)$) it is typical to refer to the group simply as $G$. If $\cdot$ is equivalent to some rational mapping[footnote about rational mappings] $f_G: G \rightarrow G$, then the group $(G,\cdot)$ is said to form an \textit{algebraic variety}[footnote about the inverse function]. A group which is also an algebraic variety is referred to as an \textbf{algebraic group}.
@@ -219,9 +223,7 @@ Within algebraic geometry, it is common practice to define a group structure ove
 $$
 E: y^2 = x^3 + ax + b
 $$
-Wherein $E$ denotes the group in question, the elements of which are all the points (solutions) of the curve. Throughout much of this section, the words \emph{point} and \emph{element} can be used interchangeably.
-
-A given curve $E$ has a \emph{smooth order} if $math$.\\
+Wherein $E$ denotes the group in question, the elements of which are all the points (solutions) of the curve. Throughout much of this section, the words \emph{point} and \emph{element} can be used interchangeably.\\
 
 \noindent
 \emph{The Group Law}. The group operation we define for $E$, denoted $+$, is better understood geometrically than algebraically. Consider the following.
