@@ -41,24 +41,76 @@ Identification schemes are a class of primitives that aim to ensure \emph{authen
 
 \subsection{Key Exchange}
 
-A given key exchange protocol, which we'll denote as $\Pi$, is specified by a pair of algorithms \textbf{KeyGen} and \textbf{SecAgr}: $\Pi = (\textbf{KeyGen},\textbf{SecAgr})$. Alice and Bob will each run both of these procedures. The first they will run on the same input, $1^\lambda$, a bit string of $\lambda$ 1's. The second, short for ``secret agreement'', they will run on the output of $KeyGen$.\\
+A given key exchange protocol, which we'll denote as $\Pi_{kex}$, is specified by a pair of polynomial time algorithms \textbf{KeyGen} and \textbf{SecAgr}: $\Pi_{kex} = (\textbf{KeyGen},\textbf{SecAgr})$. Alice and Bob will each run both of these procedures. The first they will run on the same input, $1^\lambda$, a bit string of $\lambda$ 1's. The second, short for ``secret agreement'', they will run on the output of $KeyGen$.\\
 
-From the perspective of some entity $X$ executing $\Pi$ with $Y$, the procedure looks like the following:\\
-
-\noindent
-$\textbf{KeyGen}(1^\lambda)$: A probabilistic algorithm with input $1^\lambda$ and output $(sk_X,pk_X)$. Typically $pk$ is the image of $g(sk)$, where $g$ is some \emph{one-way} function.\\ 
+From the perspective of Alice executing $\Pi_{kex}$ with Bob, the procedure looks like the following:\\
 
 \noindent
-In between execution of $\textbf{KeyGen}$ and $\textbf{SecAgr}$, Alice will send Bob her computed value $pk_{Alice}$ and Bob will send Alice $pk_{Bob}$.\\
+$\textbf{KeyGen}(1^\lambda)$: A probabilistic algorithm with input $1^\lambda$ and output $(sk_{Alice},pk_{Alice})$. Typically $pk_{Alice}$ is the image of $g(sk_{Alice})$, where $h$ is some \emph{one-way} function.\\ 
 
 \noindent
-$\textbf{SecAgr}(sk_X, pk_Y)$: A deterministic algorith with input $sk_X$ and $pk_Y$ and output $k_X \in \{0,1\}^\lambda$.\\
+In between execution of $\textbf{KeyGen}$ and $\textbf{SecAgr}$, Alice will send Bob her computed value $pk_{Alice}$ and Bob will send $pk_{Bob}$ over an insecure channel.\\
 
-$\Pi$ is said to uphold \emph{correctness} if $k_X = k_Y$. Because we deal only with correct $\Pi$, we refer to the output of $\Pi$ as simply $k$.\\
+\noindent
+$\textbf{SecAgr}(sk_{Alice}, pk_{Bob})$: A deterministic algorithm with input $sk_{Alice}$ and $pk_{Bob}$ and output $k_{Alice} \in \{0,1\}^\lambda$.\\
 
-\subsection{Identification Schemes}
+$\Pi_{kex}$ is said to uphold \emph{correctness} if $k_{Alice} = k_{Bob}$. Because we deal only with correct $\Pi_{kex}$, we refer to the output of $\Pi_{kex}$ as simply $k$. Figure \ref{fig:diffiehellman} illustrates an execution of the Diffie-Hellman key exchange protocol which relies on the difficulty of the \emph{discrete logarithm} problem for its one-way function $h$.\\
+
+\begin{figure}[!h]
+\begin{center}
+\begin{tikzpicture}
+  % Public parameter:
+  \node[draw=none,fill=none,align=center] (public) at (0,1) {Public parameter:\\g, p};
+  
+  % Alice
+  \node[draw] (Alice) at (-2,0) {Alice}; 
+  \draw[thick] (Alice) -- ++(0, -4);
+    
+  % Calculations of Alice
+  \node[draw=none,fill=none,anchor=east] (asecret) at ($(Alice) + (0,-1)$) {$a \in_{R} \{2,\dots,p-2\}$};
+  \node[draw=none,fill=none,anchor=east] (Apublic) at ($(Alice) + (0,-2)$) {$A = g^{a} \bmod{p}$};
+  \node[draw=none,fill=none,anchor=east] (akey) at ($(Alice) + (0,-4)$) {$K = (B)^{a} = g^{ba}$};
+    
+  % Bob
+  \node[draw] (Bob) at (2,0) {Bob}; 
+  \draw[thick] (Bob) -- ++(0, -4);
+   
+  % Calculations of Bob
+  \node[draw=none,fill=none,anchor=west] (bsecret) at ($(Bob) + (0,-1)$) {$b \in_{R} \{2,\dots,p-2\}$};
+  \node[draw=none,fill=none,anchor=west] (Bpublic) at ($(Bob) + (0,-2)$) {$B = g^{b} \bmod{p}$};
+  \node[draw=none,fill=none,anchor=west] (bkey) at ($(Bob) + (0,-4)$) {$K = (A)^{b} = g^{ab}$};
+   
+  % Messages
+  \draw[->,thick] ($(Alice)+(0,-2)$) -- ($(Bob)+(0,-2.5)$) node [pos=0.5,above,font=\footnotesize] {A};
+  \draw[->,thick] ($(Bob)+(0,-3)$) -- ($(Alice)+(0,-3.5)$) node [pos=0.5,above,font=\footnotesize] {B};
+    
+\end{tikzpicture}
+\end{center}
+\caption{Alice and Bob's execution of Diffie-Hellman key exchange.}
+\label{fig:diffiehellman}
+\end{figure}
+
+\subsection{Interactive Identification Schemes}
+
+Assume Alice wishes to confirm the identity of Bob. The idea behind interactive identification protocols is to offer Bob some way of proving to Alice (or anyone) that he has knowledge of some secret which \textbf{only} Bob could possess. The goal, of course, being to accomplish this without openly revealing this secret, so that it can continue to be used as an identifier for Bob. 
+
+An identification scheme (or otherwise ``proof of knowledge" or ``proof of identity") $\Pi_{id}$ is composed of by the tuple of polynomial-time algorithms (\textbf{KeyGen}, \textbf{Prove}, \textbf{Verify}). $\Pi_{id}$ is an interactive protocol, wherein the \emph{prover} (Bob, for example) executes \textbf{Prove} and the \emph{verifier} (Alice) executes \textbf{Verify}.
+
+\noindent
+$\textbf{KeyGen}(1^\lambda)$: A probabilistic algorithm with input $1^\lambda$ and output $(sk,pk)$.\\ 
+
+\noindent
+At this point, Bob will send the Alice his public key $pk$ and Alice will respond with a \emph{challenge} value $ch$.\\
+
+\noindent
+$\textbf{Prove}(sk, ch)$: A deterministic algorithm run by Bob with input $sk$ (Bob's secret key) and $ch$ (challenge) and output $resp$.\\
+
+\noindent
+$\textbf{Verify}(pk, ch, resp)$: A deterministic algorithm run by Alice with input $pk$ (Bob's public key), $ch$, and $resp$ and output $b \in {0,1}$. Bob has successfully proven his identity to Alice if $b = 1$.\\
 
 \subsection{Signature Schemes}
+
+There are two main differences between signature schemes and identification schemes. First, because we wish to authenticate Bob on every message sent to Alice we need to include Bob's message $m$ in
 
 \section{Algebraic Geometry \& Isogenies}
 \emph{Groups \& Varieties}. A \textbf{group} is a 2-tuple composed of a set of elements and a corresponding group operation (also referred to as the group \emph{law}). Given some group defined by the set $G$ and the operation $\cdot$ (written as $(G,\cdot)$) it is typical to refer to the group simply as $G$. If $\cdot$ is equivalent to some rational mapping[footnote about rational mappings] $f_G: G \rightarrow G$, then the group $(G,\cdot)$ is said to form an \textit{algebraic variety}[footnote about the inverse function]. A group which is also an algebraic variety is referred to as an \textbf{algebraic group}.
@@ -111,11 +163,11 @@ Furthermore, an \textbf{endomorphism} is a special type of morphism in which the
 For two groups $G$ and $H$, an \underline{endomorphism} is a morphism $\psi: G \rightarrow H$ wherein $G = H$
 \end{definition}
 \end{tcolorbox}
+\vspace{10mm}
 
 \noindent
-\emph{Fields \& Field Extensions}. A \textbf{field} is a mathematical structure rather analogous to a group. Fields are defined by some set $F$ and two operations: \emph{addition} and \emph{multiplication}. In order for some tuple $(F,+,\cdot)$ to constitute a field, it must satisfy an assortment of axioms:\\
+\emph{Fields \& Field Extensions}. A \textbf{field} is a mathematical structure which, while being similar to a group, demands additional properties. Fields are defined by some set $F$ and two operations: \emph{addition} and \emph{multiplication}. In order for some tuple $(F,+,\cdot)$ to constitute a field, it must satisfy an assortment of axioms:\\
 
-\noindent
 \emph{addition axioms}:
 \begin{itemize}
 \item If $x \in F$ and $y \in F$, then $x + y \in F$.
@@ -125,22 +177,35 @@ For two groups $G$ and $H$, an \underline{endomorphism} is a morphism $\psi: G \
 \item $\forall x \in F$ there is a corresponding element $-x \in F$ such that $x + (-x) = 0$.
 \end{itemize}
 
-\noindent
 \emph{multiplication axioms}:
 \begin{itemize}
-\item If $x \in F$ and $y \in F$, then $x + y \in F$.
-\item $+$ is commutative.
-\item $+$ is associative.
-\item $F$ contains an element 0 such that $\forall x \in F$ we have $0 + x = x$.
-\item $\forall x \in F$ there is a corresponding element $-x \in F$ such that $x + (-x) = 0$.
+\item If $x \in F$ and $y \in F$, then $x \cdot y \in F$.
+\item $\cdot$ is commutative.
+\item $\cdot$ is associative.
+\item $F$ contains an element $1 \neq 0$ such that $\forall x \in F$ we have $x \cdot 1 = x$.
+\item $\forall x \neq 0 \in F$ there is a corresponding element $1/x \in F$ such that $x \cdot (1/x) = 1$.
 \end{itemize}
 
- An algebraic group $G_a$ is defined over a field $K$ if each element $e \in G_a$ is defined over $K$ and the corresponding $f_{G_a}$ is also defined over $K$. To show that a particular algebraic group $G_a$ is defined over some field $K$ we will henceforth denote the group/field pairing as $G_a(K)$.\\
+Additionally, a field $(F,+,\cdot)$ must uphold the \emph{distributive law}, namely:
+$$
+ x \cdot (y + z) = x \cdot y + x \cdot y \text{ holds } \forall x,y,z \in F
+$$
 
-\noindent
-\emph{Quotient Groups}.
+While these axioms are known to be satisfied by the sets $\mathbb{Q}$, $\mathbb{R}$, and $\mathbb{C}$ with typically defined $+$ and $\cdot$, our focus will be on a particular class of field known as a \emph{finite field}. Finite fields, as the name suggests, are fields in which the set $F$ contains finitely many elements - we refer to the number of elements in $F$ as the \emph{order} of the field.
 
-These algebraic structures are all important for building up to the concept of an \emph{isogeny}. The lowest-level structure we will be concerned with when discussing the forthcoming isogeny-based protocols will typically be abelian varieties. The lowest-level structure in the SIDH C codebase is a finite field element.\\
+Let us take some prime number $p$. We can construct a finite field by taking $F$ as the set of numbers $\{0, 1, ... p-1\}$ and defining $+$ and $\cdot$ as addition and multiplication \emph{modulo p}. Finite fields defined in this fashion are denoted as $\mathbb{F}_p$, and have order $p$.
+\begin{center}
+$\forall x,y \in \mathbb{F}_p$, $x + y = (x + b) \mod{p}$, and\\
+$\forall x,y \in \mathbb{F}_p$, $x \cdot y = (x \cdot b) \mod{p}$\\
+\end{center}
+
+For any given field $K$ there exists a number $q$ such that, for every $x \in K$, adding $x$ to itself $q$ times results in the additive identity 0. This number is referred to as the \emph{characteristic} of $K$, for which we write char($K$). Finite fields are the only type of field for which $\text{char}(K) > 0$. Furthermore, if the field in question is finite and has prime order, then the order and the characteristic are equivalent.
+
+A particular field $K'$ is called an \emph{extension field} of some other field $K$ if $K \subseteq K'$. The complex numbers $\mathbb{C}$, for example, are an extension field of $\mathbb{R}$. A given field $K$ is \emph{algebraically closed} if there exists a root for every non-constant polynomial defined over $K$. If $K$ itself is not algebraically closed, we denote the extension of $K$ that is by $\overline{K}$. 
+
+An algebraic group $G_a$ is defined over a field $K$ if each element $e \in G_a$ is defined over $K$ and the corresponding $f_{G_a}$ is also defined over $K$. To show that a particular algebraic group $G_a$ is defined over some field $K$ we will henceforth denote the group/field pairing as $G_a(K)$. Naturally, in the case where our field is a finite field of order $p$, we write $G_a(\mathbb{F}_p)$.
+
+These algebraic structures are all important for building up to the concept of an \emph{isogeny}. The lowest-level object we will be concerned with when discussing the forthcoming isogeny-based protocols will typically be elements of abelian varieties. The lowest-level structure in the SIDH C codebase is a finite field element.\\
 
 \subsection{Elliptic Curves}
 
