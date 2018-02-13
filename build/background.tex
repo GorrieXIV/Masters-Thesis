@@ -24,7 +24,7 @@ To quickly recap some basic information security, there are serveral different s
 \item \emph{Confidentiality}:
 The notion that the information in question is kept private from unauthorized individuals.
 \item \emph{Integrity}:
-The notion that the information in question is accurate and complete.
+The notion that the information in question has not been altered by unauthorized individuals.
 \item \emph{Availability}:
 The notion that the information in question is available to authorized individuals when requested.
 \item \emph{Authenticity}:
@@ -33,7 +33,7 @@ The notion that the source of the information in question is verified.
 The notion that the source of the information in question \textbf{cannot} deny having originally provided the information.
 \end{itemize}
 
-Each of the primitives to come are designed to offer some utility in the communication between a given pair of entities. We will refer to these entities as Alice and Bob. The schemes we are concerned with in this paper are strictly \emph{public key} (also known as \emph{asymmetric key}) schemes.
+Each of the primitives to come are designed to offer some utility in the communication between a given pair of entities. We will refer to these entities as Alice and Bob. The schemes we are concerned with in this paper are strictly \emph{public key} (also known as \emph{asymmetric key}) schemes. In public key primitives, each user possesses a \emph{public} key (visible to every user in the network) as well as a \emph{private} key, which only they have access to. 
 
 The first class of primitives we will discuss, \emph{key exchange} protocols, provide a means by which Alice and Bob can come to the agreement of some secret value. The goal of a key exchange protocol is for Alice \& Bob, communicating over some open, insecure channel, to reach mutual agreement of the secret value while also ensuring the \emph{confidentiality} of that value. The secret value is reffered to as a \emph{secret} or \emph{shared} key and is intended for use in other cryptographic primitives. 
 
@@ -41,7 +41,7 @@ Identification schemes are a class of primitives that aim to ensure \emph{authen
 
 \subsection{Key Exchange}
 
-A given key exchange protocol, which we'll denote as $\Pi_{kex}$, is specified by a pair of polynomial time algorithms \textbf{KeyGen} and \textbf{SecAgr}: $\Pi_{kex} = (\textbf{KeyGen},\textbf{SecAgr})$. Alice and Bob will each run both of these procedures. The first they will run on the same input, $1^\lambda$, a bit string of $\lambda$ 1's. The second, short for ``secret agreement'', they will run on the output of $KeyGen$.\\
+A key exchange protocol, which we'll denote as $\Pi_{kex}$, can be represented in some contexts by a pair of polynomial time algorithms \textbf{KeyGen} and \textbf{SecAgr}: $\Pi_{kex} = (\textbf{KeyGen},\textbf{SecAgr})$. Alice and Bob will each run both of these procedures. The first they will run on the same input, $1^\lambda$, a bit string of $\lambda$ 1's. The second, short for ``secret agreement'', they will run on the output of $KeyGen$.\\
 
 Execution of $\Pi_{kex}$ between Alice and Bob involves the following:
 \begin{enumerate}[label=(\roman*)]
@@ -160,13 +160,8 @@ From this simple definition, two more properties of homomorphisms are easily ded
 \item $h(u^{-1}) = h(u)^{-1}, \forall u \in G$
 \end{itemize}
 
-Furthermore, an \textbf{endomorphism} is a special type of morphism in which the domain and the codomain are the same groups.
-\begin{tcolorbox}
-\begin{definition}[Endomorphism]
-\label{defn:endomorphism}
-For two groups $G$ and $H$, an \underline{endomorphism} is a morphism $\psi: G \rightarrow H$ wherein $G = H$
-\end{definition}
-\end{tcolorbox}
+Furthermore, an \emph{endomorphism} is a special type of morphism in which the domain and the codomain are the same groups. We denote the set of enomorphisms defineable over some group $G$ as $\text{End}(G)$.
+The \emph{kernel} of a particular homomorphism $h: G \rightarrow H$  is the set of elements in $G$ that, when applied to $h$, map to the identity element of $H$. We write this set as $ker(h)$, and it is much analogous to the familiar concept from linear algebra, wherein the kernel denotes the set of elements mapped to the zero vector by some linear map.
 \vspace{10mm}
 
 \noindent
@@ -217,7 +212,7 @@ An elliptic curve is an algebraic curve defined over some field $K$, the most ge
 $$
 y^2 + a_{1}xy + a_{3}y = x^3 + a_{2}x^2 + a_{4}x + a_6.
 $$
-This representation encapsulates elliptic curves defined over any field. If, however, we are dicussing curves defined specifically over a field $K$ such that $\text{char}(K) > 3$[ref], then the more compact form $y^2 = x^3 + ax + b$ can be applied. In this dissertation we will default to this second representation, as the schemes with which we are concerned will always be defined over $\mathbb{F}_p$ for some large prime $p$.
+This representation encapsulates elliptic curves defined over any field. If, however, we are dicussing curves defined specifically over a field $K$ such that $\text{char}(K) > 3$[ref], then the more compact form $y^2 = x^3 + ax + b$ can be applied (see figure \ref{fig:groupop} for a geometric visualization). In this dissertation we will default to this second representation, as the schemes with which we are concerned will always be defined over $\mathbb{F}_p$ for some large prime $p$.
 
 Within algebraic geometry, it is common practice to define a group structure over the points of a given elliptic curve (or any other smooth cubic curve). If we wish to define a group in accordance to a particular curve, we do so with the following notation:
 $$
@@ -228,7 +223,7 @@ Wherein $E$ denotes the group in question, the elements of which are all the poi
 \noindent
 \emph{The Group Law}. The group operation we define for $E$, denoted $+$, is better understood geometrically than algebraically. Consider the following.
 
-Given two elements $P$ and $Q$ of some arbitrary elliptic curve group $E$, we define $+$ geometrically as follows: drawing the line $L$ formed by points $P$ and $Q$, we follow $L$ to its third intersection on the curve, which we will denote as $R = (x_R, y_R)$. We then set $P + Q = -R$, where $-R$ is the reflection of $R$ over the x-axis: $(x_R, -y_R)$. See figure [fig] for an illustrated representation of this process.
+Given two elements $P$ and $Q$ of some arbitrary elliptic curve group $E$, we define $+$ geometrically as follows: drawing the line $L$ formed by points $P$ and $Q$, we follow $L$ to its third intersection on the curve, which we will denote as $R = (x_R, y_R)$. We then set $P + Q = -R$, where $-R$ is the reflection of $R$ over the x-axis: $(x_R, -y_R)$. See figure \ref{fig:groupop} for an illustrated representation of this process.
 
 \begin{figure}[!h]
 \begin{tikzpicture}[scale=.75]
@@ -267,7 +262,7 @@ The group operation $+$ is referred to as \emph{pointwise addition}. In order fo
 \begin{itemize}
 \item \emph{Closure}: Because elliptics curves are polynomials of degree of 3, we know any given line passing through two points $P$ and $Q$ of $E$ will pass through a third point $R$. The exceptions here are twofold. First, when $P = Q$ and thus our line is tangent to $E$, and second, when $Q = -P$ and our line is parallel with the y-axis. We resolve the first case nicely by defining $P + P$ by means of taking $L$ to be the line tangent to $E$ at point $P$. In the second case, $P + (-P)$, by group axiom, should yield the identity element of the group. We will define this element and resolve this issue below.  
 \item \emph{Identity}: The identity element of elliptic curve groups, denoted as $\mathcal{O}$, is a specially defined point satisfying $P + \mathcal{O} = \mathcal{O} + P = P$, $\forall P \in E$. Because of the inclusion of this special element, we have that $\#(E(K))$ is equal to $1$ $+$ the number geometric points on $E$ defined over $K$. This of course is only a noteworthy claim when $K$ is a finite field (otherwise there are already infinitely many elements in $E$).
-\item \emph{Associativity}: To show that associativity holds for geometrically defined points $P$, $Q$, and $R$ in $E$ ($(P + Q) + R = P + (Q + R)$) is rather simple (see figure [fig]). We can trivially show that this holds when any combination of $P$, $Q$, and $R$ are $\mathcal{O}$ by applying the axiom of the identity.
+\item \emph{Associativity}: To show that associativity holds for geometrically defined points $P$, $Q$, and $R$ in $E$ ($(P + Q) + R = P + (Q + R)$) is rather simple (see figure \ref{fig:axioms}). We can trivially show that this holds when any combination of $P$, $Q$, and $R$ are $\mathcal{O}$ by applying the axiom of the identity.
 \item \emph{Inverse}: Due to the x-symmetry of elliptic curves, every point $P = (x_P, y_P)$ of $E$ has an associated point $-P = (x_P, -y_P)$. If we apply $+$ to $P$ and $-P$, $L$ assumes the line parrallel to the y-axis at $x = x_P$. As discussed above, in this case there is no third intersection of $L$ on $E$. In light of this, $\mathcal{O}$ can be thought of as a point residing infinitely far in both the positive and negative directions of the y-axis. $\mathcal{O}$ is equivalently referred to as the \emph{point at infinity}.[footnote about whether $+$ actually constitutes a rational map due to this exception]
 \end{itemize}
 
@@ -293,7 +288,6 @@ The group operation $+$ is referred to as \emph{pointwise addition}. In order fo
 		\draw[fill] (1.765,-0.454) circle (0.1) node[right] {};
 		\draw[fill] (1.765,0.454) circle (0.1) node[right] {$(P + Q) + R$};
 	\end{scope}
-	
 	\begin{scope}[xshift=10cm]
 		%\draw[very thin,color=gray] (-3.9,-3.9) grid (3.9,3.9);  %background grid
 		\draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};         %x-axis
@@ -313,9 +307,7 @@ The group operation $+$ is referred to as \emph{pointwise addition}. In order fo
 		\draw[fill] (-0.006,0.132) circle (0.1) node[right] {};
 		\draw[fill] (1.765,-0.454) circle (0.1) node[right] {};
 		\draw[fill] (1.765,0.454) circle (0.1) node[right] {$P + (Q + R)$};
-		
 	\end{scope}
-	
 	\begin{scope}[xshift=20cm]
 		%\draw[very thin,color=gray] (-3.9,-3.9) grid (3.9,3.9);  %background grid
 		\draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};         %x-axis
@@ -330,7 +322,7 @@ The group operation $+$ is referred to as \emph{pointwise addition}. In order fo
   \end{scope}
 \end{tikzpicture}
 \caption{associativity illustrated on $y^2 = x^3 - 3x$ (left \& center) and $P + (-P) = \mathcal{O}$ illustrated for $y^2 = x^3 + x + 1$ (right).}
-\label{fig:groupop}
+\label{fig:axioms}
 \end{figure}
 
 Additionally, we shorthand $\overbrace{P + P + ... + P}^{n}$ as $nP$, analogous to scalar multiplication.\\
@@ -418,26 +410,30 @@ $\pa(E_0/\langle \rb \rangle)$\\
 $\text{OR}$\\
 $\pb(E_0/\langle \ba \rangle)$
 \end{center}
-To come to the shared secret agreement, the codomain curve of their composed isogenies, denoted $E_{\ba\rb}$. Below we've outli\\
+To come to the shared secret agreement, the codomain curve of their composed isogenies, denoted $E_{\ba\rb}$. Below we've outlined the SIDH key exchange protocol $\Pi_{\text{SIDH}}$ = (\textbf{KeyGen}, \textbf{SecAgr}) in a descriptive (though not yet algorithmic) manner.\\
 
 \noindent
-\textit{Key Generation}. \textcolor{blue}{Alice} chooses two random numbers $\ma, \na \in \mathbb{Z}/\laea\mathbb{Z}$ such that $(\la \nmid \ma) \lor (\la \nmid \na)$. \textcolor{blue}{Alice} then computes the isogeny $\pa: E_0 \rightarrow E_{\langle [\ma]\genpa, [\na]\genqa\rangle}$ with kernel $\text{Ker}_A := \langle [\ma]\genpa, [\na]\genqa\rangle$. \textcolor{red}{Bob} undergoes the same procedure for random elements $\mb, \nb \in \mathbb{Z}/\lbeb\mathbb{Z}$. After completion, \textcolor{blue}{Alice} and \textcolor{red}{Bob} hold their respective key pairs:
+\textbf{KeyGen}: \textcolor{blue}{Alice} chooses two random numbers $\ma, \na \in \mathbb{Z}/\laea\mathbb{Z}$ such that $(\la \nmid \ma) \lor (\la \nmid \na)$. \textcolor{blue}{Alice} then computes the isogeny $\pa: E_0 \rightarrow E_{\ba}$ where $E_{\ba} = E_0 / \langle [\ma]\genpa, [\na]\genqa\rangle$ (equivalently, $ker(\pa) = \langle [\ma]\genpa, [\na]\genqa\rangle$). \bob undergoes the same procedure for random elements $\mb, \nb \in \mathbb{Z}/\lbeb\mathbb{Z}$. After completion, \alice and \bob hold their respective key pairs:
 \begin{center}
-$(sk_A, pk_A) = (\{\ma,\na\}, E_{\langle [\ma]\genpa, [\na]\genqa\rangle})$\\
-$(sk_B, pk_B) = (\{\mb,\nb\}, )$
+$(sk_A, pk_A) = (\{\ma,\na\}, E_{\ba})$\\
+$(sk_B, pk_B) = (\{\mb,\nb\}, E_{\rb})$\\
 \end{center}
 
-\textcolor{blue}{Alice} then applies her isogeny to the points which \textcolor{red}{Bob} will use in the creation of of his isogeny: $\{\pa(\genqb),\pa(\genqb)\}$. \\
+\alice then applies her isogeny to the points which \bob will use in the creation of of his isogeny: $\{\pa(\genqb),\pa(\genqb)\}$. \bob performs the analogous operation.\\
 
 \noindent
-\textit{PK Exchange}. After \textcolor{blue}{Alice} and \textcolor{red}{Bob} successfully complete their key generation, they perform the following over an insecure channel:\\
+\textit{PK Exchange}: After \textcolor{blue}{Alice} and \textcolor{red}{Bob} successfully complete their key generation, they perform the following over an insecure channel:\\
 \begin{itemize}
-\item \textcolor{blue}{Alice} sends \textcolor{red}{Bob}
-\item
+\item \alice sends \bob $(E_{\ba}, \{\pa(\genpb),\pa(\genqb)\})$
+\item \bob sends \alice $(E_{\rb}, \{\pb(\genpa),\pb(\genqa)\})$
 \end{itemize}
 
 \noindent
-\textit{Secret Agreement}.\\
+\textbf{SecAgr}: After reception of \bob's tuple, \alice computes the isogeny $\phi'_A: E_{\rb} \rightarrow E_{\ba\rb}$ and \bob acts analogously. \alice and \bob then arrive at the equivalent image curve:
+$$
+E_{\ba\rb} = \phi'_{\ba}(\phi_{\rb}(E_0)) = \phi'_{\rb}(\phi_{\ba}(E_0)) = E_0/ \langle [\ma]\genpa + [\na]\genqa, [\mb]\genpb + [\nm]\genqb \rangle
+$$
+From which they can use the common j-invariant of as a shared secret $k$.
 
 \begin{figure}[htb]
 \centering
