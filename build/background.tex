@@ -96,11 +96,12 @@ executes \textbf{Prove} and the \emph{verifier} (Alice) executes \textbf{Verify}
 Execution of $\Pi_{id}$ between Alice and Bob involves the following:
 \begin{enumerate}[label=(\roman*)]
 \item Bob runs $\textbf{KeyGen}(1^\lambda)$: A probabilistic algorithm with input $1^\lambda$ and output $(sk,pk)$. 
-\item Bob sends to Alice his public key $pk$ and Alice will respond with a \emph{challenge} value $ch$.
-\item Bob runs $\textbf{Prove}(sk, ch)$: A deterministic algorithm with input $sk$ (Bob's secret key) and $ch$ (challenge) and output $resp$.
-\item Alice runs $\textbf{Verify}(pk, ch, resp)$: A deterministic algorithm with input $pk$ (Bob's public key), $ch$, and $resp$ and output $b \in {0,1}$. Bob has successfully proven his identity to Alice if $b = 1$.
+\item Bob sends to Alice his public key $pk$ and a probabilistically generated initial commitment $com$. Alice will respond with a \emph{challenge} value $ch$.
+\item Bob runs $\textbf{Prove}(sk, com, ch)$: A deterministic algorithm with input $sk$ (Bob's secret key) and $ch$ (challenge) and output $resp$.
+\item Alice runs $\textbf{Verify}(pk, com, ch, resp)$: A deterministic algorithm with input $pk$ (Bob's public key), $com$, $ch$, and $resp$ and output $b \in {0,1}$. Bob has successfully proven his identity to Alice if $b = 1$.
 \end{enumerate}
 
+If Alice accepts Bobs response, and $b = 1$, then we refer to the tuple $(com,ch,resp)$ as an \emph{accepting transcript}.
 There exist variations upon this type of primitive wherein Alice is not required to send Bob a specific challenge value. These are known as \emph{non-interactive} identification schemes, or non-interactive proofs of identity (NIPoI). These non-interactive approaches to solving the problem of identity and \emph{authentication} further bridge the gap between identification protocols and signature schemes. 
 
 \subsection{Signature Schemes}
@@ -366,11 +367,10 @@ This section will aim to accomplish two things. First, we will briefly explain t
 
 The original work of De Feo, Jao, and Plut outlines three different isogeny-based cryptographic primitives: Diffie-Hellman-esque key exchange, public key encryption, and the aforementioned zero-knowledge proof of identity. Because all three of these protocols require the same initialization and public parameters, we will begin by covering these parameters in detail. Immediately after, we will analyze the key exchange at a relatively high level. Our goal of this section is to explain in detail the algorithmic and cryptographic aspects of the ZKPoI scheme, as this forms the conceptual basis for the signature scheme we will be investigating. We begin with the key exchange protocol because its sub-routines are integral to the Yoo et al. signature implementation.
 
-For the discussion that follows, we will assume every instance of an SIDH protocol occurs between two parties, \textcolor{blue}{A} and \textcolor{red}{B} (eg. \textcolor{blue}{Alice} \& \textcolor{red}{Bob},) for which we will colorize information particular to \textcolor{blue}{A} in \textcolor{blue}{blue} and \textcolor{red}{B} in \textcolor{red}{red}. This will include private keys \& public keys as well as the variables and constants used in their generation.
+For the discussion that follows, we will assume every instance of an SIDH protocol occurs between two parties, \textcolor{blue}{A} and \textcolor{red}{B} (eg. \textcolor{blue}{Alice} \& \textcolor{red}{Bob},) for which we will colorize information particular to \textcolor{blue}{A} in \textcolor{blue}{blue} and \textcolor{red}{B} in \textcolor{red}{red}. This will include private keys \& public keys as well as the variables and constants used in their generation.\\
 
-\subsection{Public Parameters}
-
-As the name suggests, SIDH protocols work over supersingular curves (with no singular points). Let $\mathbb{F}_q = \mathbb{F}_{p^2}$ be the finite field over which our curves are defined, $\mathbb{F}_{p^2}$ denoting the quadratic extension field of $\mathbb{F}_{p}$.  $p$ is a prime defined as follows:
+\noindent
+\emph{Public Parameters}. As the name suggests, SIDH protocols work over supersingular curves (with no singular points). Let $\mathbb{F}_q = \mathbb{F}_{p^2}$ be the finite field over which our curves are defined, $\mathbb{F}_{p^2}$ denoting the quadratic extension field of $\mathbb{F}_{p}$.  $p$ is a prime defined as follows:
 $$
 p = \laea \lbeb \cdot f \pm 1
 $$
@@ -415,14 +415,14 @@ To come to the shared secret agreement, the codomain curve of their composed iso
 \noindent
 \textbf{KeyGen}: \textcolor{blue}{Alice} chooses two random numbers $\ma, \na \in \mathbb{Z}/\laea\mathbb{Z}$ such that $(\la \nmid \ma) \lor (\la \nmid \na)$. \textcolor{blue}{Alice} then computes the isogeny $\pa: E_0 \rightarrow E_{\ba}$ where $E_{\ba} = E_0 / \langle [\ma]\genpa, [\na]\genqa\rangle$ (equivalently, $ker(\pa) = \langle [\ma]\genpa, [\na]\genqa\rangle$). \bob undergoes the same procedure for random elements $\mb, \nb \in \mathbb{Z}/\lbeb\mathbb{Z}$. After completion, \alice and \bob hold their respective key pairs:
 \begin{center}
-$(sk_A, pk_A) = (\{\ma,\na\}, E_{\ba})$\\
-$(sk_B, pk_B) = (\{\mb,\nb\}, E_{\rb})$\\
+$(\ska, \pka) = (\{\ma,\na\}, E_{\ba})$\\
+$(\skb, \pkb) = (\{\mb,\nb\}, E_{\rb})$\\
 \end{center}
 
 \alice then applies her isogeny to the points which \bob will use in the creation of of his isogeny: $\{\pa(\genqb),\pa(\genqb)\}$. \bob performs the analogous operation.\\
 
 \noindent
-\textit{PK Exchange}: After \textcolor{blue}{Alice} and \textcolor{red}{Bob} successfully complete their key generation, they perform the following over an insecure channel:\\
+\textit{PK Exchange}: After \textcolor{blue}{Alice} and \textcolor{red}{Bob} successfully complete their key generation, they perform the following over an insecure channel:
 \begin{itemize}
 \item \alice sends \bob $(E_{\ba}, \{\pa(\genpb),\pa(\genqb)\})$
 \item \bob sends \alice $(E_{\rb}, \{\pb(\genpa),\pb(\genqa)\})$
@@ -431,7 +431,7 @@ $(sk_B, pk_B) = (\{\mb,\nb\}, E_{\rb})$\\
 \noindent
 \textbf{SecAgr}: After reception of \bob's tuple, \alice computes the isogeny $\phi'_A: E_{\rb} \rightarrow E_{\ba\rb}$ and \bob acts analogously. \alice and \bob then arrive at the equivalent image curve:
 $$
-E_{\ba\rb} = \phi'_{\ba}(\phi_{\rb}(E_0)) = \phi'_{\rb}(\phi_{\ba}(E_0)) = E_0/ \langle [\ma]\genpa + [\na]\genqa, [\mb]\genpb + [\nm]\genqb \rangle
+E_{\ba\rb} = \phi'_{\ba}(\phi_{\rb}(E_0)) = \phi'_{\rb}(\phi_{\ba}(E_0)) = E_0/ \langle [\ma]\genpa + [\na]\genqa, [\mb]\genpb + [\nb]\genqb \rangle
 $$
 From which they can use the common j-invariant of as a shared secret $k$.
 
@@ -444,11 +444,84 @@ From which they can use the common j-invariant of as a shared secret $k$.
 
 \subsection{Zero-Knowledge Proof of Identity}
 
-Recall the notion of a simple identification scheme:
+Recall the earlier discussed notion of an identification scheme. A canonical identification scheme $\Pi_{\text{SID}} = (\textbf{KeyGen},\textbf{Prove},\textbf{Verify})$ can be derived somewhat analogously to the SIDH protocol, and is outlined in the original work of De Feo et al.
+
+Say \bob has derived for himself the key pair $(\skb,\pkb)$ with $\skb = \{\mb,\nb\}$ and $\pkb = E_{\rb} = E_0/\langle [\mb]\genpb + [\nb]\genqb \rangle$ in relation to the public parameters $E_0$ and $\lbeb$. With $E_0$ and $E_{\rb}$ publicly known, $\Pi_{\text{ZKPoI}}$ revolves around \bob trying to prove to \alice that he knows the generator for $E_{\rb}$ without revealing it.
+
+To achieve this, \bob internally mimicks an execution of the key exchange protocol $\Pi_{SIDH}$ with an arbitrary ``random" entity \randall.\\
+
+\noindent
+\textbf{KeyGen}: Key generation is performed exactly as in $\Pi_{\text{SIDH}}$, the only difference being that in $\Pi_{\text{ZKPoI}}$ only the prover (\bob, in our example,) needs to generate a keypair.\\
+
+\noindent
+\emph{Commitment}: \bob generates a random point $\cyr \in E_0[\laea]$ along with the corresponding isogenies necessary to compute the diagram below in full (if \alice were acting as the prover in $\Pi_{\text{ZKPoI}}$, then she would choose $\cyr \in E_0[\lbeb]$). \bob sends his commitment $com$ as $(com_1,com_2) = (E/\langle \cyr \rangle, E/\langle \rb, \cyr \rangle)$ to \alice.\\
+
+\begin{center}
+\begin{tikzpicture}
+  \matrix (m) [matrix of math nodes,
+               row sep=4em,
+               column sep=4em,
+               minimum width=2em] {
+    E_0                     & E_0 / \langle \rb \rangle    \\
+    E_0 / \langle \cyr \rangle & E_0 / \langle \rb, \cyr \rangle \\
+  };
+  \path[-stealth]
+    (m-1-1) edge node [above] {$\pb$}  (m-1-2)
+    (m-1-1) edge node [left]  {$\pr$}  (m-2-1)
+    (m-2-1) edge node [below] {$\pbp$} (m-2-2)
+    (m-1-2) edge node [right] {$\prp$} (m-2-2);
+\end{tikzpicture}
+\end{center}
+
+\noindent
+\emph{Response}: \alice chooses a bit $b$ at random and sends her response $resp = b$ to \bob.\\
+
+\noindent
+\textbf{Prove}: If \alice's response bit $b = 0$ then \bob reveals the isogenies $\pr$ and $\prp$ (to do this, he can simply reveal the kernels of $\pr$ and $\prp$; $\cyr$ and $\pb(\cyr)$ respectively). This proves he knows the information necessary to form a shared secret with \randall \emph{if and only if} he happens to know the private key $\rb = \{[\mb]\genpb + [\nb]\genqb\}$. If $b = 1$, \bob reveals the isogeny $\pbp$. This proves that \bob knows the information necessary to form a shared secret with \randall \emph{if and only if} he knows \randall's secret key $\cyr$.\\
+
+\begin{center}
+\begin{tikzpicture}[scale=.55]
+	\begin{scope}[xshift=0cm]
+		\matrix (m) [matrix of math nodes,
+               row sep=4em,
+               column sep=4em,
+               minimum width=2em] {
+    E_0                     & E_0 / \langle \rb \rangle    \\
+    E_0 / \langle \cyr \rangle & E_0 / \langle \rb, \cyr \rangle \\
+		};
+		\draw[dashed] (m-1-1) edge node [above] {$\pb$}  (m-1-2);
+		\draw[->, line width=2.0] (m-1-1) edge node [left]  {$\pr$}  (m-2-1);
+		\draw[dashed] (m-2-1) edge node [below] {$\pbp$} (m-2-2);
+		\draw[->, line width=2.0] (m-1-2) edge node [right] {$\prp$} (m-2-2);
+	\end{scope}
+	\begin{scope}[xshift=10cm]
+		\matrix (m) [matrix of math nodes,
+               row sep=4em,
+               column sep=4em,
+               minimum width=2em] {
+    E_0                     & E_0 / \langle \rb \rangle    \\
+    E_0 / \langle \cyr \rangle & E_0 / \langle \rb, \cyr \rangle \\
+		};
+		\draw[dashed] (m-1-1) edge node [above] {$\pb$}  (m-1-2);
+		\draw[dashed] (m-1-1) edge node [left]  {$\pr$}  (m-2-1);
+		\draw[->, line width=2.0] (m-2-1) edge node [below] {$\pbp$} (m-2-2);
+		\draw[dashed] (m-1-2) edge node [right] {$\prp$} (m-2-2);
+	\end{scope}
+\end{tikzpicture}
+\end{center}
+
+Because \bob cannot at once reveal all of the information necessary to convince \alice that he knows $\rb$,  
+
+\noindent
+\textbf{Verify}:\\
+
+
+
+To have confidence that \bob was not impersonated by some malicious third party who merely guessed correctly. This particular construction for an identification scheme is known in the literature as a \emph{zero knowledge} proof of identity (or equivalently, a zero knowledge proof of \emph{knowledge}).
 
 \section{Fiat-Shamir Construction}
 
-The Fiat-Shamir construction (sometimes referred to as the Fiat-Shamir heuristic or transform) is used
+
 
 \subsection{Unruh's Post-Quantum Adaptation}
 
