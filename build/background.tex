@@ -524,12 +524,15 @@ How $\Pi_{\text{ZKPoK}}$ handles this is by having \bob and \alice run \textbf{P
 \item if $ch = 1$: return 1 \emph{if and only if} $\pr(\rb)$ has order $\lbeb$ and generates the kernel of an isogeny over $E_0/\langle \cyr \rangle \rightarrow E_0/\langle \rb, \cyr \rangle$.
 \end{itemize}
 
-
-To have confidence that \bob was not impersonated by some malicious third party who merely guessed correctly. This particular construction for an identification scheme is known in the literature as a \emph{zero knowledge} proof of identity (or equivalently, a zero knowledge proof of \emph{knowledge}).
+This particular construction for an identification scheme is known in the literature as a \emph{zero knowledge} proof of identity (or equivalently, a zero knowledge proof of \emph{knowledge}).
 
 \section{Fiat-Shamir Construction}
 
+The Fiat-Shamir construction (also frequently referred to as the Fiat-Shamir transform, or Fiat-Shamir hueristic,) is a high-level technique for transforming a canonical identification scheme into a secure  signature scheme. The construction relies heavily on the random oracle model 
 
+%\begin{Theorem}
+%Let $\Pi = (KeyGen, Prove, Verify)$ be a canonical identification scheme that is secure against a passive attack. Then, if $H$ is modeled as a random oracle, the signature scheme $\Pi'$ that results from applying the Fiat-Shamir transform to $\Pi$ is existentially unforgeable under an adaptive chosen-message attack.
+%\end{Theorem}
 
 \subsection{Unruh's Post-Quantum Adaptation}
 
