@@ -20,25 +20,25 @@
 \contentsline {section}{\numberline {2.6}Implementations of Isogeny Based Schemes}{14}{section.2.6}
 \contentsline {subsection}{\numberline {2.6.1}Parameters}{14}{subsection.2.6.1}
 \contentsline {subsection}{\numberline {2.6.2}Yoo et al. Signature Layer}{15}{subsection.2.6.2}
-\contentsline {subsection}{\numberline {2.6.3}Performance}{16}{subsection.2.6.3}
-\contentsline {chapter}{\numberline {3}Batching Operations for Isogenies}{17}{chapter.3}
-\contentsline {section}{\numberline {3.1}Batching Procedure in Detail}{17}{section.3.1}
-\contentsline {subsection}{\numberline {3.1.1}Projective Space}{17}{subsection.3.1.1}
-\contentsline {subsection}{\numberline {3.1.2}Remaining Opportunities}{17}{subsection.3.1.2}
-\contentsline {section}{\numberline {3.2}Implementation}{18}{section.3.2}
-\contentsline {section}{\numberline {3.3}Results}{18}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}Analysis}{19}{subsection.3.3.1}
-\contentsline {chapter}{\numberline {4}Compressed Signatures}{20}{chapter.4}
-\contentsline {section}{\numberline {4.1}Compression of Public Keys}{20}{section.4.1}
-\contentsline {subsection}{\numberline {4.1.1}<Sub-section title>}{20}{subsection.4.1.1}
-\contentsline {subsection}{\numberline {4.1.2}<Sub-section title>}{20}{subsection.4.1.2}
-\contentsline {subsection}{\numberline {4.1.3}<Sub-section title>}{20}{subsection.4.1.3}
-\contentsline {subsection}{\numberline {4.1.4}<Sub-section title>}{20}{subsection.4.1.4}
-\contentsline {subsection}{\numberline {4.1.5}<Sub-section title>}{20}{subsection.4.1.5}
-\contentsline {section}{\numberline {4.2}Implementation}{20}{section.4.2}
-\contentsline {section}{\numberline {4.3}Results}{20}{section.4.3}
-\contentsline {chapter}{\numberline {5}Discussion \& Conclusion}{21}{chapter.5}
-\contentsline {section}{\numberline {5.1}Results \& Comparisons}{21}{section.5.1}
-\contentsline {section}{\numberline {5.2}Additional Opportunities for Batching}{21}{section.5.2}
-\contentsline {section}{\numberline {5.3}Future Work}{21}{section.5.3}
-\contentsline {chapter}{Acknowledgements}{22}{section*.3}
+\contentsline {subsection}{\numberline {2.6.3}Performance}{17}{subsection.2.6.3}
+\contentsline {chapter}{\numberline {3}Batching Operations for Isogenies}{18}{chapter.3}
+\contentsline {section}{\numberline {3.1}Batching Procedure in Detail}{18}{section.3.1}
+\contentsline {subsection}{\numberline {3.1.1}Projective Space}{18}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}Remaining Opportunities}{18}{subsection.3.1.2}
+\contentsline {section}{\numberline {3.2}Implementation}{19}{section.3.2}
+\contentsline {section}{\numberline {3.3}Results}{19}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Analysis}{20}{subsection.3.3.1}
+\contentsline {chapter}{\numberline {4}Compressed Signatures}{21}{chapter.4}
+\contentsline {section}{\numberline {4.1}Compression of Public Keys}{21}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}<Sub-section title>}{21}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}<Sub-section title>}{21}{subsection.4.1.2}
+\contentsline {subsection}{\numberline {4.1.3}<Sub-section title>}{21}{subsection.4.1.3}
+\contentsline {subsection}{\numberline {4.1.4}<Sub-section title>}{21}{subsection.4.1.4}
+\contentsline {subsection}{\numberline {4.1.5}<Sub-section title>}{21}{subsection.4.1.5}
+\contentsline {section}{\numberline {4.2}Implementation}{21}{section.4.2}
+\contentsline {section}{\numberline {4.3}Results}{21}{section.4.3}
+\contentsline {chapter}{\numberline {5}Discussion \& Conclusion}{22}{chapter.5}
+\contentsline {section}{\numberline {5.1}Results \& Comparisons}{22}{section.5.1}
+\contentsline {section}{\numberline {5.2}Additional Opportunities for Batching}{22}{section.5.2}
+\contentsline {section}{\numberline {5.3}Future Work}{22}{section.5.3}
+\contentsline {chapter}{Acknowledgements}{23}{section*.3}

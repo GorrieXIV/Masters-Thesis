@@ -454,7 +454,7 @@ To achieve this, \bob internally mimicks an execution of the key exchange protoc
 \textbf{KeyGen}: Key generation is performed exactly as in $\Pi_{\text{SIDH}}$, the only difference being that in $\Pi_{\text{ZKPoI}}$ only the prover (\bob, in our example,) needs to generate a keypair.\\
 
 \noindent
-\emph{Commitment}: \bob generates a random point $\cyr \in E_0[\laea]$ along with the corresponding isogenies necessary to compute the diagram below in full (if \alice were acting as the prover in $\Pi_{\text{ZKPoI}}$, then she would choose $\cyr \in E_0[\lbeb]$). \bob sends his commitment $com$ as $(com_1,com_2) = (E/\langle \cyr \rangle, E/\langle \rb, \cyr \rangle)$ to \alice.\\
+\emph{Commitment}: \bob generates a random point $\cyr \in E_0[\laea]$ ($\cyr = [\mr]\genpa + [\nr]\genqa$) along with the corresponding isogenies necessary to compute the diagram below in full (if \alice were acting as the prover in $\Pi_{\text{ZKPoI}}$, then she would choose $\cyr \in E_0[\lbeb]$). \bob sends his commitment $com$ as $(com_1,com_2) = (E/\langle \cyr \rangle, E/\langle \rb, \cyr \rangle)$ to \alice.\\
 
 \begin{center}
 \begin{tikzpicture}
@@ -474,10 +474,10 @@ To achieve this, \bob internally mimicks an execution of the key exchange protoc
 \end{center}
 
 \noindent
-\emph{Response}: \alice chooses a bit $b$ at random and sends her response $resp = b$ to \bob.\\
+\emph{Response}: \alice chooses a bit $b$ at random and sends her challenge $ch = b$ to \bob.\\
 
 \noindent
-\textbf{Prove}: If \alice's response bit $b = 0$ then \bob reveals the isogenies $\pr$ and $\prp$ (to do this, he can simply reveal the kernels of $\pr$ and $\prp$; $\cyr$ and $\pb(\cyr)$ respectively). This proves he knows the information necessary to form a shared secret with \randall \emph{if and only if} he happens to know the private key $\rb = \{[\mb]\genpb + [\nb]\genqb\}$. If $b = 1$, \bob reveals the isogeny $\pbp$. This proves that \bob knows the information necessary to form a shared secret with \randall \emph{if and only if} he knows \randall's secret key $\cyr$.\\
+\textbf{Prove}: If \alice's response bit $ch = 0$ then \bob reveals the isogenies $\pr$ and $\prp$ (to do this, he can simply reveal the kernels of $\pr$ and $\prp$; $\cyr$ and $\pb(\cyr)$ respectively). This proves he knows the information necessary to form a shared secret with \randall \emph{if and only if} he happens to know the private key $\rb = \{[\mb]\genpb + [\nb]\genqb\}$. If $ch = 1$, \bob reveals the isogeny $\pbp$. This proves that \bob knows the information necessary to form a shared secret with \randall \emph{if and only if} he knows \randall's secret key $\cyr$.\\
 
 \begin{center}
 \begin{tikzpicture}[scale=.55]
@@ -510,11 +510,19 @@ To achieve this, \bob internally mimicks an execution of the key exchange protoc
 \end{tikzpicture}
 \end{center}
 
-Because \bob cannot at once reveal all of the information necessary to convince \alice that he knows $\rb$,  
+Note that \bob cannot at once reveal all of the information necessary to convince \alice that he knows $\rb$. If he reveals $\cyr$, $\pb(\cyr)$, and $\pbp$ all in one go, he incidentally reveals his secret key $\rb = [\mb]\genpb + [\nb]\genqb$. This is because \bob reveals $\pbp$ by revealing the generator of $ker(\pbp)$, namely:
+$$
+(\rb, \cyr) = [\mb]\genpb + [\nb]\genqb, [\mr]\genpa + [\nr]\genqa \rangle
+$$
+
+How $\Pi_{\text{ZKPoK}}$ handles this is by having \bob and \alice run \textbf{Prove()} and \textbf{Verify()} for $\lambda$ iterations, with a different $(com, ch, resp)$ transcript generated for every instance. This way, if \bob is able to provide a $resp$ that satisfies \alice's $ch$ for every iteration, she can be sufficiently confident that \bob has knowledge of $\rb$.\\
 
 \noindent
-\textbf{Verify}:\\
-
+\textbf{Verify}($pk, com, ch$): Like the proving procedure, verification is a conditional function depending on the value of $b$:
+\begin{itemize}
+\item if $ch = 0$: return 1 \emph{if and only if} $\cyr$ and $\pb(\cyr)$ have order $\laea$ and generate the kernels of isogenies from $E_0 \rightarrow E_0/\langle \cyr \rangle$ and $E_0/\langle \rb \rangle \rightarrow E_0/\langle \rb, \cyr \rangle$ respectively.
+\item if $ch = 1$: return 1 \emph{if and only if} $\pr(\rb)$ has order $\lbeb$ and generates the kernel of an isogeny over $E_0/\langle \cyr \rangle \rightarrow E_0/\langle \rb, \cyr \rangle$.
+\end{itemize}
 
 
 To have confidence that \bob was not impersonated by some malicious third party who merely guessed correctly. This particular construction for an identification scheme is known in the literature as a \emph{zero knowledge} proof of identity (or equivalently, a zero knowledge proof of \emph{knowledge}).
