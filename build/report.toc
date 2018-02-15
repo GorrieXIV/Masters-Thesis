@@ -8,6 +8,7 @@
 \contentsline {subsection}{\numberline {2.1.1}Key Exchange}{4}{subsection.2.1.1}
 \contentsline {subsection}{\numberline {2.1.2}Interactive Identification Schemes}{6}{subsection.2.1.2}
 \contentsline {subsection}{\numberline {2.1.3}Signature Schemes}{7}{subsection.2.1.3}
+\contentsline {subsection}{\numberline {2.1.4}The Random Oracle Model}{7}{subsection.2.1.4}
 \contentsline {section}{\numberline {2.2}Algebraic Geometry \& Isogenies}{7}{section.2.2}
 \contentsline {subsection}{\numberline {2.2.1}Elliptic Curves}{11}{subsection.2.2.1}
 \contentsline {subsection}{\numberline {2.2.2}Isogenies \& Their Properties}{14}{subsection.2.2.2}
@@ -16,29 +17,32 @@
 \contentsline {subsection}{\numberline {2.3.2}Zero-Knowledge Proof of Identity}{18}{subsection.2.3.2}
 \contentsline {section}{\numberline {2.4}Fiat-Shamir Construction}{20}{section.2.4}
 \contentsline {subsection}{\numberline {2.4.1}Unruh's Post-Quantum Adaptation}{21}{subsection.2.4.1}
-\contentsline {section}{\numberline {2.5}Isogeny Based Signatures}{21}{section.2.5}
-\contentsline {section}{\numberline {2.6}Implementations of Isogeny Based Schemes}{21}{section.2.6}
-\contentsline {subsection}{\numberline {2.6.1}Parameters}{21}{subsection.2.6.1}
-\contentsline {subsection}{\numberline {2.6.2}Yoo et al. Signature Layer}{21}{subsection.2.6.2}
-\contentsline {subsection}{\numberline {2.6.3}Performance}{23}{subsection.2.6.3}
-\contentsline {chapter}{\numberline {3}Batching Operations for Isogenies}{25}{chapter.3}
-\contentsline {section}{\numberline {3.1}Batching Procedure in Detail}{25}{section.3.1}
-\contentsline {subsection}{\numberline {3.1.1}Projective Space}{26}{subsection.3.1.1}
-\contentsline {subsection}{\numberline {3.1.2}Remaining Opportunities}{26}{subsection.3.1.2}
-\contentsline {section}{\numberline {3.2}Implementation}{27}{section.3.2}
-\contentsline {section}{\numberline {3.3}Results}{27}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}Analysis}{28}{subsection.3.3.1}
-\contentsline {chapter}{\numberline {4}Compressed Signatures}{29}{chapter.4}
-\contentsline {section}{\numberline {4.1}Compression of Public Keys}{29}{section.4.1}
-\contentsline {subsection}{\numberline {4.1.1}<Sub-section title>}{29}{subsection.4.1.1}
-\contentsline {subsection}{\numberline {4.1.2}<Sub-section title>}{29}{subsection.4.1.2}
-\contentsline {subsection}{\numberline {4.1.3}<Sub-section title>}{29}{subsection.4.1.3}
-\contentsline {subsection}{\numberline {4.1.4}<Sub-section title>}{29}{subsection.4.1.4}
-\contentsline {subsection}{\numberline {4.1.5}<Sub-section title>}{30}{subsection.4.1.5}
-\contentsline {section}{\numberline {4.2}Implementation}{30}{section.4.2}
-\contentsline {section}{\numberline {4.3}Results}{30}{section.4.3}
-\contentsline {chapter}{\numberline {5}Discussion \& Conclusion}{31}{chapter.5}
-\contentsline {section}{\numberline {5.1}Results \& Comparisons}{31}{section.5.1}
-\contentsline {section}{\numberline {5.2}Additional Opportunities for Batching}{31}{section.5.2}
-\contentsline {section}{\numberline {5.3}Future Work}{31}{section.5.3}
-\contentsline {chapter}{Acknowledgements}{32}{section*.3}
+\contentsline {section}{\numberline {2.5}Isogeny Based Signatures}{22}{section.2.5}
+\contentsline {subsection}{\numberline {2.5.1}Algorithmic Definitions}{22}{subsection.2.5.1}
+\contentsline {section}{\numberline {2.6}Implementations of Isogeny Based Cryptographic Protocols}{23}{section.2.6}
+\contentsline {subsection}{\numberline {2.6.1}Parameters}{24}{subsection.2.6.1}
+\contentsline {subsection}{\numberline {2.6.2}Overall Design}{24}{subsection.2.6.2}
+\contentsline {subsection}{\numberline {2.6.3}Key Exchange}{24}{subsection.2.6.3}
+\contentsline {subsection}{\numberline {2.6.4}Yoo et al. Signature Layer}{24}{subsection.2.6.4}
+\contentsline {subsection}{\numberline {2.6.5}Performance}{24}{subsection.2.6.5}
+\contentsline {chapter}{\numberline {3}Batching Operations for Isogenies}{26}{chapter.3}
+\contentsline {section}{\numberline {3.1}Batching Procedure in Detail}{26}{section.3.1}
+\contentsline {subsection}{\numberline {3.1.1}Projective Space}{27}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}Remaining Opportunities}{27}{subsection.3.1.2}
+\contentsline {section}{\numberline {3.2}Implementation}{28}{section.3.2}
+\contentsline {section}{\numberline {3.3}Results}{28}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Analysis}{29}{subsection.3.3.1}
+\contentsline {chapter}{\numberline {4}Compressed Signatures}{30}{chapter.4}
+\contentsline {section}{\numberline {4.1}Compression of Public Keys}{30}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}<Sub-section title>}{30}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}<Sub-section title>}{30}{subsection.4.1.2}
+\contentsline {subsection}{\numberline {4.1.3}<Sub-section title>}{30}{subsection.4.1.3}
+\contentsline {subsection}{\numberline {4.1.4}<Sub-section title>}{30}{subsection.4.1.4}
+\contentsline {subsection}{\numberline {4.1.5}<Sub-section title>}{31}{subsection.4.1.5}
+\contentsline {section}{\numberline {4.2}Implementation}{31}{section.4.2}
+\contentsline {section}{\numberline {4.3}Results}{31}{section.4.3}
+\contentsline {chapter}{\numberline {5}Discussion \& Conclusion}{32}{chapter.5}
+\contentsline {section}{\numberline {5.1}Results \& Comparisons}{32}{section.5.1}
+\contentsline {section}{\numberline {5.2}Additional Opportunities for Batching}{32}{section.5.2}
+\contentsline {section}{\numberline {5.3}Future Work}{32}{section.5.3}
+\contentsline {chapter}{Acknowledgements}{33}{section*.3}

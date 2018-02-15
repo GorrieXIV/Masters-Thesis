@@ -102,6 +102,7 @@ Execution of $\Pi_{id}$ between Alice and Bob involves the following:
 \end{enumerate}
 
 If Alice accepts Bobs response, and $b = 1$, then we refer to the tuple $(com,ch,resp)$ as an \emph{accepting transcript}.
+
 There exist variations upon this type of primitive wherein Alice is not required to send Bob a specific challenge value. These are known as \emph{non-interactive} identification schemes, or non-interactive proofs of identity (NIPoI). These non-interactive approaches to solving the problem of identity and \emph{authentication} further bridge the gap between identification protocols and signature schemes. 
 
 \subsection{Signature Schemes}
@@ -116,6 +117,8 @@ Execution of $\Pi_{sig}$ between Alice and Bob for a particular message $m$ sent
 \item Bob sends $m$ and $\sigma$ to Alice.
 \item Alice runs $\textbf{Verify}(pk, m, \sigma)$: A deterministic algorithm with input $pk$ (Bob's public key), $m$, and $\sigma$ and output $b \in {0,1}$. Alice has confidence in the \emph{integrity} and origin \emph{authenticity} of $m$ if $b = 1$.
 \end{enumerate}
+
+\subsection{The Random Oracle Model}
 
 \section{Algebraic Geometry \& Isogenies}
 \emph{Groups \& Varieties}. A \textbf{group} is a 2-tuple composed of a set of elements and a corresponding group operation (also referred to as the group \emph{law}). Given some group defined by the set $G$ and the operation $\cdot$ (written as $(G,\cdot)$) it is typical to refer to the group simply as $G$. If $\cdot$ is equivalent to some rational mapping[footnote about rational mappings] $f_G: G \rightarrow G$, then the group $(G,\cdot)$ is said to form an \textit{algebraic variety}[footnote about the inverse function]. A group which is also an algebraic variety is referred to as an \textbf{algebraic group}.
@@ -528,52 +531,41 @@ This particular construction for an identification scheme is known in the litera
 
 \section{Fiat-Shamir Construction}
 
-The Fiat-Shamir construction (also frequently referred to as the Fiat-Shamir transform, or Fiat-Shamir hueristic,) is a high-level technique for transforming a canonical identification scheme into a secure  signature scheme. The construction relies heavily on the random oracle model 
+The Fiat-Shamir construction (also frequently referred to as the Fiat-Shamir transform, or Fiat-Shamir hueristic,) is a high-level technique for transforming a canonical identification scheme into a secure  signature scheme.
 
-%\begin{Theorem}
-%Let $\Pi = (KeyGen, Prove, Verify)$ be a canonical identification scheme that is secure against a passive attack. Then, if $H$ is modeled as a random oracle, the signature scheme $\Pi'$ that results from applying the Fiat-Shamir transform to $\Pi$ is existentially unforgeable under an adaptive chosen-message attack.
-%\end{Theorem}
+The construction is rather simple. The idea is to first transform a given interactive identification protocol $\Pi_{\text{ID}}$ into a \emph{non-interactive} identification protocol. To achieve this, instead of allowing input from the verifier $\mathcal{V}$, we have our prover $\mathcal{P}$ generate the challenge $ch$ by itself. In order for the verifier to be able to check that $ch$ was generated honestly, we define $ch = H(com)$, where $H$ is some secure hash function. If we model $H$ as a \emph{random oracle}[ref], $H(com)$ is truly random; from this it can be shown that it is just as difficult for an impersonator of $\mathcal{P}$ to find an accepting transcript $(com, H(com), resp)$ as it would be for them to successfully impersonate $\mathcal{P}$ in $\Pi_{\text{ID}}$.
+
+Now that we've paired $\Pi_{\text{ID}}$ with $H$ to achieve a non-interactive identification scheme $\Pi_{\text{NID}}$, we need only to factor in some message $m$ from $\mathcal{P}$ to have constructed a signature scheme $\Pi_{\text{ID}}'$. This can be achieved by including $m$ in our calculation of the challenge: $ch = H(com, m)$. Therefore, given theorem \ref{thm:fiatshamir}, if $(com, H(com), resp)$ is an accepting transcript of $\Pi_{\text{NID}}$, then $(com, H(com, m), resp)$ is a secure signature for the message $m$. Of course, because $H(com, m)$ can be constructed by any passively observing party, it is redundant to include; and so $(com,resp)$ constitutes a valid signature for $m$. A proof of theorem \ref{thm:fiatshamir} can be found in \cite{sigs}. The security of the Fiat-Shamir construct was first proven by Pointcheval \& Stern in \cite{fsproof}.
+
+\begin{tcolorbox}
+\begin{theorem}[Fiat-Shamir Security]
+\label{thm:fiatshamir}
+Let $\Pi_{\text{ID}} = (\textbf{KeyGen}, \textbf{Prove}, \textbf{Verify})$ be a canonical identification scheme that is secure against a passive attack. Then, if $H$ is modeled as a random oracle, the signature scheme $\Pi_{\text{ID}}'$ that results from applying the Fiat-Shamir transform to $\Pi_{\text{ID}}$ is existentially unforgeable under an adaptive chosen-message attack.
+\end{theorem}
+\end{tcolorbox}
 
 \subsection{Unruh's Post-Quantum Adaptation}
 
+In 2014, Ambainis et al. showed that classical security proofs for ``proof of knowledge" protocols are insecure in the quantum setting. This is due to a technique used in the proof of FST's security whereby the random oracle is subject to ``rewinding": the proof simulates multiple runs of FST with different responses from the random oracle \cite{rewinding}.
+
+Following this insight, Unruh proposed in 2015 a construction based off that of Fiat \& Shamir which he proved to be secure in both the classical and quantum random oracle models.
+
+Because the focus of this dissertation is not the security (post-quantum or otherwise) of any particular protocol, our coverage in this section is left brief. 
 
 \section{Isogeny Based Signatures}
 
-Now that we've introduced the zero-knowledge proof of identity scheme from [REFERENCE] as well as Unruh's quantum-safe Fiat-Shamir adaption, the isogeny based signature scheme presented by Yoo et. Al is a near-trivial application of the latter to the former. 
+Now that we've seen the zero-knowledge proof of identity (ZKPoI) scheme from \cite{djp} as well as Unruh's quantum-safe Fiat-Shamir adaption, we have presented all of the material necessary for an indepth analysis of the isogeny based signature scheme presented by Yoo et. Al. The signature protocol, which we'll denote as $\Sigma'$, is a near-trivial application of Unruh's construction to the SIDH ZKPoI. In this section we will refer to the SIDH ZKPoI as $\Sigma$.
 
-The isogeny based signature scheme presented by Yoo et. Al is defined, in the traditional manner, by a tuple of algorithms. Namely, the scheme is defined by the tuple (KeyGen, Sign, Verify) with each algorithm loosely defined as follows:\\
+The public parameters used in $\Sigma'$ are the same as outlined above for all of the protocols found in \cite{djp}. Namely, we have $p = \laea\lbeb \cdot f$
+
+$\Sigma'$ is defined in the traditional manner, by a tuple of algorithms for key generation, signing, and verifying: $\Sigma' = (\textbf{KeyGen}, \textbf{Sign}, \textbf{Verify})$.\\
+
+\noindent
 \textbf{KeyGen(}\textbf{)}: Select a random point $S$ of order $\ell_{A}^{e_A}$, compute the isogeny $\phi: E \rightarrow E/ \langle S \rangle$. Return (pk, sk) where pk = $(E/ \langle S \rangle, \phi(P_B), \phi(Q_B))$ and sk = $S$.\\
 \textbf{Sign()}:\\
 \textbf{Verify()}:\\
 
-
-\section{Implementations of Isogeny Based Schemes}
-
-\subsection{Parameters}
-
-Figure [ref] illustrates the relationship between abstraction levels of the SIDH protocol and modules of the SIDH C library.\\
-
-\noindent
-\emph{Key Representation}.
-
-\begin{figure}[htb]
-\centering
-\includegraphics[scale=0.7]{halfmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
-\caption{Relationship between SIDH key exchange \& MR SIDH C library}
-\label{fig:halfmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
-\end{figure}
-
-\subsection{Yoo et al. Signature Layer}
-
-\begin{figure}[htb]
-\centering
-\includegraphics[scale=0.7]{fullmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
-\caption{Relationship between SIDH based signatures \& Our fork of the SIDH C library}
-\label{fig:fullmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
-\end{figure}
-
-
-Shortly after, the following, more in-depth algorithms are given as definitions: 
+\subsection{Algorithmic Definitions}
 
 \begin{algorithm}
 \caption{KeyGen($\lambda$)}\label{euclid}
@@ -629,9 +621,43 @@ Shortly after, the following, more in-depth algorithms are given as definitions:
 
 \If{all checks succeed}
 	\State \Return 1
+\Else
+	\State \Return 0
 \EndIf
 \end{algorithmic}
 \end{algorithm}
+
+\section{Implementations of Isogeny Based Cryptographic Protocols}
+
+Having now introduced all of the necessary 
+
+\subsection{Parameters}
+
+Figure [ref] illustrates the relationship between abstraction levels of the SIDH protocol and modules of the SIDH C library.\\
+
+\noindent
+\emph{Key Representation}.
+
+\subsection{Overall Design}
+
+\subsection{Key Exchange}
+
+\begin{figure}[htb]
+\centering
+\includegraphics[scale=0.7]{halfmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
+\caption{Relationship between SIDH key exchange \& MR SIDH C library}
+\label{fig:halfmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
+\end{figure}
+
+\subsection{Yoo et al. Signature Layer}
+
+\begin{figure}[htb]
+\centering
+\includegraphics[scale=0.7]{fullmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
+\caption{Relationship between SIDH based signatures \& Our fork of the SIDH C library}
+\label{fig:fullmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
+\end{figure}
+
 
 If we transcribe the above to the language of the Microsoft SIDH API, we have in essense the following:\\
 
