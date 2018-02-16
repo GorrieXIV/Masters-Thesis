@@ -629,18 +629,24 @@ $\Sigma'$ is defined in the traditional manner, by a tuple of algorithms for key
 
 \section{Implementations of Isogeny Based Cryptographic Protocols}
 
-Having now introduced all of the necessary 
+Having now introduced all of the background material necessary for understanding SIDH and the isogeny-based signature scheme in detail, we will breifly 
 
 \subsection{Parameters}
 
-Figure [ref] illustrates the relationship between abstraction levels of the SIDH protocol and modules of the SIDH C library.\\
+\noindent
+\emph{Data Structures}.
+
+\noindent
+\emph{Curve Parameters}.
 
 \noindent
 \emph{Key Representation}.
 
 \subsection{Overall Design}
 
-\subsection{Key Exchange}
+The SIDH library is designed with several layers of abstraction. 
+
+Figure \ref{fig:halfmap} illustrates the relationship between abstraction levels of the SIDH protocol and modules of the SIDH C library.\\
 
 \begin{figure}[htb]
 \centering
@@ -648,6 +654,9 @@ Figure [ref] illustrates the relationship between abstraction levels of the SIDH
 \caption{Relationship between SIDH key exchange \& MR SIDH C library}
 \label{fig:halfmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
 \end{figure}
+
+\subsection{Key Exchange}
+
 
 \subsection{Yoo et al. Signature Layer}
 
