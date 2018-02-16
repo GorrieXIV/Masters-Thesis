@@ -1,14 +1,14 @@
 \chapter{Technical Background}
 
-This chapter will cover the following preliminary topics: cryptographic primitives, isogenies and their relevant properties, supersingular isogeny Diffie-Hellman (SIDH), the Fiat-Shamir construction for digital signatures (and its quantum-safe adaptation), current landscape of isogeny based signature schemes, and finally the C implementations of isogeny based schemes with which we are concerned.
+This chapter will cover the following preliminary topics: cryptographic primitives, isogenies and their relevant properties, supersingular isogeny Diffie-Hellman (SIDH), the Fiat-Shamir construction for digital signatures (and its quantum-safe adaptation), the current landscape of isogeny based signature schemes, and finally the C implementations of isogeny based protocols with which we are concerned.
 
-In the first section of this chapter we will introduce a few cryptographic schemes for the readers who may not be entirely familiar with modern cryptography. We will cover key exchange, identification schemes, and signature schemes - all at as high of an abstraction level as possible. Readers familiar with these topics can skip this section without harm. 
+In the first section of this chapter we will take some time to introduce a few ideas from modern cryptography. We will cover key exchange, identification schemes, and signature schemes - all at as high of an abstraction level as possible. Readers familiar with these topics can skip this section without harm. 
 
 Our discussion of isogenies will begin with some basic coverage of the underlying algebra. We will provide the material necessary for the remaining sections as we build up in the level of abstraction; working our way through groups, finite fields, elliptic curves, and finally isogenies and their properties.
 
-Once we have presented the necessary algebra, we will illustrate the specifics of the supersingular isogeny Diffie-Hellman key-exchange protocol. We will spend most of this time dedicated to a modular deconstruction of the protocol, looking at the high-level procedures and algorithms which will be necessary for understanding in detail the signature protocol to come. This subsection will end with a briefing and analysis of the closely related zero-knowledge proof of identity (ZKPoI) isogeny protocol proposed in the original De Feo et al. paper\cite{djp}, as it is the foundation for the isogeny based signature scheme presented by Yoo et al\cite{yoo}.
+Once we have presented the necessary algebra, we will illustrate the specifics of the supersingular isogeny Diffie-Hellman key-exchange protocol. We will spend most of this time dedicated to a modular deconstruction of the protocol, looking at the high-level procedures and algorithms which will be necessary for understanding in detail the signature protocol to come. This subsection will end with a briefing and analysis of the closely related zero-knowledge proof of identity (ZKPoI) isogeny protocol proposed in the original De Feo et al. paper (\cite{djp}), as it is the foundation for the isogeny based signature scheme presented by Yoo et al in \cite{yoo}.
 
-In section 2.3 we will discuss the Fiat-Shamir transformation\cite{sigs}; a technique which, given a secure interactive proof of knowledge (\emph{identification scheme}), creates a secure digital signature scheme. We will also look at the quantum-secure adaptation published by Unruh\cite{unruh}, for applying a non-quantum-resistant transform to a quantum-resistant primitive would be rather frivolous.
+In section 2.3 we will discuss the Fiat-Shamir transformation\cite{sigs}; a technique which, given a secure interactive identification scheme, creates a secure digital signature scheme. We will also look at the quantum-secure adaptation published by Unruh in \cite{unruh}, for applying a non-quantum-resistant transform to a quantum-resistant primitive would be rather frivolous.
 
 Section 2.4 will be dedicated to covering current isogeny-based signature schemes - the topic of which this dissertation is mainly concerned. We will discuss the signature scheme of Yoo et al., which is a near direct application of Unruh's work to the SIDH zero-knowledge proof of identity.
 
@@ -45,18 +45,18 @@ A key exchange protocol, which we'll denote as $\Pi_{kex}$, can be represented i
 
 Execution of $\Pi_{kex}$ between Alice and Bob involves the following:
 \begin{enumerate}[label=(\roman*)]
-\item Alice and Bob run $\textbf{KeyGen}(1^\lambda)$: A probabilistic algorithm with input $1^\lambda$ and output $(sk,pk)$. Typically $pk$ is the image of $g(sk)$, where $h$ is some \emph{one-way} function.
+\item Alice and Bob run $\textbf{KeyGen}(1^\lambda)$: A probabilistic algorithm with input $1^\lambda$ and output $(sk,pk)$. Typically $pk$ is the image of $f(sk)$, where $f$ is some \emph{one-way} function.
 \item Alice and Bob exchange (over an insecure channel) their public keys $pk_{\text{Alice}}$ and $pk_{\text{Bob}}$.
 \item Alice runs $\textbf{SecAgr}(sk_{\text{Alice}}, pk_{\text{Bob}})$: A deterministic algorithm with input $sk_{\text{Alice}}$ and $pk_{\text{Bob}}$ and output $k_{\text{Alice}} \in \{0,1\}^\lambda$. Bob runs $\textbf{SecAgr}(sk_{\text{Bob}}, pk_{\text{Alice}})$.
 \end{enumerate}
 
-$\Pi_{kex}$ is said to uphold \emph{correctness} if $k_{Alice} = k_{Bob}$. Because we deal only with correct $\Pi_{kex}$, we refer to the output of $\Pi_{kex}$ as simply $k$. Figure \ref{fig:diffiehellman} illustrates an execution of the Diffie-Hellman key exchange protocol which relies on the difficulty of the \emph{discrete logarithm} problem for its one-way function $h$.\\
+$\Pi_{kex}$ is said to uphold \emph{correctness} if $k_{Alice} = k_{Bob}$. Because we deal only with correct $\Pi_{kex}$, we refer to the output of $\Pi_{kex}$ as simply $k$. Figure \ref{fig:diffiehellman} illustrates an execution of the Diffie-Hellman key exchange protocol which relies on the difficulty of the \emph{discrete logarithm} problem for its one-way function $f$.\\
 
 \begin{figure}[!h]
 \begin{center}
 \begin{tikzpicture}
   % Public parameter:
-  \node[draw=none,fill=none,align=center] (public) at (0,1) {Public parameter:\\g, p};
+  \node[draw=none,fill=none,align=center] (public) at (0,1) {Public parameter:\\$g, p$};
   
   % Alice
   \node[draw] (Alice) at (-2,0) {Alice}; 
@@ -65,7 +65,7 @@ $\Pi_{kex}$ is said to uphold \emph{correctness} if $k_{Alice} = k_{Bob}$. Becau
   % Calculations of Alice
   \node[draw=none,fill=none,anchor=east] (asecret) at ($(Alice) + (0,-1)$) {$a \in_{R} \{2,\dots,p-2\}$};
   \node[draw=none,fill=none,anchor=east] (Apublic) at ($(Alice) + (0,-2)$) {$A = g^{a} \bmod{p}$};
-  \node[draw=none,fill=none,anchor=east] (akey) at ($(Alice) + (0,-4)$) {$K = (B)^{a} = g^{ba}$};
+  \node[draw=none,fill=none,anchor=east] (akey) at ($(Alice) + (0,-4)$) {$k = (B)^{a} = g^{ba}$};
     
   % Bob
   \node[draw] (Bob) at (2,0) {Bob}; 
@@ -74,7 +74,7 @@ $\Pi_{kex}$ is said to uphold \emph{correctness} if $k_{Alice} = k_{Bob}$. Becau
   % Calculations of Bob
   \node[draw=none,fill=none,anchor=west] (bsecret) at ($(Bob) + (0,-1)$) {$b \in_{R} \{2,\dots,p-2\}$};
   \node[draw=none,fill=none,anchor=west] (Bpublic) at ($(Bob) + (0,-2)$) {$B = g^{b} \bmod{p}$};
-  \node[draw=none,fill=none,anchor=west] (bkey) at ($(Bob) + (0,-4)$) {$K = (A)^{b} = g^{ab}$};
+  \node[draw=none,fill=none,anchor=west] (bkey) at ($(Bob) + (0,-4)$) {$k = (A)^{b} = g^{ab}$};
    
   % Messages
   \draw[->,thick] ($(Alice)+(0,-2)$) -- ($(Bob)+(0,-2.5)$) node [pos=0.5,above,font=\footnotesize] {A};
@@ -90,7 +90,7 @@ $\Pi_{kex}$ is said to uphold \emph{correctness} if $k_{Alice} = k_{Bob}$. Becau
 
 Imagine Alice wishes to confirm the identity of Bob. The idea behind interactive identification protocols is to offer Bob some way of proving to Alice (or anyone) that he has knowledge of some secret which \textbf{only} Bob could possess. The goal, of course, being to accomplish this without openly revealing the secret, so that it can continue to be used as an identifier for Bob. 
 
-An identification scheme (or otherwise ``proof of knowledge" or ``proof of identity") $\Pi_{id}$ is composed of by the tuple of polynomial-time algorithms (\textbf{KeyGen}, \textbf{Prove}, \textbf{Verify}). $\Pi_{id}$ is an interactive protocol, wherein the \emph{prover} (Bob, for example) 
+An identification scheme (or otherwise ``proof of identity") $\Pi_{id}$ is composed of by the tuple of polynomial-time algorithms (\textbf{KeyGen}, \textbf{Prove}, \textbf{Verify}). $\Pi_{id}$ is an interactive protocol, wherein the \emph{prover} (Bob, for example) 
 executes \textbf{Prove} and the \emph{verifier} (Alice) executes \textbf{Verify}.
 
 Execution of $\Pi_{id}$ between Alice and Bob involves the following:
@@ -107,16 +107,16 @@ There exist variations upon this type of primitive wherein Alice is not required
 
 \subsection{Signature Schemes}
 
-There are two main differences between signature schemes and interactive identification schemes. The first is equivalent to the difference between Second, because we wish to authenticate Bob on every message, our scheme needs to be run every time Bob wishes to send a message to Alice. We must also include Bob's message $m$ in our execution of \textbf{Verify} (which in the context of signatures, we call \textbf{Sign}). And so, a signature scheme can be thought of as an NIPoI executed with respect to a particular message. We define a signature scheme as the tuple of algorithms $\Pi_{sig}$ = (\textbf{KeyGen}, \textbf{Sign}, \textbf{Verify}).
-
-Execution of $\Pi_{sig}$ between Alice and Bob for a particular message $m$ sent from Bob to Alice involves the following:
+We define a signature scheme as the tuple of algorithms $\Pi_{sig}$ = (\textbf{KeyGen}, \textbf{Sign}, \textbf{Verify}).Execution of $\Pi_{sig}$ between Alice and Bob for a particular message $m$ sent from Bob to Alice involves the following:
 \begin{enumerate}[label=(\roman*)]
 \item Bob runs $\textbf{KeyGen}(1^\lambda)$: A probabilistic algorithm with input $1^\lambda$ and output $(sk,pk)$.
-\item Bob sends his public key to Alice.
-\item Bob runs $\textbf{Sign}(sk, m)$: A deterministic algorithm with input $sk$ (Bob's secret key) and $m$ (the message Bob wishes to authorize) and output $\sigma$, known as a \emph{signature}.
+\item Bob sends his public key $pk$ to Alice over an authenticated channel.
+\item Bob runs $\textbf{Sign}(sk, m)$: A probabilistic algorithm with input $sk$ (Bob's secret key) and $m$ (the message Bob wishes to authorize) and output $\sigma$, known as a \emph{signature}.
 \item Bob sends $m$ and $\sigma$ to Alice.
 \item Alice runs $\textbf{Verify}(pk, m, \sigma)$: A deterministic algorithm with input $pk$ (Bob's public key), $m$, and $\sigma$ and output $b \in {0,1}$. Alice has confidence in the \emph{integrity} and origin \emph{authenticity} of $m$ if $b = 1$.
 \end{enumerate}
+
+As previously alluded to, it is worth noting that signature protocols and identification schemes are closely related. In essence, they are rather similar; but with two main differences. The first is rather comparable to the aforementioned difference between interactive identification schemes and non-interactive identification schemes. The second arises as a result of aiming to authenticate Bob on any particular message $m$. To achieve this, the signature scheme needs to be run every time Bob wishes to send a message to Alice. The details of this comparison are intentionally left vague, as it will from a topic of close inspection in section 2.4.
 
 \subsection{The Random Oracle Model}
 
@@ -171,22 +171,22 @@ The \emph{kernel} of a particular homomorphism $h: G \rightarrow H$  is the set 
 \noindent
 \emph{Fields \& Field Extensions}. A \textbf{field} is a mathematical structure which, while being similar to a group, demands additional properties. Fields are defined by some set $F$ and two operations: \emph{addition} and \emph{multiplication}. In order for some tuple $(F,+,\cdot)$ to constitute a field, it must satisfy an assortment of axioms:\\
 
-\emph{addition axioms}:
+\emph{Addition axioms}:
 \begin{itemize}
-\item If $x \in F$ and $y \in F$, then $x + y \in F$.
+\item (closure) If $x \in F$ and $y \in F$, then $x + y \in F$.
 \item $+$ is commutative.
 \item $+$ is associative.
 \item $F$ contains an element 0 such that $\forall x \in F$ we have $0 + x = x$.
 \item $\forall x \in F$ there is a corresponding element $-x \in F$ such that $x + (-x) = 0$.
 \end{itemize}
 
-\emph{multiplication axioms}:
+\emph{Multiplication axioms}:
 \begin{itemize}
-\item If $x \in F$ and $y \in F$, then $x \cdot y \in F$.
+\item (closure) If $x \in F$ and $y \in F$, then $x \cdot y \in F$.
 \item $\cdot$ is commutative.
 \item $\cdot$ is associative.
 \item $F$ contains an element $1 \neq 0$ such that $\forall x \in F$ we have $x \cdot 1 = x$.
-\item $\forall x \neq 0 \in F$ there is a corresponding element $1/x \in F$ such that $x \cdot (1/x) = 1$.
+\item $\forall x \neq 0 \in F$ there is a corresponding element $x^{-1} \in F$ such that $x \cdot (x^{-1}) = 1$.
 \end{itemize}
 
 Additionally, a field $(F,+,\cdot)$ must uphold the \emph{distributive law}, namely:
@@ -218,7 +218,7 @@ y^2 + a_{1}xy + a_{3}y = x^3 + a_{2}x^2 + a_{4}x + a_6.
 $$
 This representation encapsulates elliptic curves defined over any field. If, however, we are dicussing curves defined specifically over a field $K$ such that $\text{char}(K) > 3$[ref], then the more compact form $y^2 = x^3 + ax + b$ can be applied (see figure \ref{fig:groupop} for a geometric visualization). In this dissertation we will default to this second representation, as the schemes with which we are concerned will always be defined over $\mathbb{F}_p$ for some large prime $p$.
 
-Within algebraic geometry, it is common practice to define a group structure over the points of a given elliptic curve (or any other smooth cubic curve). If we wish to define a group in accordance to a particular curve, we do so with the following notation:
+We can define a group structure over the points of a given elliptic curve (or any other smooth cubic curve). If we wish to define a group in accordance to a particular curve, we do so with the following notation:
 $$
 E: y^2 = x^3 + ax + b
 $$
@@ -227,7 +227,7 @@ Wherein $E$ denotes the group in question, the elements of which are all the poi
 \noindent
 \emph{The Group Law}. The group operation we define for $E$, denoted $+$, is better understood geometrically than algebraically. Consider the following.
 
-Given two elements $P$ and $Q$ of some arbitrary elliptic curve group $E$, we define $+$ geometrically as follows: drawing the line $L$ formed by points $P$ and $Q$, we follow $L$ to its third intersection on the curve, which we will denote as $R = (x_R, y_R)$. We then set $P + Q = -R$, where $-R$ is the reflection of $R$ over the x-axis: $(x_R, -y_R)$. See figure \ref{fig:groupop} for an illustrated representation of this process.
+Given two elements $P$ and $Q$ of some arbitrary elliptic curve group $E$, we define $+$ geometrically as follows: drawing the line $L$ formed by points $P$ and $Q$, we follow $L$ to its third intersection on the curve (which is guaranteed to exists), which we will denote as $R = (x_R, y_R)$. We then set $P + Q = -R$, where $-R$ is the reflection of $R$ over the x-axis: $(x_R, -y_R)$. This descrptive definition of $+$ is suitable for all situations \emph{except} for when $L$ is tangent to $E$ and when $L$ is parallel to the y-axis. These cases will be covered in a short moment. See figure \ref{fig:groupop} for an illustrated representation of this process.
 
 \begin{figure}[!h]
 \begin{tikzpicture}[scale=.75]
@@ -266,8 +266,8 @@ The group operation $+$ is referred to as \emph{pointwise addition}. In order fo
 \begin{itemize}
 \item \emph{Closure}: Because elliptics curves are polynomials of degree of 3, we know any given line passing through two points $P$ and $Q$ of $E$ will pass through a third point $R$. The exceptions here are twofold. First, when $P = Q$ and thus our line is tangent to $E$, and second, when $Q = -P$ and our line is parallel with the y-axis. We resolve the first case nicely by defining $P + P$ by means of taking $L$ to be the line tangent to $E$ at point $P$. In the second case, $P + (-P)$, by group axiom, should yield the identity element of the group. We will define this element and resolve this issue below.  
 \item \emph{Identity}: The identity element of elliptic curve groups, denoted as $\mathcal{O}$, is a specially defined point satisfying $P + \mathcal{O} = \mathcal{O} + P = P$, $\forall P \in E$. Because of the inclusion of this special element, we have that $\#(E(K))$ is equal to $1$ $+$ the number geometric points on $E$ defined over $K$. This of course is only a noteworthy claim when $K$ is a finite field (otherwise there are already infinitely many elements in $E$).
-\item \emph{Associativity}: To show that associativity holds for geometrically defined points $P$, $Q$, and $R$ in $E$ ($(P + Q) + R = P + (Q + R)$) is rather simple (see figure \ref{fig:axioms}). We can trivially show that this holds when any combination of $P$, $Q$, and $R$ are $\mathcal{O}$ by applying the axiom of the identity.
-\item \emph{Inverse}: Due to the x-symmetry of elliptic curves, every point $P = (x_P, y_P)$ of $E$ has an associated point $-P = (x_P, -y_P)$. If we apply $+$ to $P$ and $-P$, $L$ assumes the line parrallel to the y-axis at $x = x_P$. As discussed above, in this case there is no third intersection of $L$ on $E$. In light of this, $\mathcal{O}$ can be thought of as a point residing infinitely far in both the positive and negative directions of the y-axis. $\mathcal{O}$ is equivalently referred to as the \emph{point at infinity}.[footnote about whether $+$ actually constitutes a rational map due to this exception]
+\item \emph{Associativity}: For all points $P$, $Q$, and $R$ in $E$, it must be the case ($(P + Q) + R = P + (Q + R)$) holds. It is rather easy to see visually why this is true for geometrically defined points in $E$ (see Figure \ref{fig:axioms}). Additionally, we can trivially show that this holds when any combination of $P$, $Q$, and $R$ are $\mathcal{O}$ by applying the axiom of the identity.
+\item \emph{Inverse}: Due to the x-symmetry of elliptic curves, every point $P = (x_P, y_P)$ of $E$ has an associated point $-P = (x_P, -y_P)$. If we apply $+$ to $P$ and $-P$, $L$ assumes the line parrallel to the y-axis at $x = x_P$. As discussed above, in this case there is no third intersection of $L$ on $E$. In light of this, $\mathcal{O}$ can be thought of as a point residing infinitely far in both the positive and negative directions of the y-axis. $\mathcal{O}$ is equivalently referred to as the \emph{point at infinity} (see Figure \ref{fig:axioms}).[footnote about whether $+$ actually constitutes a rational map due to this exception] 
 \end{itemize}
 
 \begin{figure}[!h]
@@ -527,7 +527,7 @@ How $\Pi_{\text{ZKPoK}}$ handles this is by having \bob and \alice run \textbf{P
 \item if $ch = 1$: return 1 \emph{if and only if} $\pr(\rb)$ has order $\lbeb$ and generates the kernel of an isogeny over $E_0/\langle \cyr \rangle \rightarrow E_0/\langle \rb, \cyr \rangle$.
 \end{itemize}
 
-This particular construction for an identification scheme is known in the literature as a \emph{zero knowledge} proof of identity (or equivalently, a zero knowledge proof of \emph{knowledge}).
+This scheme constitutes what is known in the literature as a \emph{zero knowledge} proof of identity. It is referred to as such because \alice, acting as the verifier, does not gain any information about \bob's secret key $sk$.
 
 \section{Fiat-Shamir Construction}
 
@@ -540,9 +540,11 @@ Now that we've paired $\Pi_{\text{ID}}$ with $H$ to achieve a non-interactive id
 \begin{tcolorbox}
 \begin{theorem}[Fiat-Shamir Security]
 \label{thm:fiatshamir}
-Let $\Pi_{\text{ID}} = (\textbf{KeyGen}, \textbf{Prove}, \textbf{Verify})$ be a canonical identification scheme that is secure against a passive attack. Then, if $H$ is modeled as a random oracle, the signature scheme $\Pi_{\text{ID}}'$ that results from applying the Fiat-Shamir transform to $\Pi_{\text{ID}}$ is existentially unforgeable under an adaptive chosen-message attack.
+Let $\Pi_{\text{ID}} = (\textbf{KeyGen}, \textbf{Prove}, \textbf{Verify})$ be a canonical identification scheme that is secure against a passive attack. Then, if $H$ is modeled as a random oracle, the signature scheme $\Pi_{\text{ID}}'$ that results from applying the Fiat-Shamir transform to $\Pi_{\text{ID}}$ is \emph{classically} existentially unforgeable under an adaptive chosen-message attack.
 \end{theorem}
 \end{tcolorbox}
+
+We will write $\textbf{FS}(\Pi)$ to denote the result of applying the Fiat-Shamir transformation to some identification protocol $\Pi$.
 
 \subsection{Unruh's Post-Quantum Adaptation}
 
@@ -554,11 +556,13 @@ Because the focus of this dissertation is not the security (post-quantum or othe
 
 \section{Isogeny Based Signatures}
 
-Now that we've seen the zero-knowledge proof of identity (ZKPoI) scheme from \cite{djp} as well as Unruh's quantum-safe Fiat-Shamir adaption, we have presented all of the material necessary for an indepth analysis of the isogeny based signature scheme presented by Yoo et. Al. The signature protocol, which we'll denote as $\Sigma'$, is a near-trivial application of Unruh's construction to the SIDH ZKPoI. In this section we will refer to the SIDH ZKPoI as $\Sigma$.
+Now that we've seen the zero-knowledge proof of identity (ZKPoI) from \cite{djp} as well as Unruh's quantum-safe Fiat-Shamir adaption, we have presented all of the material necessary for an indepth analysis of the isogeny based signature scheme presented by Yoo et. Al. The signature protocol, which we'll denote as $\Sigma'$, is a near-trivial application of Unruh's construction to the SIDH ZKPoI. In this section we will refer to the SIDH ZKPoI as $\Sigma$.
 
-The public parameters used in $\Sigma'$ are the same as outlined above for all of the protocols found in \cite{djp}. Namely, we have $p = \laea\lbeb \cdot f$
+$\Sigma'$ is defined in the traditional manner, by a tuple of algorithms for key generation, signing, and verifying: $\Sigma' = (\textbf{KeyGen}, \textbf{Sign}, \textbf{Verify})$. As could be predicted, \textbf{KeyGen} in $\Sigma'$ is defined identically to the key generation found in SIDH key exchange. \textbf{Sign} and \textbf{Verify} are defined as equivalent to \textbf{Prove} and \textbf{Verify} $\in \textbf{FS}(\Sigma)$, respectively.
 
-$\Sigma'$ is defined in the traditional manner, by a tuple of algorithms for key generation, signing, and verifying: $\Sigma' = (\textbf{KeyGen}, \textbf{Sign}, \textbf{Verify})$.\\
+For our discussion of the signature scheme, we will make use of the naming conventions used in section 2.3. That is, we will discuss $\Sigma'$ as occuring between entities \bob and \alice, with \bob imitating the role of an arbitrary third party \randall during \textbf{Sign}.
+
+The public parameters used in $\Sigma'$ are the same as outlined above for all of the protocols found in \cite{djp}. Namely, we have $p = \laea\lbeb \cdot f \pm 1$ where $\laea = 2$, $\lbeb = 3$, and $f$ is a cofacter such that $p$ is prime. We also set as parameter the curve $E_0$ such that $\#(E_0(F_{p^2})) = (\laea\lbeb)^2$. And again, we include the sets of points $(\genpa, \genqa)$ and $(\genpb, \genqb)$ generating $E_0[\laea]$ and $E_0[\lbeb]$ respectively.\\
 
 \noindent
 \textbf{KeyGen(}\textbf{)}: Select a random point $S$ of order $\ell_{A}^{e_A}$, compute the isogeny $\phi: E \rightarrow E/ \langle S \rangle$. Return (pk, sk) where pk = $(E/ \langle S \rangle, \phi(P_B), \phi(Q_B))$ and sk = $S$.\\
@@ -645,6 +649,8 @@ Having now introduced all of the background material necessary for understanding
 \subsection{Overall Design}
 
 The SIDH library is designed with several layers of abstraction. 
+
+Due to the substantial cost of field element inversions (computing $x^{-1}$ for some element $x \in \mathbb{F}_{p^2}$), curve points (and curve coefficients) are represented using projective coordinates. This notion of expensive field inversions is central to our first contribution, which will be elaborated on in the following section.
 
 Figure \ref{fig:halfmap} illustrates the relationship between abstraction levels of the SIDH protocol and modules of the SIDH C library.\\
 
