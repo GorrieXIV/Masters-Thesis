@@ -556,23 +556,26 @@ Because the focus of this dissertation is not the security (post-quantum or othe
 
 \section{Isogeny Based Signatures}
 
-Now that we've seen the zero-knowledge proof of identity (ZKPoI) from \cite{djp} as well as Unruh's quantum-safe Fiat-Shamir adaption, we have presented all of the material necessary for an indepth analysis of the isogeny based signature scheme presented by Yoo et. Al. The signature protocol, which we'll denote as $\Sigma'$, is a near-trivial application of Unruh's construction to the SIDH ZKPoI. In this section we will refer to the SIDH ZKPoI as $\Sigma$.
+Since publication of the SIDH suite, there have been several attempts at providing authentication schemes within the same framework. The post-quantum community had demonstrated undeniable signatures\cite{jvsig}, designated verifier signatures\cite{sunsig}, and undeniable blind signatures\cite{seshsig} all within the framework of isogeny based systems. It was not until the work of Yoo et al., however, that an isogeny based protocol for general authentication was shown as demonstrably secure. This protocol, particularly its C implementation, is where we have decided to focus our efforts.
+
+Now that we've seen the zero-knowledge proof of identity (ZKPoI) from \cite{djp} as well as Unruh's quantum-safe Fiat-Shamir adaption, we have presented all of the material necessary for an indepth analysis of the isogeny based signature scheme presented by Yoo et al. The signature protocol, which we'll denote as $\Sigma'$, is a near-trivial application of Unruh's construction to the SIDH ZKPoI. In this section we will refer to the SIDH ZKPoI as $\Sigma$.
 
 $\Sigma'$ is defined in the traditional manner, by a tuple of algorithms for key generation, signing, and verifying: $\Sigma' = (\textbf{KeyGen}, \textbf{Sign}, \textbf{Verify})$. As could be predicted, \textbf{KeyGen} in $\Sigma'$ is defined identically to the key generation found in SIDH key exchange. \textbf{Sign} and \textbf{Verify} are defined as equivalent to \textbf{Prove} and \textbf{Verify} $\in \textbf{FS}(\Sigma)$, respectively.
 
 For our discussion of the signature scheme, we will make use of the naming conventions used in section 2.3. That is, we will discuss $\Sigma'$ as occuring between entities \bob and \alice, with \bob imitating the role of an arbitrary third party \randall during \textbf{Sign}.
 
-The public parameters used in $\Sigma'$ are the same as outlined above for all of the protocols found in \cite{djp}. Namely, we have $p = \laea\lbeb \cdot f \pm 1$ where $\laea = 2$, $\lbeb = 3$, and $f$ is a cofacter such that $p$ is prime. We also set as parameter the curve $E_0$ such that $\#(E_0(F_{p^2})) = (\laea\lbeb)^2$. And again, we include the sets of points $(\genpa, \genqa)$ and $(\genpb, \genqb)$ generating $E_0[\laea]$ and $E_0[\lbeb]$ respectively.\\
+The public parameters used in $\Sigma'$ are the same as outlined above for all of the protocols found in \cite{djp}. Namely, we have $p = \laea\lbeb \cdot f \pm 1$ where $\laea = 2$, $\lbeb = 3$, and $f$ is a cofacter such that $p$ is prime. We also set as parameter the curve $E_0$ such that $\#(E_0(F_{p^2})) = (\laea\lbeb)^2$. And again, we include the sets of points $(\genpa, \genqa)$ and $(\genpb, \genqb)$ generating $E_0[\laea]$ and $E_0[\lbeb]$ respectively.
 
-\noindent
-\textbf{KeyGen(}\textbf{)}: Select a random point $S$ of order $\ell_{A}^{e_A}$, compute the isogeny $\phi: E \rightarrow E/ \langle S \rangle$. Return (pk, sk) where pk = $(E/ \langle S \rangle, \phi(P_B), \phi(Q_B))$ and sk = $S$.\\
-\textbf{Sign()}:\\
-\textbf{Verify()}:\\
 
 \subsection{Algorithmic Definitions}
 
+It will be useful for us to outline in more detail the procedures of $\Sigma'$, at the very least to ease the transition into our discussion of the C implementation. 
+
+
+
+\begin{figure}
 \begin{algorithm}
-\caption{KeyGen($\lambda$)}\label{euclid}
+\caption{-- \textbf{KeyGen}($\lambda$)}\label{euclid}
 \begin{algorithmic}[1]
 \State Pick a random point S of order $\ell^{e_{A}}_{A}$
 \State Compute the isogeny $\phi: E \rightarrow E/\langle S \rangle$
@@ -581,9 +584,14 @@ The public parameters used in $\Sigma'$ are the same as outlined above for all o
 \State \Return (pk,sk)
 \end{algorithmic}
 \end{algorithm}
+\label{fig:keygencode1}
+\end{figure}
 
+stuff or something haha idk
+
+\begin{figure}
 \begin{algorithm}
-\caption{Sign(sk, $m$)}\label{euclid}
+\caption{-- \textbf{Sign}(sk, $m$)}\label{euclid}
 \begin{algorithmic}[1]
 \For{\texttt{i = 1..2$\lambda$}}
 	\State Pick a random point R of order $\ell^{e_{B}}_{B}$
@@ -604,9 +612,12 @@ The public parameters used in $\Sigma'$ are the same as outlined above for all o
 \State \Return $\sigma \gets ((\texttt{com}_{i})_{i}, (\texttt{ch}_{i,j})_{i,j}, (h_{i,j})_{i,j}, (\texttt{resp}_{i,J_{i}})_{i})$
 \end{algorithmic}
 \end{algorithm}
+\label{fig:signcode1}
+\end{figure}
 
+\begin{figure}
 \begin{algorithm}[H]
-\caption{Verify(pk, $m$, $\sigma$)}\label{euclid}
+\caption{-- \textbf{Verify}(pk, $m$, $\sigma$)}\label{euclid}
 \begin{algorithmic}[1]
 \State $J_{1} \parallel ... \parallel J_{2\lambda} \gets H(pk, m, (\texttt{com}_{i})_{i},(\texttt{ch}_{i,j})_{i,j},(h_{i,j})_{i,j})$
 \For{\texttt{i = 0..2$\lambda$}}
@@ -630,6 +641,8 @@ The public parameters used in $\Sigma'$ are the same as outlined above for all o
 \EndIf
 \end{algorithmic}
 \end{algorithm}
+\label{fig:verifycode1}
+\end{figure}
 
 \section{Implementations of Isogeny Based Cryptographic Protocols}
 
@@ -646,7 +659,7 @@ Having now introduced all of the background material necessary for understanding
 \noindent
 \emph{Key Representation}.
 
-\subsection{Overall Design}
+\subsection{Design Decisions}
 
 The SIDH library is designed with several layers of abstraction. 
 
@@ -664,7 +677,7 @@ Figure \ref{fig:halfmap} illustrates the relationship between abstraction levels
 \subsection{Key Exchange}
 
 
-\subsection{Yoo et al. Signature Layer}
+\subsection{Signature Layer}
 
 \begin{figure}[htb]
 \centering
