@@ -21,12 +21,12 @@
 \contentsline {subsection}{\numberline {2.4.1}Unruh's Post-Quantum Adaptation}{15}{subsection.2.4.1}
 \contentsline {section}{\numberline {2.5}Isogeny Based Signatures}{15}{section.2.5}
 \contentsline {subsection}{\numberline {2.5.1}Algorithmic Definitions}{16}{subsection.2.5.1}
-\contentsline {section}{\numberline {2.6}Implementations of Isogeny Based Cryptographic Protocols}{17}{section.2.6}
-\contentsline {subsection}{\numberline {2.6.1}Parameters}{17}{subsection.2.6.1}
+\contentsline {section}{\numberline {2.6}Implementations of Isogeny Based Cryptographic Protocols}{18}{section.2.6}
+\contentsline {subsection}{\numberline {2.6.1}Parameters}{18}{subsection.2.6.1}
 \contentsline {subsection}{\numberline {2.6.2}Design Decisions}{18}{subsection.2.6.2}
 \contentsline {subsection}{\numberline {2.6.3}Key Exchange}{18}{subsection.2.6.3}
 \contentsline {subsection}{\numberline {2.6.4}Signature Layer}{18}{subsection.2.6.4}
-\contentsline {subsection}{\numberline {2.6.5}Performance}{19}{subsection.2.6.5}
+\contentsline {subsection}{\numberline {2.6.5}Performance}{18}{subsection.2.6.5}
 \contentsline {chapter}{\numberline {3}Batching Operations for Isogenies}{20}{chapter.3}
 \contentsline {section}{\numberline {3.1}Batching Procedure in Detail}{20}{section.3.1}
 \contentsline {subsection}{\numberline {3.1.1}Projective Space}{20}{subsection.3.1.1}

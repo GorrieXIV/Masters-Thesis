@@ -480,7 +480,7 @@ To achieve this, \bob internally mimicks an execution of the key exchange protoc
 \emph{Response}: \alice chooses a bit $b$ at random and sends her challenge $ch = b$ to \bob.\\
 
 \noindent
-\textbf{Prove}: If \alice's response bit $ch = 0$ then \bob reveals the isogenies $\pr$ and $\prp$ (to do this, he can simply reveal the kernels of $\pr$ and $\prp$; $\cyr$ and $\pb(\cyr)$ respectively). This proves he knows the information necessary to form a shared secret with \randall \emph{if and only if} he happens to know the private key $\rb = \{[\mb]\genpb + [\nb]\genqb\}$. If $ch = 1$, \bob reveals the isogeny $\pbp$. This proves that \bob knows the information necessary to form a shared secret with \randall \emph{if and only if} he knows \randall's secret key $\cyr$.\\
+\textbf{Prove($sk$, $ch$)}: If \alice's challenge bit $ch = 0$ then \bob reveals the isogenies $\pr$ and $\prp$ (to do this, he can simply reveal the generators of the kernels of $\pr$ and $\prp$; $\cyr$ and $\pb(\cyr)$ respectively). This proves he knows the information necessary to form a shared secret with \randall \emph{if and only if} he happens to know the private key $\rb = \{[\mb]\genpb + [\nb]\genqb\}$. If $ch = 1$, \bob reveals the isogeny $\pbp$. This proves that \bob knows the information necessary to form a shared secret with \randall \emph{if and only if} he knows \randall's secret key $\cyr$.\\
 
 \begin{center}
 \begin{tikzpicture}[scale=.55]
@@ -521,7 +521,7 @@ $$
 How $\Pi_{\text{ZKPoK}}$ handles this is by having \bob and \alice run \textbf{Prove()} and \textbf{Verify()} for $\lambda$ iterations, with a different $(com, ch, resp)$ transcript generated for every instance. This way, if \bob is able to provide a $resp$ that satisfies \alice's $ch$ for every iteration, she can be sufficiently confident that \bob has knowledge of $\rb$.\\
 
 \noindent
-\textbf{Verify}($pk, com, ch$): Like the proving procedure, verification is a conditional function depending on the value of $b$:
+\textbf{Verify($pk, com, ch$)}: Like the proving procedure, verification is a conditional function depending on the value of $b$:
 \begin{itemize}
 \item if $ch = 0$: return 1 \emph{if and only if} $\cyr$ and $\pb(\cyr)$ have order $\laea$ and generate the kernels of isogenies from $E_0 \rightarrow E_0/\langle \cyr \rangle$ and $E_0/\langle \rb \rangle \rightarrow E_0/\langle \rb, \cyr \rangle$ respectively.
 \item if $ch = 1$: return 1 \emph{if and only if} $\pr(\rb)$ has order $\lbeb$ and generates the kernel of an isogeny over $E_0/\langle \cyr \rangle \rightarrow E_0/\langle \rb, \cyr \rangle$.
@@ -560,27 +560,32 @@ Since publication of the SIDH suite, there have been several attempts at providi
 
 Now that we've seen the zero-knowledge proof of identity (ZKPoI) from \cite{djp} as well as Unruh's quantum-safe Fiat-Shamir adaption, we have presented all of the material necessary for an indepth analysis of the isogeny based signature scheme presented by Yoo et al. The signature protocol, which we'll denote as $\Sigma'$, is a near-trivial application of Unruh's construction to the SIDH ZKPoI. In this section we will refer to the SIDH ZKPoI as $\Sigma$.
 
-$\Sigma'$ is defined in the traditional manner, by a tuple of algorithms for key generation, signing, and verifying: $\Sigma' = (\textbf{KeyGen}, \textbf{Sign}, \textbf{Verify})$. As could be predicted, \textbf{KeyGen} in $\Sigma'$ is defined identically to the key generation found in SIDH key exchange. \textbf{Sign} and \textbf{Verify} are defined as equivalent to \textbf{Prove} and \textbf{Verify} $\in \textbf{FS}(\Sigma)$, respectively.
+$\Sigma'$ is defined in the traditional manner, by a tuple of algorithms for key generation, signing, and verifying: $\Sigma' = (\textbf{KeyGen()}, \textbf{Sign()}, \textbf{Verify()})$. As could be predicted, \textbf{KeyGen()} in $\Sigma'$ is defined identically to the key generation found in SIDH key exchange. \textbf{Sign()} and \textbf{Verify()} are defined as equivalent to \textbf{Prove()} and \textbf{Verify()} $\in$ \textbf{FS($\Sigma$)}, respectively.
 
 For our discussion of the signature scheme, we will make use of the naming conventions used in section 2.3. That is, we will discuss $\Sigma'$ as occuring between entities \bob and \alice, with \bob imitating the role of an arbitrary third party \randall during \textbf{Sign}.
 
-The public parameters used in $\Sigma'$ are the same as outlined above for all of the protocols found in \cite{djp}. Namely, we have $p = \laea\lbeb \cdot f \pm 1$ where $\laea = 2$, $\lbeb = 3$, and $f$ is a cofacter such that $p$ is prime. We also set as parameter the curve $E_0$ such that $\#(E_0(F_{p^2})) = (\laea\lbeb)^2$. And again, we include the sets of points $(\genpa, \genqa)$ and $(\genpb, \genqb)$ generating $E_0[\laea]$ and $E_0[\lbeb]$ respectively.
+The public parameters used in $\Sigma'$ are the same as outlined above for all of the protocols found in \cite{djp}. Namely, we have $p = \laea\lbeb \cdot f \pm 1$ where $\laea = 2$, $\lbeb = 3$, and $f$ is a cofacter such that $p$ is prime. We also set as parameter the curve $E$ such that $\#(E(F_{p^2})) = (\laea\lbeb)^2$. And again, we include the sets of points $(\genpa, \genqa)$ and $(\genpb, \genqb)$ generating $E[\laea]$ and $E[\lbeb]$ respectively. We have chosen $E$ over the previously used $E_0$ simply for ease of notation.
 
 \subsection{Algorithmic Definitions}
 
-It will be useful for us to outline in more detail the procedures of $\Sigma'$, at the very least to ease the transition into our discussion of the C implementation. In this subsection we will look at isogeny-level algorithmic definitions for \textbf{KeyGen()}, \textbf{Prove()} and \textbf{Verify()}, and then look at how these procedures can be expressed in terms of the procedures of $\Pi_{\text{SIDH}}$.\\
+It will be useful for us to outline in more detail the procedures of $\Sigma'$, at the very least to ease the transition into our discussion of the C implementation. In this subsection we will look at isogeny-level algorithmic definitions for \textbf{KeyGen()}, \textbf{Prove()}, and \textbf{Verify()}, and then look at how these procedures can be expressed in terms of the procedures of $\Pi_{\text{SIDH}}$.\\
 
 \noindent
-\textbf{KeyGen($\lambda$)}: As previously mentioned, key generation in $\Sigma'$ works identically to  
+\textbf{KeyGen($\lambda$, $User$)}: As previously mentioned, key generation in $\Sigma'$ is identical to $\Sigma$:\textbf{KeyGen($\lambda$)}, which in turn is identical to $\Pi_{\text{SIDH}}$:\textbf{KeyGen($\lambda$)}. We've included a parameter $User$ equaling either $\alice$ or $\bob$ -- this denotes whether the user running the procedure uses \textcolor{blue}{blue} or \textcolor{red}{red} constants. We've also obfuscate the lower level details in regards to how points are generated and how isogenies can be constructed. The result is the following:
 
 \begin{algorithm}
-\caption{-- \textbf{KeyGen($\lambda$)}}\label{euclid}
+\caption{-- \textbf{KeyGen($\lambda$, $User$)}}\label{euclid}
 \begin{algorithmic}[1]
-\State Pick a random point S of order $\ell^{e_{A}}_{A}$
+\If{$User$ = \alice}
+	\State Pick a random point $S$ of order $\laea$
+\EndIf
+\If{$User$ = \bob}
+	\State Pick a random point $S$ of order $\lbeb$
+\EndIf
 \State Compute the isogeny $\phi: E \rightarrow E/\langle S \rangle$
-\State pk $\gets (E/\langle S \rangle, \phi(P_{B}), \phi(Q_{B}))$
-\State sk $\gets S$
-\State \Return (pk,sk)
+\State $pk \gets (E/\langle S \rangle, \phi(P_{B}), \phi(Q_{B}))$
+\State $sk \gets S$
+\State \Return ($sk$, $pk$)
 \end{algorithmic}
 \end{algorithm}
 
@@ -590,25 +595,27 @@ Transcribing this to the procedures of $\Pi_{\text{SIDH}}$ we arrive (quite triv
 \begin{algorithm}
 \caption{-- \textbf{KeyGen($\lambda$)}}\label{euclid}
 \begin{algorithmic}[1]
-\State (pk, sk) $\gets \Pi_{SIDH}$.\textbf{KeyGen($\lambda)$}
-\State \Return (pk,sk)
+\State ($sk$, $pk$) $\gets \Pi_{\text{SIDH}}$:\textbf{KeyGen($\lambda$)}
+\State \Return ($sk$, $pk$)
 \end{algorithmic}
 \end{algorithm}
 
+For \textbf{Sign($sk$, $m$)} and \textbf{Verify($pk$, $m$, $\sigma$)} we assume \bob to be the signer and \alice to be the verifier. Consequently, we will write the signers key pair ($sk$, $pk$) as ($\rb$, $\pb$). Algorithms for which the roles are reversed can be constructed simply by replacing \textcolor{red}{red} constants with their \textcolor{blue}{blue} correspondants, and vice-versa.\\  
+
 \noindent
-\textbf{Sign($sk$, $m$)}:\\
+\textbf{Sign($sk$, $m$)}: \\
 
 \begin{algorithm}
-\caption{-- \textbf{Sign($sk$, $m$)}}\label{euclid}
+\caption{-- \textbf{Sign($sk = \rb$, $m$)}}\label{euclid}
 \begin{algorithmic}[1]
 \For{\texttt{i = 1..2$\lambda$}}
-	\State Pick a random point R of order $\ell^{e_{B}}_{B}$
-	\State Compute the isogeny $\psi: E \rightarrow E/\langle R \rangle$
-	\State Compute either $\phi' : E/\langle R \rangle \rightarrow E/\langle R,S \rangle$ or $\psi' : E/\langle S \rangle \rightarrow E/\langle R,S \rangle$
-	\State $(E_{1},E_{2}) \gets (E/\langle R \rangle, E/\langle R,S \rangle)$
-	\State $\texttt{com}_{i} \gets (E_{1}, E_{2})$
-	\State $\texttt{ch}_{i,0} \gets_{R} \{0,1\}$
-	\State $(\texttt{resp}_{i,0}, \texttt{resp}_{i,1}) \gets ((R,\phi(R)), \psi(S))$
+	\State Pick a random point $\cyr$ of order $\laea$
+	\State Compute the isogeny $\pr: E \rightarrow E/\langle \cyr \rangle$
+	\State Compute either $\pbp : E/\langle \rb \rangle \rightarrow E/\langle \rb,\cyr \rangle$ or $\prp : E/\langle \cyr \rangle \rightarrow E/\langle \cyr,\rb \rangle$
+	\State $(E_{1},E_{2}) \gets (E/\langle \cyr \rangle, E/\langle \cyr,\rb \rangle)$
+	\State $com_{i} \gets (E_{1}, E_{2})$
+	\State $ch_{i,0} \gets_{R} \{0,1\}$
+	\State $(resp_{i,0}, \texttt{resp}_{i,1}) \gets ((R,\phi(R)), \psi(S))$
 	\If{$\texttt{ch}_{i,0} = 1$}
 		\State $\texttt{swap}(\texttt{resp}_{i,0},\texttt{resp}_{i,1})$
 	\EndIf
