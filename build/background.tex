@@ -566,16 +566,15 @@ For our discussion of the signature scheme, we will make use of the naming conve
 
 The public parameters used in $\Sigma'$ are the same as outlined above for all of the protocols found in \cite{djp}. Namely, we have $p = \laea\lbeb \cdot f \pm 1$ where $\laea = 2$, $\lbeb = 3$, and $f$ is a cofacter such that $p$ is prime. We also set as parameter the curve $E_0$ such that $\#(E_0(F_{p^2})) = (\laea\lbeb)^2$. And again, we include the sets of points $(\genpa, \genqa)$ and $(\genpb, \genqb)$ generating $E_0[\laea]$ and $E_0[\lbeb]$ respectively.
 
-
 \subsection{Algorithmic Definitions}
 
-It will be useful for us to outline in more detail the procedures of $\Sigma'$, at the very least to ease the transition into our discussion of the C implementation. 
+It will be useful for us to outline in more detail the procedures of $\Sigma'$, at the very least to ease the transition into our discussion of the C implementation. In this subsection we will look at isogeny-level algorithmic definitions for \textbf{KeyGen()}, \textbf{Prove()} and \textbf{Verify()}, and then look at how these procedures can be expressed in terms of the procedures of $\Pi_{\text{SIDH}}$.\\
 
+\noindent
+\textbf{KeyGen($\lambda$)}: As previously mentioned, key generation in $\Sigma'$ works identically to  
 
-
-\begin{figure}
 \begin{algorithm}
-\caption{-- \textbf{KeyGen}($\lambda$)}\label{euclid}
+\caption{-- \textbf{KeyGen($\lambda$)}}\label{euclid}
 \begin{algorithmic}[1]
 \State Pick a random point S of order $\ell^{e_{A}}_{A}$
 \State Compute the isogeny $\phi: E \rightarrow E/\langle S \rangle$
@@ -584,14 +583,23 @@ It will be useful for us to outline in more detail the procedures of $\Sigma'$, 
 \State \Return (pk,sk)
 \end{algorithmic}
 \end{algorithm}
-\label{fig:keygencode1}
-\end{figure}
 
-stuff or something haha idk
+\noindent
+Transcribing this to the procedures of $\Pi_{\text{SIDH}}$ we arrive (quite trivially) at:
 
-\begin{figure}
 \begin{algorithm}
-\caption{-- \textbf{Sign}(sk, $m$)}\label{euclid}
+\caption{-- \textbf{KeyGen($\lambda$)}}\label{euclid}
+\begin{algorithmic}[1]
+\State (pk, sk) $\gets \Pi_{SIDH}$.\textbf{KeyGen($\lambda)$}
+\State \Return (pk,sk)
+\end{algorithmic}
+\end{algorithm}
+
+\noindent
+\textbf{Sign($sk$, $m$)}:\\
+
+\begin{algorithm}
+\caption{-- \textbf{Sign($sk$, $m$)}}\label{euclid}
 \begin{algorithmic}[1]
 \For{\texttt{i = 1..2$\lambda$}}
 	\State Pick a random point R of order $\ell^{e_{B}}_{B}$
@@ -612,12 +620,12 @@ stuff or something haha idk
 \State \Return $\sigma \gets ((\texttt{com}_{i})_{i}, (\texttt{ch}_{i,j})_{i,j}, (h_{i,j})_{i,j}, (\texttt{resp}_{i,J_{i}})_{i})$
 \end{algorithmic}
 \end{algorithm}
-\label{fig:signcode1}
-\end{figure}
 
-\begin{figure}
+\noindent
+\textbf{Verify($pk$, $m$, $\sigma$)}:\\
+
 \begin{algorithm}[H]
-\caption{-- \textbf{Verify}(pk, $m$, $\sigma$)}\label{euclid}
+\caption{-- \textbf{Verify($pk$, $m$, $\sigma$)}}\label{euclid}
 \begin{algorithmic}[1]
 \State $J_{1} \parallel ... \parallel J_{2\lambda} \gets H(pk, m, (\texttt{com}_{i})_{i},(\texttt{ch}_{i,j})_{i,j},(h_{i,j})_{i,j})$
 \For{\texttt{i = 0..2$\lambda$}}
@@ -641,8 +649,6 @@ stuff or something haha idk
 \EndIf
 \end{algorithmic}
 \end{algorithm}
-\label{fig:verifycode1}
-\end{figure}
 
 \section{Implementations of Isogeny Based Cryptographic Protocols}
 
@@ -689,13 +695,7 @@ Figure \ref{fig:halfmap} illustrates the relationship between abstraction levels
 
 If we transcribe the above to the language of the Microsoft SIDH API, we have in essense the following:\\
 
-\begin{algorithm}
-\caption{KeyGen($\lambda$)}\label{euclid}
-\begin{algorithmic}[1]
-\State (pk, sk) $\gets \texttt{KeyGeneration\_B()}$
-\State \Return (pk,sk)
-\end{algorithmic}
-\end{algorithm}
+
 
 \begin{algorithm}
 \caption{Sign(sk, $m$)}\label{euclid}
