@@ -571,7 +571,7 @@ The public parameters used in $\Sigma'$ are the same as outlined above for all o
 It will be useful for us to outline in more detail the procedures of $\Sigma'$, at the very least to ease the transition into our discussion of the C implementation. In this subsection we will look at isogeny-level algorithmic definitions for \textbf{KeyGen()}, \textbf{Prove()}, and \textbf{Verify()}, and then look at how these procedures can be expressed in terms of the procedures of $\Pi_{\text{SIDH}}$.\\
 
 \noindent
-\textbf{KeyGen($\lambda$, $User$)}: As previously mentioned, key generation in $\Sigma'$ is identical to $\Sigma$:\textbf{KeyGen($\lambda$)}, which in turn is identical to $\Pi_{\text{SIDH}}$:\textbf{KeyGen($\lambda$)}. We've included a parameter $User$ equaling either $\alice$ or $\bob$ -- this denotes whether the user running the procedure uses \textcolor{blue}{blue} or \textcolor{red}{red} constants. We've also obfuscate the lower level details in regards to how points are generated and how isogenies can be constructed. The result is the following:
+\textbf{KeyGen($\lambda$, $User$)}: As previously mentioned, key generation in $\Sigma'$ is identical to $\Sigma$:\textbf{KeyGen($\lambda$)}, which in turn is identical to $\Pi_{\text{SIDH}}$:\textbf{KeyGen($\lambda$)}. We've included a parameter $User$ equaling either $\alice$ or $\bob$ -- this denotes whether the user running the procedure uses \textcolor{blue}{blue} or \textcolor{red}{red} constants. We've also obfuscate the lower level details in regards to how points are generated and how isogenies can be constructed. We write $P_{User}$ and $Q_{User}$ for $\genpa$ \& $\genqa$ or $\genpb$ \& $\genqb$, depending on $User$.  The result is the following:
 
 \begin{algorithm}
 \caption{-- \textbf{KeyGen($\lambda$, $User$)}}\label{euclid}
@@ -590,7 +590,7 @@ It will be useful for us to outline in more detail the procedures of $\Sigma'$, 
 \end{algorithm}
 
 \noindent
-Transcribing this to the procedures of $\Pi_{\text{SIDH}}$ we arrive (quite trivially) at:
+Transcribing this to the procedures of $\Pi_{\text{SIDH}}$ we arrive (quite trivially) at:\\
 
 \begin{algorithm}
 \caption{-- \textbf{KeyGen($\lambda$)}}\label{euclid}
@@ -603,7 +603,7 @@ Transcribing this to the procedures of $\Pi_{\text{SIDH}}$ we arrive (quite triv
 For \textbf{Sign($sk$, $m$)} and \textbf{Verify($pk$, $m$, $\sigma$)} we assume \bob to be the signer and \alice to be the verifier. Consequently, we will write the signers key pair ($sk$, $pk$) as ($\rb$, $\pb$). Algorithms for which the roles are reversed can be constructed simply by replacing \textcolor{red}{red} constants with their \textcolor{blue}{blue} correspondants, and vice-versa.\\  
 
 \noindent
-\textbf{Sign($sk$, $m$)}: \\
+\textbf{Sign($sk$, $m$)}: The sign procedure, as a consequence of the Unruh construction, makes use of two random oracle functions \textbf{H} amd \textbf{G}. In the sign algorithm below, make note of how \bob computes both commitments and their corresponding responses for every iteration $i$ before he computes the challenge values (the bits of $J$). He then uses the $2\lambda$ bits of $J$ to decide which responses to include in $\sigma$.\\
 
 \begin{algorithm}
 \caption{-- \textbf{Sign($sk = \rb$, $m$)}}\label{euclid}
@@ -615,16 +615,16 @@ For \textbf{Sign($sk$, $m$)} and \textbf{Verify($pk$, $m$, $\sigma$)} we assume 
 	\State $(E_{1},E_{2}) \gets (E/\langle \cyr \rangle, E/\langle \cyr,\rb \rangle)$
 	\State $com_{i} \gets (E_{1}, E_{2})$
 	\State $ch_{i,0} \gets_{R} \{0,1\}$
-	\State $(resp_{i,0}, \texttt{resp}_{i,1}) \gets ((R,\phi(R)), \psi(S))$
+	\State $(resp_{i,0}, resp_{i,1}) \gets ((\cyr,\pb(\cyr)), \pr(\rb))$
 	\If{$\texttt{ch}_{i,0} = 1$}
-		\State $\texttt{swap}(\texttt{resp}_{i,0},\texttt{resp}_{i,1})$
+		\State \textbf{Swap($resp_{i,0}$,$resp_{i,1}$)}
 	\EndIf
-	\State $h_{i,j} \gets G(\texttt{resp}_{i,j})$
+	\State $h_{i,j} \gets$ \textbf{G($resp_{i,j}$)}
 \EndFor
 
-\State $J_{1} \parallel ... \parallel J_{2\lambda} \gets H(pk, m, (\texttt{com}_{i})_{i},(\texttt{ch}_{i,j})_{i,j},(h_{i,j})_{i,j})$
+\State $J_{1} \parallel ... \parallel J_{2\lambda} \gets$ \textbf{H($\pb$, $m$, $(com_{i})_{i}$,$(ch_{i,j})_{i,j}$,$(h_{i,j})_{i,j}$)}
 
-\State \Return $\sigma \gets ((\texttt{com}_{i})_{i}, (\texttt{ch}_{i,j})_{i,j}, (h_{i,j})_{i,j}, (\texttt{resp}_{i,J_{i}})_{i})$
+\State \Return $\sigma \gets ((com_{i})_{i}, (ch_{i,j})_{i,j}, (h_{i,j})_{i,j}, (resp_{i,J_{i}})_{i})$
 \end{algorithmic}
 \end{algorithm}
 
@@ -632,20 +632,20 @@ For \textbf{Sign($sk$, $m$)} and \textbf{Verify($pk$, $m$, $\sigma$)} we assume 
 \textbf{Verify($pk$, $m$, $\sigma$)}:\\
 
 \begin{algorithm}[H]
-\caption{-- \textbf{Verify($pk$, $m$, $\sigma$)}}\label{euclid}
+\caption{-- \textbf{Verify($pk = \pb$, $m$, $\sigma$)}}\label{euclid}
 \begin{algorithmic}[1]
-\State $J_{1} \parallel ... \parallel J_{2\lambda} \gets H(pk, m, (\texttt{com}_{i})_{i},(\texttt{ch}_{i,j})_{i,j},(h_{i,j})_{i,j})$
+\State $J_{1} \parallel ... \parallel J_{2\lambda} \gets$ \textbf{H($\pb$, $m$, $(com_{i})_{i}$,$(ch_{i,j})_{i,j}$,$(h_{i,j})_{i,j}$)}
 \For{\texttt{i = 0..2$\lambda$}}
-	\State \textbf{check} $h_{i,J_{i}} = G(\texttt{resp}_{i,J_{i}})$
-	\If{$\texttt{ch}_{i,J_{i}} = 0$}
-		\State Parse $(R,\phi(R)) \gets \texttt{resp}_{i,J_{i}}$
-		\State \textbf{check} $(R, \phi(R))$ have order $\ell^{e_{B}}_{B}$
-		\State \textbf{check} $R$ generates the kernel of the isogeny $E \rightarrow E_{1}$
-		\State \textbf{check} $\phi(R)$ generates the kernel of the isogeny $E/\langle S \rangle \rightarrow E_{2}$
+	\State \textbf{check} $h_{i,J_{i}} = G(resp_{i,J_{i}})$
+	\If{$ch_{i,J_{i}} = 0$}
+		\State Parse $(\cyr,\pb(\cyr)) \gets resp_{i,J_{i}}$
+		\State \textbf{check} $(\cyr, \pb(\cyr))$ have order $\laea$
+		\State \textbf{check} $\cyr$ generates the kernel of the isogeny $E \rightarrow E_{1}$
+		\State \textbf{check} $\pb(\cyr)$ generates the kernel of the isogeny $E/\langle \rb \rangle \rightarrow E_{2}$
 	\Else
-		\State Parse $\psi(S) \gets \texttt{resp}_{i,J_{i}}$
-		\State \textbf{check} $\psi(S)$ has order $\ell^{e_{A}}_{A}$
-		\State \textbf{check} $\psi(S)$ generates the kernel of the isogeny $E_{1} \rightarrow E_{2}$
+		\State Parse $\pr(\rb) \gets resp_{i,J_{i}}$
+		\State \textbf{check} $\pr(\rb)$ has order $\lbeb$
+		\State \textbf{check} $\pr(\rb)$ generates the kernel of the isogeny $E_{1} \rightarrow E_{2}$
 	\EndIf
 \EndFor
 
