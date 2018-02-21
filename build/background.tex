@@ -416,13 +416,16 @@ $\pb(E_0/\langle \ba \rangle)$
 To come to the shared secret agreement, the codomain curve of their composed isogenies, denoted $E_{\ba\rb}$. Below we've outlined the SIDH key exchange protocol $\Pi_{\text{SIDH}}$ = (\textbf{KeyGen}, \textbf{SecAgr}) in a descriptive (though not yet algorithmic) manner.\\
 
 \noindent
-\textbf{KeyGen}: \textcolor{blue}{Alice} chooses two random numbers $\ma, \na \in \mathbb{Z}/\laea\mathbb{Z}$ such that $(\la \nmid \ma) \lor (\la \nmid \na)$. \textcolor{blue}{Alice} then computes the isogeny $\pa: E_0 \rightarrow E_{\ba}$ where $E_{\ba} = E_0 / \langle [\ma]\genpa, [\na]\genqa\rangle$ (equivalently, $ker(\pa) = \langle [\ma]\genpa, [\na]\genqa\rangle$). \bob undergoes the same procedure for random elements $\mb, \nb \in \mathbb{Z}/\lbeb\mathbb{Z}$. After completion, \alice and \bob hold their respective key pairs:
-\begin{center}
-$(\ska, \pka) = (\{\ma,\na\}, E_{\ba})$\\
-$(\skb, \pkb) = (\{\mb,\nb\}, E_{\rb})$\\
-\end{center}
+\textbf{KeyGen($\lambda$)}: \textcolor{blue}{Alice} chooses two random numbers $\ma, \na \in \mathbb{Z}/\laea\mathbb{Z}$ such that $(\la \nmid \ma) \lor (\la \nmid \na)$. \textcolor{blue}{Alice} then computes the isogeny $\pa: E_0 \rightarrow E_{\ba}$ where $E_{\ba} = E_0 / \langle [\ma]\genpa, [\na]\genqa\rangle$ (equivalently, $ker(\pa) = \langle [\ma]\genpa, [\na]\genqa\rangle$). \bob undergoes the same procedure for random elements $\mb, \nb \in \mathbb{Z}/\lbeb\mathbb{Z}$.
 
-\alice then applies her isogeny to the points which \bob will use in the creation of of his isogeny: $\{\pa(\genqb),\pa(\genqb)\}$. \bob performs the analogous operation.\\
+\alice then applies her isogeny to the points which \bob will use in the creation of of his isogeny: $(\pa(\genpb),\pa(\genqb))$. \bob performs the analogous operation. This leaves us with the following private and public keys for \alice and \bob:
+
+\begin{center}
+$\ska = (\ma,\na)$\\
+$\pka = (E_{\ba}, \pa(\genpb),\pa(\genqb))$\\
+$\skb = (\mb,\nb)$\\
+$\pkb = (E_{\rb}, \pb(\genpa),\pb(\genqa))$\\
+\end{center}
 
 \noindent
 \textit{PK Exchange}: After \textcolor{blue}{Alice} and \textcolor{red}{Bob} successfully complete their key generation, they perform the following over an insecure channel:
@@ -432,7 +435,7 @@ $(\skb, \pkb) = (\{\mb,\nb\}, E_{\rb})$\\
 \end{itemize}
 
 \noindent
-\textbf{SecAgr}: After reception of \bob's tuple, \alice computes the isogeny $\phi'_A: E_{\rb} \rightarrow E_{\ba\rb}$ and \bob acts analogously. \alice and \bob then arrive at the equivalent image curve:
+\textbf{SecAgr($sk_{1}$,$pk_{2}$)}: After reception of \bob's tuple, \alice computes the isogeny $\phi'_A: E_{\rb} \rightarrow E_{\ba\rb}$ and \bob acts analogously. \alice and \bob then arrive at the equivalent image curve:
 $$
 E_{\ba\rb} = \phi'_{\ba}(\phi_{\rb}(E_0)) = \phi'_{\rb}(\phi_{\ba}(E_0)) = E_0/ \langle [\ma]\genpa + [\na]\genqa, [\mb]\genpb + [\nb]\genqb \rangle
 $$
@@ -571,15 +574,15 @@ The public parameters used in $\Sigma'$ are the same as outlined above for all o
 It will be useful for us to outline in more detail the procedures of $\Sigma'$, at the very least to ease the transition into our discussion of the C implementation. In this subsection we will look at isogeny-level algorithmic definitions for \textbf{KeyGen()}, \textbf{Prove()}, and \textbf{Verify()}, and then look at how these procedures can be expressed in terms of the procedures of $\Pi_{\text{SIDH}}$.\\
 
 \noindent
-\textbf{KeyGen($\lambda$, $User$)}: As previously mentioned, key generation in $\Sigma'$ is identical to $\Sigma$:\textbf{KeyGen($\lambda$)}, which in turn is identical to $\Pi_{\text{SIDH}}$:\textbf{KeyGen($\lambda$)}. We've included a parameter $User$ equaling either $\alice$ or $\bob$ -- this denotes whether the user running the procedure uses \textcolor{blue}{blue} or \textcolor{red}{red} constants. We've also obfuscate the lower level details in regards to how points are generated and how isogenies can be constructed. We write $P_{User}$ and $Q_{User}$ for $\genpa$ \& $\genqa$ or $\genpb$ \& $\genqb$, depending on $User$.  The result is the following:
+\textbf{KeyGen($\lambda$, $User$)}: As previously mentioned, key generation in $\Sigma'$ is identical to $\Sigma$:\textbf{KeyGen($\lambda$)}, which in turn is identical to $\Pi_{\text{SIDH}}$:\textbf{KeyGen($\lambda$)}. We've included a parameter $User$ equaling either $\alice$ or $\bob$ -- this denotes whether the user running the procedure uses \textcolor{blue}{blue} or \textcolor{red}{red} constants. We've also obfuscated the lower level details in regards to how points are generated and how isogenies can be constructed. We write $P_{User}$ and $Q_{User}$ for $\genpa$ \& $\genqa$ or $\genpb$ \& $\genqb$, depending on $User$.  The result is the following:
 
 \begin{algorithm}
 \caption{-- \textbf{KeyGen($\lambda$, $User$)}}\label{euclid}
 \begin{algorithmic}[1]
-\If{$User$ = \alice}
+\If{$User$ = $\alice$}
 	\State Pick a random point $S$ of order $\laea$
 \EndIf
-\If{$User$ = \bob}
+\If{$User$ = $\bob$}
 	\State Pick a random point $S$ of order $\lbeb$
 \EndIf
 \State Compute the isogeny $\phi: E \rightarrow E/\langle S \rangle$
@@ -629,7 +632,33 @@ For \textbf{Sign($sk$, $m$)} and \textbf{Verify($pk$, $m$, $\sigma$)} we assume 
 \end{algorithm}
 
 \noindent
-\textbf{Verify($pk$, $m$, $\sigma$)}:\\
+If we write out \textbf{Sign()} using the $\Pi_{\text{SIDH}}$ API, we see that the only real computation is being performed by \textbf{KeyGen()} and \textbf{SecAgr()}, and our two random oracles \textbf{H()} and \textbf{G()}.  The rest of the algorithm is merely organizing the information we've generated into the transcript ($com$, $ch$, $resp$) and finally into $\sigma$.
+
+\begin{algorithm}
+\caption{-- \textbf{Sign($sk = \rb$, $m$)}}\label{euclid}
+\begin{algorithmic}[1]
+\For{\texttt{i = 1..2$\lambda$}}
+	\State $(\cyr,\pr) \gets \Pi_{\text{SIDH}}$:\textbf{KeyGen($\lambda$, $\alice$)}
+	\State $\pbp: E/\langle \rb \rangle \rightarrow E/\langle \rb,\cyr \rangle \gets \Pi_{\text{SIDH}}$:\textbf{SecAgr($\rb$, $\pr$)}
+	\State $(E_{1},E_{2}) \gets (E/\langle \cyr \rangle, E/\langle \rb,\cyr \rangle)$
+	\State $com_{i} \gets (E_{1}, E_{2})$
+	\State $ch_{i,0} \gets_{R} \{0,1\}$
+	\State $(resp_{i,0}, resp_{i,1}) \gets ((\cyr,\pb(\cyr)), \pr(\rb))$
+	\If{$\texttt{ch}_{i,0} = 1$}
+		\State \textbf{Swap($resp_{i,0}$,$resp_{i,1}$)}
+	\EndIf
+	\State $h_{i,j} \gets$ \textbf{G($resp_{i,j}$)}
+\EndFor
+
+\State $J_{1} \parallel ... \parallel J_{2\lambda} \gets$ \textbf{H($\pb$, $m$, $(com_{i})_{i}$,$(ch_{i,j})_{i,j}$,$(h_{i,j})_{i,j}$)}
+
+\State \Return $\sigma \gets ((com_{i})_{i}, (ch_{i,j})_{i,j}, (h_{i,j})_{i,j}, (resp_{i,J_{i}})_{i})$
+\end{algorithmic}
+\end{algorithm}
+
+
+\noindent
+\textbf{Verify($pk$, $m$, $\sigma$)}: \alice begins her execution of \textbf{Verify()} where \bob ended his execution of \textbf{Sign()}, with the computation of $J$. \alice then knows at each iteration what check to perform on \bob's response, based on a conditional branch. You will notice that \bob's secret key $\rb$ occurs in the negative path of this branch; this is not a security concern because it is actually the point $\pr(\rb)$ that is communicated in $\sigma$, from which $\rb$ cannot be recovered.\\
 
 \begin{algorithm}[H]
 \caption{-- \textbf{Verify($pk = \pb$, $m$, $\sigma$)}}\label{euclid}
@@ -646,6 +675,30 @@ For \textbf{Sign($sk$, $m$)} and \textbf{Verify($pk$, $m$, $\sigma$)} we assume 
 		\State Parse $\pr(\rb) \gets resp_{i,J_{i}}$
 		\State \textbf{check} $\pr(\rb)$ has order $\lbeb$
 		\State \textbf{check} $\pr(\rb)$ generates the kernel of the isogeny $E_{1} \rightarrow E_{2}$
+	\EndIf
+\EndFor
+
+\If{all checks succeed}
+	\State \Return 1
+\Else
+	\State \Return 0
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{-- \textbf{Verify($pk = \pb$, $m$, $\sigma$)}}\label{euclid}
+\begin{algorithmic}[1]
+\State $J_{1} \parallel ... \parallel J_{2\lambda} \gets$ \textbf{H($\pb$, $m$, $(com_{i})_{i}$,$(ch_{i,j})_{i,j}$,$(h_{i,j})_{i,j}$)}
+\For{\texttt{i = 0..2$\lambda$}}
+	\State \textbf{check} $h_{i,J_{i}} = G(resp_{i,J_{i}})$
+	\If{$ch_{i,J_{i}} = 0$}
+		\State Parse $(\cyr,\pb(\cyr)) \gets resp_{i,J_{i}}$
+		\State \textbf{check} $(\cyr, \pr)$ is a valid output of $\Pi_{\text{SIDH}}$:\textbf{KeyGen($\lambda$, $\alice$)}
+		\State \textbf{check} that $\Pi_{\text{SIDH}}$:\textbf{SecAgr($\cyr$, $\pb$)} successfully terminates
+	\Else
+		\State Parse $\pr(\rb) \gets resp_{i,J_{i}}$
+		\State \textbf{check} that $\Pi_{\text{SIDH}}$:\textbf{SecAgr($\pr(\rb)$, $\pr$)} successfully terminates
 	\EndIf
 \EndFor
 
