@@ -717,15 +717,17 @@ These observations are formalized in Algorithm 6, where we rewrite $\Sigma'$:\te
 
 \section{Implementations of Isogeny Based Cryptographic Protocols}
 
-Having now introduced all of the background material necessary for understanding SIDH and the isogeny based signature scheme in detail, we will investigate 
+Having now introduced all of the background material necessary for understanding SIDH and the isogeny based signature scheme in detail, we will investigate the portions of the SIDH C library which are relevent to our contributions.
+
+The SIDH C library, written by a research team at Microsoft Research, was released in 2016 alongside an article titled \emph{Efficient Algorithms for Supersingular Isogeny Diffie-Hellman} (see \cite{effalg}). The article in question details several adjustments to the algorithms and data-representations outlined in \cite{djp}, leading to improved performance and key-sizes. Their C implementation (which we will henceforth refer to as $\sidh$) is built on top of these improved algorithms and written specifically for a class parameters, all-in-all offering 128-bit quantum security and 192-bit classical security key exchange up to 2.9 times faster than any previous implementation. We will look at some of the details of $\sidh$ below.
 
 \subsection{Parameters}
 
 \noindent
-\emph{Data Structures}.
+\emph{Parameters}. $\sidh$ operates over the underlying basefield $\mathbb{F}_{p}$ with $p = \laea\cdot\lbeb - 1$, $\la = 2$, $\lb = 3$, $\ea = 372$, and $\eb = 239$.
 
 \noindent
-\emph{Curve Parameters}.
+\emph{Data Structures}.
 
 \noindent
 \emph{Key Representation}.
@@ -738,15 +740,26 @@ Due to the substantial cost of field element inversions (computing $x^{-1}$ for 
 
 Figure \ref{fig:halfmap} illustrates the relationship between abstraction levels of the SIDH protocol and modules of the SIDH C library.\\
 
+\subsection{Key Exchange}
+
 \begin{figure}[htb]
 \centering
 \includegraphics[scale=0.7]{halfmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
-\caption{Relationship between SIDH key exchange \& MR SIDH C library}
+\caption{Relationship between $\Pi_{\text{SIDH}}$ \& $\sidh$ modules}
 \label{fig:halfmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
 \end{figure}
 
-\subsection{Key Exchange}
+\noindent
+\code{KeyGeneration\_A()}:\\
 
+\noindent
+\code{KeyGeneration\_B()}:\\
+
+\noindent
+\code{SecretAgreement\_A()}:\\
+
+\noindent
+\code{SecretAgreement\_B()}:\\
 
 \subsection{Signature Layer}
 
@@ -760,25 +773,46 @@ Figure \ref{fig:halfmap} illustrates the relationship between abstraction levels
 
 If we transcribe the above to the language of the Microsoft SIDH API, we have in essense the following:\\
 
-
-
 \begin{algorithm}
-\caption{Sign(sk, $m$)}\label{euclid}
+\caption{\code{Sign($sk$, $m$)}}\label{euclid}
 \begin{algorithmic}[1]
 \For{\texttt{i = 1..2$\lambda$}}
-	\State $(, R, \psi) \gets \texttt{KeyGeneration\_A(E)}$
+	\State $(\cyr, (E_{\rb}, \pr(\genpb), \pr(\genqb), \pr(\genpb - \genqb)) \gets \code{KeyGeneration\_A(}E\code{)}$
 	\State $E_{1} \gets E/\langle R \rangle$
 	\State $(E_{2},E/\langle R,S \rangle) \gets \texttt{SecretAgreement\_B()}$
 	\State $(E_{1},E_{2}) \gets (E/\langle R \rangle, E/\langle R,S \rangle)$
 	\State $\texttt{com}[i] \gets (E_{1}, E_{2})$
 	\State $\texttt{ch}[i] \gets_{R} \{0,1\}$
 	\State $(\texttt{resp}[i]_{0}, \texttt{resp}[i]_{1}) \gets ((R,\phi(R)), \psi(S))$
-	
 %% this portion was skipped?	
 %%	\If{$\texttt{ch}[i] = 1$}
 %%		\State $\texttt{swap}(\texttt{resp}[i]_{0},\texttt{resp}[i]_{1})$
 %%	\EndIf
-%%	\State $h_{i,j} \gets G(\texttt{resp}[i]_{j})$
+	\State $h_{i,j} \gets G(\texttt{resp}[i]_{j})$
+\EndFor
+
+\State $J_{1} \parallel ... \parallel J_{2\lambda} \gets H(pk, m, (\texttt{com}_{i})_{i},(\texttt{ch}_{i})_{i},(h_{i,j})_{i,j})$
+
+\State \Return $\sigma \gets ((\texttt{com}_{i})_{i}, (\texttt{ch}_{i,j})_{i,j}, (h_{i,j})_{i,j}, ((\texttt{resp})[J_{i}])$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{\code{Verify($pk$, $m$, $\sigma$)}}\label{euclid}
+\begin{algorithmic}[1]
+\For{\texttt{i = 1..2$\lambda$}}
+	\State $(\cyr, (E_{\rb}, \pr(\genpb), \pr(\genqb), \pr(\genpb - \genqb)) \gets \code{KeyGeneration\_A(}E\code{)}$
+	\State $E_{1} \gets E/\langle R \rangle$
+	\State $(E_{2},E/\langle R,S \rangle) \gets \texttt{SecretAgreement\_B()}$
+	\State $(E_{1},E_{2}) \gets (E/\langle R \rangle, E/\langle R,S \rangle)$
+	\State $\texttt{com}[i] \gets (E_{1}, E_{2})$
+	\State $\texttt{ch}[i] \gets_{R} \{0,1\}$
+	\State $(\texttt{resp}[i]_{0}, \texttt{resp}[i]_{1}) \gets ((R,\phi(R)), \psi(S))$
+%% this portion was skipped?	
+%%	\If{$\texttt{ch}[i] = 1$}
+%%		\State $\texttt{swap}(\texttt{resp}[i]_{0},\texttt{resp}[i]_{1})$
+%%	\EndIf
+	\State $h_{i,j} \gets G(\texttt{resp}[i]_{j})$
 \EndFor
 
 \State $J_{1} \parallel ... \parallel J_{2\lambda} \gets H(pk, m, (\texttt{com}_{i})_{i},(\texttt{ch}_{i})_{i},(h_{i,j})_{i,j})$

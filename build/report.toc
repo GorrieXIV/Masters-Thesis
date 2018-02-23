@@ -24,9 +24,9 @@
 \contentsline {section}{\numberline {2.6}Implementations of Isogeny Based Cryptographic Protocols}{19}{section.2.6}
 \contentsline {subsection}{\numberline {2.6.1}Parameters}{19}{subsection.2.6.1}
 \contentsline {subsection}{\numberline {2.6.2}Design Decisions}{19}{subsection.2.6.2}
-\contentsline {subsection}{\numberline {2.6.3}Key Exchange}{19}{subsection.2.6.3}
-\contentsline {subsection}{\numberline {2.6.4}Signature Layer}{19}{subsection.2.6.4}
-\contentsline {subsection}{\numberline {2.6.5}Performance}{20}{subsection.2.6.5}
+\contentsline {subsection}{\numberline {2.6.3}Key Exchange}{20}{subsection.2.6.3}
+\contentsline {subsection}{\numberline {2.6.4}Signature Layer}{20}{subsection.2.6.4}
+\contentsline {subsection}{\numberline {2.6.5}Performance}{21}{subsection.2.6.5}
 \contentsline {chapter}{\numberline {3}Batching Operations for Isogenies}{22}{chapter.3}
 \contentsline {section}{\numberline {3.1}Batching Procedure in Detail}{22}{section.3.1}
 \contentsline {subsection}{\numberline {3.1.1}Projective Space}{22}{subsection.3.1.1}
