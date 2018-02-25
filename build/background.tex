@@ -719,28 +719,60 @@ These observations are formalized in Algorithm 6, where we rewrite $\Sigma'$:\te
 
 Having now introduced all of the background material necessary for understanding SIDH and the isogeny based signature scheme in detail, we will investigate the portions of the SIDH C library which are relevent to our contributions.
 
-The SIDH C library, written by a research team at Microsoft Research, was released in 2016 alongside an article titled \emph{Efficient Algorithms for Supersingular Isogeny Diffie-Hellman} (see \cite{effalg}). The article in question details several adjustments to the algorithms and data-representations outlined in \cite{djp}, leading to improved performance and key-sizes. Their C implementation (which we will henceforth refer to as $\sidh$) is built on top of these improved algorithms and written specifically for a class parameters, all-in-all offering 128-bit quantum security and 192-bit classical security key exchange up to 2.9 times faster than any previous implementation. We will look at some of the details of $\sidh$ below.
+The SIDH C library, written by a research team at Microsoft Research, was released in 2016 alongside an article titled \emph{Efficient Algorithms for Supersingular Isogeny Diffie-Hellman} (see \cite{effalg}). The article in question details several adjustments to the algorithms and data-representations outlined in \cite{djp}, leading to improved performance and key-sizes. Their C implementation (which we will henceforth refer to as $\sidh$) is built on top of these improved algorithms and tailored to a specific set of parameters, all-in-all offering 128-bit quantum security and 192-bit classical security key exchange up to 2.9 times faster than any previous implementation. We will look at some of the details of $\sidh$ below.
 
-\subsection{Parameters}
+Before proceeding, it may be advisable to briefly overview the section on notation (\ref{sub:notation}) if one has not already.
 
-\noindent
-\emph{Parameters}. $\sidh$ operates over the underlying basefield $\mathbb{F}_{p}$ with $p = \laea\cdot\lbeb - 1$, $\la = 2$, $\lb = 3$, $\ea = 372$, and $\eb = 239$.
-
-\noindent
-\emph{Data Structures}.
+\subsection{Parameters \& Notation}
 
 \noindent
-\emph{Key Representation}.
+\emph{Parameters}. $\sidh$ operates over the underlying basefield $\mathbb{F}_{p}$ where $p = \laea\cdot\lbeb - 1$, with $\la = 2$, $\lb = 3$, $\ea = 372$, and $\eb = 239$, giving $p$ a bitlength of 751. Now, recall the Montgomery representation of a curve:
+$$
+By^2 = Cx^3 + Ax^2 + Cx
+$$
+
+$\sidh$ uses the public parameter curve $E$ defined in Montgomery form with $A = 0$, $B = 1$, and $C = 1$. The point pairs ($\genpa,\genqa$) and ($\genpb, \genqb$), generating $E[\laea]$ and $E[\lbeb]$ respectively, are hard-coded as an array of bytes. This set of parameters (including related data such as the bitlength of certain constants) is referred to in the system as \code{SIDHp751}, and is stored in the struct \code{CurveIsogenyStaticData} which will be outlined below.\\
+
+\noindent
+\emph{Data Structures}. There are several custom-defined data structures that are integral to $\sidh$. Below, we will briefly cover the ones which are likely to arise in our discussion:\\
+
+\emph{Field elements}
+\begin{itemize}
+	\item \code{felm\_t} -- buffer of bytes representing elements of $\mathbb{F}_{p}$.
+	\item \code{f2elm\_t} -- pair of \code{felm\_t} representing elements of $\mathbb{F}_{p^2}$.
+\end{itemize}
+
+\emph{Elliptic curve points}
+\begin{itemize}
+	\item \code{point\_affine} -- an \code{f2elm\_t} \code{x} and an \code{f2elm\_t} \code{y} representing a point in affine space.
+	\item \code{point\_proj} -- an \code{f2elm\_t} \code{X} and an \code{f2elm\_t} \code{Z} representing a point as projective XZ montgomery coordinates.
+	\item \code{point\_full\_proj} -- \code{f2elm\_t} elements \code{X}, \code{Y}, and \code{Z} representing a point in projective space.
+	\item \code{point\_basefield\_affine} -- an \code{felm\_t} \code{x} and an \code{felm\_t} \code{y} representing a point in affine space over the base field.
+	\item \code{point\_basefield\_proj} -- an \code{felm\_t} \code{X} and an \code{felm\_t} \code{Z} representing a point as projective XZ montgomery coordinates over the base field.
+\end{itemize}
+
+\emph{Crypto structures}
+\begin{itemize}
+	\item \code{publickey\_t} -- three \code{f2elm\_t}s representing a public key.\\
+	\code{publickey\_t[0]} = users private isogeny applied to the other parties generator $P_x$\\
+	\code{publickey\_t[1]} = users private isogeny applied to the other parties generator $Q_x$\\
+	\code{publickey\_t[2]} = users private isogeny applied $P_x - Q_x$
+\end{itemize}
+
+\emph{Curve structures}
+\begin{itemize}
+	\item \code{CurveIsogenyStruct} -- Structure containing all necessary public parameter data.
+	\item \code{CurveIsogenyStaticData} -- The same as \code{CurveIsogenyStruct}, but with buffer sizes fixed for \code{SIDHp751}.
+\end{itemize}
+
+The reader may note that \code{publickey\_t} does not contain any information defining the users co-domain curve $E/\langle S \rangle$ (with $S$ as the users secret key). It just so happens that in $\Pi_{\text{SIDH}}$ key exchange, the curves $E/\langle \ba \rangle$ and $E/\langle \rb \rangle$ are simply intermediary steps (useful for conceptualizing the protocol) and not necessary for computing the shared secret $j(E_{\ba\rb})$.
 
 \subsection{Design Decisions}
 
-The SIDH library is designed with several layers of abstraction. 
-
-Due to the substantial cost of field element inversions (computing $x^{-1}$ for some element $x \in \mathbb{F}_{p^2}$), curve points (and curve coefficients) are represented using projective coordinates. This notion of expensive field inversions is central to our first contribution, which will be elaborated on in the following section.
+\noindent
+\emph{Projective Space}. As is common in ECC, a vast majority of the procedures of $\sidh$ operate over the \emph{projective space} representation of elliptic curve points. This widely-deployed technique is used to avoid the substantial cost of field element inversions (computing $x^{-1}$ for some element $x \in \mathbb{F}_{p^2}$). This means the majority of our calculations are performed over \code{point\_proj} structures using \emph{montgomery arithmetic}(\ref{snip:montgomery}) and converted to \code{point\_affine} when necessary. This general design strategy is highly related to our first contribution, which will be elaborated upon in the sections to come.\\
 
 Figure \ref{fig:halfmap} illustrates the relationship between abstraction levels of the SIDH protocol and modules of the SIDH C library.\\
-
-\subsection{Key Exchange}
 
 \begin{figure}[htb]
 \centering
@@ -749,8 +781,33 @@ Figure \ref{fig:halfmap} illustrates the relationship between abstraction levels
 \label{fig:halfmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
 \end{figure}
 
+\subsection{Key Exchange \& Critical Functions}
+
+
+
+
 \noindent
 \code{KeyGeneration\_A()}:\\
+
+\begin{algorithm}
+\caption{\code{KeyGeneration\_A($sk$, $m$)}}\label{euclid}
+\begin{algorithmic}[1]
+\For{\texttt{i = 1..2$\lambda$}}
+	\State $(\cyr, (E_{\rb}, \pr(\genpb), \pr(\genqb), \pr(\genpb - \genqb)) \gets \code{KeyGeneration\_A(}E\code{)}$
+	\State $E_{1} \gets E/\langle R \rangle$
+	\State $(E_{2},E/\langle R,S \rangle) \gets \texttt{SecretAgreement\_B()}$
+	\State $(E_{1},E_{2}) \gets (E/\langle R \rangle, E/\langle R,S \rangle)$
+	\State $\texttt{com}[i] \gets (E_{1}, E_{2})$
+	\State $\texttt{ch}[i] \gets_{R} \{0,1\}$
+	\State $(\texttt{resp}[i]_{0}, \texttt{resp}[i]_{1}) \gets ((R,\phi(R)), \psi(S))$
+%% this portion was skipped?	
+%%	\If{$\texttt{ch}[i] = 1$}
+%%		\State $\texttt{swap}(\texttt{resp}[i]_{0},\texttt{resp}[i]_{1})$
+%%	\EndIf
+	\State $h_{i,j} \gets G(\texttt{resp}[i]_{j})$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 
 \noindent
 \code{KeyGeneration\_B()}:\\
@@ -763,7 +820,9 @@ Figure \ref{fig:halfmap} illustrates the relationship between abstraction levels
 
 \subsection{Signature Layer}
 
-\begin{figure}[htb]
+here's a figure
+
+\begin{figure}[htp]
 \centering
 \includegraphics[scale=0.7]{fullmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
 \caption{Relationship between SIDH based signatures \& Our fork of the SIDH C library}
