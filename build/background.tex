@@ -772,6 +772,9 @@ The reader may note that \code{publickey\_t} does not contain any information de
 \noindent
 \emph{Projective Space}. As is common in ECC, a vast majority of the procedures of $\sidh$ operate over the \emph{projective space} representation of elliptic curve points. This widely-deployed technique is used to avoid the substantial cost of field element inversions (computing $x^{-1}$ for some element $x \in \mathbb{F}_{p^2}$). This means the majority of our calculations are performed over \code{point\_proj} structures using \emph{montgomery arithmetic}(\ref{snip:montgomery}) and converted to \code{point\_affine} when necessary. This general design strategy is highly related to our first contribution, which will be elaborated upon in the sections to come.\\
 
+\noindent
+\emph{Secret Keys.} Recall the origin of an $\Pi_{\text{SIDH}}$ private key $(m, n)$: the goal is to randomly select a generator of the torsion group $E[\laea]$ (or $E[\lbeb]$ for \bob). It is noted in \cite{djp} that any generator of the required torsion group is sufficient. It is also noted that $m$, unless equal to the order of the torsion group, is invertible. Because of this, \alice, for example, can simple compute $R = \genpa + [m^{-1}n]\genqa$, thus enabling secret keys to be stored as a single $\mathbb{F}_{p^2}$ element. This technicality has been implemented in $\sidh$, which both saves on storage as well as offers a means for generating secret keys that is more efficient than the trivial scalar multiplication and point-wise addition approach to computing $[m]P + [n]Q$.
+
 Figure \ref{fig:halfmap} illustrates the relationship between abstraction levels of the SIDH protocol and modules of the SIDH C library.\\
 
 \begin{figure}[htb]
