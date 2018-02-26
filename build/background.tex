@@ -168,8 +168,9 @@ Furthermore, an \emph{endomorphism} is a special type of morphism in which the d
 The \emph{kernel} of a particular homomorphism $h: G \rightarrow H$  is the set of elements in $G$ that, when applied to $h$, map to the identity element of $H$. We write this set as $ker(h)$, and it is much analogous to the familiar concept from linear algebra, wherein the kernel denotes the set of elements mapped to the zero vector by some linear map.
 \vspace{10mm}
 
-\noindent
-\emph{Fields \& Field Extensions}. A \textbf{field} is a mathematical structure which, while being similar to a group, demands additional properties. Fields are defined by some set $F$ and two operations: \emph{addition} and \emph{multiplication}. In order for some tuple $(F,+,\cdot)$ to constitute a field, it must satisfy an assortment of axioms:\\
+\subsection{Fields \& Field Extensions}
+
+A \textbf{field} is a mathematical structure which, while being similar to a group, demands additional properties. Fields are defined by some set $F$ and two operations: \emph{addition} and \emph{multiplication}. In order for some tuple $(F,+,\cdot)$ to constitute a field, it must satisfy an assortment of axioms:\\
 
 \emph{Addition axioms}:
 \begin{itemize}
@@ -209,6 +210,9 @@ A particular field $K'$ is called an \emph{extension field} of some other field 
 An algebraic group $G_a$ is defined over a field $K$ if each element $e \in G_a$ is defined over $K$ and the corresponding $f_{G_a}$ is also defined over $K$. To show that a particular algebraic group $G_a$ is defined over some field $K$ we will henceforth denote the group/field pairing as $G_a(K)$. Naturally, in the case where our field is a finite field of order $p$, we write $G_a(\mathbb{F}_p)$.
 
 These algebraic structures are all important for building up to the concept of an \emph{isogeny}. The lowest-level object we will be concerned with when discussing the forthcoming isogeny-based protocols will typically be elements of abelian varieties. The lowest-level structure in the SIDH C codebase is a finite field element.\\
+
+\noindent
+\emph{Montgomery Arithmetic}\label{snip:montgomery}.
 
 \subsection{Elliptic Curves}
 
@@ -344,7 +348,7 @@ When referring to curves as abelian varieties defined over a field, we will writ
 For the remainder of this paper, unless otherwise noted, all elliptic curves in discussion will be of the supersingular variety.\\
 
 \noindent
-\emph{Montgomery Arithmetic}.
+\emph{Projective Coordinates}\label{snip:projspace}.
 
 \subsection{Isogenies \& Their Properties}
 
@@ -719,22 +723,22 @@ These observations are formalized in Algorithm 6, where we rewrite $\Sigma'$:\te
 
 Having now introduced all of the background material necessary for understanding SIDH and the isogeny based signature scheme in detail, we will investigate the portions of the SIDH C library which are relevent to our contributions.
 
-The SIDH C library, written by a research team at Microsoft Research, was released in 2016 alongside an article titled \emph{Efficient Algorithms for Supersingular Isogeny Diffie-Hellman} (see \cite{effalg}). The article in question details several adjustments to the algorithms and data-representations outlined in \cite{djp}, leading to improved performance and key-sizes. Their C implementation (which we will henceforth refer to as $\sidh$) is built on top of these improved algorithms and tailored to a specific set of parameters, all-in-all offering 128-bit quantum security and 192-bit classical security key exchange up to 2.9 times faster than any previous implementation. We will look at some of the details of $\sidh$ below.
+The SIDH C library, written by a research team at Microsoft Research, was released in 2016 alongside an article titled \emph{Efficient Algorithms for Supersingular Isogeny Diffie-Hellman} (see \cite{effalg}). The article in question details several adjustments to the algorithms and data-representations outlined in \cite{djp}, leading to improved performance and key-sizes. Their C implementation (which we will henceforth refer to as \sidh) is built on top of these improved algorithms and tailored to a specific set of parameters, all-in-all offering 128-bit quantum security and 192-bit classical security key exchange up to 2.9 times faster than any previous implementation. We will look at some of the details of \sidh below. 
 
 Before proceeding, it may be advisable to briefly overview the section on notation (\ref{sub:notation}) if one has not already.
 
-\subsection{Parameters \& Notation}
+\subsection{Parameters \& Data Representation}
 
 \noindent
-\emph{Parameters}. $\sidh$ operates over the underlying basefield $\mathbb{F}_{p}$ where $p = \laea\cdot\lbeb - 1$, with $\la = 2$, $\lb = 3$, $\ea = 372$, and $\eb = 239$, giving $p$ a bitlength of 751. Now, recall the Montgomery representation of a curve:
+\emph{Parameters}. \sidh operates over the underlying basefield $\mathbb{F}_{p}$ where $p = \laea\cdot\lbeb - 1$, with $\la = 2$, $\lb = 3$, $\ea = 372$, and $\eb = 239$, giving $p$ a bitlength of 751. Now, recall the Montgomery representation of a curve:
 $$
 By^2 = Cx^3 + Ax^2 + Cx
 $$
 
-$\sidh$ uses the public parameter curve $E$ defined in Montgomery form with $A = 0$, $B = 1$, and $C = 1$. The point pairs ($\genpa,\genqa$) and ($\genpb, \genqb$), generating $E[\laea]$ and $E[\lbeb]$ respectively, are hard-coded as an array of bytes. This set of parameters (including related data such as the bitlength of certain constants) is referred to in the system as \code{SIDHp751}, and is stored in the struct \code{CurveIsogenyStaticData} which will be outlined below.\\
+\sidh uses the public parameter curve $E$ defined in Montgomery form with $A = 0$, $B = 1$, and $C = 1$. The point pairs ($\genpa,\genqa$) and ($\genpb, \genqb$), generating $E[\laea]$ and $E[\lbeb]$ respectively, are hard-coded as an array of bytes. This set of parameters (including related data such as the bitlength of certain constants) is referred to in the system as \code{SIDHp751}, and is stored in the struct \code{CurveIsogenyStaticData} which will be outlined below.\\
 
 \noindent
-\emph{Data Structures}. There are several custom-defined data structures that are integral to $\sidh$. Below, we will briefly cover the ones which are likely to arise in our discussion:\\
+\emph{Data Structures}. There are several custom-defined data structures that are integral to \sidh. Below, we will briefly cover the ones which are likely to arise in our discussion:\\
 
 \emph{Field elements}
 \begin{itemize}
@@ -770,68 +774,107 @@ The reader may note that \code{publickey\_t} does not contain any information de
 \subsection{Design Decisions}
 
 \noindent
-\emph{Projective Space}. As is common in ECC, a vast majority of the procedures of $\sidh$ operate over the \emph{projective space} representation of elliptic curve points. This widely-deployed technique is used to avoid the substantial cost of field element inversions (computing $x^{-1}$ for some element $x \in \mathbb{F}_{p^2}$). This means the majority of our calculations are performed over \code{point\_proj} structures using \emph{montgomery arithmetic}(\ref{snip:montgomery}) and converted to \code{point\_affine} when necessary. This general design strategy is highly related to our first contribution, which will be elaborated upon in the sections to come.\\
+\emph{Projective Space}. As is common in ECC, a vast majority of the procedures of \sidh operate over the \emph{projective space}(\ref{snip:projspace}) representation of elliptic curve points. This widely-deployed technique is used to avoid the substantial cost of field element inversions (computing $x^{-1}$ for some element $x \in \mathbb{F}_{p^2}$). This means the majority of our calculations are performed over \code{point\_proj} structures using \emph{montgomery arithmetic}(\ref{snip:montgomery}) and converted to \code{point\_affine} when necessary. This general design strategy is highly related to our first contribution, which will be elaborated upon in the sections to come.\\
 
 \noindent
-\emph{Secret Keys.} Recall the origin of an $\Pi_{\text{SIDH}}$ private key $(m, n)$: the goal is to randomly select a generator of the torsion group $E[\laea]$ (or $E[\lbeb]$ for \bob). It is noted in \cite{djp} that any generator of the required torsion group is sufficient. It is also noted that $m$, unless equal to the order of the torsion group, is invertible. Because of this, \alice, for example, can simple compute $R = \genpa + [m^{-1}n]\genqa$, thus enabling secret keys to be stored as a single $\mathbb{F}_{p^2}$ element. This technicality has been implemented in $\sidh$, which both saves on storage as well as offers a means for generating secret keys that is more efficient than the trivial scalar multiplication and point-wise addition approach to computing $[m]P + [n]Q$.
-
-Figure \ref{fig:halfmap} illustrates the relationship between abstraction levels of the SIDH protocol and modules of the SIDH C library.\\
-
-\begin{figure}[htb]
-\centering
-\includegraphics[scale=0.7]{halfmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
-\caption{Relationship between $\Pi_{\text{SIDH}}$ \& $\sidh$ modules}
-\label{fig:halfmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
-\end{figure}
+\emph{Secret Keys.} Recall the origin of an $\Pi_{\text{SIDH}}$ private key $(m, n)$: the goal is to randomly select a generator of the torsion group $E[\laea]$ (or $E[\lbeb]$ for \bob). It is noted in \cite{djp} that any generator of the required torsion group is sufficient. It is also noted that $m$, unless equal to the order of the torsion group, is invertible. Because of this, \alice, for example, can simple compute $R = \genpa + [m^{-1}n]\genqa$, thus enabling secret keys to be stored as a single $\mathbb{F}_{p^2}$ element (which is referred to as $m$). This technicality has been implemented in \sidh, which both saves on storage as well as offers a means for generating secret keys that is more efficient than the trivial scalar multiplication and point-wise addition approach to computing $[m]P + [n]Q$.
 
 \subsection{Key Exchange \& Critical Functions}
 
+There are 3 central modules (C file) in \sidh, all dealing with different levels of abstraction in the $\Pi_{\text{SIDH}}$ protocol. Operating at the lowest abstraction level is the module \code{fpx.c}, wherein functions for manipulating $\mathbb{F}_{p}$ and $\mathbb{F}_{p^2}$ elements are defined. One level up from \code{fpx.c} we have \code{ec\_isogeny.c}, containing functions pertaining to elliptic curves and point arithmetic (such as \code{j\_inv(...)} for computing the j-invariant of a curve and \code{secret\_pt(...)} for computing a users secret point $S$ given their private key $m$). The final, highest abstraction-level module we will discuss is \code{kex.c}. \code{kex.c} contains the protocol-level functions for performing $\Pi_{\text{SIDH}}$, namely \code{KeyGeneration\_A(...)} and \code{KeyGeneration\_B(...)} for generating \alice and \bob's private and public keys, as well as \code{SecretAgreement\_A(...)} and \code{SecretAgreement\_B(...)} for completing the secret agreement from both sides of the key exchange. Figure \ref{fig:halfmap} illustrates the relationship between these modules and the abstraction levels of isogeny based key exchange.
 
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.7]{halfmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
+\caption{Relationship between $\Pi_{\text{SIDH}}$ \& \sidh modules}
+\label{fig:halfmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
+\end{figure}
 
+The estbalished notation for functions in \code{fpx.c} is to prepend function names with either \code{fp} or \code{fp2} to signify if it is defined for elements of $\mathbb{F}_{p}$ or $\mathbb{F}_{p^2}$. Additionally, it is common to append \code{\_mont} to the name of functions which are defined using Montgomery arithmetic. Functions in \code{fpx.c} are largely defined by byte and memory arithmetic, with the exception of slightly higher-level functions such as field element inversion (\code{fpinv751\_mont(...)}) which are defined in terms of other \code{fpx.c} functions. Furthermore, for efficiency, functions of \code{fpx.c} are defined as \code{\_\_inline} when applicable.
 
-\noindent
-\code{KeyGeneration\_A()}:\\
+\code{ec\_isogeny.c} functions are defined almost exclusively in terms of \code{fpx.c} functions, with a few occurances of internal function calling. Functions in this module that are signifant to our our work are briefly surmised in figure \ref{fig:funcs}. The implementation specifics of most other \code{ec\_isogeny.c} functions are not critical to our work, and so have been excluded. The design and efficiency of these algorithms do, however, have a rich background and can be further read about in \cite{djp} and \cite{effalg}.
 
-\begin{algorithm}
-\caption{\code{KeyGeneration\_A($sk$, $m$)}}\label{euclid}
-\begin{algorithmic}[1]
-\For{\texttt{i = 1..2$\lambda$}}
-	\State $(\cyr, (E_{\rb}, \pr(\genpb), \pr(\genqb), \pr(\genpb - \genqb)) \gets \code{KeyGeneration\_A(}E\code{)}$
-	\State $E_{1} \gets E/\langle R \rangle$
-	\State $(E_{2},E/\langle R,S \rangle) \gets \texttt{SecretAgreement\_B()}$
-	\State $(E_{1},E_{2}) \gets (E/\langle R \rangle, E/\langle R,S \rangle)$
-	\State $\texttt{com}[i] \gets (E_{1}, E_{2})$
-	\State $\texttt{ch}[i] \gets_{R} \{0,1\}$
-	\State $(\texttt{resp}[i]_{0}, \texttt{resp}[i]_{1}) \gets ((R,\phi(R)), \psi(S))$
-%% this portion was skipped?	
-%%	\If{$\texttt{ch}[i] = 1$}
-%%		\State $\texttt{swap}(\texttt{resp}[i]_{0},\texttt{resp}[i]_{1})$
-%%	\EndIf
-	\State $h_{i,j} \gets G(\texttt{resp}[i]_{j})$
-\EndFor
-\end{algorithmic}
-\end{algorithm}
+The key exchange procedures found in \code{kex.c} are composed enrirely of calls to \code{fpx.c} and \code{ec\_isogeny.c} functions, modulo some basic branching logic.
 
-\noindent
-\code{KeyGeneration\_B()}:\\
+\begin{center}
+\code{fpx.c} functions
+\begin{tabular}{|c|c|c|c|}
+	\toprule
+	Function & Description & Input & Output\\
+	\hline
+	\code{to\_fp2mont(...)} & & &\\
+	\hline
+	\code{from\_fp2mont(...)} & & &\\
+	\hline
+	\code{fp2inv751\_mont\_bingcd(...)} & yuh & yuh & yuh \\
+	\hline
+	\code{fp2inv751\_mont(...)} &  & hh &\\
+	\hline
+	\code{verify\_thread(...)} & & &\\
+	\bottomrule
+\end{tabular}
+\end{center}
 
-\noindent
-\code{SecretAgreement\_A()}:\\
+\begin{center}
+\code{ec\_isogeny.c} functions
+\begin{tabular}{|c|c|c|c|}
+	\toprule
+	Function & Description & Input & Output\\
+	\hline
+	\code{j\_inv(...)} & yuh & yuh & yuh \\
+	\hline
+	\code{secret\_pt(...)} &  & hh &\\
+	\hline
+	\code{inv\_3\_way(...)} & & &\\
+	\hline
+	\code{inv\_4\_way(...)} & & &\\
+	\hline
+	\code{generate\_2\_torsion\_basis(...)} & & &\\
+	\hline
+	\code{generate\_3\_torsion\_basis(...)} & & &\\
+	\bottomrule
+\end{tabular}
+\end{center}
 
-\noindent
-\code{SecretAgreement\_B()}:\\
+\begin{center}
+\code{kex.c} functions
+\begin{tabular}{|c|c|c|c|}
+	\toprule
+	Function & Description & Input & Output\\
+	\hline
+	\code{KeyGeneration\_A(...)} & yuh & yuh & yuh \\
+	\hline
+	\code{KeyGeneration\_B(...)} &  & hh &\\
+	\hline
+	\code{SecretAgreement\_A(...)} & & &\\
+	\hline
+	\code{SecretAgreement\_B(...)} & & &\\
+	\bottomrule
+\end{tabular}
+\end{center}
 
 \subsection{Signature Layer}
 
-here's a figure
+Yoo et al., along with the publication of \cite{yoo}, provided an implementation of their signature scheme as a fork to \sidh. Their contributions to the \sidh codebase come in the form of the following functions:
 
-\begin{figure}[htp]
-\centering
-\includegraphics[scale=0.7]{fullmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
-\caption{Relationship between SIDH based signatures \& Our fork of the SIDH C library}
-\label{fig:fullmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
-\end{figure}
-
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+	\toprule
+	Function & Description & Input & Output\\
+	\midrule
+	\code{isogeny\_keygen(...)} & yuh & yuh & yuh \\
+	\hline
+	\code{isogeny\_sign(...)} &  & hh &\\
+	&  & &\\
+	\hline
+	\code{sign\_thread(...)} & & &\\
+	\hline
+	\code{isogeny\_verify(...)} & & &\\
+	\hline
+	\code{verify\_thread(...)} & & &\\
+	\bottomrule
+\end{tabular}
+\end{center}
 
 If we transcribe the above to the language of the Microsoft SIDH API, we have in essense the following:\\
 
@@ -846,10 +889,6 @@ If we transcribe the above to the language of the Microsoft SIDH API, we have in
 	\State $\texttt{com}[i] \gets (E_{1}, E_{2})$
 	\State $\texttt{ch}[i] \gets_{R} \{0,1\}$
 	\State $(\texttt{resp}[i]_{0}, \texttt{resp}[i]_{1}) \gets ((R,\phi(R)), \psi(S))$
-%% this portion was skipped?	
-%%	\If{$\texttt{ch}[i] = 1$}
-%%		\State $\texttt{swap}(\texttt{resp}[i]_{0},\texttt{resp}[i]_{1})$
-%%	\EndIf
 	\State $h_{i,j} \gets G(\texttt{resp}[i]_{j})$
 \EndFor
 
@@ -883,5 +922,6 @@ If we transcribe the above to the language of the Microsoft SIDH API, we have in
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Performance}
+\noindent
+\emph{Parallel Implementation.}
 

@@ -31,8 +31,8 @@
 \usepackage{enumitem}
 
 %for editing purposes
-\usepackage{setspace}
-\doublespacing
+%\usepackage{setspace}
+%\doublespacing
 %%%%%%%%%%%%%%%%%%%%
 
 \usepackage[bookmarks, colorlinks=false, pdfborder={0 0 0}, pdftitle={title goes here}, pdfauthor={Robert W.V. Gorrie}, pdfsubject={<subject here>}, pdfkeywords={<keywords here>}]{hyperref} %for creating links in the pdf version and other additional pdf attributes, no effect on the printed document
@@ -111,7 +111,10 @@
 }
 
 \def\code#1{\texttt{#1}}
-\newcommand{\sidh}[0]{\code{SIDH}_{\code{C}}}
+% shortcuts for SIDH codebase and API
+\newcommand{\sidh}[0]{$\code{SIDH}_{\code{C}}$\xspace}
+\newcommand{\sidht}[0]{$\code{SIDH}_{\code{C}}\code{2.0}$\xspace}
+
 
 \newcommand\tab[1][1cm]{\hspace*{#1}}
 
