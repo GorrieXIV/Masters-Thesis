@@ -798,17 +798,22 @@ The key exchange procedures found in \code{kex.c} are composed enrirely of calls
 
 \begin{center}
 \code{fpx.c} functions\\
-\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|c|c|c|}
 	\toprule
-	Function & Description & Input & Output\\
+	Function & Input & Output\\
 	\hline
-	\code{to\_fp2mont(...)} & & &\\
+	\code{to\_fp2mont(...)} & \code{f2elm\_t a} & \code{f2elm\_t ma}\\
+	Converts an $\mathbb{F}_{p^2}$  element & &\\
+	to Montgomery representation & &\\
 	\hline
-	\code{from\_fp2mont(...)} & & &\\
+	\code{from\_fp2mont(...)} & \code{f2elm\_t ma} & \code{f2elm\_t a}\\
+	Converts an $\mathbb{F}_{p^2}$ element & &\\
+	from Montgomery representation  & &\\
+	to regular form & &\\
 	\hline
-	\code{fp2inv751\_mont\_bingcd(...)} & yuh & yuh & yuh \\
+	\code{fp2inv751\_mont\_bingcd(...)} & \code{f2elm\_t a} & \code{f2elm\_t a}$^{-1}$\\
 	\hline
-	\code{fp2inv751\_mont(...)} &  & hh &\\
+	\code{fp2inv751\_mont(...)} & hh &\\
 	\bottomrule
 \end{tabular}
 \end{center}
@@ -853,7 +858,14 @@ The key exchange procedures found in \code{kex.c} are composed enrirely of calls
 
 \subsection{Signature Layer}
 
-Yoo et al. provided, along with their publication of \cite{yoo}, an implementation of their signature scheme as a fork to \sidh. All of their functions are written specifically for an instance of $\Sigma'$ where the signer is assuming the \rb role (meaning that \randall assumes the \ba role), but their algorithms could be trivially modified to provide versions supporting a signer in the \ba role. Their contributions to the \sidh codebase come in the form of the following functions:
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=0.7]{fullmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
+\caption{Relationship between SIDH based signatures \& Our fork of the SIDH C library}
+\label{fig:fullmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
+\end{figure}
+
+Yoo et al. provided, along with their publication of \cite{yoo}, an implementation of their signature scheme as a fork to \sidh. All of their functions are written specifically for an instance of $\Sigma'$ where the signer is assuming the \rb role (meaning that \randall assumes the \ba role), but their algorithms could be trivially modified to provide versions supporting a signer in the \ba role. Their contributions to the \sidh codebase come in the form of the functions listed below -- their relation to the rest of \sidh is illustrated in figure \ref{fig:fullmap}.
 
 \begin{center}
 \begin{tabular}{|c|c|c|c|}

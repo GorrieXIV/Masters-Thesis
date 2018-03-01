@@ -1,16 +1,5 @@
 \chapter{Batching Operations for Isogenies}
 
-\section{Merging Signatures with \sidht}
-
-\sidht and \sidh yeah
-
-\begin{figure}[htp]
-\centering
-\includegraphics[scale=0.7]{fullmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
-\caption{Relationship between SIDH based signatures \& Our fork of the SIDH C library}
-\label{fig:fullmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
-\end{figure}
-
 \section{Partial Batched Inversions}
 
 One of our main contributions is the embedding of a low-level $\mathbb{F}_{p^{2}}$ procedure into Microsofts pre-existing SIDH library. The procedure in question reduces arbitrarily many unrelated/potentially parallel $\mathbb{F}_{p^{2}}$ inversions to a sequence of $\mathbb{F}_{p}$ multiplications \& additions, as well as one $\mathbb{F}_{p}$ inversion.\\
