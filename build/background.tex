@@ -33,11 +33,18 @@ The notion that the source of the information in question is verified.
 The notion that the source of the information in question \textbf{cannot} deny having originally provided the information.
 \end{itemize}
 
+The security of a particular cryptographic primitive is measured by two components. The first, referred to often as a ``security guarantee", measures what conditions constitute a successful attack on the primitive. The second, known as the ``threat model", makes assumptions about the computational powers that the adversary holds. The best practice in forming security proofs is to aim for security with respect to the most easily broken security guarantee and the most challenging possible threat model. The combination of a security guarantee and threat model is known as a \emph{security goal}.
+
 Each of the primitives to come are designed to offer some utility in the communication between a given pair of entities. We will refer to these entities as Alice and Bob. The schemes we are concerned with in this paper are strictly \emph{public key} (also known as \emph{asymmetric key}) schemes. In public key primitives, each user possesses a \emph{public} key (visible to every user in the network) as well as a \emph{private} key, which only they have access to. 
 
 The first class of primitives we will discuss, \emph{key exchange} protocols, provide a means by which Alice and Bob can come to the agreement of some secret value. The goal of a key exchange protocol is for Alice \& Bob, communicating over some open, insecure channel, to reach mutual agreement of the secret value while also ensuring the \emph{confidentiality} of that value. The secret value is reffered to as a \emph{secret} or \emph{shared} key and is intended for use in other cryptographic primitives. 
 
 Identification schemes are a class of primitives that aim to ensure \emph{authenticity} of a given entity. If Alice is communicating with Bob and she wants to verify that Bob is who he claims to be, the two can utilize a secure identification scheme. After identification protocols we will look at signature schemes, which are somewhat of an extension of the former. Signature schemes aim to provide \emph{authenticity} on every message sent from Bob to Alice, as well as \emph{non-repudiability} \& \emph{integrity} of those messages.\\
+
+\noindent
+\emph{Random Oracle Model}. Before continuing with our discussion of primitives, it is worth discussion a framework in cryptography known as the random oracle model. A ``random oracle" is a theoretical black box which, for every unique input, responds with a truly random output. That is, if a query is made to a random oracle $h$ with input $x$ (written $h(x)$) multiple times, $h$ with respond with the same (random) output every time.
+
+For certain constructions to be proven secure, it is sometimes necessary to assume the existence of random oracles. While this assumption may seem greviously optimistic, \emph{hash functions} are a widely diployed family of functions which are believed to approach the nature of random oracles to some degree. Much of the security of modern cryptography depends on the security of such hash functions.
 
 \subsection{Key Exchange}
 
@@ -51,6 +58,8 @@ Execution of $\Pi_{kex}$ between Alice and Bob involves the following:
 \end{enumerate}
 
 $\Pi_{kex}$ is said to uphold \emph{correctness} if $k_{Alice} = k_{Bob}$. Because we deal only with correct $\Pi_{kex}$, we refer to the output of $\Pi_{kex}$ as simply $k$. Figure \ref{fig:diffiehellman} illustrates an execution of the Diffie-Hellman key exchange protocol which relies on the difficulty of the \emph{discrete logarithm} problem for its one-way function $f$.\\
+
+The security goal typical of a key exchange protocol is that a standard eavesdropper (threat) cannot discern the resulting shared secret key from a randomly generated value (security guarantee).
 
 \begin{figure}[!h]
 \begin{center}
@@ -101,7 +110,7 @@ Execution of $\Pi_{id}$ between Alice and Bob involves the following:
 \item Alice runs $\textbf{Verify}(pk, com, ch, resp)$: A deterministic algorithm with input $pk$ (Bob's public key), $com$, $ch$, and $resp$ and output $b \in {0,1}$. Bob has successfully proven his identity to Alice if $b = 1$.
 \end{enumerate}
 
-If Alice accepts Bobs response, and $b = 1$, then we refer to the tuple $(com,ch,resp)$ as an \emph{accepting transcript}.
+If Alice accepts Bobs response, and $b = 1$, then we refer to the tuple $(com,ch,resp)$ as an \emph{accepting transcript}. In terms of security, it is common to show that an identification scheme is secure against a \emph{passive attack}. Proving such security implies that an adversary who eavesdrops on arbitrarily many executions of $\Pi_{id}$ between a verifier $\mathcal{V}$ and a prover $\mathcal{P}$ cannot successfully impersonate $\mathcal{V}$.
 
 There exist variations upon this type of primitive wherein Alice is not required to send Bob a specific challenge value. These are known as \emph{non-interactive} identification schemes, or non-interactive proofs of identity (NIPoI). These non-interactive approaches to solving the problem of identity and \emph{authentication} further bridge the gap between identification protocols and signature schemes. 
 
@@ -118,7 +127,7 @@ We define a signature scheme as the tuple of algorithms $\Pi_{sig}$ = (\textbf{K
 
 As previously alluded to, it is worth noting that signature protocols and identification schemes are closely related. In essence, they are rather similar; but with two main differences. The first is rather comparable to the aforementioned difference between interactive identification schemes and non-interactive identification schemes. The second arises as a result of aiming to authenticate Bob on any particular message $m$. To achieve this, the signature scheme needs to be run every time Bob wishes to send a message to Alice. The details of this comparison are intentionally left vague, as it will from a topic of close inspection in section 2.4.
 
-\subsection{The Random Oracle Model}
+The strongest security goal for a signature scheme $\Pi_{sig}$ is expressed as \emph{existential unforgeability} under an \emph{adaptive chosen-message attack}. If this goal is provably satisfied, an adversary with the ability to sign arbitrary messages will not be able to forge even the most trivial of signatures.
 
 \section{Algebraic Geometry \& Isogenies}
 \emph{Groups \& Varieties}. A \textbf{group} is a 2-tuple composed of a set of elements and a corresponding group operation (also referred to as the group \emph{law}). Given some group defined by the set $G$ and the operation $\cdot$ (written as $(G,\cdot)$) it is typical to refer to the group simply as $G$. If $\cdot$ is equivalent to some rational mapping[footnote about rational mappings] $f_G: G \rightarrow G$, then the group $(G,\cdot)$ is said to form an \textit{algebraic variety}[footnote about the inverse function]. A group which is also an algebraic variety is referred to as an \textbf{algebraic group}.
@@ -137,7 +146,6 @@ For some group $(G,\cdot)$, some $x,y \in G$, and some rational mapping $f_G: G 
 $$
 \text{group } \xRightarrow[]{x\cdot y = f_G(x,y)} \text{algebraic group } \xRightarrow[]{x\cdot y = y\cdot x} \text{abelian variety }
 $$
-
 
 \noindent
 \emph{Morphisms}. Let us again take for example some group $(G,\cdot)$. Let's also define some set $S_{(G,\cdot)}$ which contains every tuple $(x,y,z)$ for group elements $x,y,z$ which satisfy $x\cdot y = z$.
@@ -212,7 +220,9 @@ An algebraic group $G_a$ is defined over a field $K$ if each element $e \in G_a$
 These algebraic structures are all important for building up to the concept of an \emph{isogeny}. The lowest-level object we will be concerned with when discussing the forthcoming isogeny-based protocols will typically be elements of abelian varieties. The lowest-level structure in the SIDH C codebase is a finite field element.\\
 
 \noindent
-\emph{Montgomery Arithmetic}\label{snip:montgomery}.
+\emph{Montgomery Arithmetic}\label{snip:montgomery}. In 1985, Peter Montgomery introduced a method for efficiently computing the modular multiplication of two elements $a$ and $b$. The technique begins with the construction of some constant $R$, whose value depends solely on the modulus $N$ and the underlying computer architecture.\footnote{The specifics of how $R$ is constructed are beyond the scope of this dissertation; if they feel so inclined, the reader should refer to \cite{mont}}
+
+With the retrieval of $R$, $aR \mod{N}$ and $bR \mod{N}$ are constructed and referred to as the Montgomery \emph{representation} of $a$ and $b$ respectively. Montgomery multiplication outlines an algorithm for computing $abR \mod{N}$ (the Montgomery product of $a$ and $b$), from which $ab \mod{N}$ can be recovered through conversion back to standard representation. Once in Montgomery representation, other arithmetic can be performed (including field element inversions) in order to leverage the performance improvement offered by Montgomery modular multiplication -- converting back to regular representation when necessary.
 
 \subsection{Elliptic Curves}
 
@@ -339,34 +349,53 @@ Consequently, because groups defined over elliptic curves in this fashion are co
 
 When referring to curves as abelian varieties defined over a field, we will write them as $E_{\alpha}(K)$, for some curve $E_{\alpha}$ and some field $K$. If we are only concerned with the geometric properties of the curve, or curves as distinct elements of some group structure, it will suffice to write $E_{\alpha}$. Moving forward from here, we will assume all general curves discussed are capable of definition over some finite field $\mathbb{F}_p$.\\
 
-\noindent
-\emph{Torsion Groups}. The $r$-\emph{torsion group} of $E$ is the set of all points $P \in E(\overline{\mathbb{F}}_q)$ such that $[r]P = \mathcal{O}$. We denote the $r$-torsion group of some curve as $E[r]$.\\
+The $r$-\emph{torsion group} of $E$ is the set of all points $P \in E(\overline{\mathbb{F}}_q)$ such that $[r]P = \mathcal{O}$. We denote the $r$-torsion group of some curve as $E[r]$.\\
 
 \noindent
-\emph{Supersingular Curves}. An elliptic curve can be either \emph{ordinary} or \emph{supersingular}. There are several equivalent ways to define supersingular curves (and thus the distinction between them and ordinary curves,)
+\emph{Supersingular Curves}. An elliptic curve can be either \emph{ordinary} or \emph{supersingular}. There are several equivalent ways of defining supersingular curves (and thus the distinction between them and ordinary curves) in a general setting, but each of these goes well beyond our scope. In the context of curves defined over finite fiels, however, the following succinct definition holds:
+\begin{tcolorbox}
+\begin{definition}[Supersingular Curve]
+\label{defn:supersingular}
+Let $E$ be an elliptic curve defined over the finite field $\mathbb{F}_{p}$. $E$ is said to be \underline{supersingular} if $\#(E(\mathbb{F}_{p})) = p+1$.\footnote{Readers are welcomed to investigate \cite{pairings} for further details.}
+\end{definition}
+\end{tcolorbox}
 
-For the remainder of this paper, unless otherwise noted, all elliptic curves in discussion will be of the supersingular variety.\\
+For the remainder of this paper, unless otherwise noted, all elliptic curves in discussion will be of the supersingular variety.\\ 
 
 \noindent
-\emph{Projective Coordinates}\label{snip:projspace}.
+\emph{Projective Coordinates}\label{snip:projspace}. While elliptic curves are naturally defined in two-dimensional affine space, there are many benefits to expressing them through three-dimension projective coordinates. First and foremost, expressing curves in projective space allows us to reason geometrically about $\mathcal{O}$. This is done by defining a curve $E$ such that it resides in some two-dimension subspace of 3-space, the point $\mathcal{O}$ then resides at some point in 3-space outside of the residing plane of $E$. 
+
+Representing a curve in 3-space requires some substitution of $x$ and $y$ coordinates, a typical forma for achieving this is the following:
+
+$$
+x = X/Z
+y = Y/Z
+Z = 1
+$$
+
+Such a representation fo elliptic curve points offers computationally efficient arithmetic over points. This is conceptually similar to the previously mentioned Montgomery arithmetic regarding finite field elements. Other substitutions offer different computational advantages, but the implementations we will discuss make use of this typical approach.
 
 \subsection{Isogenies \& Their Properties}
 
 \begin{tcolorbox}
 \begin{definition}[Isogeny]
 \label{defn:isogeny}
-Let $G$ and $H$ be algebraic groups[ref]. An \underline{isogeny} is a morphism[ref] $h: G \rightarrow H$ possessing a finite kernel.
+Let $G$ and $H$ be algebraic groups[ref]. An \underline{isogeny} is a morphism\ref{defn:homomorphism} $h: G \rightarrow H$ possessing a finite kernel.
 \end{definition}
 \end{tcolorbox}
 
-In the case of the above definition where $G$ and $H$ are abelian varieties (such as elliptic curves,) the isogeny $h$ is homomorphic[ref] between $G$ and $H$. Because of this, isogenies over elliptic curves (and other abelian varieties) inherit certain characteristics.\\
+In the case of the above definition where $G$ and $H$ are abelian varieties (such as elliptic curves,) the isogeny $h$ is homomorphic between $G$ and $H$. Because of this, isogenies over elliptic curves (and other abelian varieties) inherit certain characteristics.\\
 For an isogeny $h: E_{1} \rightarrow E_{2}$ defined over elliptic curves $E_1$ and $E_2$, the following holds:
 \begin{itemize}
 \item $h(\mathcal{O}) = \mathcal{O}$, and
 \item $h(u^{-1}) = h(u)^{-1}, \forall u \in G$
 \end{itemize}
 
+If there exists some isogeny $\phi$ between curves $E_1$ and $E_2$ then $E_1$ and $E_2$ are said to be \emph{isogenous}. All supersingular curves are isogenous only to other supersingular curves. The equivalent statement holds for ordinary curves. With this in mind, we can concieve a sort of graph structure connecting all isogenous curves, these graphs pertaining to either the supersingular or ordinary variety of curves. 
+
 We write $\text{End}(E)$ to denote the ring formed by all the isogenies acting over $E$ which are also endomorphisms. Note that $m$-repeated pointwise addition of a point with itself can equivalently be modelled by an endomorphism, we denote the application of such an endomorphism to a point $P$ as $[m]P$, such that $[m]: E \rightarrow E$ and $[m]P = mP$.
+
+An important facet of isogenies is that they can be uniquely identified by their kernel. If $S$ is the group of points denoting the kernel of some isogeny $\phi$ with domain $E$, we write $\phi: E \rightarrow E/S$. Because the subgroup $S$ sufficiently identifies $\phi$, any given generator of $S$ equivalently identifies $\phi$. Therefore, if $R$ generates the subgroup $S$ we can write $\phi: E \rightarrow E/\langle R \rangle$. Moreover, we will have a specific interest in isogenies with kernels defined by some \emph{torsion subgroup}. 
 
 \section{Supersingular Isogeny Diffie-Hellman}
 
@@ -749,10 +778,10 @@ $$
 \emph{Elliptic curve points}
 \begin{itemize}
 	\item \code{point\_affine} -- an \code{f2elm\_t} \code{x} and an \code{f2elm\_t} \code{y} representing a point in affine space.
-	\item \code{point\_proj} -- an \code{f2elm\_t} \code{X} and an \code{f2elm\_t} \code{Z} representing a point as projective XZ montgomery coordinates.
+	\item \code{point\_proj} -- an \code{f2elm\_t} \code{X} and an \code{f2elm\_t} \code{Z} representing a point as projective XZ Montgomery coordinates.
 	\item \code{point\_full\_proj} -- \code{f2elm\_t} elements \code{X}, \code{Y}, and \code{Z} representing a point in projective space.
 	\item \code{point\_basefield\_affine} -- an \code{felm\_t} \code{x} and an \code{felm\_t} \code{y} representing a point in affine space over the base field.
-	\item \code{point\_basefield\_proj} -- an \code{felm\_t} \code{X} and an \code{felm\_t} \code{Z} representing a point as projective XZ montgomery coordinates over the base field.
+	\item \code{point\_basefield\_proj} -- an \code{felm\_t} \code{X} and an \code{felm\_t} \code{Z} representing a point as projective XZ Montgomery coordinates over the base field.
 \end{itemize}
 
 \emph{Crypto structures}
@@ -777,7 +806,10 @@ The reader may note that \code{publickey\_t} does not contain any information de
 \emph{Projective Space}. As is common in ECC, a vast majority of the procedures of \sidh operate over the \emph{projective space}(\ref{snip:projspace}) representation of elliptic curve points. This widely-deployed technique is used to avoid the substantial cost of field element inversions (computing $x^{-1}$ for some element $x \in \mathbb{F}_{p^2}$). This means the majority of our calculations are performed over \code{point\_proj} structures using \emph{montgomery arithmetic}(\ref{snip:montgomery}) and converted to \code{point\_affine} when necessary. This general design strategy is highly related to our first contribution, which will be elaborated upon in the sections to come.\\
 
 \noindent
-\emph{Secret Keys.} Recall the origin of an $\Pi_{\text{SIDH}}$ private key $(m, n)$: the goal is to randomly select a generator of the torsion group $E[\laea]$ (or $E[\lbeb]$ for \bob). It is noted in \cite{djp} that any generator of the required torsion group is sufficient. It is also noted that $m$, unless equal to the order of the torsion group, is invertible. Because of this, \alice, for example, can simple compute $R = \genpa + [m^{-1}n]\genqa$, thus enabling secret keys to be stored as a single $\mathbb{F}_{p^2}$ element (which is referred to as $m$). This technicality has been implemented in \sidh, which both saves on storage as well as offers a means for generating secret keys that is more efficient than the trivial scalar multiplication and point-wise addition approach to computing $[m]P + [n]Q$.
+\emph{Secret Keys}. Recall the origin of an $\Pi_{\text{SIDH}}$ private key $(m, n)$: the goal is to randomly select a generator of the torsion group $E[\laea]$ (or $E[\lbeb]$ for \bob). It is noted in \cite{djp} that any generator of the required torsion group is sufficient. It is also noted that $m$, unless equal to the order of the torsion group, is invertible. Because of this, \alice, for example, can simple compute $R = \genpa + [m^{-1}n]\genqa$, thus enabling secret keys to be stored as a single $\mathbb{F}_{p^2}$ element (which is referred to as $m$). This technicality has been implemented in \sidh, which both saves on storage as well as offers a means for generating secret keys that is more efficient than the trivial scalar multiplication and point-wise addition approach to computing $[m]P + [n]Q$.\\
+
+\noindent
+\emph{Tailor-made Montgomery Multiplication}.
 
 \subsection{Key Exchange \& Critical Functions}
 
@@ -794,7 +826,7 @@ The estbalished notation for functions in \code{fpx.c} is to prepend function na
 
 \code{ec\_isogeny.c} functions are defined almost exclusively in terms of \code{fpx.c} functions, with a few occurances of internal function calling. Functions in this module that are signifant to our our work are briefly surmised in figure \ref{fig:funcs}. The implementation specifics of most other \code{ec\_isogeny.c} functions are not critical to our work, and so have been excluded. The design and efficiency of these algorithms do, however, have a rich background and can be further read about in \cite{djp} and \cite{effalg}.
 
-The key exchange procedures found in \code{kex.c} are composed enrirely of calls to \code{fpx.c} and \code{ec\_isogeny.c} functions, modulo some basic branching logic.
+The key exchange procedures found in \code{kex.c} are composed entirely of calls to \code{fpx.c} and \code{ec\_isogeny.c} functions, modulo some basic branching logic.
 
 \begin{center}
 \code{fpx.c} functions\\
@@ -928,7 +960,7 @@ There are a few minor details regarding the functions above that should be made 
 \label{fig:fullmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
 \end{figure}
 
-If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Verify} as described above to the language of the \sidh API, we have in essense the following:\\
+If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Verify} as described in section 2.5 to the language of the \sidh API, we have in essense the following:\\
 
 \begin{algorithm}
 \caption{-- \code{Sign($sk_{\rb}$, $m$)}}\label{euclid}
@@ -976,9 +1008,9 @@ If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Ve
 \end{algorithmic}
 \end{algorithm}
 
-Outside of simply replacing $\Pi_{\text{SIDH}}'$ procedure calls with \sidh functions, the reader may notice additional differences between \code{Sign} and \code{Verify} and their $\Sigma'$ counterparts. These differences are surmized below:
+Outside of simply replacing $\Pi_{\text{SIDH}}'$ procedure calls with \sidh functions, the reader may notice additional differences between \code{Sign} and \code{Verify} and their $\Sigma'$ counterparts. Namely, Yoo et al. have chosen to exclude the challenge bit $ch$ in the \sidh implementations of these functions, consequently excluding the conditional and \textbf{Swap} statement of lines 8 and 9 in algorithm 4. 
 
-Namely, Yoo et al. have chosen to exclude the challenge bit $ch$ in the \sidh implementations of these functions, this is justified because
+Another important implementation detail is the seperation of the signing procedure into two functions: \code{isogeny\_sign} and \code{sign\_thread}. Because all of the $2\lambda$ iterations are entirely independent of the others, the signing and verification proceedures present themselves as embarrassingly parallel. \code{isogey\_sign} acts as the entry point for \code{Sign} and spawns a POSIX thread for every instance of the for-loop; each one calling \code{sign\_thread} which runs performs \bob's interaction with \randall. 
 
 \begin{itemize}
 \item difference

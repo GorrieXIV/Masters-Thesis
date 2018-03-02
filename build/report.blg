@@ -17,87 +17,76 @@ You're missing a field name---line 21 of file refs.bib.bib
  :    %volume = {73},
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-You're missing a field name---line 39 of file refs.bib.bib
+You're missing a field name---line 41 of file refs.bib.bib
  :  
  :  %volume = {},
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-You're missing a field name---line 89 of file refs.bib.bib
+You're missing a field name---line 109 of file refs.bib.bib
  :    
  :    %volume = {73},
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 155 of file refs.bib.bib
+I was expecting a `,' or a `}'---line 175 of file refs.bib.bib
  :  
  :  volume = {IACR-CRYPTO-2016}
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
-Too many commas in name 1 of "Youngho Yoo, Reza Azarderakhsh, Amir Jalali, David Jao, Vladimir Soukharev" for entry yoo
-while executing---line 1540 of file alphaurl.bst
-Too many commas in name 1 of "Youngho Yoo, Reza Azarderakhsh, Amir Jalali, David Jao, Vladimir Soukharev" for entry yoo
-while executing---line 1540 of file alphaurl.bst
-Too many commas in name 1 of "Youngho Yoo, Reza Azarderakhsh, Amir Jalali, David Jao, Vladimir Soukharev" for entry yoo
-while executing---line 1540 of file alphaurl.bst
-Too many commas in name 1 of "Youngho Yoo, Reza Azarderakhsh, Amir Jalali, David Jao, Vladimir Soukharev" for entry yoo
-while executing---line 1540 of file alphaurl.bst
 Warning--empty journal in rewinding
 Warning--empty journal in effalg
-Warning--empty journal in jvsig
-Warning--empty journal in fsproof
 Warning--empty journal in djp
 Warning--empty year in djp
+Warning--empty journal in jvsig
 Warning--empty publisher in sigs
 Warning--empty year in sigs
+Warning--empty publisher in mont
+Warning--empty journal in fsproof
 Warning--empty journal in seshsig
+Warning--empty journal in sunsig
 Warning--empty journal in unruh
 Warning--empty year in unruh
-Warning--empty journal in sunsig
-Too many commas in name 1 of "Youngho Yoo, Reza Azarderakhsh, Amir Jalali, David Jao, Vladimir Soukharev" for entry yoo
-while executing---line 1606 of file alphaurl.bst
-Too many commas in name 1 of "Youngho Yoo, Reza Azarderakhsh, Amir Jalali, David Jao, Vladimir Soukharev" for entry yoo
-while executing---line 1606 of file alphaurl.bst
 Warning--empty journal in yoo
 Warning--empty year in yoo
-You've used 10 entries,
+You've used 11 entries,
             3274 wiz_defined-function locations,
-            715 strings with 6629 characters,
-and the built_in function-call counts, 3771 in all, are:
-= -- 343
-> -- 116
-< -- 10
-+ -- 28
-- -- 27
-* -- 168
-:= -- 571
-add.period$ -- 26
-call.type$ -- 10
-change.case$ -- 51
-chr.to.int$ -- 10
-cite$ -- 24
-duplicate$ -- 151
-empty$ -- 338
-format.name$ -- 39
-if$ -- 932
+            720 strings with 6776 characters,
+and the built_in function-call counts, 4762 in all, are:
+= -- 430
+> -- 236
+< -- 4
++ -- 74
+- -- 73
+* -- 258
+:= -- 748
+add.period$ -- 29
+call.type$ -- 11
+change.case$ -- 68
+chr.to.int$ -- 11
+cite$ -- 26
+duplicate$ -- 160
+empty$ -- 375
+format.name$ -- 86
+if$ -- 1131
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 11
-newline$ -- 49
-num.names$ -- 30
-pop$ -- 123
+missing$ -- 13
+newline$ -- 55
+num.names$ -- 33
+pop$ -- 150
 preamble$ -- 1
-purify$ -- 62
+purify$ -- 81
 quote$ -- 0
-skip$ -- 298
+skip$ -- 327
 stack$ -- 0
-substring$ -- 99
-swap$ -- 10
-text.length$ -- 10
-text.prefix$ -- 2
+substring$ -- 106
+swap$ -- 11
+text.length$ -- 4
+text.prefix$ -- 3
 top$ -- 0
-type$ -- 76
-warning$ -- 14
-while$ -- 23
+type$ -- 80
+warning$ -- 15
+while$ -- 32
 width$ -- 13
-write$ -- 105
-(There were 11 error messages)
+write$ -- 117
+(There were 5 error messages)

@@ -1,53 +1,59 @@
-\begin{thebibliography}{MSS16}
+\newcommand{\etalchar}[1]{$^{#1}$}
+\begin{thebibliography}{STW12}
 
-\bibitem[AA14]{rewinding}
-Dominique~Unruh Andris~Ambainis, Ansis~Rosmanis.
+\bibitem[ARU14]{rewinding}
+Andris Ambainis, Ansis Rosmanis, and Dominique Unruh.
 \newblock Quantum attacks on classical proof systems (the hardness of quantum
   rewinding).
 \newblock pages 474--483, 2014.
 
-\bibitem[CC16]{effalg}
-Michael~Naehrig Craig~Costello, Patrick~Longa.
+\bibitem[CLN16]{effalg}
+Craig Costello, Patrick Longa, and Michael Naehrig.
 \newblock Efficient algorithms for supersingular isogeny diffie-hellman.
 \newblock 2016.
-
-\bibitem[DJ14]{jvsig}
-Vladimir~Soukharev David~Jao.
-\newblock Isogeny-based quantum resistant undeniable signatures.
-\newblock 2014.
-
-\bibitem[DP96]{fsproof}
-Jacques~Stern David~Pointcheval.
-\newblock Security proofs for signature schemes.
-\newblock 1996.
 
 \bibitem[FJP]{djp}
 Luca~De Feo, David Jao, and Jerome Plut.
 \newblock Towards quantum-resistant cryptosystems from supersingular elliptic
   curvce isogenies.
 
+\bibitem[JS14]{jvsig}
+David Jao and Vladimir Soukharev.
+\newblock Isogeny-based quantum resistant undeniable signatures.
+\newblock 2014.
+
 \bibitem[Kat]{sigs}
 Jonathan Katz.
 \newblock {\em Digital Signatures}.
 
-\bibitem[MSS16]{seshsig}
-V.~Chandrasekaren M.~Seshadri~Srinath.
+\bibitem[Mon85]{mont}
+Peter~L. Montgomery.
+\newblock {\em Modular Multiplication Without Trial Division}.
+\newblock 1985.
+
+\bibitem[PS96]{fsproof}
+David Pointcheval and Jacques Stern.
+\newblock Security proofs for signature schemes.
+\newblock 1996.
+
+\bibitem[SC16]{seshsig}
+M.~Seshadri Srinath and V.~Chandrasekaren.
 \newblock Isogeny-based quantum-resistant undeniable blind signature scheme.
 \newblock 2016.
 
-\bibitem[Unr]{unruh}
-Unruh.
-\newblock Non-interactive zero-knowledge proofs in the quantum random oracle
-  model.
-
-\bibitem[XS12]{sunsig}
-Yumin~Wang Xi~Sun, Haibo~Tian.
+\bibitem[STW12]{sunsig}
+Xi~Sun, Haibo Tian, and Yumin Wang.
 \newblock Toward quantum-resistant strong designated verifier signature from
   isogenies.
 \newblock 2012.
 
-\bibitem[YY]{yoo}
-Amir Jalali David Jao Vladimir~Soukharev Youngho~Yoo, Reza~Azarderakhsh.
+\bibitem[Unr]{unruh}
+Dominique Unruh.
+\newblock Non-interactive zero-knowledge proofs in the quantum random oracle
+  model.
+
+\bibitem[YAJ{\etalchar{+}}]{yoo}
+Youngho Yoo, Reza Azarderakhsh, Amir Jalali, David Jao, and Vladimir Soukharev.
 \newblock A post-quantum digital signature scheme based on supersingular
   isogenies.
 
