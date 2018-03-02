@@ -802,61 +802,124 @@ The key exchange procedures found in \code{kex.c} are composed enrirely of calls
 	\toprule
 	Function & Input & Output\\
 	\hline
-	\code{to\_fp2mont(...)} & \code{f2elm\_t a} & \code{f2elm\_t ma}\\
+	\code{to\_fp2mont} & \code{f2elm\_t a} & \code{f2elm\_t ma}\\
 	Converts an $\mathbb{F}_{p^2}$  element & &\\
 	to Montgomery representation & &\\
 	\hline
-	\code{from\_fp2mont(...)} & \code{f2elm\_t ma} & \code{f2elm\_t a}\\
+	\code{from\_fp2mont} & \code{f2elm\_t ma} & \code{f2elm\_t a}\\
 	Converts an $\mathbb{F}_{p^2}$ element & &\\
 	from Montgomery representation  & &\\
 	to regular form & &\\
 	\hline
-	\code{fp2inv751\_mont\_bingcd(...)} & \code{f2elm\_t a} & \code{f2elm\_t a}$^{-1}$\\
+	\code{fp2inv751\_mont\_bingcd} & \code{f2elm\_t a} & \code{f2elm\_t a}$^{-1}$\\
+	performs \emph{non-constant} & &\\
+	time inversion of & &\\
+	a $\mathbb{F}_{p^2}$ element & &\\
 	\hline
-	\code{fp2inv751\_mont(...)} & hh &\\
+	\code{fp2inv751\_mont} & \code{f2elm\_t a} & \code{f2elm\_t a}$^{-1}$\\
+	performs \emph{constant} & &\\
+	time inversion of & &\\
+	a $\mathbb{F}_{p^2}$ element & &\\
 	\bottomrule
 \end{tabular}
 \end{center}
 
 \begin{center}
 \code{ec\_isogeny.c} functions\\
-\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|c|c|c|}
 	\toprule
-	Function & Description & Input & Output\\
+	Function & Input & Output\\
 	\hline
-	\code{j\_inv} & yuh & yuh & yuh \\
+	\code{j\_inv} & \code{f2elm\_t A} & \code{f2elm\_t jinv}\\
+	computes the j-invariant & \code{f2elm\_t C} &\\
+	of a curve with represented & &\\
+	in Montgomery form with \code{A} and \code{C} & &\\
 	\hline
-	\code{secret\_pt} &  & hh &\\
+	\code{secret\_pt} & \code{point\_basefield P} & \code{point\_proj R}\\
+	generates the secret & \code{digit\_t m} &\\
+	point \code{R} from & \code{SIDHp751} &\\
+	secret key \code{m} & \code{int AliceOrBob} &\\
 	\hline
-	\code{inv\_3\_way} & & &\\
+	\code{inv\_3\_way} & \code{f2elm\_t z1} & \code{f2elm\_t z1}$^{-1}$\\
+	performs simultaneous inversion & \code{f2elm\_t z2} & \code{f2elm\_t z2}$^{-1}$\\
+	of three elements & \code{f2elm\_t z3} & \code{f2elm\_t z3}$^{-1}$\\
 	\hline
-	\code{inv\_4\_way} & & &\\
+	\code{inv\_4\_way} & \code{f2elm\_t z1} & \code{f2elm\_t z1}$^{-1}$\\
+	performs simultaneous inversion & \code{f2elm\_t z2} & \code{f2elm\_t z2}$^{-1}$\\
+	of 4 elements & \code{f2elm\_t z3} & \code{f2elm\_t z3}$^{-1}$\\
+	& \code{f2elm\_t z4} & \code{f2elm\_t z4}$^{-1}$\\
 	\hline
-	\code{generate\_2\_torsion\_basis} & & &\\
+	\code{generate\_2\_torsion\_basis} & \code{f2elm\_t A} & \code{point\_full\_proj R1}\\
+	constructs a basis ($\{R1, R2\}$) & \code{SIDHp751} & \code{point\_full\_proj R2}\\
+	generating $E[\laea]$ &  &\\
 	\hline
-	\code{generate\_3\_torsion\_basis} & & &\\
+	\code{generate\_3\_torsion\_basis} & \code{f2elm\_t A} & \code{point\_full\_proj R1}\\
+	constructs a basis ($\{R1, R2\}$) & \code{SIDHp751} & \code{point\_full\_proj R2}\\
+	generating $E[\lbeb]$ & &\\
 	\bottomrule
 \end{tabular}
 \end{center}
 
 \begin{center}
 \code{kex.c} functions\\
-\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|c|c|c|}
 	\toprule
-	Function & Description & Input & Output\\
+	Function & Input & Output\\
 	\hline
-	\code{KeyGeneration\_A} & yuh & yuh & yuh \\
+	\code{KeyGeneration\_A} & \code{unsigned char* privateKeyA} & \code{unsigned char* privateKeyA} \\
+	performs key generation & \code{bool generateRandom} & \code{unsigned char* publicKeyA} \\
+	for \alice & &\\
 	\hline
-	\code{KeyGeneration\_B} &  & hh &\\
+	\code{KeyGeneration\_B} & & \code{unsigned char* privateKeyB}\\
+	performs key generation & & \code{unsigned char* publicKeyB}\\
+	for \bob & &\\
 	\hline
-	\code{SecretAgreement\_A} & & &\\
+	\code{SecretAgreement\_A} & \code{unsigned char* privateKeyA} & \code{unsigned char* sharedSecretA}\\
+	computes the shared secret & \code{unsigned char* publicKeyB} & \code{point\_proj kerngen}\\
+	from \alice's perspective & \code{point\_proj kerngen} &\\
 	\hline
-	\code{SecretAgreement\_B} & & &\\
+	\code{SecretAgreement\_B} & \code{unsigned char* privateKeyB} & \code{unsigned char* sharedSecretB}\\
+	computes the shared secret & \code{unsigned char* publicKeyA} & \code{point\_proj kerngen}\\
+	from \bob's perspective & \code{point\_proj kerngen} &\\
 	\bottomrule
 \end{tabular}
 \end{center}
 
+The reader may note that \code{privateKeyA} (in \code{KeyGeneration\_A}) and \code{kerngen} (in both secret agreements) appear as both inputs and outputs. This is no mistake. In \code{KeyGeneration\_A}, if \code{generateRandom = false} is passed as an input, then \code{privateKeyA} is expected to be set, and the corresponding public key is computed. In secret agreement, if \code{kerngen} is set to null then the algorithm proceeds normally. If it is set to a valid point, however, it can be used in place of a secret key input (which in such a case is expected to be null). Both of these details are critical to the design of signature functions as they are described below.
+
 \subsection{Signature Layer}
+
+Yoo et al. provided, along with their publication of \cite{yoo}, an implementation of their signature scheme as a fork to \sidh. All of their functions are written specifically for an instance of $\Sigma'$ where the signer is assuming the \rb role (meaning that \randall assumes the \ba role), but their algorithms could be trivially modified to provide versions supporting a signer in the \ba role. Their contributions to the \sidh codebase come in the form of the functions listed below -- their relation to the rest of \sidh is illustrated in figure \ref{fig:fullmap}.
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+	\toprule
+	Function & Input & Output\\
+	\midrule
+	\code{isogeny\_keygen} & & \code{unsigned char* privateKeyB}\\
+	generates the signers & & \code{unsigned char* publicKeyB}\\
+	key pair & &\\
+	\hline
+	\code{isogeny\_sign} & \code{privateKey} & \code{Signature sig}\\
+	produces a signature & \code{publicKey} &\\
+	for a message & message $m$ &\\
+	\hline
+	\code{sign\_thread} & & \\
+	performs a single iteration & &\\
+	of the for-loop in \textbf{Sign} & &\\
+	\hline
+	\code{isogeny\_verify} & \code{Signature sig} & \code{true} or \code{false}\\
+	checks the validity & &\\
+	of a signature & &\\
+	\hline
+	\code{verify\_thread} & &\\
+	performs a single iteration & &\\
+	of the for-loop in \textbf{Verify} & &\\
+	\bottomrule
+\end{tabular}
+\end{center}
+
+There are a few minor details regarding the functions above that should be made clear.
 
 \begin{figure}[htp]
 \centering
@@ -865,37 +928,16 @@ The key exchange procedures found in \code{kex.c} are composed enrirely of calls
 \label{fig:fullmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
 \end{figure}
 
-Yoo et al. provided, along with their publication of \cite{yoo}, an implementation of their signature scheme as a fork to \sidh. All of their functions are written specifically for an instance of $\Sigma'$ where the signer is assuming the \rb role (meaning that \randall assumes the \ba role), but their algorithms could be trivially modified to provide versions supporting a signer in the \ba role. Their contributions to the \sidh codebase come in the form of the functions listed below -- their relation to the rest of \sidh is illustrated in figure \ref{fig:fullmap}.
-
-\begin{center}
-\begin{tabular}{|c|c|c|c|}
-	\toprule
-	Function & Description & Input & Output\\
-	\midrule
-	\code{isogeny\_keygen} & yuh & yuh & yuh \\
-	\hline
-	\code{isogeny\_sign} &  & hh &\\
-	&  & &\\
-	\hline
-	\code{sign\_thread} & & &\\
-	\hline
-	\code{isogeny\_verify} & & &\\
-	\hline
-	\code{verify\_thread} & & &\\
-	\bottomrule
-\end{tabular}
-\end{center}
-
 If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Verify} as described above to the language of the \sidh API, we have in essense the following:\\
 
 \begin{algorithm}
 \caption{-- \code{Sign($sk_{\rb}$, $m$)}}\label{euclid}
 \begin{algorithmic}[1]
 \For{\texttt{i = 1..2$\lambda$}}
-	\State $(sk_{\cyr} = \cyr, pk_{\cyr}) \gets \code{KeyGeneration\_A()}$
-	\State $(E/\langle \rb,\cyr \rangle, \pr(\rb)) \gets \code{SecretAgreement\_B(}sk_{\rb}, pk_{\cyr},\code{NULL)}$
+	\State $(sk_{\cyr} = \cyr, pk_{\cyr}) \gets \code{KeyGeneration\_A(\code{NULL}, \code{true})}$
+	\State $(E/\langle \rb,\cyr \rangle, \pr(\rb)) \gets \code{SecretAgreement\_B(}sk_{\rb}, pk_{\cyr}, \code{NULL})$
 	\State $(E_{1},E_{2}) \gets (E/\langle \cyr \rangle, E/\langle \rb,\cyr \rangle)$
-	\State $\texttt{com}[i] \gets (E_{1}, E_{2})$
+	\State $(\texttt{com}[i]_{0}, \texttt{com}[i]_{1}) \gets (E_{1}, E_{2})$
 	\State $(\texttt{resp}[i]_{0}, \texttt{resp}[i]_{1}) \gets (\cyr, \pr(\rb))$
 	\State $h[i] \gets$ \code{keccak(resp$[i]_0$)|keccak(resp$[i]_1$)}
 \EndFor
@@ -911,14 +953,18 @@ If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Ve
 \begin{algorithmic}[1]
 \State $J_{1} \parallel ... \parallel J_{2\lambda} \gets$ \code{keccak(com, $m$, $h$)}
 \For{\texttt{i = 0..2$\lambda$}}
-	\State \textbf{check} $h_{i,J_{i}} = G(resp_{i,J_{i}})$
-	\If{$ch_{i,J_{i}} = 0$}
-		\State Parse $(\cyr,\pb(\cyr)) \gets resp_{i,J_{i}}$
-		\State \textbf{check} $(\cyr, \pr)$ is a valid output of \code{KeyGeneration\_A($\lambda$, $\alice$)}
-		\State \textbf{check} that \code{SecretAgreement\_A($\cyr$, $\pb$)} successfully outputs an isogeny with co-domain $E_{2}$
+	\State \textbf{check} $h[i] =$ \code{keccak(resp$[i]_0$)|keccak(resp$[i]_1$)}
+	\If{$J_{i} = 0$}
+		\State $\cyr \gets \code{resp}[i]_{0}$
+		\State $pk_{\cyr} \gets$ \code{KeyGeneration\_A(\cyr, \code{false})}
+		\State \textbf{check} $pk_{\cyr}$ = \code{com$[i]_{0}$}
+		\State $E_{\cyr\rb} \gets$ \code{SecretAgreement\_A($\cyr$, $\pb$, NULL)}
+		\State \textbf{check} $E_{\cyr\rb}$ = \code{com$[i]_{1}$}
 	\Else
-		\State Parse $\pr(\rb) \gets resp_{i,J_{i}}$
-		\State \textbf{check} that \code{SecretAgreement\_B($\pr(\rb)$, $\pr$, $\pr(\rb)$)} successfully outputs an isogeny with co-domain $E_{2}$
+		\State $\pr(\rb) \gets \code{resp}[i]_{1}$
+		\State $pk_{\cyr} \gets \code{com}[i]_{0}$
+		\State $E_{\rb\cyr} \gets$ \code{SecretAgreement\_B(NULL, $pk_{\cyr}$, $\pr(\rb)$)}
+		\State \textbf{check} $E_{\rb\cyr}$ = \code{com$[i]_{1}$}
 	\EndIf
 \EndFor
 
