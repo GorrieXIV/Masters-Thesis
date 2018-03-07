@@ -1,5 +1,11 @@
 \chapter{Batching Operations for Isogenies}
 
+Our first contribution to the \sidh codebase is the implementation and integration of a procedure for batching together many $\mathbb{F}_{p}$ element inversions. This contribution is discussed in detail in the following chapter. The chapter is split into three sections: a high-level discussion of the procedure itself, the low-level details of its integration into \sidh, and the resulting improvements in performance that result. 
+
+In the first section of this chapter we will detail the specifics of the partial batched inversion procedure. 
+
+As we then venture into the lower-level implementation details, we will explore how the procedure can be leveraged optimally in the codebase. We will take a closer look at several of the aforementioned \sidh functions as we illustrate some of the performance bottlenecks in the system. At this time, we will also discuss minutiae with regards to the design decisions made in the imeplementation of the partial batched inversion procedure.  
+
 \section{Partial Batched Inversions}
 
 One of our main contributions is the embedding of a low-level $\mathbb{F}_{p^{2}}$ procedure into Microsofts pre-existing SIDH library. The procedure in question reduces arbitrarily many unrelated/potentially parallel $\mathbb{F}_{p^{2}}$ inversions to a sequence of $\mathbb{F}_{p}$ multiplications \& additions, as well as one $\mathbb{F}_{p}$ inversion.\\
@@ -14,7 +20,6 @@ More specifically, the procedure takes us from \textit{n} $\mathbb{F}_{p^{2}}$  
 \item 2\textit{n} $\mathbb{F}_{p}$ multiplications
 \end{itemize}
 \end{center}
-
 
 The procedure is as follows:\\
 
@@ -51,6 +56,8 @@ The procedure is as follows:\\
 \end{algorithmic}
 \end{algorithm}
 
+\subsection{Parallelizing Signatures}
+
 \subsection{Projective Space}
 
 Because the work of Yoo et al. was built on top of the original Microsoft SIDH library, all underlying field operations (and isogeny arithmetic) are performed in projective space. Doing field arithmitic in projective space allows us to avoid many inversion operations. The downside of this (for our work) is that the number opportunities for implementing the batched inversion algorithm becomes greatly limited.\\
@@ -60,9 +67,11 @@ There are two functions called in the isogeny signature system that perform a $\
 
 This means that in the signing procedure there are 2 opportunities for implementing batched partial-inversion with a batch size of 248 elements. In the verify procedure, however, there are 3 opportunities for implementing batched inversion with a batch size of roughly ~124 elements.\\
 
-\subsection{Constant Time vs. Binary GCD Inversion}
+
 
 \section{Implementation Details}
+
+\subsection{Constant Time vs. Binary GCD Inversion}
 
 \begin{figure}[htb]
 \centering

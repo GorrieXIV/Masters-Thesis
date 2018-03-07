@@ -1010,9 +1010,6 @@ If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Ve
 
 Outside of simply replacing $\Pi_{\text{SIDH}}'$ procedure calls with \sidh functions, the reader may notice additional differences between \code{Sign} and \code{Verify} and their $\Sigma'$ counterparts. Namely, Yoo et al. have chosen to exclude the challenge bit $ch$ in the \sidh implementations of these functions, consequently excluding the conditional and \textbf{Swap} statement of lines 8 and 9 in algorithm 4. 
 
-Another important implementation detail is the seperation of the signing procedure into two functions: \code{isogeny\_sign} and \code{sign\_thread}. Because all of the $2\lambda$ iterations are entirely independent of the others, the signing and verification proceedures present themselves as embarrassingly parallel. \code{isogey\_sign} acts as the entry point for \code{Sign} and spawns a POSIX thread for every instance of the for-loop; each one calling \code{sign\_thread} which runs performs \bob's interaction with \randall. 
+Another important implementation detail is the seperation of the signing procedure into two functions: \code{isogeny\_sign} and \code{sign\_thread}. Because all of the $2\lambda$ iterations are entirely independent of the others, the signing and verification proceedures present themselves as embarrassingly parallel. \code{isogey\_sign} acts as the entry point for \code{Sign} and spawns a POSIX thread for every instance of the for-loop; each one calling \code{sign\_thread} which runs performs \bob's interaction with \randall.
 
-\begin{itemize}
-\item difference
-\end{itemize}
 
