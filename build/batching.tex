@@ -2,9 +2,11 @@
 
 Our first contribution to the \sidh codebase is the implementation and integration of a procedure for batching together many $\mathbb{F}_{p}$ element inversions. This contribution is discussed in detail in the following chapter. The chapter is split into three sections: a high-level discussion of the procedure itself, the low-level details of its integration into \sidh, and the resulting improvements in performance that result. 
 
-In the first section of this chapter we will detail the specifics of the partial batched inversion procedure. 
+In the first section of this chapter we will detail the specifics of the partial batched inversion procedure.
 
-As we then venture into the lower-level implementation details, we will explore how the procedure can be leveraged optimally in the codebase. We will take a closer look at several of the aforementioned \sidh functions as we illustrate some of the performance bottlenecks in the system. At this time, we will also discuss minutiae with regards to the design decisions made in the imeplementation of the partial batched inversion procedure.  
+As we then venture into the lower-level implementation details, we will explore how the procedure can be leveraged optimally in the codebase. We will take a closer look at several of the aforementioned \sidh functions as we illustrate some of the performance bottlenecks in the system. At this time, we will also discuss minutiae with regards to the design decisions made in the imeplementation of the partial batched inversion procedure.
+
+We will end this chapter by taking a detailed look at the performance gains offered by the inclusion of partial batched inversions in the Yoo et al. signature scheme. We will contrast the measured performance of our implementation with an analytical calculation of the expected performance improvement, and discuss the possible origins of divergent behaviour.  
 
 \section{Partial Batched Inversions}
 
