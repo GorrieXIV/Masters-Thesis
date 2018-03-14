@@ -610,7 +610,7 @@ It will be useful for us to outline in more detail the procedures of $\Sigma'$, 
 \textbf{KeyGen($\lambda$, $User$)}: As previously mentioned, key generation in $\Sigma'$ is identical to $\Sigma$:\textbf{KeyGen($\lambda$)}, which in turn is identical to $\Pi_{\text{SIDH}}$:\textbf{KeyGen($\lambda$)}. We've included a parameter $User$ equaling either $\alice$ or $\bob$ -- this denotes whether the user running the procedure uses \textcolor{blue}{blue} or \textcolor{red}{red} constants. We've also obfuscated the lower level details in regards to how points are generated and how isogenies can be constructed. We write $P_{User}$ and $Q_{User}$ for $\genpa$ \& $\genqa$ or $\genpb$ \& $\genqb$, depending on $User$.  The result is the following:
 
 \begin{algorithm}
-\caption{-- \textbf{KeyGen($\lambda$, $User$)}}\label{euclid}
+\caption{-- \textbf{KeyGen($\lambda$, $User$)}}\label{alg:keygensig}
 \begin{algorithmic}[1]
 \If{$User$ = $\alice$}
 	\State Pick a random point $S$ of order $\laea$
@@ -920,6 +920,7 @@ The key exchange procedures found in \code{kex.c} are composed entirely of calls
 The reader may note that \code{privateKeyA} (in \code{KeyGeneration\_A}) and \code{kerngen} (in both secret agreements) appear as both inputs and outputs. This is no mistake. In \code{KeyGeneration\_A}, if \code{generateRandom = false} is passed as an input, then \code{privateKeyA} is expected to be set, and the corresponding public key is computed. In secret agreement, if \code{kerngen} is set to null then the algorithm proceeds normally. If it is set to a valid point, however, it can be used in place of a secret key input (which in such a case is expected to be null). Both of these details are critical to the design of signature functions as they are described below.
 
 \subsection{Signature Layer}
+\label{subsec:sigcode}
 
 Yoo et al. provided, along with their publication of \cite{yoo}, an implementation of their signature scheme as a fork to \sidh. All of their functions are written specifically for an instance of $\Sigma'$ where the signer is assuming the \rb role (meaning that \randall assumes the \ba role), but their algorithms could be trivially modified to provide versions supporting a signer in the \ba role. Their contributions to the \sidh codebase come in the form of the functions listed below -- their relation to the rest of \sidh is illustrated in figure \ref{fig:fullmap}.
 
@@ -963,7 +964,7 @@ There are a few minor details regarding the functions above that should be made 
 If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Verify} as described in section 2.5 to the language of the \sidh API, we have in essense the following:\\
 
 \begin{algorithm}
-\caption{-- \code{Sign($sk_{\rb}$, $m$)}}\label{euclid}
+\caption{-- \code{Sign($sk_{\rb}$, $m$)}}\label{alg:signmath}
 \begin{algorithmic}[1]
 \For{\texttt{i = 1..2$\lambda$}}
 	\State $(sk_{\cyr} = \cyr, pk_{\cyr}) \gets \code{KeyGeneration\_A(\code{NULL}, \code{true})}$
@@ -981,7 +982,7 @@ If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Ve
 \end{algorithm}
 
 \begin{algorithm}[H]
-\caption{-- \code{Verify($pk = \pb$, $m$, $\sigma$)}}\label{euclid}
+\caption{-- \code{Verify($pk = \pb$, $m$, $\sigma$)}}\label{alg:verifmath}
 \begin{algorithmic}[1]
 \State $J_{1} \parallel ... \parallel J_{2\lambda} \gets$ \code{keccak(com, $m$, $h$)}
 \For{\texttt{i = 0..2$\lambda$}}
@@ -1009,7 +1010,5 @@ If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Ve
 \end{algorithm}
 
 Outside of simply replacing $\Pi_{\text{SIDH}}'$ procedure calls with \sidh functions, the reader may notice additional differences between \code{Sign} and \code{Verify} and their $\Sigma'$ counterparts. Namely, Yoo et al. have chosen to exclude the challenge bit $ch$ in the \sidh implementations of these functions, consequently excluding the conditional and \textbf{Swap} statement of lines 8 and 9 in algorithm 4. 
-
-Another important implementation detail is the seperation of the signing procedure into two functions: \code{isogeny\_sign} and \code{sign\_thread}. Because all of the $2\lambda$ iterations are entirely independent of the others, the signing and verification proceedures present themselves as embarrassingly parallel. \code{isogey\_sign} acts as the entry point for \code{Sign} and spawns a POSIX thread for every instance of the for-loop; each one calling \code{sign\_thread} which runs performs \bob's interaction with \randall.
 
 

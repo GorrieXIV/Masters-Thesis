@@ -2,7 +2,7 @@
 
 Our first contribution to the \sidh codebase is the implementation and integration of a procedure for batching together many $\mathbb{F}_{p}$ element inversions. This contribution is discussed in detail in the following chapter. The chapter is split into three sections: a high-level discussion of the procedure itself, the low-level details of its integration into \sidh, and the resulting improvements in performance that result. 
 
-In the first section of this chapter we will detail the specifics of the partial batched inversion procedure.
+In the first section of this chapter we will detail the specifics of the partial batched inversion procedure. We will show how the procedure can be constructed by combining the partial inversion technique with the inversion batching technique outlined in \cite{batching}. 
 
 As we then venture into the lower-level implementation details, we will explore how the procedure can be leveraged optimally in the codebase. We will take a closer look at several of the aforementioned \sidh functions as we illustrate some of the performance bottlenecks in the system. At this time, we will also discuss minutiae with regards to the design decisions made in the imeplementation of the partial batched inversion procedure.
 
@@ -11,6 +11,10 @@ We will end this chapter by taking a detailed look at the performance gains offe
 \section{Partial Batched Inversions}
 
 One of our main contributions is the embedding of a low-level $\mathbb{F}_{p^{2}}$ procedure into Microsofts pre-existing SIDH library. The procedure in question reduces arbitrarily many unrelated/potentially parallel $\mathbb{F}_{p^{2}}$ inversions to a sequence of $\mathbb{F}_{p}$ multiplications \& additions, as well as one $\mathbb{F}_{p}$ inversion.\\
+
+\section{$\mathbb{F}_{p^{2}}$ Inversions in $\mathbb{F}_{p}$}
+
+\section{Batching Field Element Inversions}
 
 More specifically, the procedure takes us from \textit{n} $\mathbb{F}_{p^{2}}$  inversions to: 
 \begin{center}
@@ -58,20 +62,20 @@ The procedure is as follows:\\
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Parallelizing Signatures}
 
 \subsection{Projective Space}
 
 Because the work of Yoo et al. was built on top of the original Microsoft SIDH library, all underlying field operations (and isogeny arithmetic) are performed in projective space. Doing field arithmitic in projective space allows us to avoid many inversion operations. The downside of this (for our work) is that the number opportunities for implementing the batched inversion algorithm becomes greatly limited.\\
 
-\subsection{Remaining Opportunities}
-There are two functions called in the isogeny signature system that perform a $\mathbb{F}_{p^{2}}$ inversion: j\_inv and inv\_4\_way. These functions are called once in SecretAgreement and KeyGeneration operations respectively. SecretAgreement and KeyGeneration are in turn called from each signing and verification thread.\\
-
-This means that in the signing procedure there are 2 opportunities for implementing batched partial-inversion with a batch size of 248 elements. In the verify procedure, however, there are 3 opportunities for implementing batched inversion with a batch size of roughly ~124 elements.\\
-
-
-
 \section{Implementation Details}
+
+\subsection{Parallelizing Signatures}
+
+Because every $2\lambda$ iteration of the \textbf{Sign} and \textbf{Verify} procedures are entirely independent of each other, these functions present themselves as embarrassingly parallel.\footnote{in the field of high performance computing, a problem that is trivially parallizable is often referred to as \emph{embarrassingly} parallizable.} 
+
+Recall from section \ref{subsec:sigcode} the table of functions that can be found in \code{SIDH\_signature}. \code{isogey\_sign} acts as the entry point for \code{Sign} and spawns a POSIX thread for every instance of the for-loop; each one calling \code{sign\_thread} which performs \bob's interaction with \randall. Verification proceeds analogously; \code{isogeny\_verify} is executed and spawns a POSIX threads executing \code{verify\_thread} until all $2\lambda$ iterations are complete.
+
+This parallelization of the signature scheme was the approach taken by Yoo et al. in their original implementation. It also lends itself rather nicely 
 
 \subsection{Constant Time vs. Binary GCD Inversion}
 
@@ -117,6 +121,7 @@ The two figures below provide benchmarks for KeyGen, Sign, and Verify procedures
 \textbf{System B:} With inversion batching turned on we a observe a ~0.9 \% performance increase for key signing and a ~2.3 \% performance increase for key verification.\\
 
 \subsection{Analysis}
+
 It should first be noted that, because our benchmarks are measured in terms of clock cycles, the difference between our two system clock speeds should be essentially ineffective. \\
 
 In the following table, "Batched Inversion" signifies running the batched partial-inversion procedure on 248 $\mathbb{F}_{p^{2}}$ elements. The procedure uses the binary GCD $\mathbb{F}_{p}$ inversion function which, unlike regular $\mathbb{F}_{p^{2}}$ montgomery inversion, is not constant time.\\
@@ -133,4 +138,9 @@ In the following table, "Batched Inversion" signifies running the batched partia
 \end{center}
 
 Do performance increases observed make sense?\\
+
+\subsection{Remaining Opportunities}
+There are two functions called in the isogeny signature system that perform a $\mathbb{F}_{p^{2}}$ inversion: j\_inv and inv\_4\_way. These functions are called once in SecretAgreement and KeyGeneration operations respectively. SecretAgreement and KeyGeneration are in turn called from each signing and verification thread.\\
+
+This means that in the signing procedure there are 2 opportunities for implementing batched partial-inversion with a batch size of 248 elements. In the verify procedure, however, there are 3 opportunities for implementing batched inversion with a batch size of roughly ~124 elements.\\
 
