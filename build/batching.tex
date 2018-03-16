@@ -1,20 +1,22 @@
 \chapter{Batching Operations for Isogenies}
 
-Our first contribution to the \sidh codebase is the implementation and integration of a procedure for batching together many $\mathbb{F}_{p}$ element inversions. This contribution is discussed in detail in the following chapter. The chapter is split into three sections: a high-level discussion of the procedure itself, the low-level details of its integration into \sidh, and the resulting improvements in performance that result. 
+Our first contribution to the \sidh codebase is the implementation and integration of a procedure for batching together many $\mathbb{F}_{p^2}$ element inversions. This contribution is discussed in detail in the following chapter. The chapter is split into three sections: a high-level discussion of the procedure itself, the low-level details of its integration into \sidh, and finally, the resulting affects of this procedure on the performance of \sidh. 
 
-In the first section of this chapter we will detail the specifics of the partial batched inversion procedure. We will show how the procedure can be constructed by combining the partial inversion technique with the inversion batching technique outlined in \cite{batching}. 
+In the first section of this chapter we will detail the specifics of the partial batched inversion procedure. We will show how the procedure can be constructed by combining two techniques: a well known method for reducing a $\mathbb{F}_{p^2}$ inversion to several $\mathbb{F}_{p}$ operations, and an inversion batching technique outlined in \cite{batching}. 
 
-As we then venture into the lower-level implementation details, we will explore how the procedure can be leveraged optimally in the codebase. We will take a closer look at several of the aforementioned \sidh functions as we illustrate some of the performance bottlenecks in the system. At this time, we will also discuss minutiae with regards to the design decisions made in the imeplementation of the partial batched inversion procedure.
+As we then venture into the lower-level implementation details, we will explore how the procedure can be leveraged optimally in the codebase. We will take a closer look at several of the aforementioned \sidh functions as we illustrate some of the performance bottlenecks in the system. At this time, we will also discuss the design decisions made while implementing the partial batched inversion procedure as well as some of the functions lower-level minutiae.
 
-We will end this chapter by taking a detailed look at the performance gains offered by the inclusion of partial batched inversions in the Yoo et al. signature scheme. We will contrast the measured performance of our implementation with an analytical calculation of the expected performance improvement, and discuss the possible origins of divergent behaviour.  
+We will end this chapter by taking a detailed look at the performance gains offered by the inclusion of partial batched inversions in \sidh. More precisely, we will be examining the effects of the procedure on the Yoo et al. signature layer. We will contrast the measured performance of our implementation with an analytical calculation of the expected improvement, and discuss the possible origins of divergent behaviour.  
 
 \section{Partial Batched Inversions}
 
-One of our main contributions is the embedding of a low-level $\mathbb{F}_{p^{2}}$ procedure into Microsofts pre-existing SIDH library. The procedure in question reduces arbitrarily many unrelated/potentially parallel $\mathbb{F}_{p^{2}}$ inversions to a sequence of $\mathbb{F}_{p}$ multiplications \& additions, as well as one $\mathbb{F}_{p}$ inversion.\\
+We will now outline our first contribution to \sidh. The ``partial batched inversion" procedure in question reduces arbitrarily many \emph{unrelated} $\mathbb{F}_{p^{2}}$ inversions to a sequence of $\mathbb{F}_{p}$ operations. The fact that the elements being inverted need not hold any relation will be significant to the applicability of this procedure. For brevities sake, we will henceforth refer to this procedure as \code{pb\_inv}.
 
-\section{$\mathbb{F}_{p^{2}}$ Inversions in $\mathbb{F}_{p}$}
+As mentioned above, \code{pb\_inv} is constructed by combining two distinct techniques. Both of these techniques improve the efficiency of computing field element inversions: the first is specific to extension fields (in our case, $\mathbb{F}_{p^{2}}$ elements,) but the second is a technique applicable to general field element inversion.
 
-\section{Batching Field Element Inversions}
+\subsection{$\mathbb{F}_{p^{2}}$ Inversions done in $\mathbb{F}_{p}$}
+
+\subsection{Batching Field Element Inversions}
 
 More specifically, the procedure takes us from \textit{n} $\mathbb{F}_{p^{2}}$  inversions to: 
 \begin{center}
@@ -63,9 +65,11 @@ The procedure is as follows:\\
 \end{algorithm}
 
 
-\subsection{Projective Space}
+\subsection{Applicability to \sidh}
 
-Because the work of Yoo et al. was built on top of the original Microsoft SIDH library, all underlying field operations (and isogeny arithmetic) are performed in projective space. Doing field arithmitic in projective space allows us to avoid many inversion operations. The downside of this (for our work) is that the number opportunities for implementing the batched inversion algorithm becomes greatly limited.\\
+Because the work of Yoo et al. was built on top of the original Microsoft SIDH library, all underlying field arithmetic (and as such, pointwise arithmetic) is performed in projective space using Montgomery representation. As was mentioned in the previous chapter, doing such allows us to avoid a great deal of field element inversions. We simply convert to Montgomery representation at the beginning of heavy arithmetic, perform the desired operations, and then convert back to standard representation when complete. Throughout the codebase, (most noticeably in \code{kex.c}) we can see an analogous approach taken in for pointwise arithmetic, by first converting to a projective space representation, performing operations, and then converting back to affine coordinates. 
+
+ The downside of this (for our work) is that the number opportunities for implementing the batched inversion algorithm becomes greatly limited.\\
 
 \section{Implementation Details}
 
@@ -77,7 +81,7 @@ Recall from section \ref{subsec:sigcode} the table of functions that can be foun
 
 This parallelization of the signature scheme was the approach taken by Yoo et al. in their original implementation. It also lends itself rather nicely 
 
-\subsection{Constant Time vs. Binary GCD Inversion}
+\subsection{Security Concerns}
 
 \begin{figure}[htb]
 \centering
