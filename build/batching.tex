@@ -12,40 +12,26 @@ We will end this chapter by taking a detailed look at the performance gains offe
 
 We will now outline our first contribution to \sidh. The ``partial batched inversion" procedure in question reduces arbitrarily many \emph{unrelated} $\mathbb{F}_{p^{2}}$ inversions to a sequence of $\mathbb{F}_{p}$ operations. The fact that the elements being inverted need not hold any relation will be significant to the applicability of this procedure. For brevities sake, we will henceforth refer to this procedure as \code{pb\_inv}.
 
-As mentioned above, \code{pb\_inv} is constructed by combining two distinct techniques. Both of these techniques improve the efficiency of computing field element inversions: the first is specific to extension fields (in our case, $\mathbb{F}_{p^{2}}$ elements,) but the second is a technique applicable to general field element inversion.
+As mentioned above, \code{pb\_inv} is constructed by combining two distinct techniques. Both of these techniques improve the efficiency of computing field element inversions: the first is specific to extension fields (in our case, $\mathbb{F}_{p^{2}}$ elements,) but the second is a technique applicable to general field element inversions.
+
+We will begin with a dissection of these two techniques, starting first with the ``partial" inversion technique and then looking at batched inversions. The definitions we will give for these techniques below are given at the level of field arithmetic. When we proceed, however, to sketch \code{pb\_inv} we will do so using the \sidh API.
 
 \subsection{$\mathbb{F}_{p^{2}}$ Inversions done in $\mathbb{F}_{p}$}
 
 \begin{algorithm}
-\caption{Partial $\mathbb{F}_{p^{2}}$ Inversion}\label{alg:partialinv}
+\caption{-- \textbf{Partial\_Inversion($\mathbb{F}_{p^{2}}$ \code{a}, $\mathbb{F}_{p^{2}}$ \code{a}$^{-1}$)}}\label{alg:partialinv}
 \begin{algorithmic}[1]
-\Procedure{partial\_batched\_inv($\mathbb{F}_{p^{2}}$[ ] vec, $\mathbb{F}_{p^{2}}$[ ] dest, int n)}{}
-\State initialize $\mathbb{F}_{p}$ $den[n]$
-\For{\texttt{i = 0..(n-1)}}
-	\State $den[i] \gets a[i][0]^{2} + a[i][1]^{2}$
-\EndFor
+\State $\mathbb{F}_{p} \code{den} \gets \code{a[0]}^{2} + \code{a[1]}^{2}$
+\State $den_{inv} \gets \texttt{inv(a[n-1])}$
 
-\State $a[0] \gets den[0]$
-
-\For{\texttt{i = 1..(n-1)}}
-	\State $a[i] \gets \texttt{a[i-1]*den[i]}$
-\EndFor
-
-\State $a_{inv} \gets \texttt{inv(a[n-1])}$
-
-\For{\texttt{i = n-1..1}}
-	\State $a[i] \gets a_{inv}*dest[i-1]$
-	\State $a_{inv} \gets a_{inv}*den[i]$
-\EndFor
+\State $a[i] \gets a_{inv}*dest[i-1]$
+\State $a_{inv} \gets a_{inv}*den[i]$
 
 \State $dest[0] \gets a_{inv}$
 
-\For{\texttt{i = 0..(n-1)}}
-	\State $dest[i][0] \gets a[i]*vec[i][0]$
-	\State $vec[i][1] \gets -1*vec[i][1]$
-	\State $dest[i][1] \gets a[i]*vec[i][1]$
-\EndFor
-\EndProcedure
+\State $dest[i][0] \gets a[i]*vec[i][0]$
+\State $vec[i][1] \gets -1*vec[i][1]$
+\State $dest[i][1] \gets a[i]*vec[i][1]$
 \end{algorithmic}
 \end{algorithm}
 
