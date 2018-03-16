@@ -16,7 +16,42 @@ As mentioned above, \code{pb\_inv} is constructed by combining two distinct tech
 
 \subsection{$\mathbb{F}_{p^{2}}$ Inversions done in $\mathbb{F}_{p}$}
 
+\begin{algorithm}
+\caption{Partial $\mathbb{F}_{p^{2}}$ Inversion}\label{alg:partialinv}
+\begin{algorithmic}[1]
+\Procedure{partial\_batched\_inv($\mathbb{F}_{p^{2}}$[ ] vec, $\mathbb{F}_{p^{2}}$[ ] dest, int n)}{}
+\State initialize $\mathbb{F}_{p}$ $den[n]$
+\For{\texttt{i = 0..(n-1)}}
+	\State $den[i] \gets a[i][0]^{2} + a[i][1]^{2}$
+\EndFor
+
+\State $a[0] \gets den[0]$
+
+\For{\texttt{i = 1..(n-1)}}
+	\State $a[i] \gets \texttt{a[i-1]*den[i]}$
+\EndFor
+
+\State $a_{inv} \gets \texttt{inv(a[n-1])}$
+
+\For{\texttt{i = n-1..1}}
+	\State $a[i] \gets a_{inv}*dest[i-1]$
+	\State $a_{inv} \gets a_{inv}*den[i]$
+\EndFor
+
+\State $dest[0] \gets a_{inv}$
+
+\For{\texttt{i = 0..(n-1)}}
+	\State $dest[i][0] \gets a[i]*vec[i][0]$
+	\State $vec[i][1] \gets -1*vec[i][1]$
+	\State $dest[i][1] \gets a[i]*vec[i][1]$
+\EndFor
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
 \subsection{Batching Field Element Inversions}
+
+\subsection{Partial Batched Inversions}
 
 More specifically, the procedure takes us from \textit{n} $\mathbb{F}_{p^{2}}$  inversions to: 
 \begin{center}
@@ -32,7 +67,7 @@ More specifically, the procedure takes us from \textit{n} $\mathbb{F}_{p^{2}}$  
 The procedure is as follows:\\
 
 \begin{algorithm}
-\caption{Batched Partial-Inversion}\label{euclid}
+\caption{\code{pb\_inv}}\label{alg:partialbatchedinversion}
 \begin{algorithmic}[1]
 \Procedure{partial\_batched\_inv($\mathbb{F}_{p^{2}}$[ ] vec, $\mathbb{F}_{p^{2}}$[ ] dest, int n)}{}
 \State initialize $\mathbb{F}_{p}$ $den[n]$
