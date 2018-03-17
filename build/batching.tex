@@ -12,30 +12,67 @@ We will end this chapter by taking a detailed look at the performance gains offe
 
 We will now outline our first contribution to \sidh. The ``partial batched inversion" procedure in question reduces arbitrarily many \emph{unrelated} $\mathbb{F}_{p^{2}}$ inversions to a sequence of $\mathbb{F}_{p}$ operations. The fact that the elements being inverted need not hold any relation will be significant to the applicability of this procedure. For brevities sake, we will henceforth refer to this procedure as \code{pb\_inv}.
 
-As mentioned above, \code{pb\_inv} is constructed by combining two distinct techniques. Both of these techniques improve the efficiency of computing field element inversions: the first is specific to extension fields (in our case, $\mathbb{F}_{p^{2}}$ elements,) but the second is a technique applicable to general field element inversions.
+As mentioned above, \code{pb\_inv} is constructed by combining two distinct techniques. Both of these techniques improve the efficiency of computing field element inversions: the first is specific to extension fields (in our case, $\mathbb{F}_{p^{2}}$ elements,) but the second is a technique applicable to field element inversions in a more general setting.
 
-We will begin with a dissection of these two techniques, starting first with the ``partial" inversion technique and then looking at batched inversions. The definitions we will give for these techniques below are given at the level of field arithmetic. When we proceed, however, to sketch \code{pb\_inv} we will do so using the \sidh API.
+We will begin with a dissection of these two techniques, starting first with the ``partial" inversion technique and then looking at batched inversions. The definitions we will give for these techniques below are given at the level of field arithmetic. When we proceed to sketch \code{pb\_inv}, we will offer two definitions: one in this section given at the abstraction-level of field arithmetic, and one in the proceeding section given in terms of \sidh syntax.
+
+In the subsections to come, when we are working at the level of field arithmetic we will denote the first and second portions of an arbitrary $x \in \mathbb{F}_{p^{2}}$ as $x_{a}$ and $x_{b}$ respectively. Recall from \ref{subsec:algebra} that both $x_{a}$ and $x_{b}$ are valid $\mathbb{F}_{p}$ elements. 
 
 \subsection{$\mathbb{F}_{p^{2}}$ Inversions done in $\mathbb{F}_{p}$}
 
+There is a simple way in which we can perform one $\mathbb{F}_{p^{2}}$ by means of doing a $\mathbb{F}_{p}$ inversion. Consider the following:
+
 \begin{algorithm}
-\caption{-- \textbf{Partial\_Inversion($\mathbb{F}_{p^{2}}$ \code{a}, $\mathbb{F}_{p^{2}}$ \code{a}$^{-1}$)}}\label{alg:partialinv}
+\caption{-- \textbf{PartialInv($\mathbb{F}_{p^{2}}$ $x$, $\mathbb{F}_{p^{2}}$ $x^{-1}$)}}\label{alg:partialinv}
 \begin{algorithmic}[1]
-\State $\mathbb{F}_{p} \code{den} \gets \code{a[0]}^{2} + \code{a[1]}^{2}$
-\State $den_{inv} \gets \texttt{inv(a[n-1])}$
+\State $den \gets x_{a}^{2} + x_{b}^{2}$
 
-\State $a[i] \gets a_{inv}*dest[i-1]$
-\State $a_{inv} \gets a_{inv}*den[i]$
+\State $den_{inv} \gets den^{-1}$
 
-\State $dest[0] \gets a_{inv}$
+\State $a \gets x_{a} \cdot den_{inv}$
 
-\State $dest[i][0] \gets a[i]*vec[i][0]$
-\State $vec[i][1] \gets -1*vec[i][1]$
-\State $dest[i][1] \gets a[i]*vec[i][1]$
+\State $b \gets -(x_{b}) \cdot den_{inv}$
+
+\State $x^{-1} \gets \{a, b\}$
+
+\State \Return $x^{-1}$
 \end{algorithmic}
 \end{algorithm}
 
+Using this technique we can perform 1 $\mathbb{F}_{p^{2}}$ inversion with the following operations: 
+\begin{center}
+\begin{itemize}
+\item 2 $\mathbb{F}_{p}$ squarings
+\item 1 $\mathbb{F}_{p}$ additions
+\item 1 $\mathbb{F}_{p}$ inversion
+\item 3 $\mathbb{F}_{p}$ multiplications
+\end{itemize}
+\end{center}
+
+Why then, the reader may ask, is this set of field operations more efficient than a single extension field inversion? 
+
 \subsection{Batching Field Element Inversions}
+
+The second technique used in the composition of \code{pb\_inv} reduces arbitrarily many (general) field element inversions to \emph{one} inversion and a linearly scaling amount of multiplcations in the \emph{same} field.
+
+This technique, which we will shorthand \textbf{BatchedInv}, was outlined in Shacham and Boneh in \cite{batching}. Shacham and Boneh allude that their work is strongly connected to the earlier efforts of Amos Fiat in batching multiple RSA decryptions.  
+
+\begin{algorithm}
+\caption{-- \textbf{BatchedInv($\mathbb{F}_{p^{2}}$ $x$, $\mathbb{F}_{p^{2}}$ $x^{-1}$, $\mathbb{Z} n$)}}\label{alg:batchedinv}
+\begin{algorithmic}[1]
+\State $den \gets x_{a}^{2} + x_{b}^{2}$
+
+\State $den_{inv} \gets den^{-1}$
+
+\State $a \gets x_{a} \cdot den_{inv}$
+
+\State $b \gets -(x_{b}) \cdot den_{inv}$
+
+\State $x^{-1} \gets \{a, b\}$
+
+\State \Return $x^{-1}$
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Partial Batched Inversions}
 
@@ -53,7 +90,7 @@ More specifically, the procedure takes us from \textit{n} $\mathbb{F}_{p^{2}}$  
 The procedure is as follows:\\
 
 \begin{algorithm}
-\caption{\code{pb\_inv}}\label{alg:partialbatchedinversion}
+\caption{-- \textbf{PartialBatchedInversions()}}\label{alg:pbinvmath}
 \begin{algorithmic}[1]
 \Procedure{partial\_batched\_inv($\mathbb{F}_{p^{2}}$[ ] vec, $\mathbb{F}_{p^{2}}$[ ] dest, int n)}{}
 \State initialize $\mathbb{F}_{p}$ $den[n]$
@@ -94,13 +131,52 @@ Because the work of Yoo et al. was built on top of the original Microsoft SIDH l
 
 \section{Implementation Details}
 
+\begin{algorithm}
+\caption{-- \code{pb\_inv}}\label{alg:pbmathcode}
+\begin{algorithmic}[1]
+\Procedure{partial\_batched\_inv($\mathbb{F}_{p^{2}}$[ ] vec, $\mathbb{F}_{p^{2}}$[ ] dest, int n)}{}
+\State initialize $\mathbb{F}_{p}$ $den[n]$
+\For{\texttt{i = 0..(n-1)}}
+	\State $den[i] \gets a[i][0]^{2} + a[i][1]^{2}$
+\EndFor
+
+\State $a[0] \gets den[0]$
+
+\For{\texttt{i = 1..(n-1)}}
+	\State $a[i] \gets \texttt{a[i-1]*den[i]}$
+\EndFor
+
+\State $a_{inv} \gets \texttt{inv(a[n-1])}$
+
+\For{\texttt{i = n-1..1}}
+	\State $a[i] \gets a_{inv}*dest[i-1]$
+	\State $a_{inv} \gets a_{inv}*den[i]$
+\EndFor
+
+\State $dest[0] \gets a_{inv}$
+
+\For{\texttt{i = 0..(n-1)}}
+	\State $dest[i][0] \gets a[i]*vec[i][0]$
+	\State $vec[i][1] \gets -1*vec[i][1]$
+	\State $dest[i][1] \gets a[i]*vec[i][1]$
+\EndFor
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
 \subsection{Parallelizing Signatures}
 
 Because every $2\lambda$ iteration of the \textbf{Sign} and \textbf{Verify} procedures are entirely independent of each other, these functions present themselves as embarrassingly parallel.\footnote{in the field of high performance computing, a problem that is trivially parallizable is often referred to as \emph{embarrassingly} parallizable.} 
 
 Recall from section \ref{subsec:sigcode} the table of functions that can be found in \code{SIDH\_signature}. \code{isogey\_sign} acts as the entry point for \code{Sign} and spawns a POSIX thread for every instance of the for-loop; each one calling \code{sign\_thread} which performs \bob's interaction with \randall. Verification proceeds analogously; \code{isogeny\_verify} is executed and spawns a POSIX threads executing \code{verify\_thread} until all $2\lambda$ iterations are complete.
 
-This parallelization of the signature scheme was the approach taken by Yoo et al. in their original implementation. It also lends itself rather nicely 
+This parallelization of the signature scheme was the approach taken by Yoo et al. in their original implementation. It also lends itself rather nicely\\
+
+\noindent
+\code{inv\_4\_way}.\\
+
+\noindent
+\code{j\_inv}.\\
 
 \subsection{Security Concerns}
 
