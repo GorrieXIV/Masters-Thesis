@@ -20,7 +20,12 @@ In the subsections to come, when we are working at the level of field arithmetic
 
 \subsection{$\mathbb{F}_{p^{2}}$ Inversions done in $\mathbb{F}_{p}$}
 
-There is a simple way in which we can perform one $\mathbb{F}_{p^{2}}$ by means of doing a $\mathbb{F}_{p}$ inversion. Consider the following:
+There is a simple way in which we can perform one $\mathbb{F}_{p^{2}}$ inversion by means of doing several $\mathbb{F}_{p}$ operations. We will begin by considering multiplicative inverses of complex numbers. Fields of the form $\mathbb{F}_{q^{2}}$ for some prime $q$ are, after all, quadratic extension fields; because of this $\mathbb{F}_{p^{2}}$ arithmetic is treated, for the most part, analogously to complex number arithmetic.
+
+Consider the complex number $C = a + bi$. We have that $C^{-1} = 1 / (a + bi)$, from which we can rationalize the denominator:\\
+$$
+C^{-1} = \frac {1}{(a + bi)} \cdot \frac{(a - bi)}{(a - bi)}
+$$
 
 \begin{algorithm}
 \caption{-- \textbf{PartialInv($\mathbb{F}_{p^{2}}$ $x$, $\mathbb{F}_{p^{2}}$ $x^{-1}$)}}\label{alg:partialinv}

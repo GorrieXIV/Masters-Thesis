@@ -34,9 +34,9 @@
 \contentsline {subsection}{\numberline {3.1.4}Applicability to $\texttt {SIDH}_{\texttt {C}}$\xspace }{29}{subsection.3.1.4}
 \contentsline {section}{\numberline {3.2}Implementation Details}{30}{section.3.2}
 \contentsline {subsection}{\numberline {3.2.1}Parallelizing Signatures}{30}{subsection.3.2.1}
-\contentsline {subsection}{\numberline {3.2.2}Security Concerns}{30}{subsection.3.2.2}
-\contentsline {section}{\numberline {3.3}Results}{30}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}Analysis}{31}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.2.2}Security Concerns}{31}{subsection.3.2.2}
+\contentsline {section}{\numberline {3.3}Results}{31}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Analysis}{32}{subsection.3.3.1}
 \contentsline {subsection}{\numberline {3.3.2}Remaining Opportunities}{32}{subsection.3.3.2}
 \contentsline {chapter}{\numberline {4}Compressing Signatures}{33}{chapter.4}
 \contentsline {section}{\numberline {4.1}SIDH Key Compression Background}{33}{section.4.1}
