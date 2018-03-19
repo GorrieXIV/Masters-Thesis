@@ -16,19 +16,36 @@ As mentioned above, \code{pb\_inv} is constructed by combining two distinct tech
 
 We will begin with a dissection of these two techniques, starting first with the ``partial" inversion technique and then looking at batched inversions. The definitions we will give for these techniques below are given at the level of field arithmetic. When we proceed to sketch \code{pb\_inv}, we will offer two definitions: one in this section given at the abstraction-level of field arithmetic, and one in the proceeding section given in terms of \sidh syntax.
 
-In the subsections to come, when we are working at the level of field arithmetic we will denote the first and second portions of an arbitrary $x \in \mathbb{F}_{p^{2}}$ as $x_{a}$ and $x_{b}$ respectively. Recall from \ref{subsec:algebra} that both $x_{a}$ and $x_{b}$ are valid $\mathbb{F}_{p}$ elements. 
+In the subsections to come, when we are working at the level of field arithmetic we will denote the first and second portions of an arbitrary $x \in \mathbb{F}_{p^{2}}$ as $x_{a}$ and $x_{b}$ respectively. We identify $x$ by saying $x = \{x_{a}, x_{b}\}$. Recall from \ref{subsec:algebra} that both $x_{a}$ and $x_{b}$ are valid $\mathbb{F}_{p}$ elements. 
 
 \subsection{$\mathbb{F}_{p^{2}}$ Inversions done in $\mathbb{F}_{p}$}
 
 There is a simple way in which we can perform one $\mathbb{F}_{p^{2}}$ inversion by means of doing several $\mathbb{F}_{p}$ operations. We will begin by considering multiplicative inverses of complex numbers. Fields of the form $\mathbb{F}_{q^{2}}$ for some prime $q$ are, after all, quadratic extension fields; because of this $\mathbb{F}_{p^{2}}$ arithmetic is treated, for the most part, analogously to complex number arithmetic.
 
-Consider the complex number $C = a + bi$. We have that $C^{-1} = 1 / (a + bi)$, from which we can rationalize the denominator:\\
+Consider the complex number $C = a + bi$. We have that $C^{-1} = 1 / (a + bi)$, from which we can rationalize the denominator like so:\\
 $$
 C^{-1} = \frac {1}{(a + bi)} \cdot \frac{(a - bi)}{(a - bi)}
 $$
+$$
+C^{-1} = \frac {a - bi}{(a + bi)(a - bi)}
+$$
+Here we note that $(a + bi)(a - bi)$ is equivalently $(a^2 - b^2)$ and so we have
+$$
+C^{-1} = \frac {a - bi}{(a)^2 - (bi)^2}
+$$
+$$
+C^{-1} = \frac {a - bi}{a^2 + b^2}
+$$
+
+Elements in the quadratic extension of a finite field are treated similarly, such that if we take some element $x = \{x_{a}, x_{b}\} \in \mathbb{F}_{p^{2}}$ for some prime $p$, we can equivalently represent $x$ as $x_{a} + x_{b}i$ and treat arithmetic on $x$ exactly as we would for a complex number (modulo $p$, of course). From this we can see that $x^{-1}$ can be defined as:
+$$
+x^{-1} = \{\frac {x_{a}}{x_{a}^2 + x_{b}^2}, \frac {-x_{b}}{x_{a}^2 + x_{b}^2}\}
+$$
+
+Now it is clear that we can compute the multiplicative inverse of $x$ by computing the inverse of $x_{a}^2 + x_{b}^2$, which is of course a inversion in $\mathbb{F}_{p}$. We can further formulate this technique as an algorithm,  which we do below and refer to as \textbf{PartialInv}.
 
 \begin{algorithm}
-\caption{-- \textbf{PartialInv($\mathbb{F}_{p^{2}}$ $x$, $\mathbb{F}_{p^{2}}$ $x^{-1}$)}}\label{alg:partialinv}
+\caption{-- \textbf{PartialInv($\mathbb{F}_{p^{2}}$ $x$)}}\label{alg:partialinv}
 \begin{algorithmic}[1]
 \State $den \gets x_{a}^{2} + x_{b}^{2}$
 
@@ -44,26 +61,29 @@ $$
 \end{algorithmic}
 \end{algorithm}
 
-Using this technique we can perform 1 $\mathbb{F}_{p^{2}}$ inversion with the following operations: 
+Effectively, this procedure reduces one $\mathbb{F}_{p^{2}}$ inversion to the following operations: 
+
 \begin{center}
 \begin{itemize}
-\item 2 $\mathbb{F}_{p}$ squarings
-\item 1 $\mathbb{F}_{p}$ additions
-\item 1 $\mathbb{F}_{p}$ inversion
-\item 3 $\mathbb{F}_{p}$ multiplications
+\item 2 $\mathbb{F}_{p}$ squarings -- \emph{line 1 of algorithm} \ref{alg:partialinv}
+\item 1 $\mathbb{F}_{p}$ addition -- \emph{line 1 of algorithm} \ref{alg:partialinv}
+\item 1 $\mathbb{F}_{p}$ inversion -- \emph{line 2 of algorithm} \ref{alg:partialinv}
+\item 3 $\mathbb{F}_{p}$ multiplications -- \emph{lines 3 \& 4 of algorithm} \ref{alg:partialinv}
 \end{itemize}
 \end{center}
 
-Why then, the reader may ask, is this set of field operations more efficient than a single extension field inversion? 
+We say ``reduces", but it may not yet be entirely obvious that this approach is computationally favourable over directly computing an $\mathbb{F}_{p^{2}}$ inversion. 
 
 \subsection{Batching Field Element Inversions}
 
 The second technique used in the composition of \code{pb\_inv} reduces arbitrarily many (general) field element inversions to \emph{one} inversion and a linearly scaling amount of multiplcations in the \emph{same} field.
 
-This technique, which we will shorthand \textbf{BatchedInv}, was outlined in Shacham and Boneh in \cite{batching}. Shacham and Boneh allude that their work is strongly connected to the earlier efforts of Amos Fiat in batching multiple RSA decryptions.  
+This technique, which we will shorthand \textbf{BatchedInv}, was outlined by Shacham and Boneh in \cite{batching}. Shacham and Boneh allude that their work is strongly connected to the earlier efforts of Amos Fiat in batching multiple RSA decryptions, but Fiat's work (amongst other limitations,) is applicable only to the RSA cryptosystem. 
+
+We formalize this technique as an algorithm under the name \textbf{BatchedInv}. It is a general time/space trade-off that allows us to perform many inversions a one, along with a sequence of multiplications. \textbf{BatchedInv} is described below.
 
 \begin{algorithm}
-\caption{-- \textbf{BatchedInv($\mathbb{F}_{p^{2}}$ $x$, $\mathbb{F}_{p^{2}}$ $x^{-1}$, $\mathbb{Z} n$)}}\label{alg:batchedinv}
+\caption{-- \textbf{BatchedInv($\mathbb{F}_{p^{2}}$ $\{x_0, x_1, ..., x_n\}$}}\label{alg:batchedinv}
 \begin{algorithmic}[1]
 \State $den \gets x_{a}^{2} + x_{b}^{2}$
 
@@ -78,6 +98,17 @@ This technique, which we will shorthand \textbf{BatchedInv}, was outlined in Sha
 \State \Return $x^{-1}$
 \end{algorithmic}
 \end{algorithm}
+
+And so, \textbf{BatchedInv} can be used to reduce $n$ $\mathbb{F}_{p^{2}}$ inversions to the following operations:
+
+\begin{center}
+\begin{itemize}
+\item 2 $\mathbb{F}_{p}$ squarings -- \emph{line 1 of algorithm} \ref{alg:partialinv}
+\item 1 $\mathbb{F}_{p}$ addition -- \emph{line 1 of algorithm} \ref{alg:partialinv}
+\item 1 $\mathbb{F}_{p}$ inversion -- \emph{line 2 of algorithm} \ref{alg:partialinv}
+\item 3 $\mathbb{F}_{p}$ multiplications -- \emph{lines 3 \& 4 of algorithm} \ref{alg:partialinv}
+\end{itemize}
+\end{center}
 
 \subsection{Partial Batched Inversions}
 
