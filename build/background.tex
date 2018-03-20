@@ -812,6 +812,7 @@ The reader may note that \code{publickey\_t} does not contain any information de
 \emph{Tailor-made Montgomery Multiplication}.
 
 \subsection{Key Exchange \& Critical Functions}
+\label{subsec:functions}
 
 There are 3 central modules (C file) in \sidh, all dealing with different levels of abstraction in the $\Pi_{\text{SIDH}}$ protocol. Operating at the lowest abstraction level is the module \code{fpx.c}, wherein functions for manipulating $\mathbb{F}_{p}$ and $\mathbb{F}_{p^2}$ elements are defined. One level up from \code{fpx.c} we have \code{ec\_isogeny.c}, containing functions pertaining to elliptic curves and point arithmetic (such as \code{j\_inv(...)} for computing the j-invariant of a curve and \code{secret\_pt(...)} for computing a users secret point $S$ given their private key $m$). The final, highest abstraction-level module we will discuss is \code{kex.c}. \code{kex.c} contains the protocol-level functions for performing $\Pi_{\text{SIDH}}$, namely \code{KeyGeneration\_A(...)} and \code{KeyGeneration\_B(...)} for generating \alice and \bob's private and public keys, as well as \code{SecretAgreement\_A(...)} and \code{SecretAgreement\_B(...)} for completing the secret agreement from both sides of the key exchange. Figure \ref{fig:halfmap} illustrates the relationship between these modules and the abstraction levels of isogeny based key exchange.
 

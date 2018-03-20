@@ -34,7 +34,7 @@ $$
 C^{-1} = \frac {a - bi}{(a)^2 - (bi)^2}
 $$
 $$
-C^{-1} = \frac {a - bi}{a^2 + b^2}
+C^{-1} = \frac {a - bi}{a^2 + b^2}.
 $$
 
 Elements in the quadratic extension of a finite field are treated similarly, such that if we take some element $x = \{x_{a}, x_{b}\} \in \mathbb{F}_{p^{2}}$ for some prime $p$, we can equivalently represent $x$ as $x_{a} + x_{b}i$ and treat arithmetic on $x$ exactly as we would for a complex number (modulo $p$, of course). From this we can see that $x^{-1}$ can be defined as:
@@ -72,30 +72,49 @@ Effectively, this procedure reduces one $\mathbb{F}_{p^{2}}$ inversion to the fo
 \end{itemize}
 \end{center}
 
-We say ``reduces", but it may not yet be entirely obvious that this approach is computationally favourable over directly computing an $\mathbb{F}_{p^{2}}$ inversion. 
+We say ``reduces", but it may not be immediately clear that this technique is computationally favourable over any other approach to computing an $\mathbb{F}_{p^{2}}$ inversion. 
 
 \subsection{Batching Field Element Inversions}
 
 The second technique used in the composition of \code{pb\_inv} reduces arbitrarily many (general) field element inversions to \emph{one} inversion and a linearly scaling amount of multiplcations in the \emph{same} field.
 
-This technique, which we will shorthand \textbf{BatchedInv}, was outlined by Shacham and Boneh in \cite{batching}. Shacham and Boneh allude that their work is strongly connected to the earlier efforts of Amos Fiat in batching multiple RSA decryptions, but Fiat's work (amongst other limitations,) is applicable only to the RSA cryptosystem. 
+This technique was outlined by Shacham and Boneh in \cite{batching}. Shacham and Boneh provided several techniques for improving the performance of SSL handshakes, most of which built on the earlier efforts of Amos Fiat in batching multiple RSA decryptions. While releveant, Fiat's work is admittedly is applicable only to the RSA cryptosystem (alongside other limitations). One improvement offered by Shacham and Boneh, however, is their proposed notion of batching together divisions from across multiple unrelated SSL instances. 
 
-We formalize this technique as an algorithm under the name \textbf{BatchedInv}. It is a general time/space trade-off that allows us to perform many inversions a one, along with a sequence of multiplications. \textbf{BatchedInv} is described below.
+Suppose we want to compute the inverses of three elements $x, y, z \in F$ where $F$ is some arbitrary field. The batched division technique allows us to reduce these three inversions to one. The technique can be organized into three phases. In the first phase, all the elements of the batch are multiplied together into one product, yielding $a = xyz$. Next, we compute the inverse of $a$: $a^{-1} = (xyz)^{-1}$. Finally we can compute each individual element's multiplicative inverse as follows:
+$$
+x^{-1} = a^{-1} \cdot (yz)
+$$
+$$
+y^{-1} = a^{-1} \cdot (xz)
+$$
+$$
+z^{-1} = a^{-1} \cdot (xy)
+$$
+
+This technique is a general time/space trade-off allowing us to avoid costly operations at the price of a a constant amount of memory. We can extend this time/space trade-off further still. Consider the following. 
+
+This results in an implementation with linearly-less operations at the cost of a linearly scaling amount of memory.
+
+We generalize this technique to $n$-many elements, and provide an algorithm under the name \textbf{BatchedInv} (See algorithm \ref{alg:batchedinv}).
 
 \begin{algorithm}
-\caption{-- \textbf{BatchedInv($\mathbb{F}_{p^{2}}$ $\{x_0, x_1, ..., x_n\}$}}\label{alg:batchedinv}
+\caption{-- \textbf{BatchedInv($\mathbb{F}_{p^{2}}$ $\{x_0, x_1, ..., x_n-1\}$)}}\label{alg:batchedinv}
 \begin{algorithmic}[1]
-\State $den \gets x_{a}^{2} + x_{b}^{2}$
+\State $a_0 \gets x_0$
 
-\State $den_{inv} \gets den^{-1}$
+\For{\texttt{i = 1..(n-1)}}
+	\State $a_i \gets a_{i-1} \cdot x_i$
+\EndFor
 
-\State $a \gets x_{a} \cdot den_{inv}$
+\State $inv \gets a_{n-1}^{-1}$
 
-\State $b \gets -(x_{b}) \cdot den_{inv}$
+\For{\texttt{i = (n-1)..1}}
+	\State $a_i^{-1} \gets a_{i-1} \cdot inv$
+	\State $inv \gets inv \cdot x_{i}$
+\EndFor
 
-\State $x^{-1} \gets \{a, b\}$
+\State $a_0^{-1} = inv$
 
-\State \Return $x^{-1}$
 \end{algorithmic}
 \end{algorithm}
 
@@ -112,18 +131,9 @@ And so, \textbf{BatchedInv} can be used to reduce $n$ $\mathbb{F}_{p^{2}}$ inver
 
 \subsection{Partial Batched Inversions}
 
-More specifically, the procedure takes us from \textit{n} $\mathbb{F}_{p^{2}}$  inversions to: 
-\begin{center}
-\begin{itemize}
-\item 2\textit{n} $\mathbb{F}_{p}$ squarings
-\item \textit{n} $\mathbb{F}_{p}$ additions
-\item 1 $\mathbb{F}_{p}$ inversion
-\item 3(\textit{n}-1) $\mathbb{F}_{p}$ multiplications
-\item 2\textit{n} $\mathbb{F}_{p}$ multiplications
-\end{itemize}
-\end{center}
+We have now outlined the following: \textbf{PartialInv} as a technique for computing $\mathbb{F}_{p^2}$ inversions by means of $\mathbb{F}_{p}$ arithmetic, and \textbf{BatchedInv} as a technique for batching together arbitrarily many inversion operations. We will now combine these procedures in a rather trivial manner to achieve the partial batched inversion algorithm.
 
-The procedure is as follows:\\
+We offer a formalizing of this procedure in a mathematical setting in algorithm \ref{alg:pbinvmath}. We give a precise C function definition in section \ref{sec:pbinvimplementation}.
 
 \begin{algorithm}
 \caption{-- \textbf{PartialBatchedInversions()}}\label{alg:pbinvmath}
@@ -158,6 +168,17 @@ The procedure is as follows:\\
 \end{algorithmic}
 \end{algorithm}
 
+More specifically, the procedure takes us from \textit{n} $\mathbb{F}_{p^{2}}$  inversions to: 
+\begin{center}
+\begin{itemize}
+\item 2\textit{n} $\mathbb{F}_{p}$ squarings
+\item \textit{n} $\mathbb{F}_{p}$ additions
+\item 1 $\mathbb{F}_{p}$ inversion
+\item 3(\textit{n}-1) $\mathbb{F}_{p}$ multiplications
+\item 2\textit{n} $\mathbb{F}_{p}$ multiplications
+\end{itemize}
+\end{center}
+
 
 \subsection{Applicability to \sidh}
 
@@ -166,9 +187,12 @@ Because the work of Yoo et al. was built on top of the original Microsoft SIDH l
  The downside of this (for our work) is that the number opportunities for implementing the batched inversion algorithm becomes greatly limited.\\
 
 \section{Implementation Details}
+\label{sec:pbinvimplementation}
+
+With Algorithm \ref{alg:pbinvcode} we provide an explicit C definition for the function \code{pb\_inv}. For descriptions of the functions called in this procedure, the reader can refer to section \ref{subsec:functions}. For explicit definitions of some of these functions, the reader can refer to appendix [insert appendix].
 
 \begin{algorithm}
-\caption{-- \code{pb\_inv}}\label{alg:pbmathcode}
+\caption{-- \code{pb\_inv}}\label{alg:pbinvcode}
 \begin{algorithmic}[1]
 \Procedure{partial\_batched\_inv($\mathbb{F}_{p^{2}}$[ ] vec, $\mathbb{F}_{p^{2}}$[ ] dest, int n)}{}
 \State initialize $\mathbb{F}_{p}$ $den[n]$
@@ -214,14 +238,31 @@ This parallelization of the signature scheme was the approach taken by Yoo et al
 \noindent
 \code{j\_inv}.\\
 
-\subsection{Security Concerns}
-
 \begin{figure}[htb]
 \centering
 \includegraphics[scale=0.5]{signandverifycall} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
 \caption{<Caption here>}
 \label{fig:label} % insert suitable label, this is used to refer to a fig from within the text as shown above
 \end{figure}
+
+\subsection{Security Concerns}
+
+Recall the notion of a general side-channel attack: A side-channel attack is performed when an unauthorized individual is able to acquire information by measuring properties of the physical implementation of the system at hand. This can be done by analyzing the power consumption, timing properties, or electromagnetic leaks of a CPU while it operates on (or generates) confidential information.
+
+In the context of information security, algorithms for performing operations over mathematical objects can be said to fall under one of two categories: \emph{constant time} and \emph{non-constant time} algorithms. Constant time algorithms are designed to protect confidential information from side-channel attacks, but come at the cost of computational efficiency.
+
+In the \sidh library, there are two distinct functions for computing field element inversions. \code{fp2inv751\_mont} is a \emph{constant time} implementation. They perform comparatively as such:
+
+\begin{center}
+\begin{tabular}{@{}lllll@{}}
+	\toprule
+	Procedure & Performance in clock cyckes & System A With Batching\\
+	\midrule
+	\code{fp2inv751\_mont} & 68,881,331 & 68,881,331\\
+	\code{fp2inv751\_mont\_bingcd} & 15,744,477,032 & 15,565,738,003\\
+	\bottomrule
+\end{tabular}
+\end{center}
 
 \section{Results}
 
@@ -261,7 +302,7 @@ The two figures below provide benchmarks for KeyGen, Sign, and Verify procedures
 
 It should first be noted that, because our benchmarks are measured in terms of clock cycles, the difference between our two system clock speeds should be essentially ineffective. \\
 
-In the following table, "Batched Inversion" signifies running the batched partial-inversion procedure on 248 $\mathbb{F}_{p^{2}}$ elements. The procedure uses the binary GCD $\mathbb{F}_{p}$ inversion function which, unlike regular $\mathbb{F}_{p^{2}}$ montgomery inversion, is not constant time.\\
+In the following table, ``Batched Inversion" signifies running the batched partial-inversion procedure on 248 $\mathbb{F}_{p^{2}}$ elements. The procedure uses the binary GCD $\mathbb{F}_{p}$ inversion function which, unlike regular $\mathbb{F}_{p^{2}}$ montgomery inversion, is not constant time.\\
 
 \begin{center}
 \begin{tabular}{@{}ll@{}}
@@ -277,7 +318,7 @@ In the following table, "Batched Inversion" signifies running the batched partia
 Do performance increases observed make sense?\\
 
 \subsection{Remaining Opportunities}
-There are two functions called in the isogeny signature system that perform a $\mathbb{F}_{p^{2}}$ inversion: j\_inv and inv\_4\_way. These functions are called once in SecretAgreement and KeyGeneration operations respectively. SecretAgreement and KeyGeneration are in turn called from each signing and verification thread.\\
+There are two functions called in the isogeny signature system that perform a $\mathbb{F}_{p^{2}}$ inversion: \code{j\_inv} and \code{inv\_4\_way}. These functions are called once in SecretAgreement and KeyGeneration operations respectively. SecretAgreement and KeyGeneration are in turn called from each signing and verification thread.\\
 
 This means that in the signing procedure there are 2 opportunities for implementing batched partial-inversion with a batch size of 248 elements. In the verify procedure, however, there are 3 opportunities for implementing batched inversion with a batch size of roughly ~124 elements.\\
 
