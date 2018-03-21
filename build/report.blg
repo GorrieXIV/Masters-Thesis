@@ -1,4 +1,4 @@
-This is BibTeX, Version 0.99d (TeX Live 2013/Debian)
+This is BibTeX, Version 0.99d (TeX Live 2015/Debian)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: report.aux
 The style file: alphaurl.bst
@@ -7,86 +7,58 @@ Reallocated global_strs (elt_size=20001) to 20 items from 10.
 Reallocated glb_str_end (elt_size=4) to 20 items from 10.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: refs.bib.bib
-You're missing a field name---line 7 of file refs.bib.bib
- :    
- :    %volume = {73},
-(Error may have been on previous line)
-I'm skipping whatever remains of this entry
-You're missing a field name---line 21 of file refs.bib.bib
- :    
- :    %volume = {73},
-(Error may have been on previous line)
-I'm skipping whatever remains of this entry
-You're missing a field name---line 41 of file refs.bib.bib
- :  
- :  %volume = {},
-(Error may have been on previous line)
-I'm skipping whatever remains of this entry
-You're missing a field name---line 109 of file refs.bib.bib
- :    
- :    %volume = {73},
-(Error may have been on previous line)
-I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 175 of file refs.bib.bib
- :  
- :  volume = {IACR-CRYPTO-2016}
-(Error may have been on previous line)
-I'm skipping whatever remains of this entry
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Warning--empty journal in rewinding
 Warning--empty journal in effalg
+Warning--empty journal in pairings
+Warning--empty year in pairings
 Warning--empty journal in djp
-Warning--empty year in djp
 Warning--empty journal in jvsig
-Warning--empty publisher in sigs
-Warning--empty year in sigs
-Warning--empty publisher in mont
 Warning--empty journal in fsproof
+Warning--empty journal in batching
 Warning--empty journal in seshsig
 Warning--empty journal in sunsig
 Warning--empty journal in unruh
-Warning--empty year in unruh
 Warning--empty journal in yoo
-Warning--empty year in yoo
-You've used 11 entries,
+You've used 13 entries,
             3274 wiz_defined-function locations,
-            720 strings with 6776 characters,
-and the built_in function-call counts, 4762 in all, are:
-= -- 430
-> -- 236
-< -- 4
-+ -- 74
-- -- 73
-* -- 258
-:= -- 748
-add.period$ -- 29
-call.type$ -- 11
-change.case$ -- 68
-chr.to.int$ -- 11
-cite$ -- 26
-duplicate$ -- 160
-empty$ -- 375
-format.name$ -- 86
-if$ -- 1131
+            731 strings with 6941 characters,
+and the built_in function-call counts, 5586 in all, are:
+= -- 526
+> -- 268
+< -- 5
++ -- 82
+- -- 81
+* -- 278
+:= -- 876
+add.period$ -- 38
+call.type$ -- 13
+change.case$ -- 80
+chr.to.int$ -- 13
+cite$ -- 25
+duplicate$ -- 185
+empty$ -- 440
+format.name$ -- 97
+if$ -- 1344
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 13
-newline$ -- 55
-num.names$ -- 33
-pop$ -- 150
+missing$ -- 14
+newline$ -- 68
+num.names$ -- 39
+pop$ -- 152
 preamble$ -- 1
-purify$ -- 81
+purify$ -- 94
 quote$ -- 0
-skip$ -- 327
+skip$ -- 415
 stack$ -- 0
-substring$ -- 106
+substring$ -- 120
 swap$ -- 11
-text.length$ -- 4
-text.prefix$ -- 3
+text.length$ -- 5
+text.prefix$ -- 4
 top$ -- 0
-type$ -- 80
-warning$ -- 15
-while$ -- 32
-width$ -- 13
-write$ -- 117
-(There were 5 error messages)
+type$ -- 100
+warning$ -- 12
+while$ -- 37
+width$ -- 14
+write$ -- 148
+(There were 12 warnings)

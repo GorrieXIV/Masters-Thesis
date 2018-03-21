@@ -13,44 +13,44 @@
 \contentsline {section}{\numberline {2.2}Algebraic Geometry \& Isogenies}{6}{section.2.2}
 \contentsline {subsection}{\numberline {2.2.1}Fields \& Field Extensions}{7}{subsection.2.2.1}
 \contentsline {subsection}{\numberline {2.2.2}Elliptic Curves}{9}{subsection.2.2.2}
-\contentsline {subsection}{\numberline {2.2.3}Isogenies \& Their Properties}{11}{subsection.2.2.3}
+\contentsline {subsection}{\numberline {2.2.3}Isogenies \& Their Properties}{12}{subsection.2.2.3}
 \contentsline {section}{\numberline {2.3}Supersingular Isogeny Diffie-Hellman}{12}{section.2.3}
 \contentsline {subsection}{\numberline {2.3.1}SIDH Key Exchange}{13}{subsection.2.3.1}
 \contentsline {subsection}{\numberline {2.3.2}Zero-Knowledge Proof of Identity}{14}{subsection.2.3.2}
 \contentsline {section}{\numberline {2.4}Fiat-Shamir Construction}{16}{section.2.4}
-\contentsline {subsection}{\numberline {2.4.1}Unruh's Post-Quantum Adaptation}{16}{subsection.2.4.1}
-\contentsline {section}{\numberline {2.5}Isogeny Based Signatures}{16}{section.2.5}
+\contentsline {subsection}{\numberline {2.4.1}Unruh's Post-Quantum Adaptation}{17}{subsection.2.4.1}
+\contentsline {section}{\numberline {2.5}Isogeny Based Signatures}{17}{section.2.5}
 \contentsline {subsection}{\numberline {2.5.1}Algorithmic Definitions}{17}{subsection.2.5.1}
-\contentsline {section}{\numberline {2.6}Implementations of Isogeny Based Cryptographic Protocols}{20}{section.2.6}
-\contentsline {subsection}{\numberline {2.6.1}Parameters \& Data Representation}{20}{subsection.2.6.1}
-\contentsline {subsection}{\numberline {2.6.2}Design Decisions}{22}{subsection.2.6.2}
-\contentsline {subsection}{\numberline {2.6.3}Key Exchange \& Critical Functions}{22}{subsection.2.6.3}
-\contentsline {subsection}{\numberline {2.6.4}Signature Layer}{25}{subsection.2.6.4}
-\contentsline {chapter}{\numberline {3}Batching Operations for Isogenies}{27}{chapter.3}
-\contentsline {section}{\numberline {3.1}Partial Batched Inversions}{27}{section.3.1}
-\contentsline {subsection}{\numberline {3.1.1}$\mathbb {F}_{p^{2}}$ Inversions done in $\mathbb {F}_{p}$}{28}{subsection.3.1.1}
-\contentsline {subsection}{\numberline {3.1.2}Batching Field Element Inversions}{29}{subsection.3.1.2}
-\contentsline {subsection}{\numberline {3.1.3}Partial Batched Inversions}{30}{subsection.3.1.3}
-\contentsline {subsection}{\numberline {3.1.4}Applicability to $\texttt {SIDH}_{\texttt {C}}$\xspace }{31}{subsection.3.1.4}
-\contentsline {section}{\numberline {3.2}Implementation Details}{31}{section.3.2}
-\contentsline {subsection}{\numberline {3.2.1}Parallelizing Signatures}{31}{subsection.3.2.1}
-\contentsline {subsection}{\numberline {3.2.2}Security Concerns}{32}{subsection.3.2.2}
-\contentsline {section}{\numberline {3.3}Results}{32}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}Analysis}{33}{subsection.3.3.1}
-\contentsline {subsection}{\numberline {3.3.2}Remaining Opportunities}{33}{subsection.3.3.2}
-\contentsline {chapter}{\numberline {4}Compressing Signatures}{35}{chapter.4}
-\contentsline {section}{\numberline {4.1}SIDH Key Compression Background}{35}{section.4.1}
-\contentsline {subsection}{\numberline {4.1.1}Motivation \& Overview}{35}{subsection.4.1.1}
-\contentsline {subsection}{\numberline {4.1.2}Construction of Bases}{35}{subsection.4.1.2}
-\contentsline {subsection}{\numberline {4.1.3}}{35}{subsection.4.1.3}
-\contentsline {subsection}{\numberline {4.1.4}Decompression}{35}{subsection.4.1.4}
-\contentsline {section}{\numberline {4.2}Implementation Details}{35}{section.4.2}
-\contentsline {subsection}{\numberline {4.2.1}Tailoring Compression for Signatures}{35}{subsection.4.2.1}
-\contentsline {subsection}{\numberline {4.2.2}Decompressing $\psi (S)$}{35}{subsection.4.2.2}
-\contentsline {section}{\numberline {4.3}Results}{35}{section.4.3}
-\contentsline {section}{\numberline {4.4}Analysis}{35}{section.4.4}
-\contentsline {chapter}{\numberline {5}Discussion \& Conclusion}{36}{chapter.5}
-\contentsline {section}{\numberline {5.1}Results \& Comparisons}{36}{section.5.1}
-\contentsline {section}{\numberline {5.2}Additional Opportunities for Batching}{36}{section.5.2}
-\contentsline {section}{\numberline {5.3}Future Work}{36}{section.5.3}
-\contentsline {chapter}{Acknowledgements}{37}{section*.3}
+\contentsline {section}{\numberline {2.6}Implementations of Isogeny Based Cryptographic Protocols}{21}{section.2.6}
+\contentsline {subsection}{\numberline {2.6.1}Parameters \& Data Representation}{21}{subsection.2.6.1}
+\contentsline {subsection}{\numberline {2.6.2}Design Decisions}{23}{subsection.2.6.2}
+\contentsline {subsection}{\numberline {2.6.3}Key Exchange \& Critical Functions}{23}{subsection.2.6.3}
+\contentsline {subsection}{\numberline {2.6.4}Signature Layer}{26}{subsection.2.6.4}
+\contentsline {chapter}{\numberline {3}Batching Operations for Isogenies}{28}{chapter.3}
+\contentsline {section}{\numberline {3.1}Partial Batched Inversions}{28}{section.3.1}
+\contentsline {subsection}{\numberline {3.1.1}$\mathbb {F}_{p^{2}}$ Inversions done in $\mathbb {F}_{p}$}{29}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}Batching Field Element Inversions}{30}{subsection.3.1.2}
+\contentsline {subsection}{\numberline {3.1.3}Partial Batched Inversions}{31}{subsection.3.1.3}
+\contentsline {subsection}{\numberline {3.1.4}Applicability to $\texttt {SIDH}_{\texttt {C}}$\xspace }{32}{subsection.3.1.4}
+\contentsline {section}{\numberline {3.2}Implementation Details}{32}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Parallelizing Signatures}{32}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}Security Concerns}{33}{subsection.3.2.2}
+\contentsline {section}{\numberline {3.3}Results}{33}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Analysis}{34}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.2}Remaining Opportunities}{34}{subsection.3.3.2}
+\contentsline {chapter}{\numberline {4}Compressing Signatures}{36}{chapter.4}
+\contentsline {section}{\numberline {4.1}SIDH Key Compression Background}{36}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}Motivation \& Overview}{36}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}Construction of Bases}{36}{subsection.4.1.2}
+\contentsline {subsection}{\numberline {4.1.3}}{36}{subsection.4.1.3}
+\contentsline {subsection}{\numberline {4.1.4}Decompression}{36}{subsection.4.1.4}
+\contentsline {section}{\numberline {4.2}Implementation Details}{36}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}Tailoring Compression for Signatures}{36}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}Decompressing $\psi (S)$}{36}{subsection.4.2.2}
+\contentsline {section}{\numberline {4.3}Results}{36}{section.4.3}
+\contentsline {section}{\numberline {4.4}Analysis}{36}{section.4.4}
+\contentsline {chapter}{\numberline {5}Discussion \& Conclusion}{37}{chapter.5}
+\contentsline {section}{\numberline {5.1}Results \& Comparisons}{37}{section.5.1}
+\contentsline {section}{\numberline {5.2}Additional Opportunities for Batching}{37}{section.5.2}
+\contentsline {section}{\numberline {5.3}Future Work}{37}{section.5.3}
+\contentsline {chapter}{Acknowledgements}{38}{section*.3}
