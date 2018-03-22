@@ -16,7 +16,13 @@ As mentioned above, \code{pb\_inv} is constructed by combining two distinct tech
 
 We will begin with a dissection of these two techniques, starting first with the ``partial" inversion technique and then looking at batched inversions. The definitions we will give for these techniques below are given at the level of field arithmetic. When we proceed to sketch \code{pb\_inv}, we will offer two definitions: one in this section given at the abstraction-level of field arithmetic, and one in the proceeding section given in terms of \sidh syntax.
 
-In the subsections to come, when we are working at the level of field arithmetic we will denote the first and second portions of an arbitrary $x \in \mathbb{F}_{p^{2}}$ as $x_{a}$ and $x_{b}$ respectively. We identify $x$ by saying $x = \{x_{a}, x_{b}\}$. Recall from \ref{subsec:algebra} that both $x_{a}$ and $x_{b}$ are valid $\mathbb{F}_{p}$ elements. 
+In the subsections to come, when we are working at the level of field arithmetic we will denote the first and second portions of an arbitrary $x \in \mathbb{F}_{p^{2}}$ as $x_{a}$ and $x_{b}$ respectively. We identify $x$ by saying $x = \{x_{a}, x_{b}\}$. Recall from \ref{subsec:fields} that both $x_{a}$ and $x_{b}$ are valid $\mathbb{F}_{p}$ elements. 
+
+We will express the performance of the comming procedures in terms of the sum number of underlying field operations within them. We denote the computation time for extension field arithmetic with upper-case letters and use lower-case letters for base field arithmetic. For example, the performance of some procedure $P$, which we might write as $C_{P}$, may look like the following:
+$$
+C_{P} = 2\textbf{A} + x\textbf{I} + y\textbf{m} + \textbf{s}
+$$
+Which denotes that $P$ is a procedure composed of 2 $\mathbb{F}_{p^{2}}$ additions, $x$-many $\mathbb{F}_{p^{2}}$ inversions, $y$-many $\mathbb{F}_{p}$ multiplications, and a single $\mathbb{F}_{p}$ squaring. 
 
 \subsection{$\mathbb{F}_{p^{2}}$ Inversions done in $\mathbb{F}_{p}$}
 
@@ -78,7 +84,9 @@ We say ``reduces", but it may not be immediately clear that this technique is co
 
 The second technique used in the composition of \code{pb\_inv} reduces arbitrarily many (general) field element inversions to \emph{one} inversion and a linearly scaling amount of multiplcations in the \emph{same} field.
 
-This technique was outlined by Shacham and Boneh in \cite{batching}. Shacham and Boneh provided several techniques for improving the performance of SSL handshakes, most of which built on the earlier efforts of Amos Fiat in batching multiple RSA decryptions. While releveant, Fiat's work is admittedly is applicable only to the RSA cryptosystem (alongside other limitations). One improvement offered by Shacham and Boneh, however, is their proposed notion of batching together divisions from across multiple unrelated SSL instances. 
+This technique was outlined by Shacham and Boneh in \cite{batching}. Shacham and Boneh provided several techniques for improving the performance of SSL handshakes, most of which built on the earlier efforts of Amos Fiat in batching multiple RSA decryptions. While somewhat related, Fiat's work admittedly is only applicable to the RSA cryptosystem, and requires additional constraints on the elements being batched. 
+
+One improvement offered by Shacham and Boneh, however, is their proposed notion of batching together divisions from across multiple unrelated SSL instances. 
 
 Suppose we want to compute the inverses of three elements $x, y, z \in F$ where $F$ is some arbitrary field. The batched division technique allows us to reduce these three inversions to one. The technique can be organized into three phases. In the first phase, all the elements of the batch are multiplied together into one product, yielding $a = xyz$. Next, we compute the inverse of $a$: $a^{-1} = (xyz)^{-1}$. Finally we can compute each individual element's multiplicative inverse as follows:
 $$
@@ -95,7 +103,7 @@ This technique is a general time/space trade-off allowing us to avoid costly ope
 
 This results in an implementation with linearly-less operations at the cost of a linearly scaling amount of memory.
 
-We generalize this technique to $n$-many elements, and provide an algorithm under the name \textbf{BatchedInv} (See algorithm \ref{alg:batchedinv}).
+We generalize this technique to $n$-many elements, and provide an algorithm under the name \textbf{BatchedInv} (See Algorithm \ref{alg:batchedinv}). In Algorithm \ref{alg:batchedinv}, lines 1--3 implement the first phase of the procedure. In reference to Fiat's RSA batching, we refer to this subroutine as ``upward-percolation". Line 4 carries out the second phase: the inversion of the product. The third and final stage, ``downward-percolation", occurs in lines 5--7.
 
 \begin{algorithm}
 \caption{-- \textbf{BatchedInv($\mathbb{F}_{p^{2}}$ $\{x_0, x_1, ..., x_n-1\}$)}}\label{alg:batchedinv}
@@ -131,15 +139,43 @@ And so, \textbf{BatchedInv} can be used to reduce $n$ $\mathbb{F}_{p^{2}}$ inver
 
 \subsection{Partial Batched Inversions}
 
-We have now outlined the following: \textbf{PartialInv} as a technique for computing $\mathbb{F}_{p^2}$ inversions by means of $\mathbb{F}_{p}$ arithmetic, and \textbf{BatchedInv} as a technique for batching together arbitrarily many inversion operations. We will now combine these procedures in a rather trivial manner to achieve the partial batched inversion algorithm.
+We have now outlined the following: \textbf{PartialInv} as a technique for computing $\mathbb{F}_{p^2}$ inversions by means of $\mathbb{F}_{p}$ arithmetic, and \textbf{BatchedInv} as a technique for batching together arbitrarily many inversion operations. We will now combine these procedures in a (near) trivial manner to achieve the partial batched inversion algorithm.
 
-We offer a formalizing of this procedure in a mathematical setting in algorithm \ref{alg:pbinvmath}. We give a precise C function definition in section \ref{sec:pbinvimplementation}.
+At first glance, an attempt to meld these two techniques together might be made in the following way:
 
 \begin{algorithm}
-\caption{-- \textbf{PartialBatchedInversions()}}\label{alg:pbinvmath}
+\caption{-- Attempted\_PartialBatchedInv($\{x_0, x_1, ... , x_{n-1}\}$)}\label{alg:partialinv}
+\begin{algorithmic}[1]
+\State $a \gets$ upward-percolation of elements $\{x_0, x_1, ... , x_{n-1}\}$
+
+\State $a^{-1} \gets$ \textbf{PartialInv($a$)}
+
+\State $\{x_{0}^{-1}, x_{1}^{-1}, ... , x_{n-1}^{-1}\} \gets$ downward-percolation of $a^{-1}$
+
+\State \Return $\{x_{0}^{-1}, x_{1}^{-1}, ... , x_{n-1}^{-1}\}$
+\end{algorithmic}
+\end{algorithm}
+\noindent
+Counting the sum of operations in this proposed approach, we have the following: 
+\begin{itemize}
+\item $n$ $\mathbb{F}_{p^2}$ multiplications -- \emph{upward-percolation phase}
+\item 2 $\mathbb{F}_{p}$ squarings, 1 $\mathbb{F}_{p}$ addition, 1 $\mathbb{F}_{p}$ inversion, and 3 $\mathbb{F}_{p}$ multiplications -- \emph{call to} \textbf{PartialInv($a$)}
+\item $2n$ $\mathbb{F}_{p^2}$ multiplications -- \emph{downward-percolation phase}
+\end{itemize}
+To measure the complixity in terms of field operations, denoted $C'$, we can surmize the the total operation count as:
+$$
+C' = (n\textbf{M}) + (2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}) + (2n\textbf{M})
+$$
+$$
+C' = 3n\textbf{M} + 2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}
+$$
+
+Below we provide an alternative approach to building \textbf{PartialBatchedInv} that relies on only $\mathbb{F}_{p}$ operations. Afterward, we show by simply analysis why this approach yields the better performance. This procedure is formalized in a mathematical setting in algorithm \ref{alg:pbinvmath}. We give a precise C function definition in section \ref{sec:pbinvimplementation}.
+
+\begin{algorithm}
+\caption{-- \textbf{PartialBatchedInversion()}}\label{alg:pbinvmath}
 \begin{algorithmic}[1]
 \Procedure{partial\_batched\_inv($\mathbb{F}_{p^{2}}$[ ] vec, $\mathbb{F}_{p^{2}}$[ ] dest, int n)}{}
-\State initialize $\mathbb{F}_{p}$ $den[n]$
 \For{\texttt{i = 0..(n-1)}}
 	\State $den[i] \gets a[i][0]^{2} + a[i][1]^{2}$
 \EndFor
@@ -147,10 +183,10 @@ We offer a formalizing of this procedure in a mathematical setting in algorithm 
 \State $a[0] \gets den[0]$
 
 \For{\texttt{i = 1..(n-1)}}
-	\State $a[i] \gets \texttt{a[i-1]*den[i]}$
+	\State $a[i] \gets a[i-1]*den[i]$
 \EndFor
 
-\State $a_{inv} \gets \texttt{inv(a[n-1])}$
+\State $a_{inv} \gets inv(a[n-1])$
 
 \For{\texttt{i = n-1..1}}
 	\State $a[i] \gets a_{inv}*dest[i-1]$
@@ -167,7 +203,7 @@ We offer a formalizing of this procedure in a mathematical setting in algorithm 
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
-
+\noindent
 More specifically, the procedure takes us from \textit{n} $\mathbb{F}_{p^{2}}$  inversions to: 
 \begin{center}
 \begin{itemize}
@@ -178,7 +214,23 @@ More specifically, the procedure takes us from \textit{n} $\mathbb{F}_{p^{2}}$  
 \item 2\textit{n} $\mathbb{F}_{p}$ multiplications
 \end{itemize}
 \end{center}
-
+\noindent
+And so, with $C$ measuring the performance of \textbf{PartialBatchedInversion}, we have
+$$
+C = 2n\textbf{s} + n\textbf{a} + \textbf{i} + 3(n-1)\textbf{m} + 2n\textbf{m}
+$$
+We can further simplify $C$ if we presume that a the execution time of squaring is roughly the same as multiplication. Additionally, we can simplify $3(n-1)$ to $3n$ in the spirit of complexitiy theory. With these simplifications we arrive at
+$$
+C \approx 7n\textbf{m} + n\textbf{a} + \textbf{i}
+$$
+Applying the same simplifying assumptions to $C'$, we arrive at
+$$
+C' \approx 3n\textbf{M} + 5\textbf{m} + \textbf{a} + \textbf{i} 
+$$
+We note here that an $\mathbb{F}_{p^2}$ multiplication (\textbf{M}) is performed simply by means of 4 $\mathbb{F}_{p}$ multiplications (again, recall the multiplcation of complex numbers). So we have $\textbf{M} = 4\textbf{m}$, and can further simplify $C'$:
+$$
+C' \approx (12n + 5)\textbf{m} + \textbf{a} + \textbf{i}
+$$
 
 \subsection{Applicability to \sidh}
 
@@ -251,7 +303,7 @@ Recall the notion of a general side-channel attack: A side-channel attack is per
 
 In the context of information security, algorithms for performing operations over mathematical objects can be said to fall under one of two categories: \emph{constant time} and \emph{non-constant time} algorithms. Constant time algorithms are designed to protect confidential information from side-channel attacks, but come at the cost of computational efficiency.
 
-In the \sidh library, there are two distinct functions for computing field element inversions. \code{fp2inv751\_mont} is a \emph{constant time} implementation. They perform comparatively as such:
+In the \sidh library, there are two distinct functions for computing field element inversions: \code{fp2inv751\_mont} and \code{fp2inv751\_mont\_bingcd}. \code{fp2inv751\_mont\_bingcd} performs inversion by means of the binary GCD (greatest common denominator) algorithm, and is a \emph{non-constant time} implementation. \code{fp2inv751\_mont} is a \emph{constant time} implementation, and as such runs slower than \code{fp2inv751\_mont\_bingcd} in nearly all cases, but protects against timing based side-channel attacks. They perform comparatively as such:
 
 \begin{center}
 \begin{tabular}{@{}lllll@{}}
