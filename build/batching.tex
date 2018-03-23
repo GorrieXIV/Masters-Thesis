@@ -144,7 +144,7 @@ We have now outlined the following: \textbf{PartialInv} as a technique for compu
 At first glance, an attempt to meld these two techniques together might be made in the following way:
 
 \begin{algorithm}
-\caption{-- Attempted\_PartialBatchedInv($\{x_0, x_1, ... , x_{n-1}\}$)}\label{alg:partialinv}
+\caption{-- \textbf{PartialBatchedInvAttempt($\{x_0, x_1, ... , x_{n-1}\}$)}}\label{alg:partialinv}
 \begin{algorithmic}[1]
 \State $a \gets$ upward-percolation of elements $\{x_0, x_1, ... , x_{n-1}\}$
 
@@ -162,49 +162,53 @@ Counting the sum of operations in this proposed approach, we have the following:
 \item 2 $\mathbb{F}_{p}$ squarings, 1 $\mathbb{F}_{p}$ addition, 1 $\mathbb{F}_{p}$ inversion, and 3 $\mathbb{F}_{p}$ multiplications -- \emph{call to} \textbf{PartialInv($a$)}
 \item $2n$ $\mathbb{F}_{p^2}$ multiplications -- \emph{downward-percolation phase}
 \end{itemize}
-To measure the complixity in terms of field operations, denoted $C'$, we can surmize the the total operation count as:
+To measure the complixity in terms of field operations, denoted $C_{\text{attempt}}$, we can surmize the the total operation count as:
 $$
-C' = (n\textbf{M}) + (2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}) + (2n\textbf{M})
+C_{\text{attempt}} = (n\textbf{M}) + (2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}) + (2n\textbf{M})
 $$
 $$
-C' = 3n\textbf{M} + 2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}
+C_{\text{attempt}} = 3n\textbf{M} + 2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}
 $$
 
 Below we provide an alternative approach to building \textbf{PartialBatchedInv} that relies on only $\mathbb{F}_{p}$ operations. Afterward, we show by simply analysis why this approach yields the better performance. This procedure is formalized in a mathematical setting in algorithm \ref{alg:pbinvmath}. We give a precise C function definition in section \ref{sec:pbinvimplementation}.
 
 \begin{algorithm}
-\caption{-- \textbf{PartialBatchedInversion()}}\label{alg:pbinvmath}
+\caption{-- \textbf{PartialBatchedInversion($\mathbb{F}_{p^{2}}$ $\{x_0, x_1, ..., x_n-1\}$)}}\label{alg:pbinvmath}
 \begin{algorithmic}[1]
 \Procedure{partial\_batched\_inv($\mathbb{F}_{p^{2}}$[ ] vec, $\mathbb{F}_{p^{2}}$[ ] dest, int n)}{}
-\For{\texttt{i = 0..(n-1)}}
-	\State $den[i] \gets a[i][0]^{2} + a[i][1]^{2}$
+\For{\code{i = 0..(n-1)}}
+	\State $den_{i} \gets (x_i)_{a}^{2} + (x_i)_{b}^{2}$
 \EndFor
 
-\State $a[0] \gets den[0]$
+\State $a_0 \gets den_0$
 
-\For{\texttt{i = 1..(n-1)}}
-	\State $a[i] \gets a[i-1]*den[i]$
+\For{\code{i = 1..(n-1)}}
+	\State $a_i \gets a_{i-1} \cdot den_i$
 \EndFor
 
-\State $a_{inv} \gets inv(a[n-1])$
+\State $inv \gets inv(a_{n-1})$
 
-\For{\texttt{i = n-1..1}}
-	\State $a[i] \gets a_{inv}*dest[i-1]$
-	\State $a_{inv} \gets a_{inv}*den[i]$
+\For{\code{i = n-1..1}}
+	\State $a_i \gets inv \cdot dest_{i-1}$
+	\State $inv \gets inv \cdot den_i$
 \EndFor
 
-\State $dest[0] \gets a_{inv}$
+\State $a_0 \gets a_{inv}$
 
-\For{\texttt{i = 0..(n-1)}}
-	\State $dest[i][0] \gets a[i]*vec[i][0]$
-	\State $vec[i][1] \gets -1*vec[i][1]$
-	\State $dest[i][1] \gets a[i]*vec[i][1]$
+\For{\code{i = 0..(n-1)}}
+	\State $(xinv_i)_a \gets a_i \cdot (x_i)_a$
+	\State $(xinv_i)_b \gets a_i \cdot -(x_i)_b$
+	\State $x_i^{-1} \gets \{(xinv_i)_a, (xinv_i)_b\}$
 \EndFor
+\State \Return $\{x_0^{-1}, x_1^{-1}, ..., x_n-1^{-1}\}$
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
 \noindent
-More specifically, the procedure takes us from \textit{n} $\mathbb{F}_{p^{2}}$  inversions to: 
+
+$a$ is a simple auxillary set we use to hold the inverted $\mathbb{F}_{p}$ elements. After these are all computed via the for-loop on line 8, we can reconstruct $\mathbb{F}_{p}$
+
+More specifically, the procedure takes us from $n$ $\mathbb{F}_{p^{2}}$  inversions to: 
 \begin{center}
 \begin{itemize}
 \item 2\textit{n} $\mathbb{F}_{p}$ squarings
@@ -225,11 +229,22 @@ C \approx 7n\textbf{m} + n\textbf{a} + \textbf{i}
 $$
 Applying the same simplifying assumptions to $C'$, we arrive at
 $$
-C' \approx 3n\textbf{M} + 5\textbf{m} + \textbf{a} + \textbf{i} 
+C_{\text{attempt}} \approx 3n\textbf{M} + 5\textbf{m} + \textbf{a} + \textbf{i} 
 $$
-We note here that an $\mathbb{F}_{p^2}$ multiplication (\textbf{M}) is performed simply by means of 4 $\mathbb{F}_{p}$ multiplications (again, recall the multiplcation of complex numbers). So we have $\textbf{M} = 4\textbf{m}$, and can further simplify $C'$:
+We note here that an $\mathbb{F}_{p^2}$ multiplication (\textbf{M}) is performed simply by means of 4 $\mathbb{F}_{p}$ multiplications (again, recall the multiplcation of complex numbers). So we have $\textbf{M} = 4\textbf{m}$, and can further simplify $C_{\text{attempt}}$:
 $$
-C' \approx (12n + 5)\textbf{m} + \textbf{a} + \textbf{i}
+C_{\text{attempt}} \approx (12n + 5)\textbf{m} + \textbf{a} + \textbf{i}
+$$
+Finally we've simplified $C$ and $C_{\text{attempt}}$ to forms that are more easily compared. Let $\textbf{P}$ denote the proposition that $C$ runs in fewer operations than $C_{\text{attempt}}$ 
+$$
+\textbf{P} \equiv C < C_{\text{attempt}}
+$$
+$$
+\textbf{P} \equiv 7n\textbf{m} + n\textbf{a} + \textbf{i} < (12n + 5)\textbf{m} + \textbf{a} + \textbf{i}
+$$
+Simplifying slightly, we need now to resolve
+$$
+7n\textbf{m} + n\textbf{a} < (12n + 5)\textbf{m} + \textbf{a}
 $$
 
 \subsection{Applicability to \sidh}
