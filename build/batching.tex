@@ -99,7 +99,9 @@ $$
 z^{-1} = a^{-1} \cdot (xy)
 $$
 
-This technique is a general time/space trade-off allowing us to avoid costly operations at the price of a a constant amount of memory. We can extend this time/space trade-off further still. Consider the following. 
+This technique can be thought of as analogous to a time/space trade-off. The difference being that, while in standard time/space trade-off algorithms we can sort of ``exchange" The inclusion of this auxilliary variable $a$ allows us to avoid costly inversions at the price of a constant amount of memory. 
+
+We can extend this time/space trade-off further still. Consider the following. 
 
 This results in an implementation with linearly-less operations at the cost of a linearly scaling amount of memory.
 
@@ -256,6 +258,8 @@ Because the work of Yoo et al. was built on top of the original Microsoft SIDH l
 \section{Implementation Details}
 \label{sec:pbinvimplementation}
 
+We will now take the work of the previous section and explain in detail how it can be applied to the Yoo et al. signature layer of \sidh. We begin first by transcribing \textbf{PartialBatchedInversion} to its programmatic variant, \code{pb\_inv}. In the subsections to come, we offer explainations for some of the design choices made in the implementation of \code{pb\_inv}, both at a micro level (algorithmic details of the procedure) and a macro level (specifics of implementation outside of the algorithm).
+
 With Algorithm \ref{alg:pbinvcode} we provide an explicit C definition for the function \code{pb\_inv}. For descriptions of the functions called in this procedure, the reader can refer to section \ref{subsec:functions}. For explicit definitions of some of these functions, the reader can refer to appendix [insert appendix].
 
 \begin{algorithm}
@@ -330,6 +334,15 @@ In the \sidh library, there are two distinct functions for computing field eleme
 	\bottomrule
 \end{tabular}
 \end{center}
+
+Take for example some private data $c$ being manipulated or operated on by some algorithm $\textbf{A}$. In order to be entirely certain that $c$ in \textbf{P($c$)} is not vulnerable to \emph{any} imagineable side-channel attack it must be the case that the structure of \textbf{P} does not in anyway depend on the information stored in $c$.
+
+Let us look more closely at the elements that are inverted by \code{pb\_inv}. In \code{KeyGeneration\_A} the elements being passed to \code{pb\_inv} are simply the constituents of \randall's public key for every iteration of the signing procedure. Because the data being operated on is publicly available information, we needn't consider if it is vulnerable to side-channel analysis. 
+
+In \code{SecretAgreement\_A}, \code{pb\_inv} is called by \code{j\_inv}, which produces the \emph{j}-invariant of a particular curve. When \code{SecretAgreement\_A} is used in the context of SIDH key exchange, \code{j\_inv} is used to compute the shared secret between party members \ba and \rb, and so would need to be protected against side-channel attacks. This is not the case in the context of signatures, however. Recall the structure of SIDH signatures: every signature includes, for every $2\lambda$ iterations, the commitment $E_1$, which is precisely the shared secret between the signer and \randall. And so, every use of \code{pb\_inv} \emph{in the context of signatures} does not require extra precautions to side-channel analysis. The same is true for \code{SecretAgreement\_B}.
+
+While it is not the case for our implementations that the data on which \code{pb\_inv} operates would find itself the subject of side-channel analysis, it is not difficult to imagine a scenario where this might be the case. 
+
 
 \section{Results}
 
