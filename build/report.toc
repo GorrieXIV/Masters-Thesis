@@ -32,25 +32,25 @@
 \contentsline {subsection}{\numberline {3.1.2}Batching Field Element Inversions}{30}{subsection.3.1.2}
 \contentsline {subsection}{\numberline {3.1.3}Partial Batched Inversions}{31}{subsection.3.1.3}
 \contentsline {subsection}{\numberline {3.1.4}Applicability to $\texttt {SIDH}_{\texttt {C}}$\xspace }{33}{subsection.3.1.4}
-\contentsline {section}{\numberline {3.2}Implementation Details}{33}{section.3.2}
+\contentsline {section}{\numberline {3.2}Implementation Details}{34}{section.3.2}
 \contentsline {subsection}{\numberline {3.2.1}Parallelizing Signatures}{34}{subsection.3.2.1}
 \contentsline {subsection}{\numberline {3.2.2}Security Concerns}{35}{subsection.3.2.2}
-\contentsline {section}{\numberline {3.3}Results}{35}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}Analysis}{36}{subsection.3.3.1}
-\contentsline {subsection}{\numberline {3.3.2}Remaining Opportunities}{36}{subsection.3.3.2}
-\contentsline {chapter}{\numberline {4}Compressing Signatures}{38}{chapter.4}
-\contentsline {section}{\numberline {4.1}SIDH Key Compression Background}{38}{section.4.1}
-\contentsline {subsection}{\numberline {4.1.1}Motivation \& Overview}{38}{subsection.4.1.1}
-\contentsline {subsection}{\numberline {4.1.2}Construction of Bases}{38}{subsection.4.1.2}
-\contentsline {subsection}{\numberline {4.1.3}Pohlig-Hellman}{38}{subsection.4.1.3}
-\contentsline {subsection}{\numberline {4.1.4}Decompression}{38}{subsection.4.1.4}
-\contentsline {section}{\numberline {4.2}Implementation Details}{38}{section.4.2}
-\contentsline {subsection}{\numberline {4.2.1}Tailoring Compression for Signatures}{38}{subsection.4.2.1}
-\contentsline {subsection}{\numberline {4.2.2}Decompressing $\psi (S)$}{38}{subsection.4.2.2}
-\contentsline {section}{\numberline {4.3}Results}{38}{section.4.3}
-\contentsline {section}{\numberline {4.4}Analysis}{38}{section.4.4}
-\contentsline {chapter}{\numberline {5}Discussion \& Conclusion}{39}{chapter.5}
-\contentsline {section}{\numberline {5.1}Results \& Comparisons}{39}{section.5.1}
-\contentsline {section}{\numberline {5.2}Additional Opportunities for Batching}{39}{section.5.2}
-\contentsline {section}{\numberline {5.3}Future Work}{39}{section.5.3}
-\contentsline {chapter}{Acknowledgements}{40}{section*.3}
+\contentsline {section}{\numberline {3.3}Results}{36}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Analysis}{37}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.2}Remaining Opportunities}{38}{subsection.3.3.2}
+\contentsline {chapter}{\numberline {4}Compressing Signatures}{39}{chapter.4}
+\contentsline {section}{\numberline {4.1}SIDH Key Compression Background}{39}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}Motivation \& Overview}{39}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}Construction of Bases}{39}{subsection.4.1.2}
+\contentsline {subsection}{\numberline {4.1.3}Pohlig-Hellman}{39}{subsection.4.1.3}
+\contentsline {subsection}{\numberline {4.1.4}Decompression}{39}{subsection.4.1.4}
+\contentsline {section}{\numberline {4.2}Implementation Details}{39}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}Tailoring Compression for Signatures}{39}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}Decompressing $\psi (S)$}{39}{subsection.4.2.2}
+\contentsline {section}{\numberline {4.3}Results}{39}{section.4.3}
+\contentsline {section}{\numberline {4.4}Analysis}{39}{section.4.4}
+\contentsline {chapter}{\numberline {5}Discussion \& Conclusion}{40}{chapter.5}
+\contentsline {section}{\numberline {5.1}Results \& Comparisons}{40}{section.5.1}
+\contentsline {section}{\numberline {5.2}Additional Opportunities for Batching}{40}{section.5.2}
+\contentsline {section}{\numberline {5.3}Future Work}{40}{section.5.3}
+\contentsline {chapter}{Acknowledgements}{41}{section*.3}

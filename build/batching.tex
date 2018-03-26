@@ -88,7 +88,7 @@ This technique was outlined by Shacham and Boneh in \cite{batching}. Shacham and
 
 One improvement offered by Shacham and Boneh, however, is their proposed notion of batching together divisions from across multiple unrelated SSL instances. 
 
-Suppose we want to compute the inverses of three elements $x, y, z \in F$ where $F$ is some arbitrary field. The batched division technique allows us to reduce these three inversions to one. The technique can be organized into three phases. In the first phase, all the elements of the batch are multiplied together into one product, yielding $a = xyz$. Next, we compute the inverse of $a$: $a^{-1} = (xyz)^{-1}$. Finally we can compute each individual element's multiplicative inverse as follows:
+Suppose we want to compute the inverses of three elements $x, y, z \in F$ where $F$ is some arbitrary field. The batched division technique allows us to reduce these three inversions to one. The technique can be organized into three phases. In the first phase, all the elements of the batch are multiplied together into one product, yielding $a = xyz$. We refer to this first phase as ``upward-percolation". Next, we compute the inverse of $a$: $a^{-1} = (xyz)^{-1}$, which we refer to as the inversion phase. In the final phase, ``downward-percolation", we can compute each individual element's multiplicative inverse as follows:
 $$
 x^{-1} = a^{-1} \cdot (yz)
 $$
@@ -99,11 +99,13 @@ $$
 z^{-1} = a^{-1} \cdot (xy)
 $$
 
-This technique can be thought of as analogous to a time/space trade-off. The difference being that, while in standard time/space trade-off algorithms we can sort of ``exchange" The inclusion of this auxilliary variable $a$ allows us to avoid costly inversions at the price of a constant amount of memory. 
+Let us analyse these phases a little more closely while we generalize to $n$-many elements. In the upward-percolation phase, constructing $a$ requires $n-1$ multiplications; and so has a complexity of $\mathcal{O}(n)$. The inversion phase requires one field element inversion, and so has complexity of $\mathcal{O}(1)$. 
 
-We can extend this time/space trade-off further still. Consider the following. 
+If we implement the downward-percolation phase directly as outlined in the three-element example above, retrieving every output inversion requires $n$ products each composed of $n-1$ multiplications. These $n$ products are each also multiplied by $a^{-1}$. This multiplication by $a^{-1}$ can be added to our $n-1$ inversion count resulting in $n$-many products composed of $n$ multiplications; bringing the complixity of the downward-percolation phase to $\mathcal{O}(n^2)$.
 
-This results in an implementation with linearly-less operations at the cost of a linearly scaling amount of memory.
+This batching proceedure can be thought of as analogous to traditional time-memory tradeoff algorithms. In a general time-memory tradeoff algorithm you can continue to make some linear or polynomial (or otherwise) sacrifice in memory in order to gain some increase in performance. In the batching procedure described above we are in \emph{some} sense sacrificing some marginal amount of memory to gain an increase in performance, but it is not a tradeoff that we can adjust to our liking.
+
+There is a way in which we can further reduce the execution time of this procedure by
 
 We generalize this technique to $n$-many elements, and provide an algorithm under the name \textbf{BatchedInv} (See Algorithm \ref{alg:batchedinv}). In Algorithm \ref{alg:batchedinv}, lines 1--3 implement the first phase of the procedure. In reference to Fiat's RSA batching, we refer to this subroutine as ``upward-percolation". Line 4 carries out the second phase: the inversion of the product. The third and final stage, ``downward-percolation", occurs in lines 5--7.
 
@@ -132,10 +134,9 @@ And so, \textbf{BatchedInv} can be used to reduce $n$ $\mathbb{F}_{p^{2}}$ inver
 
 \begin{center}
 \begin{itemize}
-\item 2 $\mathbb{F}_{p}$ squarings -- \emph{line 1 of algorithm} \ref{alg:partialinv}
-\item 1 $\mathbb{F}_{p}$ addition -- \emph{line 1 of algorithm} \ref{alg:partialinv}
-\item 1 $\mathbb{F}_{p}$ inversion -- \emph{line 2 of algorithm} \ref{alg:partialinv}
-\item 3 $\mathbb{F}_{p}$ multiplications -- \emph{lines 3 \& 4 of algorithm} \ref{alg:partialinv}
+\item $n-1$ $\mathbb{F}_{p^2}$ multiplications -- \emph{line 2-3 of algorithm} \ref{alg:batchedinv}
+\item 1 $\mathbb{F}_{p^2}$ inversion -- \emph{line 4 of algorithm} \ref{alg:batchedinv}
+\item $2(n-1)$ $\mathbb{F}_{p^2}$ multiplications -- \emph{line 5-7 of algorithm} \ref{alg:batchedinv}
 \end{itemize}
 \end{center}
 
@@ -258,7 +259,7 @@ Because the work of Yoo et al. was built on top of the original Microsoft SIDH l
 \section{Implementation Details}
 \label{sec:pbinvimplementation}
 
-We will now take the work of the previous section and explain in detail how it can be applied to the Yoo et al. signature layer of \sidh. We begin first by transcribing \textbf{PartialBatchedInversion} to its programmatic variant, \code{pb\_inv}. In the subsections to come, we offer explainations for some of the design choices made in the implementation of \code{pb\_inv}, both at a micro level (algorithmic details of the procedure) and a macro level (specifics of implementation outside of the algorithm).
+We will now take the work of the previous section and explain in detail how it can be applied to the Yoo et al. signature layer of \sidh. We begin first by transcribing \textbf{PartialBatchedInversion} to its programmatic variant, \code{pb\_inv}. In the subsections to come, we offer explainations for some of the design choices made in the implementation of \code{pb\_inv}, both at a micro level (algorithmic details of the procedure) and a macro level (specifics of implementation within \sidh).
 
 With Algorithm \ref{alg:pbinvcode} we provide an explicit C definition for the function \code{pb\_inv}. For descriptions of the functions called in this procedure, the reader can refer to section \ref{subsec:functions}. For explicit definitions of some of these functions, the reader can refer to appendix [insert appendix].
 
@@ -346,6 +347,54 @@ While it is not the case for our implementations that the data on which \code{pb
 
 \section{Results}
 
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+	\toprule
+	Modulus Size & Regular Batch & Partial Batched Inversion & Unbatched \\
+	\midrule
+	32 Inversion & 0.033685 & 0.00080204\\
+	64 Inversion & 0.00033685 & 0.00080204\\
+	128 Inversion & 0.00033685 & 0.00080204\\
+	256 Inversion & 0.00033685 & 0.00080204\\
+	512 Inversion & 0.00033685 & 0.00080204\\
+	1024 Inversion & 0.00033685 & 0.00080204\\
+	2048 Inversion & 0.00033685 & 0.00080204\\
+	\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+	\toprule
+	Modulus Size & Regular Batch & Partial Batched Inversion & Unbatched \\
+	\midrule
+	32 & 0.00033685 & 0.00080204\\
+	64 & 0.00033685 & 0.00080204\\
+	128 & 0.00033685 & 0.00080204\\
+	256 & 0.00033685 & 0.00080204\\
+	512 & 0.00033685 & 0.00080204\\
+	1024 & 0.00033685 & 0.00080204\\
+	2048 & 0.00033685 & 0.00080204\\
+	\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+	\toprule
+	Modulus Size & Regular Batch & Partial Batched Inversion & Unbatched \\
+	\midrule
+	32 & 0.00033685 & 0.00080204\\
+	64 & 0.00033685 & 0.00080204\\
+	128 & 0.00033685 & 0.00080204\\
+	256 & 0.00033685 & 0.00080204\\
+	512 & 0.00033685 & 0.00080204\\
+	1024 & 0.00033685 & 0.00080204\\
+	2048 & 0.00033685 & 0.00080204\\
+	\bottomrule
+\end{tabular}
+\end{center}
+
 Two different machines were used for benchmarking. System A denotes a single-core, 1.70 GHz Intel Celeron CPU. System B denotes a quad-core, 3.1 GHz AMD A8-7600.\\
 
 The two figures below provide benchmarks for KeyGen, Sign, and Verify procedures with both batched partial inversion implemented (in the previously mentioned locations) and not implemented. All benchmarks are averages computed from 100 randomized sample runs. All results are measured in clock cycles.
@@ -391,6 +440,24 @@ In the following table, ``Batched Inversion" signifies running the batched parti
 	\midrule
 	Batched Inversion & 1721718\\
 	$\mathbb{F}_{p^{2}}$ Montgomery Inversion & 874178\\
+	\bottomrule
+\end{tabular}
+\end{center}
+
+The following are all measure in clock cycles, as the computed average of 1000 distinct executions:
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+	\toprule
+	Modulus Size & Multiplication & Inversion Time \\
+	\midrule
+	32 & 0.00033685 & 0.00080204\\
+	64 & 0.00033685 & 0.00080204\\
+	128 & 0.00033685 & 0.00080204\\
+	256 & 0.00033685 & 0.00080204\\
+	512 & 0.00033685 & 0.00080204\\
+	1024 & 0.00033685 & 0.00080204\\
+	2048 & 0.00033685 & 0.00080204\\
 	\bottomrule
 \end{tabular}
 \end{center}
