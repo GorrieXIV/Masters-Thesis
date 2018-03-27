@@ -57,9 +57,9 @@ Execution of $\Pi_{kex}$ between Alice and Bob involves the following:
 \item Alice runs $\textbf{SecAgr}(sk_{\text{Alice}}, pk_{\text{Bob}})$: A deterministic algorithm with input $sk_{\text{Alice}}$ and $pk_{\text{Bob}}$ and output $k_{\text{Alice}} \in \{0,1\}^\lambda$. Bob runs $\textbf{SecAgr}(sk_{\text{Bob}}, pk_{\text{Alice}})$ to obtain $k_{\text{Bob}} \in \{0,1\}^\lambda$.
 \end{enumerate}
 
-$\Pi_{kex}$ is said to uphold \emph{correctness} if $k_{Alice} = k_{Bob}$. Because we deal only with correct $\Pi_{kex}$, we refer to the output of $\Pi_{kex}$ as simply $k$. Figure \ref{fig:diffiehellman} illustrates an execution of the Diffie-Hellman key exchange protocol which relies on the difficulty of the \emph{discrete logarithm} problem for its one-way function $f$.\\
+$\Pi_{kex}$ is said to uphold \emph{correctness} if $k_{Alice} = k_{Bob}$ for all honestly derived keypairs $(sk_{\text{Alice}},pk_{\text{Alice}})$ and $(sk_{\text{Bob}},pk_{\text{Bob}})$. Because we deal only with correct $\Pi_{kex}$, we refer to the output of $\Pi_{kex}$ as simply $k$. Figure \ref{fig:diffiehellman} illustrates an execution of the Diffie-Hellman key exchange protocol which relies on the difficulty of the \emph{discrete logarithm} problem for its one-way function $f$.\\
 
-The security goal typical of a key exchange protocol is that a standard eavesdropper (threat) cannot discern the resulting shared secret key from a randomly generated value (security guarantee).
+The security goal typical of a key exchange protocol is that an adversary with access to the session transcript (threat) cannot discern the resulting shared secret key from a randomly generated value (security guarantee).
 
 \begin{figure}[!h]
 \begin{center}
@@ -110,27 +110,32 @@ Execution of $\Pi_{id}$ between Alice and Bob involves the following:
 \item Alice runs $\textbf{Verify}(pk, com, ch, resp)$: A deterministic algorithm with input $pk$ (Bob's public key), $com$, $ch$, and $resp$ and output $b \in {0,1}$. Bob has successfully proven his identity to Alice if $b = 1$.
 \end{enumerate}
 
-If Alice accepts Bobs response, and $b = 1$, then we refer to the tuple $(com,ch,resp)$ as an \emph{accepting transcript}. In terms of security, it is common to show that an identification scheme is secure against a \emph{passive attack}. Proving such security implies that an adversary who eavesdrops on arbitrarily many executions of $\Pi_{id}$ between a verifier $\mathcal{V}$ and a prover $\mathcal{P}$ cannot successfully impersonate $\mathcal{V}$.
+If Alice accepts Bob's response, and $b = 1$, then we refer to the tuple $(com,ch,resp)$ as an \emph{accepting transcript}. In terms of security, it is common to show that an identification scheme is secure against \emph{impersonation} under a \emph{passive attack}. Proving such security implies that an adversary who eavesdrops on arbitrarily many executions of $\Pi_{id}$ between a verifier $\mathcal{V}$ and a prover $\mathcal{P}$ cannot successfully impersonate $\mathcal{V}$.
 
 There exist variations upon this type of primitive wherein Alice is not required to send Bob a specific challenge value. These are known as \emph{non-interactive} identification schemes, or non-interactive proofs of identity (NIPoI). These non-interactive approaches to solving the problem of identity and \emph{authentication} further bridge the gap between identification protocols and signature schemes. 
 
 \subsection{Signature Schemes}
 
-We define a signature scheme as the tuple of algorithms $\Pi_{sig}$ = (\textbf{KeyGen}, \textbf{Sign}, \textbf{Verify}).Execution of $\Pi_{sig}$ between Alice and Bob for a particular message $m$ sent from Bob to Alice involves the following:
-\begin{enumerate}[label=(\roman*)]
+We define a signature scheme as the tuple of algorithms $\Pi_{sig}$ = (\textbf{KeyGen}, \textbf{Sign}, \textbf{Verify}). Some execution of $\Pi_{sig}$ between Alice and Bob for a particular message $m$ sent from Bob to Alice involves the following...
+\noindent
+First, before any message is to be signed, the Bob must run the following:
+\begin{itemize}
 \item Bob runs $\textbf{KeyGen}(1^\lambda)$: A probabilistic algorithm with input $1^\lambda$ and output $(sk,pk)$.
-\item Bob sends his public key $pk$ to Alice over an authenticated channel.
+\end{itemize}
+Then, for every message $m$ Bob wishes to authenticate and send to Alice: 
+\begin{enumerate}[label=(\roman*)]
+\item Bob sends his public key $pk$ to Alice over an authenticated channel if he has not yet done so.
 \item Bob runs $\textbf{Sign}(sk, m)$: A probabilistic algorithm with input $sk$ (Bob's secret key) and $m$ (the message Bob wishes to authorize) and output $\sigma$, known as a \emph{signature}.
 \item Bob sends $m$ and $\sigma$ to Alice.
-\item Alice runs $\textbf{Verify}(pk, m, \sigma)$: A deterministic algorithm with input $pk$ (Bob's public key), $m$, and $\sigma$ and output $b \in {0,1}$. Alice has confidence in the \emph{integrity} and origin \emph{authenticity} of $m$ if $b = 1$.
+\item Alice runs $\textbf{Verify}(pk, m, \sigma)$: A deterministic algorithm with input $pk$ (Bob's public key), $m$, and $\sigma$ and output $b \in \{0,1\}$. Alice has confidence in the \emph{integrity} and origin \emph{authenticity} of $m$ if $b = 1$.
 \end{enumerate}
 
 As previously alluded to, it is worth noting that signature protocols and identification schemes are closely related. In essence, they are rather similar; but with two main differences. The first is rather comparable to the aforementioned difference between interactive identification schemes and non-interactive identification schemes. The second arises as a result of aiming to authenticate Bob on any particular message $m$. To achieve this, the signature scheme needs to be run every time Bob wishes to send a message to Alice. The details of this comparison are intentionally left vague, as it will from a topic of close inspection in section 2.4.
 
-The strongest security goal for a signature scheme $\Pi_{sig}$ is expressed as \emph{existential unforgeability} under an \emph{adaptive chosen-message attack}. If this goal is provably satisfied, an adversary with the ability to sign arbitrary messages will not be able to forge even the most trivial of signatures.
+The strongest security goal for a signature scheme $\Pi_{sig}$ is expressed as \emph{existential unforgeability} under an \emph{adaptive chosen-message attack}. If this goal is provably satisfied, an adversary with the ability to sign arbitrary messages will not be able to forge any conceivable and valid signature.
 
 \section{Algebraic Geometry \& Isogenies}
-\emph{Groups \& Varieties}. A \textbf{group} is a 2-tuple composed of a set of elements and a corresponding group operation (also referred to as the group \emph{law}). Given some group defined by the set $G$ and the operation $\cdot$ (written as $(G,\cdot)$) it is typical to refer to the group simply as $G$. If $\cdot$ is equivalent to some rational mapping[footnote about rational mappings] $f_G: G \rightarrow G$, then the group $(G,\cdot)$ is said to form an \textit{algebraic variety}[footnote about the inverse function]. A group which is also an algebraic variety is referred to as an \textbf{algebraic group}.
+\emph{Groups \& Varieties}. A \textbf{group} is a 2-tuple composed of a set of elements and a corresponding group operation (also referred to as the group \emph{law}). Given some group defined by the set $G$ and the operation $\cdot$ (written as $(G,\cdot)$) it is typical to refer to the group simply as $G$. If $\cdot$ is equivalent to some rational mapping\footnote{A rational map is a mapping between two groups which is defined by a polynomial function with rational coefficients.} $f_G: G \rightarrow G$, then the group $(G,\cdot)$ is said to form an \textbf{algebraic variety}. A group which is also an algebraic variety is referred to as an \textbf{algebraic group}.
 
 $G$ is said to be an \emph{abelian} group if, in addition to the four traditional group axioms (closure, associativity, existence of an identity, existence of an inverse), $G$ satisfies the condition of commutitiviy. More formally, for some group $G$ with group operation $\cdot$, we say $G$ is an abelian group iff $x \cdot y = y \cdot x$ $\forall x, y \in G$. An algebraic group which is also abelian is referred to as an \textbf{abelian variety}.
 
