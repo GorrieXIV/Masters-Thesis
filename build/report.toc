@@ -20,7 +20,7 @@
 \contentsline {section}{\numberline {2.4}Fiat-Shamir Construction}{16}{section.2.4}
 \contentsline {subsection}{\numberline {2.4.1}Unruh's Post-Quantum Adaptation}{17}{subsection.2.4.1}
 \contentsline {section}{\numberline {2.5}Isogeny Based Signatures}{17}{section.2.5}
-\contentsline {subsection}{\numberline {2.5.1}Algorithmic Definitions}{17}{subsection.2.5.1}
+\contentsline {subsection}{\numberline {2.5.1}Algorithmic Definitions}{18}{subsection.2.5.1}
 \contentsline {section}{\numberline {2.6}Implementations of Isogeny Based Cryptographic Protocols}{21}{section.2.6}
 \contentsline {subsection}{\numberline {2.6.1}Parameters \& Data Representation}{21}{subsection.2.6.1}
 \contentsline {subsection}{\numberline {2.6.2}Design Decisions}{23}{subsection.2.6.2}

@@ -221,14 +221,18 @@ For any given field $K$ there exists a number $q$ such that, for every $x \in K$
 
 A particular field $K'$ is called an \emph{extension field} of some other field $K$ if $K \subseteq K'$. The complex numbers $\mathbb{C}$, for example, are an extension field of $\mathbb{R}$. A given field $K$ is \emph{algebraically closed} if there exists a root for every non-constant polynomial defined over $K$. If $K$ itself is not algebraically closed, we denote the extension of $K$ that is by $\overline{K}$. 
 
-An algebraic group $G_a$ is defined over a field $K$ if each element $e \in G_a$ is defined over $K$ and the corresponding $f_{G_a}$ is also defined over $K$. To show that a particular algebraic group $G_a$ is defined over some field $K$ we will henceforth denote the group/field pairing as $G_a(K)$. Naturally, in the case where our field is a finite field of order $p$, we write $G_a(\mathbb{F}_p)$.
+An algebraic group $G_a$ is defined over a field $K$ if each element $e \in G_a$ is also an element of the field $K$, and the corresponding $f_{G_a}$ is defined over $K$. To show that a particular algebraic group $G_a$ is defined over some field $K$ we will henceforth denote the group/field pairing as $G_a(K)$. Naturally, in the case where our field is a finite field of order $p$, we write $G_a(\mathbb{F}_p)$.
 
 These algebraic structures are all important for building up to the concept of an \emph{isogeny}. The lowest-level object we will be concerned with when discussing the forthcoming isogeny-based protocols will typically be elements of abelian varieties. The lowest-level structure in the SIDH C codebase is a finite field element.\\
 
 \noindent
-\emph{Montgomery Arithmetic}\label{snip:montgomery}. In 1985, Peter Montgomery introduced a method for efficiently computing the modular multiplication of two elements $a$ and $b$. The technique begins with the construction of some constant $R$, whose value depends solely on the modulus $N$ and the underlying computer architecture.\footnote{The specifics of how $R$ is constructed are beyond the scope of this dissertation; if they feel so inclined, the reader should refer to \cite{mont}}
+\emph{Montgomery Arithmetic}\label{snip:montgomery}. We will now briefly discuss a technique for efficiently performing modular arithmetic. This method is widely deployed in cryptosystems centered around finite fields, and is abundantly used in the \sidh library that we will shortly be examining.
+
+In 1985, Peter Montgomery introduced a method for efficiently computing the modular multiplication of two elements $a$ and $b$. The technique begins with the construction of some constant $R$, whose value depends solely on the modulus $N$ and the underlying computer architecture.\footnote{The specifics of how $R$ is constructed are beyond the scope of this dissertation; if they feel so inclined, the reader should refer to \cite{mont}}
 
 With the retrieval of $R$, $aR \mod{N}$ and $bR \mod{N}$ are constructed and referred to as the Montgomery \emph{representation} of $a$ and $b$ respectively. Montgomery multiplication outlines an algorithm for computing $abR \mod{N}$ (the Montgomery product of $a$ and $b$), from which $ab \mod{N}$ can be recovered through conversion back to standard representation. Once in Montgomery representation, other arithmetic can be performed (including field element inversions) in order to leverage the performance improvement offered by Montgomery modular multiplication -- converting back to regular representation when necessary.
+
+Applying Montgomery multiplication has the added benefit of decreasing the amount of field element inversions that need to be computed. Because of this, the technique is particularly relevant to this dissertation. We continue this discussion in section \ref{sec:pbinvimplementation}.
 
 \subsection{Elliptic Curves}
 
@@ -236,7 +240,7 @@ An elliptic curve is an algebraic curve defined over some field $K$, the most ge
 $$
 y^2 + a_{1}xy + a_{3}y = x^3 + a_{2}x^2 + a_{4}x + a_6.
 $$
-This representation encapsulates elliptic curves defined over any field. If, however, we are dicussing curves defined specifically over a field $K$ such that $\text{char}(K) > 3$[ref], then the more compact form $y^2 = x^3 + ax + b$ can be applied (see figure \ref{fig:groupop} for a geometric visualization). In this dissertation we will default to this second representation, as the schemes with which we are concerned will always be defined over $\mathbb{F}_p$ for some large prime $p$.
+This representation encapsulates elliptic curves defined over any field. If, however, we are dicussing curves defined specifically over a field $K$ such that $\text{char}(K) > 3$ (see \cite{silverman}), then the more compact form $y^2 = x^3 + ax + b$ can be applied (see Figure \ref{fig:groupop} for a geometric visualization). In this dissertation we will default to this second representation, as the schemes with which we are concerned will always be defined over $\mathbb{F}_p$ for some large prime $p$.
 
 We can define a group structure over the points of a given elliptic curve (or any other smooth cubic curve). If we wish to define a group in accordance to a particular curve, we do so with the following notation:
 $$
@@ -247,7 +251,7 @@ Wherein $E$ denotes the group in question, the elements of which are all the poi
 \noindent
 \emph{The Group Law}. The group operation we define for $E$, denoted $+$, is better understood geometrically than algebraically. Consider the following.
 
-Given two elements $P$ and $Q$ of some arbitrary elliptic curve group $E$, we define $+$ geometrically as follows: drawing the line $L$ formed by points $P$ and $Q$, we follow $L$ to its third intersection on the curve (which is guaranteed to exists), which we will denote as $R = (x_R, y_R)$. We then set $P + Q = -R$, where $-R$ is the reflection of $R$ over the x-axis: $(x_R, -y_R)$. This descrptive definition of $+$ is suitable for all situations \emph{except} for when $L$ is tangent to $E$ and when $L$ is parallel to the y-axis. These cases will be covered in a short moment. See figure \ref{fig:groupop} for an illustrated representation of this process.
+Given two elements $P$ and $Q$ of some arbitrary elliptic curve group $E$, we define $+$ geometrically as follows: drawing the line $L$ through points $P$ and $Q$, we follow $L$ to its third intersection on the curve (which is guaranteed to exist), which we will denote as $R = (x_R, y_R)$. We then set $P + Q = -R$, where $-R$ is the reflection of $R$ over the x-axis: $(x_R, -y_R)$. This descriptive definition of $+$ is suitable for all situations \emph{except} for when $L$ is tangent to $E$ or when $L$ is parallel to the y-axis. These cases will be covered in a short moment. See Figure \ref{fig:groupop} for an illustrated representation of this process.
 
 \begin{figure}[!h]
 \begin{tikzpicture}[scale=.75]
@@ -284,10 +288,10 @@ Given two elements $P$ and $Q$ of some arbitrary elliptic curve group $E$, we de
 
 The group operation $+$ is referred to as \emph{pointwise addition}. In order for $(E,+)$ to properly form a group under pointwise addition, it must satisfy the four group axioms:
 \begin{itemize}
-\item \emph{Closure}: Because elliptics curves are polynomials of degree of 3, we know any given line passing through two points $P$ and $Q$ of $E$ will pass through a third point $R$. The exceptions here are twofold. First, when $P = Q$ and thus our line is tangent to $E$, and second, when $Q = -P$ and our line is parallel with the y-axis. We resolve the first case nicely by defining $P + P$ by means of taking $L$ to be the line tangent to $E$ at point $P$. In the second case, $P + (-P)$, by group axiom, should yield the identity element of the group. We will define this element and resolve this issue below.  
+\item \emph{Closure}: Because elliptic curves are polynomials of degree of 3, we know any given line passing through two points $P$ and $Q$ of $E$ will pass through a third point $R$. The exceptions here are twofold. First, when $P = Q$ and thus our line is tangent to $E$, and second, when $Q = -P$ and our line is parallel with the y-axis. We resolve the first case nicely by defining $P + P$ by means of taking $L$ to be the line tangent to $E$ at point $P$. In the second case, $P + (-P)$, by group axiom, should yield the identity element of the group. We will define this element and resolve this issue below.  
 \item \emph{Identity}: The identity element of elliptic curve groups, denoted as $\mathcal{O}$, is a specially defined point satisfying $P + \mathcal{O} = \mathcal{O} + P = P$, $\forall P \in E$. Because of the inclusion of this special element, we have that $\#(E(K))$ is equal to $1$ $+$ the number geometric points on $E$ defined over $K$. This of course is only a noteworthy claim when $K$ is a finite field (otherwise there are already infinitely many elements in $E$).
 \item \emph{Associativity}: For all points $P$, $Q$, and $R$ in $E$, it must be the case ($(P + Q) + R = P + (Q + R)$) holds. It is rather easy to see visually why this is true for geometrically defined points in $E$ (see Figure \ref{fig:axioms}). Additionally, we can trivially show that this holds when any combination of $P$, $Q$, and $R$ are $\mathcal{O}$ by applying the axiom of the identity.
-\item \emph{Inverse}: Due to the x-symmetry of elliptic curves, every point $P = (x_P, y_P)$ of $E$ has an associated point $-P = (x_P, -y_P)$. If we apply $+$ to $P$ and $-P$, $L$ assumes the line parrallel to the y-axis at $x = x_P$. As discussed above, in this case there is no third intersection of $L$ on $E$. In light of this, $\mathcal{O}$ can be thought of as a point residing infinitely far in both the positive and negative directions of the y-axis. $\mathcal{O}$ is equivalently referred to as the \emph{point at infinity} (see Figure \ref{fig:axioms}).[footnote about whether $+$ actually constitutes a rational map due to this exception] 
+\item \emph{Inverse}: Due to the x-symmetry of elliptic curves, every point $P = (x_P, y_P)$ of $E$ has an associated point $-P = (x_P, -y_P)$. If we apply $+$ to $P$ and $-P$, $L$ assumes the line parrallel to the y-axis at $x = x_P$. As discussed above, in this case there is no third intersection of $L$ on $E$. In light of this, $\mathcal{O}$ can be thought of as a point residing infinitely far in both the positive and negative directions of the y-axis. $\mathcal{O}$ is equivalently referred to as the \emph{point at infinity} (see Figure \ref{fig:axioms}).\footnote{One might suspect that the inclusion of this (apparently) non-algebraic element $\mathcal{O}$ suggests that $+$ is not a rational-map. The operator $+$ \emph{can} be shown to be a rational-mapping if we define our elliptic curve groups in three-dimensional projective space.}
 \end{itemize}
 
 \begin{figure}[!h]
@@ -349,13 +353,15 @@ The group operation $+$ is referred to as \emph{pointwise addition}. In order fo
 \label{fig:axioms}
 \end{figure}
 
+Of course, there are relatively simple formulas for algebraically defining point-wise addition and inverse computation. We have opted to describe these operations geometrically simply for ease of communication.
+
 Additionally, we shorthand $\overbrace{P + P + ... + P}^{n}$ as $nP$, analogous to scalar multiplication.\\
 
-Consequently, because groups defined over elliptic curves in this fashion are commutitive, they also constitute abelian varieties[ref].
+Consequently, because groups defined over elliptic curves in this fashion are commutitive, they also constitute abelian varieties.
 
 When referring to curves as abelian varieties defined over a field, we will write them as $E_{\alpha}(K)$, for some curve $E_{\alpha}$ and some field $K$. If we are only concerned with the geometric properties of the curve, or curves as distinct elements of some group structure, it will suffice to write $E_{\alpha}$. Moving forward from here, we will assume all general curves discussed are capable of definition over some finite field $\mathbb{F}_p$.\\
 
-The $r$-\emph{torsion group} of $E$ is the set of all points $P \in E(\overline{\mathbb{F}}_q)$ such that $[r]P = \mathcal{O}$. We denote the $r$-torsion group of some curve as $E[r]$.\\
+The $r$-\emph{torsion group} of $E$ is the set of all points $P \in E(\overline{\mathbb{F}}_q)$ such that $rP = \mathcal{O}$. We denote the $r$-torsion group of some curve as $E[r]$.\\
 
 \noindent
 \emph{Supersingular Curves}. An elliptic curve can be either \emph{ordinary} or \emph{supersingular}. There are several equivalent ways of defining supersingular curves (and thus the distinction between them and ordinary curves) in a general setting, but each of these goes well beyond our scope. In the context of curves defined over finite fiels, however, the following succinct definition holds:
@@ -366,27 +372,27 @@ Let $E$ be an elliptic curve defined over the finite field $\mathbb{F}_{p}$. $E$
 \end{definition}
 \end{tcolorbox}
 
-For the remainder of this paper, unless otherwise noted, all elliptic curves in discussion will be of the supersingular variety.\\ 
+For the remainder of this paper, unless otherwise noted, all elliptic curves in discussion will supersingular.\\ 
 
 \noindent
-\emph{Projective Coordinates}\label{snip:projspace}. While elliptic curves are naturally defined in two-dimensional affine space, there are many benefits to expressing them through three-dimension projective coordinates. First and foremost, expressing curves in projective space allows us to reason geometrically about $\mathcal{O}$. This is done by defining a curve $E$ such that it resides in some two-dimension subspace of 3-space, the point $\mathcal{O}$ then resides at some point in 3-space outside of the residing plane of $E$. 
+\emph{Projective Space}\label{snip:projspace}. While elliptic curves are naturally defined in two-dimensional affine space, there are many benefits to expressing them through three-dimension projective coordinates. First and foremost, expressing curves in projective space allows us to reason geometrically about $\mathcal{O}$. This is done by defining a curve $E$ such that it resides in some two-dimension subspace of 3-space, the point $\mathcal{O}$ then resides at some point in 3-space outside of the residing plane of $E$. 
 
 Representing a curve in 3-space requires some substitution of $x$ and $y$ coordinates, a typical forma for achieving this is the following:
 
 $$
-x = X/Z
-y = Y/Z
+x = X/Z\quad
+y = Y/Z\quad
 Z = 1
 $$
 
-Such a representation fo elliptic curve points offers computationally efficient arithmetic over points. This is conceptually similar to the previously mentioned Montgomery arithmetic regarding finite field elements. Other substitutions offer different computational advantages, but the implementations we will discuss make use of this typical approach.
+Such a representation of elliptic curve points offers more computationally efficient arithmetic over points. This is conceptually similar to the previously mentioned Montgomery arithmetic regarding finite field elements. Other substitutions offer different computational advantages, but the implementations we will discuss make use of this typical approach.
 
 \subsection{Isogenies \& Their Properties}
 
 \begin{tcolorbox}
 \begin{definition}[Isogeny]
 \label{defn:isogeny}
-Let $G$ and $H$ be algebraic groups[ref]. An \underline{isogeny} is a morphism\ref{defn:homomorphism} $h: G \rightarrow H$ possessing a finite kernel.
+Let $G$ and $H$ be algebraic groups. An \underline{isogeny} is a morphism $h: G \rightarrow H$ possessing a finite kernel.
 \end{definition}
 \end{tcolorbox}
 
