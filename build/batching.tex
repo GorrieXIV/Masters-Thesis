@@ -179,12 +179,12 @@ Counting the sum of operations in this proposed approach, we have the following:
 \item 2 $\mathbb{F}_{p}$ squarings, 1 $\mathbb{F}_{p}$ addition, 1 $\mathbb{F}_{p}$ inversion, and 3 $\mathbb{F}_{p}$ multiplications -- \emph{call to} \textbf{PartialInv($a$)}
 \item $2n$ $\mathbb{F}_{p^2}$ multiplications -- \emph{downward-percolation phase}
 \end{itemize}
-To measure the complixity in terms of field operations, denoted $C_{\text{attempt}}$, we can surmize the the total operation count as:
+To measure the complixity in terms of field operations, denoted $C'$, we can surmize the the total operation count as:
 $$
-C_{\text{attempt}} = (n\textbf{M}) + (2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}) + (2n\textbf{M})
+C' = (n\textbf{M}) + (2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}) + (2n\textbf{M})
 $$
 $$
-C_{\text{attempt}} = 3n\textbf{M} + 2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}
+C' = 3n\textbf{M} + 2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}
 $$
 
 Below we provide an alternative approach to building \textbf{PartialBatchedInv} that relies on only $\mathbb{F}_{p}$ operations. Afterward, we show by simply analysis why this approach yields the better performance. This procedure is formalized in a mathematical setting in algorithm \ref{alg:pbinvmath}. We give a precise C function definition in section \ref{sec:pbinvimplementation}.
@@ -246,15 +246,15 @@ C \approx 7n\textbf{m} + n\textbf{a} + \textbf{i}
 $$
 Applying the same simplifying assumptions to $C'$, we arrive at
 $$
-C_{\text{attempt}} \approx 3n\textbf{M} + 5\textbf{m} + \textbf{a} + \textbf{i} 
+C' \approx 3n\textbf{M} + 5\textbf{m} + \textbf{a} + \textbf{i} 
 $$
-We note here that an $\mathbb{F}_{p^2}$ multiplication (\textbf{M}) is performed simply by means of 4 $\mathbb{F}_{p}$ multiplications (again, recall the multiplcation of complex numbers). So we have $\textbf{M} = 4\textbf{m}$, and can further simplify $C_{\text{attempt}}$:
+We note here that an $\mathbb{F}_{p^2}$ multiplication (\textbf{M}) is performed simply by means of 4 $\mathbb{F}_{p}$ multiplications (again, recall the multiplcation of complex numbers). So we have $\textbf{M} = 4\textbf{m}$, and can further simplify $C'$:
 $$
-C_{\text{attempt}} \approx (12n + 5)\textbf{m} + \textbf{a} + \textbf{i}
+C' \approx (12n + 5)\textbf{m} + \textbf{a} + \textbf{i}
 $$
-Finally we've simplified $C$ and $C_{\text{attempt}}$ to forms that are more easily compared. Let $\textbf{P}$ denote the proposition that $C$ runs in fewer operations than $C_{\text{attempt}}$ 
+Finally we've simplified $C$ and $C'$ to forms that are more easily compared. Let $\textbf{P}$ denote the proposition that $C$ runs in fewer operations than $C'$:
 $$
-\textbf{P} \equiv C < C_{\text{attempt}}
+\textbf{P} \equiv C < C'
 $$
 $$
 \textbf{P} \equiv 7n\textbf{m} + n\textbf{a} + \textbf{i} < (12n + 5)\textbf{m} + \textbf{a} + \textbf{i}
@@ -445,7 +445,7 @@ The two figures below provide benchmarks for KeyGen, Sign, and Verify procedures
 
 It should first be noted that, because our benchmarks are measured in terms of clock cycles, the difference between our two system clock speeds should be essentially ineffective. \\
 
-In the following table, ``Batched Inversion" signifies running the batched partial-inversion procedure on 248 $\mathbb{F}_{p^{2}}$ elements. The procedure uses the binary GCD $\mathbb{F}_{p}$ inversion function which, unlike regular $\mathbb{F}_{p^{2}}$ montgomery inversion, is not constant time.\\
+In the following table, ``Batched Inversion" signifies running \code{pb\_inv} on 248 $\mathbb{F}_{p^{2}}$ elements.
 
 \begin{center}
 \begin{tabular}{@{}ll@{}}
@@ -458,7 +458,7 @@ In the following table, ``Batched Inversion" signifies running the batched parti
 \end{tabular}
 \end{center}
 
-The following are all measure in clock cycles, as the computed average of 1000 distinct executions:
+The following are all measured in clock cycles, as the computed average of 1000 distinct executions:
 
 \begin{center}
 \begin{tabular}{@{}lll@{}}

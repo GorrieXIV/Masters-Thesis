@@ -965,7 +965,9 @@ Yoo et al. provided, along with their publication of \cite{yoo}, an implementati
 \end{tabular}
 \end{center}
 
-There are a few minor details regarding the functions above that should be made clear.
+To begin, \code{isogeny\_keygen} has a trivial definition; \code{KeyGeneration\_B} is called and populates the signer's public and private keys. \code{isogeny\_keygen} returns the success status of the call to \code{KeyGeneration\_B}.
+
+In their original fork of \sidh, Yoo et al. included these functions in the file \code{kex\_tests.c}. This file was originally intended for testing the functions of \code{kex.c}, and so our fork of the library has placed the signature functions in a new file \code{SIDH\_signature.c}. We have also included a file \code{sig\_tests.c} for testing the contents and performance of \code{SIDH\_signature.c} functions. 
 
 \begin{figure}[htp]
 \centering
