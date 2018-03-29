@@ -10,7 +10,7 @@ We will end this chapter by taking a detailed look at the performance gains offe
 
 \section{Partial Batched Inversions}
 
-We will now outline our first contribution to \sidh. The ``partial batched inversion" procedure in question reduces arbitrarily many \emph{unrelated} $\mathbb{F}_{p^{2}}$ inversions to a sequence of $\mathbb{F}_{p}$ operations. The fact that the elements being inverted need not hold any relation will be significant to the applicability of this procedure. For brevities sake, we will henceforth refer to this procedure as \code{pb\_inv}.
+We will now outline our first contribution to \sidh. The ``partial batched inversion" procedure in question reduces arbitrarily many \emph{unrelated} $\mathbb{F}_{p^{2}}$ inversions to a sequence of $\mathbb{F}_{p}$ operations. The fact that the elements being inverted need not hold any relation will be significant to the applicability of this procedure. For brevities sake, we will henceforth refer to this procedure as \code{pb\_inv} in the \sidh context, and \textbf{PartialBatchedInversion} in the more general mathematical context.
 
 As mentioned above, \code{pb\_inv} is constructed by combining two distinct techniques. Both of these techniques improve the efficiency of computing field element inversions: the first is specific to extension fields (in our case, $\mathbb{F}_{p^{2}}$ elements,) but the second is a technique applicable to field element inversions in a more general setting.
 
@@ -35,7 +35,7 @@ $$
 $$
 C^{-1} = \frac {a - bi}{(a + bi)(a - bi)}
 $$
-Here we note that $(a + bi)(a - bi)$ is equivalently $(a^2 - b^2)$ and so we have
+Here we note that $(a + bi)(a - bi)$ is equivalently $(a^2 - b^2)$ and so we can rewrite $C^{-1}$ as the following:
 $$
 C^{-1} = \frac {a - bi}{(a)^2 - (bi)^2}
 $$
@@ -48,10 +48,10 @@ $$
 x^{-1} = \{\frac {x_{a}}{x_{a}^2 + x_{b}^2}, \frac {-x_{b}}{x_{a}^2 + x_{b}^2}\}
 $$
 
-Now it is clear that we can compute the multiplicative inverse of $x$ by computing the inverse of $x_{a}^2 + x_{b}^2$, which is of course a inversion in $\mathbb{F}_{p}$. We can further formulate this technique as an algorithm,  which we do below and refer to as \textbf{PartialInv}.
+Now it is clear that we can compute the multiplicative inverse of $x$ by computing: the inverse of $x_{a}^2 + x_{b}^2$, which is of course an inversion in $\mathbb{F}_{p}$, and $-x_{b}$, which is a relatively inexpensive operation (also in the base field). Below, we formulate this technique as algorithm \ref{alg:partialinv}, which we refer to as \textbf{PartialInv}.\\
 
-\begin{algorithm}
-\caption{-- \textbf{PartialInv($\mathbb{F}_{p^{2}}$ $x$)}}\label{alg:partialinv}
+\begin{algorithm}[!h]
+\caption{-- \textbf{PartialInv($x \in \mathbb{F}_{p^{2}}$)}}\label{alg:partialinv}
 \begin{algorithmic}[1]
 \State $den \gets x_{a}^{2} + x_{b}^{2}$
 
@@ -103,14 +103,28 @@ Let us analyse these phases a little more closely while we generalize to $n$-man
 
 If we implement the downward-percolation phase directly as outlined in the three-element example above, retrieving every output inversion requires $n$ products each composed of $n-1$ multiplications. These $n$ products are each also multiplied by $a^{-1}$. This multiplication by $a^{-1}$ can be added to our $n-1$ inversion count resulting in $n$-many products composed of $n$ multiplications; bringing the complixity of the downward-percolation phase to $\mathcal{O}(n^2)$.
 
-This batching proceedure can be thought of as analogous to traditional time-memory tradeoff algorithms. In a general time-memory tradeoff algorithm you can continue to make some linear or polynomial (or otherwise) sacrifice in memory in order to gain some increase in performance. In the batching procedure described above we are in \emph{some} sense sacrificing some marginal amount of memory to gain an increase in performance, but it is not a tradeoff that we can adjust to our liking.
+This batching proceedure can be thought of as analogous to traditional time-memory tradeoff algorithms. In a general time-memory tradeoff algorithm you can continue to make some linear or polynomial (or otherwise) sacrifice of memory in order to gain some increase in performance. In the batching procedure described above we are in some sense sacrificing some marginal amount of memory to gain an increase in performance, but it is not a tradeoff that we can adjust to our liking.
 
-There is a way in which we can further reduce the execution time of this procedure by
+There is a way, much akin to this time-memory tradeoff strategy, that we can further reduce the execution time of this procedure. In the upward-percolation phase, we currently store in $a$ the product of elements $x_0 \cdot x_1 \cdot ... \cdot x_{n-1}$. Suppose instead that we store in $a$ an \emph{array} (size $n$) of elements, defined in the following way:
+$$
+a_i = 
+\begin{cases}
+x_0 & i = 0\\
+a_{i-1} \cdot x_i & \text{otherwise}
+\end{cases}
+$$
+Equivalently, the elements of this array are
+$$
+a_0 = x_0, \quad a_1 = x_0 \cdot x_1, \quad a_2 = x_0 \cdot x_1 \cdot x_2, \quad ... 
+$$
+and so on and so forth up to $n-1$. In the inversion phase we will compute $inv = a_{n-1}^{-1}$; we are still inverting the product of all the elements, but because we have stored the value of the product at every step of the way, we can save on a significant number of operations in the downward-percolation phase.
 
-We generalize this technique to $n$-many elements, and provide an algorithm under the name \textbf{BatchedInv} (See Algorithm \ref{alg:batchedinv}). In Algorithm \ref{alg:batchedinv}, lines 1--3 implement the first phase of the procedure. In reference to Fiat's RSA batching, we refer to this subroutine as ``upward-percolation". Line 4 carries out the second phase: the inversion of the product. The third and final stage, ``downward-percolation", occurs in lines 5--7.
+Going into the final stage of the procedure now, we can compute $x_{n-1}^{-1}$ simply by computing $inv \cdot a_{n-2}$. Moving forward (or backwards, technically), we peel the previously used $x_{n-1}^{-1}$ off of $inv$ by computing $inv := inv \cdot x_{n-1}$ and, with our updated $inv$, we compute $x_{n-2}^{-1} = inv \cdot a_{n-3}$. We proceed in this fashion until we reach $x_{0}^{-1}$, which (if we've been updating $inv$ every step of the way) is simply equal to $inv$. 
+
+We provide an algorithm under the name of \textbf{BatchedInv} implementing this generalization to $n$-many elements (See Algorithm \ref{alg:batchedinv}). In Algorithm \ref{alg:batchedinv}, lines 1--3 implement the upward-percolation phase. Line 4 carries out the second phase: the inversion of $a_{n-1}$. The third and final stage, downward-percolation, occurs from lines 5 to 7.
 
 \begin{algorithm}
-\caption{-- \textbf{BatchedInv($\mathbb{F}_{p^{2}}$ $\{x_0, x_1, ..., x_n-1\}$)}}\label{alg:batchedinv}
+\caption{-- \textbf{BatchedInv($\{x_0, x_1, ..., x_n-1\} \in \mathbb{F}_{p^{2}}^{n}$)}}\label{alg:batchedinv}
 \begin{algorithmic}[1]
 \State $a_0 \gets x_0$
 
@@ -121,16 +135,16 @@ We generalize this technique to $n$-many elements, and provide an algorithm unde
 \State $inv \gets a_{n-1}^{-1}$
 
 \For{\texttt{i = (n-1)..1}}
-	\State $a_i^{-1} \gets a_{i-1} \cdot inv$
+	\State $x_i^{-1} \gets a_{i-1} \cdot inv$
 	\State $inv \gets inv \cdot x_{i}$
 \EndFor
 
-\State $a_0^{-1} = inv$
+\State $x_0^{-1} = inv$
 
 \end{algorithmic}
 \end{algorithm}
 
-And so, \textbf{BatchedInv} can be used to reduce $n$ $\mathbb{F}_{p^{2}}$ inversions to the following operations:
+And so, this procedure can be used to reduce $n$-many $\mathbb{F}_{p^{2}}$ inversions to the following operations:
 
 \begin{center}
 \begin{itemize}
@@ -465,7 +479,8 @@ The following are all measure in clock cycles, as the computed average of 1000 d
 Do performance increases observed make sense?\\
 
 \subsection{Remaining Opportunities}
-There are two functions called in the isogeny signature system that perform a $\mathbb{F}_{p^{2}}$ inversion: \code{j\_inv} and \code{inv\_4\_way}. These functions are called once in SecretAgreement and KeyGeneration operations respectively. SecretAgreement and KeyGeneration are in turn called from each signing and verification thread.\\
+There are two functions called in the isogeny signature system that perform a $\mathbb{F}_{p^{2}}$ inversion: \code{j\_inv} and \code{inv\_4\_way}. These functions are called once in SecretAgreement and KeyGeneration operations respectively. SecretAgreement and KeyGeneration are in turn called from each signing and verification thread.
 
-This means that in the signing procedure there are 2 opportunities for implementing batched partial-inversion with a batch size of 248 elements. In the verify procedure, however, there are 3 opportunities for implementing batched inversion with a batch size of roughly ~124 elements.\\
+This means that in the signing procedure there are 2 opportunities for implementing batched partial-inversion with a batch size of 248 elements. In the verify procedure, however, there are 3 opportunities for implementing batched inversion with a batch size of roughly ~124 elements.
 
+Another avenue for implementation of this procedure, much in line with Fiat's original RSA batch, lies in . We discuss this approach in greater detail in section \ref{sec:morebatch}.
