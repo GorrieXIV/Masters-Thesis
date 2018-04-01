@@ -15,14 +15,14 @@
 \contentsline {subsection}{\numberline {2.2.2}Elliptic Curves}{9}{subsection.2.2.2}
 \contentsline {subsection}{\numberline {2.2.3}Isogenies \& Their Properties}{12}{subsection.2.2.3}
 \contentsline {section}{\numberline {2.3}Supersingular Isogeny Diffie-Hellman}{13}{section.2.3}
-\contentsline {subsection}{\numberline {2.3.1}SIDH Key Exchange}{13}{subsection.2.3.1}
+\contentsline {subsection}{\numberline {2.3.1}SIDH Key Exchange}{14}{subsection.2.3.1}
 \contentsline {subsection}{\numberline {2.3.2}Zero-Knowledge Proof of Identity}{15}{subsection.2.3.2}
-\contentsline {section}{\numberline {2.4}Fiat-Shamir Construction}{16}{section.2.4}
+\contentsline {section}{\numberline {2.4}Fiat-Shamir Construction}{17}{section.2.4}
 \contentsline {subsection}{\numberline {2.4.1}Unruh's Post-Quantum Adaptation}{17}{subsection.2.4.1}
-\contentsline {section}{\numberline {2.5}Isogeny Based Signatures}{17}{section.2.5}
+\contentsline {section}{\numberline {2.5}Isogeny Based Signatures}{18}{section.2.5}
 \contentsline {subsection}{\numberline {2.5.1}Algorithmic Definitions}{18}{subsection.2.5.1}
 \contentsline {section}{\numberline {2.6}Implementations of Isogeny Based Cryptographic Protocols}{21}{section.2.6}
-\contentsline {subsection}{\numberline {2.6.1}Parameters \& Data Representation}{21}{subsection.2.6.1}
+\contentsline {subsection}{\numberline {2.6.1}Parameters \& Data Representation}{22}{subsection.2.6.1}
 \contentsline {subsection}{\numberline {2.6.2}Design Decisions}{23}{subsection.2.6.2}
 \contentsline {subsection}{\numberline {2.6.3}Key Exchange \& Critical Functions}{23}{subsection.2.6.3}
 \contentsline {subsection}{\numberline {2.6.4}Signature Layer}{26}{subsection.2.6.4}
