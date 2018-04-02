@@ -177,8 +177,7 @@ $$
 2(n-1) < n^2
 $$
 
-
-And so \textbf{BatchedInv} outperforms our original roughly-sketched procedure when the number of elements being batched ($n$) exceeds 2.
+And so, because $n^2$ is always larger than $2(n-1)$ for all $n \in \mathbb{R}$, \textbf{BatchedInv} outperforms our original roughly-sketched procedure for every possible batch sizes. This can be checked, if one so wishes, by setting $n^2 = 2(n-1)$, simplifying to $n^2 - 2n + 2$, and noting that the discriminant ($2^2 - 4\cdot 2$) is negative. 
 
 \subsection{Partial Batched Inversions}
 
