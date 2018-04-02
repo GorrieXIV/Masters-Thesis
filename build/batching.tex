@@ -18,11 +18,11 @@ We will begin with a dissection of these two techniques, starting first with the
 
 In the subsections to come, when we are working at the level of field arithmetic we will denote the first and second portions of an arbitrary $x \in \mathbb{F}_{p^{2}}$ as $x_{a}$ and $x_{b}$ respectively. We identify $x$ by saying $x = \{x_{a}, x_{b}\}$. Recall from \ref{subsec:fields} that both $x_{a}$ and $x_{b}$ are valid $\mathbb{F}_{p}$ elements. 
 
-We will express the performance of the comming procedures in terms of the sum number of underlying field operations within them. We denote the computation time for extension field arithmetic with upper-case letters and use lower-case letters for base field arithmetic. For example, the performance of some procedure $P$, which we might write as $C_{P}$, may look like the following:
+We will express the performance of the comming procedures in terms of the sum number of underlying field operations within them. We denote the computation time for base field arithmetic with bold letters (such as \textbf{a} for $\mathbb{F}_p$ \textbf{a}ddition), and we use bold letters accented with a ``closure" bar for extension field arithmetic ($\bar{\textbf{a}}$ for $\mathbb{F}_{p^2}$ \textbf{a}ddition). For example, the performance of some procedure $P$, which we might write as $C_{P}$, may look like the following:
 $$
-C_{P} = 2\textbf{A} + x\textbf{I} + y\textbf{m} + \textbf{s}
+C_{P} = 2\bar{\textbf{a}} + x\bar{\textbf{i}} + y\textbf{m} + \textbf{s}
 $$
-Which denotes that $P$ is a procedure composed of 2 $\mathbb{F}_{p^{2}}$ additions, $x$-many $\mathbb{F}_{p^{2}}$ inversions, $y$-many $\mathbb{F}_{p}$ multiplications, and a single $\mathbb{F}_{p}$ squaring. 
+Which denotes that $P$ is a procedure composed of 2 $\mathbb{F}_{p^{2}}$ additions, $x$-many $\mathbb{F}_{p^{2}}$ inversions, $y$-many $\mathbb{F}_{p}$ multiplications, and a single $\mathbb{F}_{p}$ squaring. We reserve uppercase bold letters for arithmetic over elliptic curve points (such as \textbf{A} to denote the point-wise addition operation).
 
 \subsection{$\mathbb{F}_{p^{2}}$ Inversions done in $\mathbb{F}_{p}$}
 
@@ -101,8 +101,14 @@ $$
 
 Let us analyse these phases a little more closely while we generalize to $n$-many elements. In the upward-percolation phase, constructing $a$ requires $n-1$ multiplications; and so has a complexity of $\mathcal{O}(n)$. The inversion phase requires one field element inversion, and so has complexity of $\mathcal{O}(1)$. 
 
-If we implement the downward-percolation phase directly as outlined in the three-element example above, retrieving every output inversion requires $n$ products each composed of $n-1$ multiplications. These $n$ products are each also multiplied by $a^{-1}$. This multiplication by $a^{-1}$ can be added to our $n-1$ inversion count resulting in $n$-many products composed of $n$ multiplications; bringing the complixity of the downward-percolation phase to $\mathcal{O}(n^2)$.
+If we implement the downward-percolation phase directly as outlined in the three-element example above, computing every output requires $n$ products each composed of $n-1$ multiplications. These $n$ products are each also multiplied by $a^{-1}$. This multiplication by $a^{-1}$ can be added to our $n-1$ inversion count resulting in $n$-many products composed of $n$ multiplications; bringing the complixity of the downward-percolation phase to $\mathcal{O}(n^2)$.
 
+Let $B_0$ denote the performance of the approach above to batching field element inversions. We have, then, that 
+$$
+B_0 = n^2\bar{\textbf{m}} + (n-1)\bar{\textbf{m}} + \bar{\textbf{i}}.
+$$\\
+
+\noindent
 This batching proceedure can be thought of as analogous to traditional time-memory tradeoff algorithms. In a general time-memory tradeoff algorithm you can continue to make some linear or polynomial (or otherwise) sacrifice of memory in order to gain some increase in performance. In the batching procedure described above we are in some sense sacrificing some marginal amount of memory to gain an increase in performance, but it is not a tradeoff that we can adjust to our liking.
 
 There is a way, much akin to this time-memory tradeoff strategy, that we can further reduce the execution time of this procedure. In the upward-percolation phase, we currently store in $a$ the product of elements $x_0 \cdot x_1 \cdot ... \cdot x_{n-1}$. Suppose instead that we store in $a$ an \emph{array} (size $n$) of elements, defined in the following way:
@@ -121,7 +127,7 @@ and so on and so forth up to $n-1$. In the inversion phase we will compute $inv 
 
 Going into the final stage of the procedure now, we can compute $x_{n-1}^{-1}$ simply by computing $inv \cdot a_{n-2}$. Moving forward (or backwards, technically), we peel the previously used $x_{n-1}^{-1}$ off of $inv$ by computing $inv := inv \cdot x_{n-1}$ and, with our updated $inv$, we compute $x_{n-2}^{-1} = inv \cdot a_{n-3}$. We proceed in this fashion until we reach $x_{0}^{-1}$, which (if we've been updating $inv$ every step of the way) is simply equal to $inv$. 
 
-We provide an algorithm under the name of \textbf{BatchedInv} implementing this generalization to $n$-many elements (See Algorithm \ref{alg:batchedinv}). In Algorithm \ref{alg:batchedinv}, lines 1--3 implement the upward-percolation phase. Line 4 carries out the second phase: the inversion of $a_{n-1}$. The third and final stage, downward-percolation, occurs from lines 5 to 7.
+We provide an algorithm under the name of \textbf{BatchedInv} implementing this approach, generalized to $n$-many elements (See Algorithm \ref{alg:batchedinv}). In Algorithm \ref{alg:batchedinv}, lines 1--3 implement the upward-percolation phase. Line 4 carries out the second phase: the inversion of $a_{n-1}$. The third and final stage, downward-percolation, occurs from lines 5 to 7.
 
 \begin{algorithm}
 \caption{-- \textbf{BatchedInv($\{x_0, x_1, ..., x_n-1\} \in \mathbb{F}_{p^{2}}^{n}$)}}\label{alg:batchedinv}
@@ -144,7 +150,7 @@ We provide an algorithm under the name of \textbf{BatchedInv} implementing this 
 \end{algorithmic}
 \end{algorithm}
 
-And so, this procedure can be used to reduce $n$-many $\mathbb{F}_{p^{2}}$ inversions to the following operations:
+\textbf{BatchedInv} can be used to reduce $n$-many $\mathbb{F}_{p^{2}}$ inversions to the following operations:
 
 \begin{center}
 \begin{itemize}
@@ -153,6 +159,26 @@ And so, this procedure can be used to reduce $n$-many $\mathbb{F}_{p^{2}}$ inver
 \item $2(n-1)$ $\mathbb{F}_{p^2}$ multiplications -- \emph{line 5-7 of algorithm} \ref{alg:batchedinv}
 \end{itemize}
 \end{center}
+
+\noindent
+Let $B$ denote the performance of \textbf{BatchedInv}. 
+$$
+B = 2(n-1)\bar{\textbf{m}} + (n-1)\bar{\textbf{m}} + \bar{\textbf{i}}.
+$$
+
+Comparing the performance of \textbf{BatchedInv} with our initial construction, we see that $B < B_0$ holds when the following holds:
+$$
+2(n-1)\bar{\textbf{m}} + (n-1)\bar{\textbf{m}} + \bar{\textbf{i}} < n^2\bar{\textbf{m}} + (n-1)\bar{\textbf{m}} + \bar{\textbf{i}}
+$$
+$$
+2(n-1)\bar{\textbf{m}} < n^2\bar{\textbf{m}}
+$$
+$$
+2(n-1) < n^2
+$$
+
+
+And so \textbf{BatchedInv} outperforms our original roughly-sketched procedure when the number of elements being batched ($n$) exceeds 2.
 
 \subsection{Partial Batched Inversions}
 
@@ -181,10 +207,10 @@ Counting the sum of operations in this proposed approach, we have the following:
 \end{itemize}
 To measure the complixity in terms of field operations, denoted $C'$, we can surmize the the total operation count as:
 $$
-C' = (n\textbf{M}) + (2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}) + (2n\textbf{M})
+C' = (n\bar{\textbf{m}}) + (2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}) + (2n\bar{\textbf{m}})
 $$
 $$
-C' = 3n\textbf{M} + 2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}
+C' = 3n\bar{\textbf{m}} + 2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}
 $$
 
 Below we provide an alternative approach to building \textbf{PartialBatchedInv} that relies on only $\mathbb{F}_{p}$ operations. Afterward, we show by simply analysis why this approach yields the better performance. This procedure is formalized in a mathematical setting in algorithm \ref{alg:pbinvmath}. We give a precise C function definition in section \ref{sec:pbinvimplementation}.
@@ -246,7 +272,7 @@ C \approx 7n\textbf{m} + n\textbf{a} + \textbf{i}
 $$
 Applying the same simplifying assumptions to $C'$, we arrive at
 $$
-C' \approx 3n\textbf{M} + 5\textbf{m} + \textbf{a} + \textbf{i} 
+C' \approx 3n\bar{\textbf{m}} + 5\textbf{m} + \textbf{a} + \textbf{i} 
 $$
 We note here that an $\mathbb{F}_{p^2}$ multiplication (\textbf{M}) is performed simply by means of 4 $\mathbb{F}_{p}$ multiplications (again, recall the multiplcation of complex numbers). So we have $\textbf{M} = 4\textbf{m}$, and can further simplify $C'$:
 $$
