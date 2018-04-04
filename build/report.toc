@@ -30,14 +30,14 @@
 \contentsline {section}{\numberline {3.1}Partial Batched Inversions}{29}{section.3.1}
 \contentsline {subsection}{\numberline {3.1.1}$\mathbb {F}_{p^{2}}$ Inversions done in $\mathbb {F}_{p}$}{30}{subsection.3.1.1}
 \contentsline {subsection}{\numberline {3.1.2}Batching Field Element Inversions}{31}{subsection.3.1.2}
-\contentsline {subsection}{\numberline {3.1.3}Partial Batched Inversions}{33}{subsection.3.1.3}
+\contentsline {subsection}{\numberline {3.1.3}Partial Batched Inversions}{34}{subsection.3.1.3}
 \contentsline {subsection}{\numberline {3.1.4}Applicability to $\texttt {SIDH}_{\texttt {C}}$\xspace }{35}{subsection.3.1.4}
-\contentsline {section}{\numberline {3.2}Implementation Details}{35}{section.3.2}
-\contentsline {subsection}{\numberline {3.2.1}Parallelizing Signatures}{36}{subsection.3.2.1}
+\contentsline {section}{\numberline {3.2}Implementation Details}{36}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Parallelizing Signatures}{37}{subsection.3.2.1}
 \contentsline {subsection}{\numberline {3.2.2}Security Concerns}{37}{subsection.3.2.2}
 \contentsline {section}{\numberline {3.3}Results}{38}{section.3.3}
 \contentsline {subsection}{\numberline {3.3.1}Analysis}{39}{subsection.3.3.1}
-\contentsline {subsection}{\numberline {3.3.2}Remaining Opportunities}{39}{subsection.3.3.2}
+\contentsline {subsection}{\numberline {3.3.2}Remaining Opportunities}{40}{subsection.3.3.2}
 \contentsline {chapter}{\numberline {4}Compressing Signatures}{41}{chapter.4}
 \contentsline {section}{\numberline {4.1}SIDH Key Compression Background}{41}{section.4.1}
 \contentsline {subsection}{\numberline {4.1.1}Motivation \& Overview}{41}{subsection.4.1.1}
