@@ -193,10 +193,10 @@ And so, because $n^2$ is always larger than $2(n-1)$ for all $n \in \mathbb{R}$,
 
 We have now outlined the following: \textbf{PartialInv} as a technique for computing $\mathbb{F}_{p^2}$ inversions by means of $\mathbb{F}_{p}$ arithmetic, and \textbf{BatchedInv} as a technique for batching together arbitrarily many inversion operations. We will now combine these procedures in a (near) trivial manner to achieve the partial batched inversion algorithm.
 
-At first glance, an attempt to meld these two techniques together might be made in the following way:
+At first glance, an attempt to meld these two techniques together might be made in the same fashion as Algorithm \ref{alg:partialinv}. We denote this approach \textbf{PartialBatchedInv}$_0$.
 
 \begin{algorithm}
-\caption{-- \textbf{PartialBatchedInvAttempt($\{x_0, x_1, ... , x_{n-1}\}$)}}\label{alg:partialinv}
+\caption{-- \textbf{PartialBatchedInv$_0$($\{x_0, x_1, ... , x_{n-1}\}$)}}\label{alg:partialinv}
 \begin{algorithmic}[1]
 \State $a \gets$ upward-percolation of elements $\{x_0, x_1, ... , x_{n-1}\}$
 
@@ -208,21 +208,21 @@ At first glance, an attempt to meld these two techniques together might be made 
 \end{algorithmic}
 \end{algorithm}
 \noindent
-Counting the sum of operations in this proposed approach, we have the following: 
+If we sum of operations in \textbf{PartialBatchedInv}$_0$, we have the following: 
 \begin{itemize}
 \item $n$ $\mathbb{F}_{p^2}$ multiplications -- \emph{upward-percolation phase}
 \item 2 $\mathbb{F}_{p}$ squarings, 1 $\mathbb{F}_{p}$ addition, 1 $\mathbb{F}_{p}$ inversion, and 3 $\mathbb{F}_{p}$ multiplications -- \emph{call to} \textbf{PartialInv($a$)}
 \item $2n$ $\mathbb{F}_{p^2}$ multiplications -- \emph{downward-percolation phase}
 \end{itemize}
-To measure the complixity in terms of field operations, denoted $C'$, we can surmize the the total operation count as:
+To measure the complixity in terms of field operations, denoted $C_0$, we can surmize the the total operation count as:
 $$
-C' = (n\bar{\textbf{m}}) + (2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}) + (2n\bar{\textbf{m}})
+C_0 = (n\bar{\textbf{m}}) + (2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}) + (2n\bar{\textbf{m}})
 $$
 $$
-C' = 3n\bar{\textbf{m}} + 2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}
+C_0 = 3n\bar{\textbf{m}} + 2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}
 $$
 
-Below we provide an alternative approach to building \textbf{PartialBatchedInv} that relies on only $\mathbb{F}_{p}$ operations. Afterward, we show by simply analysis why this approach yields the better performance. This procedure is formalized in a mathematical setting in algorithm \ref{alg:pbinvmath}. We give a precise C function definition in section \ref{sec:pbinvimplementation}.
+Below we provide an alternative approach to building \textbf{PartialBatchedInv} that relies on only $\mathbb{F}_{p}$ operations. Afterward, we show by simple analysis why this approach yields the better performance. This procedure is formalized in a mathematical setting in algorithm \ref{alg:pbinvmath}. We give a precise C function definition in section \ref{sec:pbinvimplementation}.
 
 \begin{algorithm}
 \caption{-- \textbf{PartialBatchedInversion($\mathbb{F}_{p^{2}}$ $\{x_0, x_1, ..., x_n-1\}$)}}\label{alg:pbinvmath}
@@ -279,7 +279,7 @@ We can further simplify $C$ if we presume that a the execution time of squaring 
 $$
 C \approx 7n\textbf{m} + n\textbf{a} + \textbf{i}
 $$
-Applying the same simplifying assumptions to $C'$, we arrive at
+Applying the same simplifying assumptions to $C_0$, we arrive at
 $$
 C_0 \approx 3n\bar{\textbf{m}} + 5\textbf{m} + \textbf{a} + \textbf{i} 
 $$
@@ -287,7 +287,7 @@ We note here that an $\mathbb{F}_{p^2}$ multiplication (\textbf{M}) is performed
 $$
 C_0 \approx (12n + 5)\textbf{m} + \textbf{a} + \textbf{i}
 $$
-Finally we've simplified $C$ and $C'$ to forms that are more easily compared. Let $\textbf{P}$ denote the proposition that $C$ runs in fewer operations than $C'$:
+Finally we've simplified $C$ and $C_0$ to forms that are more easily compared. Let $\textbf{P}$ denote the proposition that $C$ runs in fewer operations than $C_0$:
 $$
 \textbf{P} \equiv C < C_0
 $$
@@ -298,15 +298,47 @@ Simplifying slightly, we need now to resolve
 $$
 7n\textbf{m} + n\textbf{a} < (12n + 5)\textbf{m} + \textbf{a}
 $$
-One could theorize an attempt to resolve this comparison analytically. This could be done, for example, by reducing $\mathbb{F}_{p^2}$ multiplications to a series of $\mathbb{F}_{p^2}$ additions (not unlike how performing $a \cdot b$ for $a,b \in \mathbb{Z}$ can be equivalently thought of as doing $a$-many additions of $b$). This approach turns out to be inaccurate, however, because while working in finite fields the performance of multiplication depends to be somewhat context sensitive.[foot note or something?]
+$$
+n\textbf{a} - \textbf{a} < (12n + 5)\textbf{m} - 7n\textbf{m}
+$$
+$$
+n\textbf{a} - \textbf{a} < 5n\textbf{m} + 5\textbf{m}
+$$
+It appears now that in order for \textbf{PartialBatchedInv}$_0$ to be computationally favourable over \textbf{PartialBatchedInv}, the execution time for one $\mathbb{F}_p$ addition would need to be larger than at least 5 times that of one $\mathbb{F}_p$ multiplication. 
 
-The better  
+For the radical skeptics, we can check the validity of this inequality at least contextually. We can verify this by measuring and comparing the execution times of the \sidh addition and multiplcation functions we will be using for our implementation.
 
-\subsection{Applicability to \sidh}
+When doing so (using the arithmetic test cases included in \code{arith\_tests.c} by Microsoft Research) we arrive at the following measurements:
 
-Because the work of Yoo et al. was built on top of the original Microsoft SIDH library, all underlying field arithmetic (and as such, pointwise arithmetic) is performed in projective space using Montgomery representation. As was mentioned in the previous chapter, doing such allows us to avoid a great deal of field element inversions. We simply convert to Montgomery representation at the beginning of heavy arithmetic, perform the desired operations, and then convert back to standard representation when complete. Throughout the codebase, (most noticeably in \code{kex.c}) we can see an analogous approach taken in for pointwise arithmetic, by first converting to a projective space representation, performing operations, and then converting back to affine coordinates. 
+\begin{center}
+\begin{tabular}{@{}lllll@{}}
+	\toprule
+	Operation & \sidh function & performance in clock cyckes\\
+	\midrule
+	$\mathbb{F}_p$ addition & \code{fpadd751} & 206\\
+	$\mathbb{F}_p$ multiplication & \code{fpmult751\_mont} & 1009\\
+	\bottomrule
+\end{tabular}
+\end{center}
 
- The downside of this (for our work) is that the number opportunities for implementing the batched inversion algorithm becomes greatly limited.\\
+If we query for the performance of other operations, including $\mathbb{F}_{p^2}$ arithmetic, we can estimate to what degree roughly \textbf{PartialBatchedInv} outperforms \textbf{PartialBatchedInv}$_0$. We can also measure to what degree we can expect that it will outperform an unbatched implementation of $n$-many inversions.
+
+\begin{center}
+\begin{tabular}{@{}lllll@{}}
+	\toprule
+	Operation & \sidh function & performance in clock cycles\\
+	\midrule
+	$\mathbb{F}_p$ inversion & \code{fpinv751\_mont} & 826228\\
+	$\mathbb{F}_{p^2}$ addition & \code{fp2add751} & 172\\
+	$\mathbb{F}_{p^2}$ multiplication & \code{fp2mult751\_mont} & 2793\\
+	$\mathbb{F}_{p^2}$ inversion & \code{fp2inv751\_mont} & 829786\\
+	\bottomrule
+\end{tabular}
+\end{center}
+
+All of these results are computed as the average over 100 distinct applications. Furthermore, because they are measured in clock cycles they are independent of any CPU clock rate. Because of this they are indicative of the complexity of each operation, opposed to the performance of these operations on any one particular machine.
+
+We now use these results to compare \textbf{PartialBatchedInv}, \textbf{PartialBatchedInv}$_0$, and unbatched inversion. 
 
 \section{Implementation Details}
 \label{sec:pbinvimplementation}
@@ -368,6 +400,12 @@ This parallelization of the signature scheme was the approach taken by Yoo et al
 \caption{<Caption here>}
 \label{fig:label} % insert suitable label, this is used to refer to a fig from within the text as shown above
 \end{figure}
+
+\subsection{Applicability to \sidh}
+
+Because the work of Yoo et al. was built on top of the original Microsoft SIDH library, all underlying field arithmetic (and as such, pointwise arithmetic) is performed in projective space using Montgomery representation. As was mentioned in the previous chapter, doing such allows us to avoid a great deal of field element inversions. We simply convert to Montgomery representation at the beginning of heavy arithmetic, perform the desired operations, and then convert back to standard representation when complete. Throughout the codebase, (most noticeably in \code{kex.c}) we can see an analogous approach taken in for pointwise arithmetic, by first converting to a projective space representation, performing operations, and then converting back to affine coordinates. 
+
+ The downside of this (for our work) is that the number opportunities for implementing the batched inversion algorithm becomes greatly limited.\\
 
 \subsection{Security Concerns}
 
