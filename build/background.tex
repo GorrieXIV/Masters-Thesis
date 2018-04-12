@@ -670,11 +670,11 @@ Similar to above, we will write $\textbf{Un}(\Pi)$ to denote the result of apply
 
 Since publication of the SIDH suite, there have been several attempts at providing authentication schemes using the same primitives. The post-quantum community had demonstrated undeniable signatures \cite{jvsig}, designated verifier signatures \cite{sunsig}, and undeniable blind signatures \cite{seshsig} all within the framework of isogeny based systems. It was not until the work of Yoo et al. ((\cite{yoo})), however, that an isogeny based protocol for general authentication was shown as demonstrably secure. This protocol, particularly its C implementation, is where we have decided to focus our efforts.
 
-Now that we've seen the zero-knowledge proof of identity (ZKPoI) from \cite{djp} as well as Unruh's quantum-safe Fiat-Shamir adaption, we have presented all of the material necessary for an indepth analysis of the isogeny based signature scheme presented by Yoo et al. The signature protocol, which we'll denote as $\Sigma'$, is a near-trivial application of Unruh's construction to the SIDH ZKPoI. In this section we will refer to the SIDH ZKPoI as $\Sigma$.
+Now that we've seen the zero-knowledge proof of identity (ZKPoI) from \cite{djp} as well as Unruh's quantum-safe Fiat-Shamir adaption, we have presented all of the material necessary for an indepth analysis of the isogeny based signature scheme presented by Yoo et al. The signature protocol, which we'll denote as $\Sigma'$, is an application of Unruh's construction to the SIDH ZKPoI. In this section we will refer to the SIDH ZKPoI as $\Sigma$.
 
-$\Sigma'$ is defined in the traditional manner, by a tuple of algorithms for key generation, signing, and verifying: $\Sigma' = (\textbf{KeyGen()}, \textbf{Sign()}, \textbf{Verify()})$. As could be predicted, \textbf{KeyGen()} in $\Sigma'$ is defined identically to the key generation found in SIDH key exchange. \textbf{Sign()} and \textbf{Verify()} are defined as equivalent to \textbf{Prove()} and \textbf{Verify()} $\in$ \textbf{FS($\Sigma$)}, respectively.
+$\Sigma'$ is defined in the traditional manner, by a tuple of algorithms for key generation, signing, and verifying: $\Sigma' = (\textbf{KeyGen()}, \textbf{Sign()}, \textbf{Verify()})$. \textbf{KeyGen()} in $\Sigma'$ is defined identically to the key generation found in SIDH key exchange. \textbf{Sign()} and \textbf{Verify()} are defined by applying Unruh's transformation to \textbf{Prove()} and \textbf{Verify()}.
 
-For our discussion of the signature scheme, we will make use of the naming conventions used in section 2.3. That is, we will discuss $\Sigma'$ as occuring between entities \bob and \alice, with \bob imitating the role of an arbitrary third party \randall during \textbf{Sign}.
+For our discussion of the signature scheme, we will make use of the naming conventions used in Section 2.3. That is, we will discuss $\Sigma'$ as occuring between entities \bob and \alice, with \bob imitating the role of an arbitrary third party \randall during \textbf{Sign}.
 
 The public parameters used in $\Sigma'$ are the same as outlined above for all of the protocols found in \cite{djp}. Namely, we have $p = \laea\lbeb \cdot f \pm 1$ where $\laea = 2$, $\lbeb = 3$, and $f$ is a cofacter such that $p$ is prime. We also set as parameter the curve $E$ such that $\#(E(F_{p^2})) = (\laea\lbeb)^2$. And again, we include the sets of points $(\genpa, \genqa)$ and $(\genpb, \genqb)$ generating $E[\laea]$ and $E[\lbeb]$ respectively. We have chosen $E$ over the previously used $E_0$ simply for ease of notation.
 
@@ -705,17 +705,17 @@ It will be useful for us to outline in more detail the procedures of $\Sigma'$, 
 Transcribing this to the procedures of $\Pi_{\text{SIDH}}$ we arrive (quite trivially) at:\\
 
 \begin{algorithm}
-\caption{-- \textbf{KeyGen($\lambda$)}}\label{euclid}
+\caption{-- \textbf{KeyGen($\lambda$, $User$)}}\label{euclid}
 \begin{algorithmic}[1]
-\State ($sk$, $pk$) $\gets \Pi_{\text{SIDH}}$:\textbf{KeyGen($\lambda$)}
+\State ($sk$, $pk$) $\gets \Pi_{\text{SIDH}}$:\textbf{KeyGen($\lambda$, $User$)}
 \State \Return ($sk$, $pk$)
 \end{algorithmic}
 \end{algorithm}
 
-For \textbf{Sign($sk$, $m$)} and \textbf{Verify($pk$, $m$, $\sigma$)} we assume \bob to be the signer and \alice to be the verifier. Consequently, we will write the signers key pair ($sk$, $pk$) as ($\rb$, $\pb$). Algorithms for which the roles are reversed can be constructed simply by replacing \textcolor{red}{red} constants with their \textcolor{blue}{blue} correspondants, and vice-versa.\\  
+For \textbf{Sign($sk$, $m$)} and \textbf{Verify($pk$, $m$, $\sigma$)} we assume \bob to be the signer and \alice to be the verifier. Consequently, we will write the signer's key pair ($sk$, $pk$) as ($\rb$, $\pb$). Algorithms for which the roles are reversed can be constructed simply by replacing \textcolor{red}{red} constants with their \textcolor{blue}{blue} correspondants, and vice-versa.\\  
 
 \noindent
-\textbf{Sign($sk$, $m$)}: The sign procedure, as a consequence of the Unruh construction, makes use of two random oracle functions \textbf{H} amd \textbf{G}. In the sign algorithm below, make note of how \bob computes both commitments and their corresponding responses for every iteration $i$ before he computes the challenge values (the bits of $J$). He then uses the $2\lambda$ bits of $J$ to decide which responses to include in $\sigma$.\\
+\textbf{Sign($sk$, $m$)}: The sign procedure, as a consequence of the Unruh construction, makes use of two random oracle functions \textbf{H} and \textbf{G}. In the sign algorithm below, make note of how \bob computes both commitments and their corresponding responses for every iteration $i$ before he computes the challenge values (the bits of $J$). He then uses the $2\lambda$ bits of $J$ to decide which responses to include in $\sigma$.\\
 
 \begin{algorithm}
 \caption{-- \textbf{Sign($sk = \rb$, $m$)}}\label{euclid}
@@ -723,10 +723,11 @@ For \textbf{Sign($sk$, $m$)} and \textbf{Verify($pk$, $m$, $\sigma$)} we assume 
 \For{\texttt{i = 1..2$\lambda$}}
 	\State Pick a random point $\cyr$ of order $\laea$
 	\State Compute the isogeny $\pr: E \rightarrow E/\langle \cyr \rangle$
-	\State Compute either $\pbp : E/\langle \rb \rangle \rightarrow E/\langle \rb,\cyr \rangle$ or $\prp : E/\langle \cyr \rangle \rightarrow E/\langle \cyr,\rb \rangle$
+	\State Compute the isogeny $\pbp : E/\langle \rb \rangle \rightarrow E/\langle \rb,\cyr \rangle$
 	\State $(E_{1},E_{2}) \gets (E/\langle \cyr \rangle, E/\langle \cyr,\rb \rangle)$
 	\State $com_{i} \gets (E_{1}, E_{2})$
 	\State $ch_{i,0} \gets_{R} \{0,1\}$
+	\State $ch_{i,1} \gets 1 - ch_{i,0}$
 	\State $(resp_{i,0}, resp_{i,1}) \gets ((\cyr,\pb(\cyr)), \pr(\rb))$
 	\If{$\texttt{ch}_{i,0} = 1$}
 		\State \textbf{Swap($resp_{i,0}$,$resp_{i,1}$)}
@@ -752,6 +753,7 @@ If we write out \textbf{Sign()} using the $\Pi_{\text{SIDH}}$ API, we see that t
 	\State $(E_{1},E_{2}) \gets (E/\langle \cyr \rangle, E/\langle \rb,\cyr \rangle)$
 	\State $com_{i} \gets (E_{1}, E_{2})$
 	\State $ch_{i,0} \gets_{R} \{0,1\}$
+	\State $ch_{i,1} \gets 1 - ch_{i,0}$
 	\State $(resp_{i,0}, resp_{i,1}) \gets ((\cyr,\pb(\cyr)), \pr(\rb))$
 	\If{$\texttt{ch}_{i,0} = 1$}
 		\State \textbf{Swap($resp_{i,0}$,$resp_{i,1}$)}
@@ -772,16 +774,17 @@ If we write out \textbf{Sign()} using the $\Pi_{\text{SIDH}}$ API, we see that t
 \begin{algorithm}[H]
 \caption{-- \textbf{Verify($pk = \pb$, $m$, $\sigma$)}}\label{euclid}
 \begin{algorithmic}[1]
+\State Parse $((com_i)_i, (ch_{i,j})_{i,j}, (h_{i,j})_{i,j}, (resp_{i})_{i}) \gets \sigma$
 \State $J_{1} \parallel ... \parallel J_{2\lambda} \gets$ \textbf{H($\pb$, $m$, $(com_{i})_{i}$,$(ch_{i,j})_{i,j}$,$(h_{i,j})_{i,j}$)}
 \For{\texttt{i = 0..2$\lambda$}}
-	\State \textbf{check} $h_{i,J_{i}} = G(resp_{i,J_{i}})$
+	\State \textbf{check} $h_{i,J_{i}} = G(resp_{i})$
 	\If{$ch_{i,J_{i}} = 0$}
-		\State Parse $(\cyr,\pb(\cyr)) \gets resp_{i,J_{i}}$
+		\State Parse $(\cyr,\pb(\cyr)) \gets resp_{i}$
 		\State \textbf{check} $(\cyr, \pb(\cyr))$ have order $\laea$
 		\State \textbf{check} $\cyr$ generates the kernel of the isogeny $E \rightarrow E_{1}$
 		\State \textbf{check} $\pb(\cyr)$ generates the kernel of the isogeny $E/\langle \rb \rangle \rightarrow E_{2}$
 	\Else
-		\State Parse $\pr(\rb) \gets resp_{i,J_{i}}$
+		\State Parse $\pr(\rb) \gets resp_{i}$
 		\State \textbf{check} $\pr(\rb)$ has order $\lbeb$
 		\State \textbf{check} $\pr(\rb)$ generates the kernel of the isogeny $E_{1} \rightarrow E_{2}$
 	\EndIf
