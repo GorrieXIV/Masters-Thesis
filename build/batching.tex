@@ -1,4 +1,5 @@
 \chapter{Batching Operations for Isogenies}
+\label{sec:batching}
 
 Our first contribution to the \sidh codebase is the implementation and integration of a procedure for batching together many $\mathbb{F}_{p^2}$ element inversions. This contribution is discussed in detail in the following chapter. The chapter is split into three sections: a high-level discussion of the procedure itself, the low-level details of its integration into \sidh, and finally, the resulting affects of this procedure on the performance of \sidh. 
 
@@ -343,9 +344,40 @@ We now use these results to compare \textbf{PartialBatchedInv}, \textbf{PartialB
 \section{Implementation Details}
 \label{sec:pbinvimplementation}
 
-We will now take the work of the previous section and explain in detail how it can be applied to the Yoo et al. signature layer of \sidh. We begin first by transcribing \textbf{PartialBatchedInversion} to its programmatic variant, \code{pb\_inv}. In the subsections to come, we offer explainations for some of the design choices made in the implementation of \code{pb\_inv}, both at a micro level (algorithmic details of the procedure) and a macro level (specifics of implementation within \sidh).
+We will now take the work of the previous subsection and explain in detail how it can be applied to the Yoo et al. signature layer of \sidh. We will begin by exploring potential bottlenecks in the protocols performance, specifically in search of execution paths in the codebase where batching inversions could offer a performance increase. We will discuss properties of the signature scheme that can be leveraged to optimize the performance increases offered by \textbf{PartialBatchedInv}.
 
-With Algorithm \ref{alg:pbinvcode} we provide an explicit C definition for the function \code{pb\_inv}. For descriptions of the functions called in this procedure, the reader can refer to section \ref{subsec:functions}. For explicit definitions of some of these functions, the reader can refer to appendix [insert appendix].
+After this breif mapping of \sidh, we move into the lower-level details of our procedures implementation. We transcribe \textbf{PartialBatchedInversion} to its C variant, \code{pb\_inv}, which is defined almost entirely by means of the \sidh API. We will discuss some design specifics of \code{pb\_inv}, and look breifly at the security of the function with respect to the signature scheme.
+
+We round off this subsection with a discussion of other possible ways in which \code{pb\_inv} (and operation batching in general) can offer performance improvements to the Yoo et al. signature scheme. This discussion is continued in the final Chapter of this dissertation, in Section \ref{sec:morebatch}. 
+
+\subsection{Parallelizing Signatures}
+
+Because every $2\lambda$ iteration of the \textbf{Sign} and \textbf{Verify} procedures are entirely independent of each other, these functions present themselves as embarrassingly parallel.\footnote{in the field of high performance computing, a problem that is trivially parallizable is often referred to as \emph{embarrassingly} parallizable.} 
+
+Recall from section \ref{subsec:sigcode} the table of functions that can be found in \code{SIDH\_signature}. \code{isogey\_sign} acts as the entry point for \code{Sign} and spawns a POSIX thread for every instance of the for-loop; each one calling \code{sign\_thread} which performs \bob's interaction with \randall. Verification proceeds analogously; \code{isogeny\_verify} is executed and spawns a POSIX threads executing \code{verify\_thread} until all $2\lambda$ iterations are complete.
+
+This parallelization of the signature scheme was the approach taken by Yoo et al. in their original implementation. It also lends itself rather nicely\\
+
+\noindent
+\code{inv\_4\_way}.\\
+
+\noindent
+\code{j\_inv}.\\
+
+\begin{figure}[htb]
+\centering
+\includegraphics[scale=0.5]{signandverifycall} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
+\caption{<Caption here>}
+\label{fig:label} % insert suitable label, this is used to refer to a fig from within the text as shown above
+\end{figure}
+
+Because the work of Yoo et al. was built on top of the original Microsoft SIDH library, all underlying field arithmetic (and as such, pointwise arithmetic) is performed in projective space using Montgomery representation. As was mentioned in the previous chapter, doing such allows us to avoid a great deal of field element inversions. We simply convert to Montgomery representation at the beginning of heavy arithmetic, perform the desired operations, and then convert back to standard representation when complete. Throughout the codebase, (most noticeably in \code{kex.c}) we can see an analogous approach taken in for pointwise arithmetic, by first converting to a projective space representation, performing operations, and then converting back to affine coordinates. 
+
+The downside of this (for our work) is that the number opportunities for implementing the batched inversion algorithm becomes greatly limited.\\
+
+\subsection{Implementation \& Design Decisions}
+
+With Algorithm \ref{alg:pbinvcode} we provide an explicit C definition for the function \code{pb\_inv}. For descriptions of the functions called in this procedure, the reader can refer to section \ref{subsec:functions}. For explicit definitions of some of these functions, the reader can refer to Appendix \ref{app:functions}.
 
 \begin{algorithm}
 \caption{-- \code{pb\_inv}}\label{alg:pbinvcode}
@@ -379,35 +411,6 @@ With Algorithm \ref{alg:pbinvcode} we provide an explicit C definition for the f
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
-
-\subsection{Parallelizing Signatures}
-
-Because every $2\lambda$ iteration of the \textbf{Sign} and \textbf{Verify} procedures are entirely independent of each other, these functions present themselves as embarrassingly parallel.\footnote{in the field of high performance computing, a problem that is trivially parallizable is often referred to as \emph{embarrassingly} parallizable.} 
-
-Recall from section \ref{subsec:sigcode} the table of functions that can be found in \code{SIDH\_signature}. \code{isogey\_sign} acts as the entry point for \code{Sign} and spawns a POSIX thread for every instance of the for-loop; each one calling \code{sign\_thread} which performs \bob's interaction with \randall. Verification proceeds analogously; \code{isogeny\_verify} is executed and spawns a POSIX threads executing \code{verify\_thread} until all $2\lambda$ iterations are complete.
-
-This parallelization of the signature scheme was the approach taken by Yoo et al. in their original implementation. It also lends itself rather nicely\\
-
-\noindent
-\code{inv\_4\_way}.\\
-
-\noindent
-\code{j\_inv}.\\
-
-\begin{figure}[htb]
-\centering
-\includegraphics[scale=0.5]{signandverifycall} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
-\caption{<Caption here>}
-\label{fig:label} % insert suitable label, this is used to refer to a fig from within the text as shown above
-\end{figure}
-
-\subsection{Applicability to \sidh}
-
-Because the work of Yoo et al. was built on top of the original Microsoft SIDH library, all underlying field arithmetic (and as such, pointwise arithmetic) is performed in projective space using Montgomery representation. As was mentioned in the previous chapter, doing such allows us to avoid a great deal of field element inversions. We simply convert to Montgomery representation at the beginning of heavy arithmetic, perform the desired operations, and then convert back to standard representation when complete. Throughout the codebase, (most noticeably in \code{kex.c}) we can see an analogous approach taken in for pointwise arithmetic, by first converting to a projective space representation, performing operations, and then converting back to affine coordinates. 
-
- The downside of this (for our work) is that the number opportunities for implementing the batched inversion algorithm becomes greatly limited.\\
-
-\subsection{Security Concerns}
 
 Recall the notion of a general side-channel attack: A side-channel attack is performed when an unauthorized individual is able to acquire information by measuring properties of the physical implementation of the system at hand. This can be done by analyzing the power consumption, timing properties, or electromagnetic leaks of a CPU while it operates on (or generates) confidential information.
 

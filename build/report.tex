@@ -29,10 +29,11 @@
 \usepackage{tcolorbox}
 \usepackage{xspace}
 \usepackage{enumitem}
+\usepackage[toc,page]{appendix}
 
 %for editing purposes
-\usepackage{setspace}
-\doublespacing
+%\usepackage{setspace}
+%\doublespacing
 %%%%%%%%%%%%%%%%%%%%
 
 \usepackage[bookmarks, colorlinks=false, pdfborder={0 0 0}, pdftitle={title goes here}, pdfauthor={Robert W.V. Gorrie}, pdfsubject={<subject here>}, pdfkeywords={<keywords here>}]{hyperref} %for creating links in the pdf version and other additional pdf attributes, no effect on the printed document
@@ -132,12 +133,15 @@
 \newpage
 \pagenumbering{arabic} %reset numbering to normal for the main content
 
+\input{acknow}
 \input{introduction} %literature survey included in this
 \input{background}
 \input{batching}
 \input{compression}
 \input{conclusion}
-\input{acknow}
+\begin{appendices}
+	\input{appendA}
+\end{appendices}
 \input{ref}
 
 \end{document}

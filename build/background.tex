@@ -97,26 +97,58 @@ The security goal typical of a key exchange protocol is that an adversary with a
 
 \subsection{Interactive Identification Schemes}
 
-Imagine Alice wishes to confirm the identity of Bob. The idea behind interactive identification protocols is to offer Bob some way of proving to Alice (or anyone) that he has knowledge of some secret which \textbf{only} Bob could possess. The goal, of course, being to accomplish this without openly revealing the secret, so that it can continue to be used as an identifier for Bob. 
+Imagine Alice wishes to confirm the identity of Bob. The motivation for interactive identification schemes is to provide Bob with some mechanism for proving to Alice (or any other party) that he has knowledge of some secret which \textbf{only} Bob could possess. The goal, of course, being to accomplish this without openly revealing the secret, so that it can continue to be used as an identifier for Bob. 
 
-An identification scheme (or otherwise ``proof of identity") $\Pi_{id}$ is composed of by the tuple of polynomial-time algorithms (\textbf{KeyGen}, \textbf{Prove}, \textbf{Verify}). $\Pi_{id}$ is an interactive protocol, wherein the \emph{prover} (Bob, for example) 
-executes \textbf{Prove} and the \emph{verifier} (Alice) executes \textbf{Verify}.
+An identification scheme (or otherwise ``proof of identity" protocol) $\Pi_{id}$ is composed of by the tuple of polynomial-time algorithms (\textbf{KeyGen}, \textbf{Commit}, \textbf{Prove}, \textbf{Verify}) and some set $\omega$. $\Pi_{id}$ is an interactive protocol requiring two parties. The \emph{prover} (Bob, for example) executes \textbf{KeyGen}, \textbf{Commit}, and \textbf{Prove}. The \emph{verifier} (Alice, in our example) executes \textbf{Verify} following Bob's actions. 
 
-Execution of $\Pi_{id}$ between Alice and Bob involves the following:
+Execution of $\Pi_{id}$ between Alice and Bob proceeds as follows:
 \begin{enumerate}[label=(\roman*)]
-\item Bob runs \textbf{KeyGen($1^\lambda)$}: A probabilistic algorithm with input $1^\lambda$ and output $(sk,pk)$. 
-\item Bob sends to Alice his public key $pk$ and a probabilistically generated initial commitment $com$. Alice will respond with a \emph{challenge} value $ch$.
-\item Bob runs \textbf{Prove($sk$, $com$, $ch$)}: A deterministic algorithm with input $sk$ (Bob's secret key) and $ch$ (challenge) and output $resp$.
-\item Alice runs \textbf{Verify($pk$, $com$, $ch$, $resp$)}: A deterministic algorithm with input $pk$ (Bob's public key), $com$, $ch$, and $resp$ and output $b \in {0,1}$. Bob has successfully proven his identity to Alice if $b = 1$.
+\item Bob runs \textbf{KeyGen($1^\lambda)$}: A probabilistic algorithm with input $1^\lambda$ and outputs Bob's keypair $(sk,pk)$. Bob sends his public key $pk$ to Alice.
+\item Bob runs \textbf{Commit()}: a probabilistic algorithm with output $com$. $com$ is referred to as a ``commitment". Bob sends $com$ to Alice.
+\item Alice sends a randomly generated ``challenge" value $ch \in \omega$. Alice sends $ch$ to Bob. 
+\item Bob runs \textbf{Prove($sk$, $com$, $ch$)}: A deterministic algorithm with input $sk$ and $ch$, and output $resp$. $resp$ is the ``response" to Alice's challenge.
+\item Alice runs \textbf{Verify($pk$, $com$, $ch$, $resp$)}: A deterministic algorithm with input $pk$, $com$, $ch$, and $resp$, and output $b \in {0,1}$. Bob has successfully proven his identity to Alice if $b = 1$.
 \end{enumerate}
+
+\begin{figure}[!h]
+\begin{center}
+\begin{tikzpicture}
+  % Alice
+  \node[draw] (prover) at (-2,0) {$\mathcal{P}$}; 
+  \draw[thick] (prover) -- ++(0, -5);
+    
+  % Calculations of Alice
+  \node[draw=none,fill=none,anchor=east] (asecret) at ($(prover) + (0,-1)$) {$a \in_{R} \{2,\dots,p-2\}$};
+  \node[draw=none,fill=none,anchor=east] (Apublic) at ($(prover) + (0,-2)$) {$A = g^{a} \bmod{p}$};
+  \node[draw=none,fill=none,anchor=east] (akey) at ($(prover) + (0,-4)$) {$k = (B)^{a} = g^{ba}$};
+    
+  % Bob
+  \node[draw] (verifier) at (2,0) {$\mathcal{V}$}; 
+  \draw[thick] (verifier) -- ++(0, -5);
+   
+  % Calculations of Bob
+  \node[draw=none,fill=none,anchor=west] (bsecret) at ($(verifier) + (0,-1)$) {$b \in_{R} \{2,\dots,p-2\}$};
+  \node[draw=none,fill=none,anchor=west] (Bpublic) at ($(verifier) + (0,-2)$) {$B = g^{b} \bmod{p}$};
+  \node[draw=none,fill=none,anchor=west] (bkey) at ($(verifier) + (0,-4)$) {$k = (A)^{b} = g^{ab}$};
+   
+  % Messages
+  \draw[->,thick] ($(prover)+(0,-2)$) -- ($(verifier)+(0,-2.5)$) node [pos=0.5,above,font=\footnotesize] {$pk, com$};
+  \draw[->,thick] ($(verifier)+(0,-3)$) -- ($(prover)+(0,-3.5)$) node [pos=0.5,above,font=\footnotesize] {$ch$};
+  \draw[->,thick] ($(prover)+(0,-4)$) -- ($(verifier)+(0,-4.5)$) node [pos=0.5,above,font=\footnotesize] {$resp$};
+    
+\end{tikzpicture}
+\end{center}
+\caption{A general interactive identification scheme with prover $\mathcal{P}$ and verifier $\mathcal{V}$.}
+\label{fig:piid}
+\end{figure}
 
 If Alice accepts Bob's response, and $b = 1$, then we refer to the tuple $(com,ch,resp)$ as an \emph{accepting transcript}. In terms of security, it is common to show that an identification scheme is secure against \emph{impersonation} under a \emph{passive attack}. Proving such security implies that an adversary who eavesdrops on arbitrarily many executions of $\Pi_{id}$ between a verifier $\mathcal{V}$ and a prover $\mathcal{P}$ cannot successfully impersonate $\mathcal{V}$.
 
 We may at times speak of \emph{canonical} identification schemes. An identification scheme $\Pi$ occuring between a prover $\mathcal{P}$ and a verifier $\mathcal{V}$ is labelled canonical if it satisfies all of the following constraints:
 \begin{itemize}
-\item $\Pi$ consists of an initial message (or ``commitment") $comm$ sent by $\mathcal{P}$, a challenge $ch$ sent by $\mathcal{V}$, and a final response $resp$ sent by $\mathcal{P}$.
+\item $\Pi$ consists of an initial message (or ``commitment") $com$ sent by $\mathcal{P}$, a challenge $ch$ sent by $\mathcal{V}$, and a final response $resp$ sent by $\mathcal{P}$.
 \item $ch$ is chosen uniformly at random from some set $\omega$.
-\item $comm$ is generated by some probabilistic function \textbf{R} taking $\mathcal{P}$'s secret key as input. For any secret key $sk$ and fixed string $\bar{comm}$, the probability that \textbf{R($sk$)} $= \bar{comm}$ is negligible. 
+\item $com$ is generated by some probabilistic function \textbf{R} taking $\mathcal{P}$'s secret key as input. For any secret key $sk$ and fixed string $\bar{com}$, the probability that \textbf{R($sk$)} $= \bar{com}$ is negligible. 
 \end{itemize}
 
 These constraints gurantee that $\Pi$ will have two important features. First, that any third party given the transcript and prover's public key can efficiently determine whether the verifier will accept. Second, that the probability that $comm$ repeats in polynomially many executions of $\Pi$ is negligible.  
@@ -450,7 +482,7 @@ $$
 
 \subsection{SIDH Key Exchange}
 
-This subsection will illustrate an SIDH key exchange run between party members \textcolor{blue}{Alice} and \textcolor{red}{Bob}. The general idea of the protocol can be surmised by the diagram below. In the scheme, \textbf{private keys} take the form of isogenies defined with domain $E$, and \textbf{public keys} are the associated co-domain curve of said isogenies.\cite{djp} For the entirety of this section we will denote isogenies by their function symbols, but when we come section \ref{sec:implementations} to  will show how we can efficiently represent isogenies in a computational environment.
+This subsection will illustrate an SIDH key exchange run between party members \textcolor{blue}{Alice} and \textcolor{red}{Bob}. The general idea of the protocol is summerized in the diagram below. In the scheme, \textbf{private keys} take the form of isogenies defined with domain $E$, and \textbf{public keys} are the associated co-domain curve of said isogenies.\cite{djp} For the entirety of this section we will denote isogenies by their function symbols, but when we come section \ref{sec:implementations} to  will show how we can efficiently represent isogenies in a computational environment.
 
 \begin{center}
 \begin{tikzpicture}
@@ -479,7 +511,7 @@ $\pb(E_0/\langle \ba \rangle)$.
 From these isogenies, \alice and \bob arrive at their shared secret agreement: the mutual codomain curve of $\pa(E_0/\langle \rb \rangle)$ and $\pb(E_0/\langle \ba \rangle)$, denoted $E_{\ba\rb}$.\\
 
 \noindent
-Below we've outlined the SIDH key exchange protocol $\Pi_{\text{SIDH}}$ = (\textbf{KeyGen}, \textbf{SecAgr}) in a descriptive manner. We do not provide algorithmic definitions for these procedures, but C code corresponding to their implementations in \sidh can be found in Appendix [include appendix].\\
+Below we've outlined the SIDH key exchange protocol $\Pi_{\text{SIDH}}$ = (\textbf{KeyGen}, \textbf{SecAgr}) in a descriptive manner. We do not provide algorithmic definitions for all of these procedures, but algorithmic details for some of these are covered partly in Sections \ref{sec:implementations} and \ref{sec:pbinvimplementation}. C code for functions that are not covered in these Sections but are noneless relevant can be found in Appendix \ref{app:functions}.\\
 
 \noindent
 \textbf{KeyGen($\lambda$)}: \textcolor{blue}{Alice} chooses two random numbers $\ma, \na \in \mathbb{Z}/\laea\mathbb{Z}$ such that $(\la \nmid \ma) \lor (\la \nmid \na)$. \textcolor{blue}{Alice} then computes the isogeny $\pa: E_0 \rightarrow E_{\ba}$ where $E_{\ba} = E_0 / \langle [\ma]\genpa, [\na]\genqa\rangle$ (equivalently, $ker(\pa) = \langle [\ma]\genpa, [\na]\genqa\rangle$). \bob does the same for random elements $\mb, \nb \in \mathbb{Z}/\lbeb\mathbb{Z}$.
@@ -667,6 +699,7 @@ Similar to above, we will write $\textbf{Un}(\Pi)$ to denote the result of apply
 \end{algorithm}
 
 \section{Isogeny Based Signatures}
+\label{sec:sigsbackground}
 
 Since publication of the SIDH suite, there have been several attempts at providing authentication schemes using the same primitives. The post-quantum community had demonstrated undeniable signatures \cite{jvsig}, designated verifier signatures \cite{sunsig}, and undeniable blind signatures \cite{seshsig} all within the framework of isogeny based systems. It was not until the work of Yoo et al. ((\cite{yoo})), however, that an isogeny based protocol for general authentication was shown as demonstrably secure. This protocol, particularly its C implementation, is where we have decided to focus our efforts.
 
@@ -806,6 +839,7 @@ These observations are formalized in Algorithm 6, where we rewrite $\Sigma'$:\te
 \begin{algorithm}[H]
 \caption{-- \textbf{Verify($pk = \pb$, $m$, $\sigma$)} via $\Pi_{\text{SIDH}}$}\label{euclid}
 \begin{algorithmic}[1]
+\State Parse $((com_i)_i, (ch_{i,j})_{i,j}, (h_{i,j})_{i,j}, (resp_{i})_{i}) \gets \sigma$
 \State $J_{1} \parallel ... \parallel J_{2\lambda} \gets$ \textbf{H($\pb$, $m$, $(com_{i})_{i}$,$(ch_{i,j})_{i,j}$,$(h_{i,j})_{i,j}$)}
 \For{\texttt{i = 0..2$\lambda$}}
 	\State \textbf{check} $h_{i,J_{i}} = G(resp_{i,J_{i}})$
@@ -834,7 +868,7 @@ Having now introduced all of the background material necessary for understanding
 
 The SIDH C library, written by a research team at Microsoft Research, was released in 2016 alongside an article titled \emph{Efficient Algorithms for Supersingular Isogeny Diffie-Hellman} (see \cite{effalg}). The article in question details several adjustments to the algorithms and data-representations outlined in \cite{djp}, leading to improved performance and key-sizes. Their C implementation (which we will henceforth refer to as \sidh) is built on top of these improved algorithms and tailored to a specific set of parameters, all-in-all offering 128-bit quantum security and 192-bit classical security key exchange up to 2.9 times faster than any previous implementation. We will look at some of the details of \sidh below. 
 
-Before proceeding, it may be advisable to briefly overview the section on notation (\ref{sub:notation}) if one has not already.
+Before proceeding, it may be advisable to briefly review the section on notation (\ref{sub:notation}) if one has not already.
 
 \subsection{Parameters \& Data Representation}
 
@@ -864,12 +898,12 @@ $$
 	\item \code{point\_basefield\_proj} -- an \code{felm\_t} \code{X} and an \code{felm\_t} \code{Z} representing a point as projective XZ Montgomery coordinates over the base field.
 \end{itemize}
 
-\emph{Crypto structures}
+\emph{Cryptographic structures}
 \begin{itemize}
 	\item \code{publickey\_t} -- three \code{f2elm\_t}s representing a public key.\\
-	\code{publickey\_t[0]} = users private isogeny applied to the other parties generator $P_x$\\
-	\code{publickey\_t[1]} = users private isogeny applied to the other parties generator $Q_x$\\
-	\code{publickey\_t[2]} = users private isogeny applied $P_x - Q_x$
+	\code{publickey\_t[0]} = user's private isogeny applied to the other party's generator $P_x$\\
+	\code{publickey\_t[1]} = user's private isogeny applied to the other party's generator $Q_x$\\
+	\code{publickey\_t[2]} = user's private isogeny applied to $P_x - Q_x$
 \end{itemize}
 
 \emph{Curve structures}
@@ -878,12 +912,12 @@ $$
 	\item \code{CurveIsogenyStaticData} -- The same as \code{CurveIsogenyStruct}, but with buffer sizes fixed for \code{SIDHp751}.
 \end{itemize}
 
-The reader may note that \code{publickey\_t} does not contain any information defining the users co-domain curve $E/\langle S \rangle$ (with $S$ as the users secret key). It just so happens that in $\Pi_{\text{SIDH}}$ key exchange, the curves $E/\langle \ba \rangle$ and $E/\langle \rb \rangle$ are simply intermediary steps (useful for conceptualizing the protocol) and not necessary for computing the shared secret $j(E_{\ba\rb})$.
+The reader may note that \code{publickey\_t} does not contain any information defining the user's co-domain curve $E/\langle S \rangle$ (with $S$ as the users secret key). It just so happens that in $\Pi_{\text{SIDH}}$ key exchange, the curves $E/\langle \ba \rangle$ and $E/\langle \rb \rangle$ are simply intermediary steps (useful for conceptualizing the protocol) and not necessary for computing the shared secret $j(E_{\ba\rb})$.
 
 \subsection{Design Decisions}
 
 \noindent
-\emph{Projective Space}. As is common in ECC, a vast majority of the procedures of \sidh operate over the \emph{projective space}(\ref{snip:projspace}) representation of elliptic curve points. This widely-deployed technique is used to avoid the substantial cost of field element inversions (computing $x^{-1}$ for some element $x \in \mathbb{F}_{p^2}$). This means the majority of our calculations are performed over \code{point\_proj} structures using \emph{montgomery arithmetic}(\ref{snip:montgomery}) and converted to \code{point\_affine} when necessary. This general design strategy is highly related to our first contribution, which will be elaborated upon in the sections to come.\\
+\emph{Projective Space}. As is common in ECC, a vast majority of the procedures of \sidh operate over the \emph{projective space} (Section \ref{snip:projspace}) representation of elliptic curve points. This widely-deployed technique is used to avoid the substantial cost of field element inversions (computing $x^{-1}$ for some element $x \in \mathbb{F}_{p^2}$). This means the majority of our calculations are performed over \code{point\_proj} structures using \emph{Montgomery arithmetic} (Section \ref{snip:montgomery}) and converted to \code{point\_affine} when necessary. This general design strategy is highly related to our first contribution, which will be elaborated upon in Section \ref{sec:batching}.\\
 
 \noindent
 \emph{Secret Keys}. Recall the origin of an $\Pi_{\text{SIDH}}$ private key $(m, n)$: the goal is to randomly select a generator of the torsion group $E[\laea]$ (or $E[\lbeb]$ for \bob). It is noted in \cite{djp} that any generator of the required torsion group is sufficient. It is also noted that $m$, unless equal to the order of the torsion group, is invertible. Because of this, \alice, for example, can simple compute $R = \genpa + [m^{-1}n]\genqa$, thus enabling secret keys to be stored as a single $\mathbb{F}_{p^2}$ element (which is referred to as $m$). This technicality has been implemented in \sidh, which both saves on storage as well as offers a means for generating secret keys that is more efficient than the trivial scalar multiplication and point-wise addition approach to computing $[m]P + [n]Q$.\\
@@ -894,7 +928,9 @@ The reader may note that \code{publickey\_t} does not contain any information de
 \subsection{Key Exchange \& Critical Functions}
 \label{subsec:functions}
 
-There are 3 central modules (C file) in \sidh, all dealing with different levels of abstraction in the $\Pi_{\text{SIDH}}$ protocol. Operating at the lowest abstraction level is the module \code{fpx.c}, wherein functions for manipulating $\mathbb{F}_{p}$ and $\mathbb{F}_{p^2}$ elements are defined. One level up from \code{fpx.c} we have \code{ec\_isogeny.c}, containing functions pertaining to elliptic curves and point arithmetic (such as \code{j\_inv(...)} for computing the j-invariant of a curve and \code{secret\_pt(...)} for computing a users secret point $S$ given their private key $m$). The final, highest abstraction-level module we will discuss is \code{kex.c}. \code{kex.c} contains the protocol-level functions for performing $\Pi_{\text{SIDH}}$, namely \code{KeyGeneration\_A(...)} and \code{KeyGeneration\_B(...)} for generating \alice and \bob's private and public keys, as well as \code{SecretAgreement\_A(...)} and \code{SecretAgreement\_B(...)} for completing the secret agreement from both sides of the key exchange. Figure \ref{fig:halfmap} illustrates the relationship between these modules and the abstraction levels of isogeny based key exchange.
+There are 3 central modules (C file) in \sidh, all dealing with different levels of abstraction in the $\Pi_{\text{SIDH}}$ protocol.  Figure \ref{fig:halfmap} illustrates the relationship between these modules and the abstraction levels of isogeny based key exchange. 
+
+Operating at the lowest abstraction level is the module \code{fpx.c}, wherein functions for manipulating $\mathbb{F}_{p}$ and $\mathbb{F}_{p^2}$ elements are defined. One level up from \code{fpx.c} we have \code{ec\_isogeny.c}, containing functions pertaining to elliptic curves and point arithmetic (such as \code{j\_inv(...)} for computing the j-invariant of a curve and \code{secret\_pt(...)} for computing a users secret point $S$ given their private key $m$). The final, highest abstraction-level module we will discuss is \code{kex.c}. \code{kex.c} contains the protocol-level functions for performing $\Pi_{\text{SIDH}}$, namely \code{KeyGeneration\_A(...)} and \code{KeyGeneration\_B(...)} for generating \alice and \bob's private and public keys, as well as \code{SecretAgreement\_A(...)} and \code{SecretAgreement\_B(...)} for completing the secret agreement from both sides of the key exchange.
 
 \begin{figure}[!htb]
 \centering
@@ -905,10 +941,11 @@ There are 3 central modules (C file) in \sidh, all dealing with different levels
 
 The estbalished notation for functions in \code{fpx.c} is to prepend function names with either \code{fp} or \code{fp2} to signify if it is defined for elements of $\mathbb{F}_{p}$ or $\mathbb{F}_{p^2}$. Additionally, it is common to append \code{\_mont} to the name of functions which are defined using Montgomery arithmetic. Functions in \code{fpx.c} are largely defined by byte and memory arithmetic, with the exception of slightly higher-level functions such as field element inversion (\code{fpinv751\_mont(...)}) which are defined in terms of other \code{fpx.c} functions. Furthermore, for efficiency, functions of \code{fpx.c} are defined as \code{\_\_inline} when applicable.
 
-\code{ec\_isogeny.c} functions are defined almost exclusively in terms of \code{fpx.c} functions, with a few occurances of internal function calling. Functions in this module that are signifant to our our work are briefly surmised in figure \ref{fig:funcs}. The implementation specifics of most other \code{ec\_isogeny.c} functions are not critical to our work, and so have been excluded. The design and efficiency of these algorithms do, however, have a rich background and can be further read about in \cite{djp} and \cite{effalg}.
+\code{ec\_isogeny.c} functions are defined almost exclusively in terms of \code{fpx.c} functions, with a few occurances of internal function calling. Functions in this module that are signifant to our our work are briefly summerized in Figure \ref{fig:ecfuncs}. The implementation specifics of most other \code{ec\_isogeny.c} functions are not critical to our work, and so have been excluded. The design and efficiency of these algorithms do, however, have a rich background and can be further read about in \cite{djp} and \cite{effalg}.
 
 The key exchange procedures found in \code{kex.c} are composed entirely of calls to \code{fpx.c} and \code{ec\_isogeny.c} functions, modulo some basic branching logic.
 
+\begin{figure}
 \begin{center}
 \code{fpx.c} functions\\
 \begin{tabular}{|c|c|c|}
@@ -936,7 +973,10 @@ The key exchange procedures found in \code{kex.c} are composed entirely of calls
 	\bottomrule
 \end{tabular}
 \end{center}
+\label{fig:fpfuncs}
+\end{figure}
 
+\begin{figure}
 \begin{center}
 \code{ec\_isogeny.c} functions\\
 \begin{tabular}{|c|c|c|}
@@ -972,7 +1012,10 @@ The key exchange procedures found in \code{kex.c} are composed entirely of calls
 	\bottomrule
 \end{tabular}
 \end{center}
+\label{fig:ecfuncs}
+\end{figure}
 
+\begin{figure}
 \begin{center}
 \code{kex.c} functions\\
 \begin{tabular}{|c|c|c|}
@@ -997,13 +1040,15 @@ The key exchange procedures found in \code{kex.c} are composed entirely of calls
 	\bottomrule
 \end{tabular}
 \end{center}
+\label{fig:kexfuncs}
+\end{figure}
 
 The reader may note that \code{privateKeyA} (in \code{KeyGeneration\_A}) and \code{kerngen} (in both secret agreements) appear as both inputs and outputs. This is no mistake. In \code{KeyGeneration\_A}, if \code{generateRandom = false} is passed as an input, then \code{privateKeyA} is expected to be set, and the corresponding public key is computed. In secret agreement, if \code{kerngen} is set to null then the algorithm proceeds normally. If it is set to a valid point, however, it can be used in place of a secret key input (which in such a case is expected to be null). Both of these details are critical to the design of signature functions as they are described below.
 
 \subsection{Signature Layer}
 \label{subsec:sigcode}
 
-Yoo et al. provided, along with their publication of \cite{yoo}, an implementation of their signature scheme as a fork to \sidh. All of their functions are written specifically for an instance of $\Sigma'$ where the signer is assuming the \rb role (meaning that \randall assumes the \ba role), but their algorithms could be trivially modified to provide versions supporting a signer in the \ba role. Their contributions to the \sidh codebase come in the form of the functions listed below -- their relation to the rest of \sidh is illustrated in figure \ref{fig:fullmap}.
+Yoo et al. provided, along with their publication of \cite{yoo}, an implementation of their signature scheme as a fork to \sidh. All of their functions are written specifically for an instance of $\Sigma'$ where the signer is assuming the \rb role (meaning that \randall assumes the \ba role), but their algorithms could be trivially modified to provide versions supporting a signer in the \ba role. Their contributions to the \sidh codebase come in the form of the functions listed below -- their relation to the rest of \sidh is illustrated in Figure \ref{fig:fullmap}.
 
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
@@ -1040,14 +1085,14 @@ In their original fork of \sidh, Yoo et al. included these functions in the file
 \begin{figure}[htp]
 \centering
 \includegraphics[scale=0.7]{fullmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
-\caption{Relationship between SIDH based signatures \& Our fork of the SIDH C library}
+\caption{Relationship between SIDH based signatures \& the Yoo et al. fork of the SIDH C library}
 \label{fig:fullmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
 \end{figure}
 
-If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Verify} as described in section 2.5 to the language of the \sidh API, we have in essense the following:\\
+If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Verify} (as described in Section \ref{subsec:sigsbackground}) to the language of the \sidh API, we have in essence the procedures \code{Sign} and \code{Verify} given by Algorithms \ref{alg:signcode} and \ref{alg:verifcode} respectively.\\
 
 \begin{algorithm}
-\caption{-- \code{Sign($sk_{\rb}$, $m$)}}\label{alg:signmath}
+\caption{-- \code{Sign($sk_{\rb}$, $m$)}}\label{alg:signcode}
 \begin{algorithmic}[1]
 \For{\texttt{i = 1..2$\lambda$}}
 	\State $(sk_{\cyr} = \cyr, pk_{\cyr}) \gets \code{KeyGeneration\_A(\code{NULL}, \code{true})}$
@@ -1065,7 +1110,7 @@ If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Ve
 \end{algorithm}
 
 \begin{algorithm}[H]
-\caption{-- \code{Verify($pk = \pb$, $m$, $\sigma$)}}\label{alg:verifmath}
+\caption{-- \code{Verify($pk = \pb$, $m$, $\sigma$)}}\label{alg:verifcode}
 \begin{algorithmic}[1]
 \State $J_{1} \parallel ... \parallel J_{2\lambda} \gets$ \code{keccak(com, $m$, $h$)}
 \For{\texttt{i = 0..2$\lambda$}}
@@ -1092,6 +1137,6 @@ If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Ve
 \end{algorithmic}
 \end{algorithm}
 
-Outside of simply replacing $\Pi_{\text{SIDH}}'$ procedure calls with \sidh functions, the reader may notice additional differences between \code{Sign} and \code{Verify} and their $\Sigma'$ counterparts. Namely, Yoo et al. have chosen to exclude the challenge bit $ch$ in the \sidh implementations of these functions, consequently excluding the conditional and \textbf{Swap} statement of lines 8 and 9 in algorithm 4. 
+Outside of simply replacing $\Pi_{\text{SIDH}}'$ procedure calls with \sidh functions, the reader may notice additional differences between \code{Sign} and \code{Verify} and their $\Sigma'$ counterparts. Namely, Yoo et al. have chosen to exclude the challenge bit $ch$ in the \sidh implementations of these functions, consequently excluding the conditional and \textbf{Swap} statement of lines 8 and 9 in Algorithm 4. 
 
 
