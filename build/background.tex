@@ -57,11 +57,7 @@ Execution of $\Pi_{kex}$ between Alice and Bob involves the following:
 \item Alice runs $\textbf{SecAgr}(sk_{\text{Alice}}, pk_{\text{Bob}})$: A deterministic algorithm with input $sk_{\text{Alice}}$ and $pk_{\text{Bob}}$ and output $k_{\text{Alice}} \in \{0,1\}^\lambda$. Bob runs $\textbf{SecAgr}(sk_{\text{Bob}}, pk_{\text{Alice}})$ to obtain $k_{\text{Bob}} \in \{0,1\}^\lambda$.
 \end{enumerate}
 
-$\Pi_{kex}$ is said to uphold \emph{correctness} if $k_{Alice} = k_{Bob}$ for all honestly derived keypairs $(sk_{\text{Alice}},pk_{\text{Alice}})$ and $(sk_{\text{Bob}},pk_{\text{Bob}})$. Because we deal only with correct $\Pi_{kex}$, we refer to the output of $\Pi_{kex}$ as simply $k$. Figure \ref{fig:diffiehellman} illustrates an execution of the Diffie-Hellman key exchange protocol which relies on the difficulty of the \emph{discrete logarithm} problem for its one-way function $f$.\\
-
-The security goal typical of a key exchange protocol is that an adversary with access to the session transcript (threat) cannot discern the resulting shared secret key from a randomly generated value (security guarantee).
-
-\begin{figure}[!h]
+\begin{figure}[!ht]
 \begin{center}
 \begin{tikzpicture}
   % Public parameter:
@@ -95,6 +91,11 @@ The security goal typical of a key exchange protocol is that an adversary with a
 \label{fig:diffiehellman}
 \end{figure}
 
+\noindent
+$\Pi_{kex}$ is said to uphold \emph{correctness} if $k_{Alice} = k_{Bob}$ for all honestly derived keypairs $(sk_{\text{Alice}},pk_{\text{Alice}})$ and $(sk_{\text{Bob}},pk_{\text{Bob}})$. Because we deal only with correct $\Pi_{kex}$, we refer to the output of $\Pi_{kex}$ as simply $k$. Figure \ref{fig:diffiehellman} illustrates an execution of the Diffie-Hellman key exchange protocol which relies on the difficulty of the \emph{discrete logarithm} problem for its one-way function $f$.\\
+
+The security goal typical of a key exchange protocol is that an adversary with access to the session transcript (threat) cannot discern the resulting shared secret key from a randomly generated value (security guarantee).
+
 \subsection{Interactive Identification Schemes}
 
 Imagine Alice wishes to confirm the identity of Bob. The motivation for interactive identification schemes is to provide Bob with some mechanism for proving to Alice (or any other party) that he has knowledge of some secret which \textbf{only} Bob could possess. The goal, of course, being to accomplish this without openly revealing the secret, so that it can continue to be used as an identifier for Bob. 
@@ -113,23 +114,22 @@ Execution of $\Pi_{id}$ between Alice and Bob proceeds as follows:
 \begin{figure}[!h]
 \begin{center}
 \begin{tikzpicture}
-  % Alice
+  % prover
   \node[draw] (prover) at (-2,0) {$\mathcal{P}$}; 
   \draw[thick] (prover) -- ++(0, -5);
     
-  % Calculations of Alice
-  \node[draw=none,fill=none,anchor=east] (asecret) at ($(prover) + (0,-1)$) {$a \in_{R} \{2,\dots,p-2\}$};
-  \node[draw=none,fill=none,anchor=east] (Apublic) at ($(prover) + (0,-2)$) {$A = g^{a} \bmod{p}$};
-  \node[draw=none,fill=none,anchor=east] (akey) at ($(prover) + (0,-4)$) {$k = (B)^{a} = g^{ba}$};
+  % Calculations for the prover
+  \node[draw=none,fill=none,anchor=east] (asecret) at ($(prover) + (0,-1)$) {$(sk, pk) =$ \textbf{KeyGen($1^\lambda)$}};
+  \node[draw=none,fill=none,anchor=east] (Apublic) at ($(prover) + (0,-2)$) {$com =$ \textbf{Commit()}};
+  \node[draw=none,fill=none,anchor=east] (akey) at ($(prover) + (0,-4)$) {$resp =$ \textbf{Prove($sk$, $com$, $ch$)}};
     
-  % Bob
+  % verifier
   \node[draw] (verifier) at (2,0) {$\mathcal{V}$}; 
   \draw[thick] (verifier) -- ++(0, -5);
    
-  % Calculations of Bob
-  \node[draw=none,fill=none,anchor=west] (bsecret) at ($(verifier) + (0,-1)$) {$b \in_{R} \{2,\dots,p-2\}$};
-  \node[draw=none,fill=none,anchor=west] (Bpublic) at ($(verifier) + (0,-2)$) {$B = g^{b} \bmod{p}$};
-  \node[draw=none,fill=none,anchor=west] (bkey) at ($(verifier) + (0,-4)$) {$k = (A)^{b} = g^{ab}$};
+  % Calculations for the verifier
+  \node[draw=none,fill=none,anchor=west] (Bpublic) at ($(verifier) + (0,-2.5)$) {$ch \gets_{R} \omega$};
+  \node[draw=none,fill=none,anchor=west] (bkey) at ($(verifier) + (0,-4.5)$) {$b =$ \textbf{Verify($pk$, $com$, $ch$, $resp$)}};
    
   % Messages
   \draw[->,thick] ($(prover)+(0,-2)$) -- ($(verifier)+(0,-2.5)$) node [pos=0.5,above,font=\footnotesize] {$pk, com$};
@@ -142,8 +142,11 @@ Execution of $\Pi_{id}$ between Alice and Bob proceeds as follows:
 \label{fig:piid}
 \end{figure}
 
-If Alice accepts Bob's response, and $b = 1$, then we refer to the tuple $(com,ch,resp)$ as an \emph{accepting transcript}. In terms of security, it is common to show that an identification scheme is secure against \emph{impersonation} under a \emph{passive attack}. Proving such security implies that an adversary who eavesdrops on arbitrarily many executions of $\Pi_{id}$ between a verifier $\mathcal{V}$ and a prover $\mathcal{P}$ cannot successfully impersonate $\mathcal{V}$.
+If Alice accepts Bob's response, and $b = 1$, then we refer to the tuple $(com,ch,resp)$ as an \emph{accepting transcript}. This general construction for identification protocols is illustrated in Figure \ref{fig:piid}, where the prover is referred to as $\mathcal{P}$ and $\mathcal{V}$ denotes the verifier.
 
+In terms of security, it is common to show that an identification scheme is secure against \emph{impersonation} under a \emph{passive attack}. Proving such security implies that an adversary who eavesdrops on arbitrarily many executions of $\Pi_{id}$ between a verifier $\mathcal{V}$ and a prover $\mathcal{P}$ cannot successfully impersonate $\mathcal{V}$.\\
+
+\noindent
 We may at times speak of \emph{canonical} identification schemes. An identification scheme $\Pi$ occuring between a prover $\mathcal{P}$ and a verifier $\mathcal{V}$ is labelled canonical if it satisfies all of the following constraints:
 \begin{itemize}
 \item $\Pi$ consists of an initial message (or ``commitment") $com$ sent by $\mathcal{P}$, a challenge $ch$ sent by $\mathcal{V}$, and a final response $resp$ sent by $\mathcal{P}$.
@@ -648,7 +651,7 @@ Now that we've paired $\Pi_{\text{ID}}$ with $H$ to achieve a non-interactive id
 \begin{tcolorbox}
 \begin{theorem}[Fiat-Shamir Security]
 \label{thm:fiatshamir}
-Let $\Pi_{\text{ID}} = (\textbf{KeyGen}, \textbf{Prove}, \textbf{Verify})$ be a canonical identification scheme that is secure against a passive attack. Then, if $H$ is modeled as a random oracle, the signature scheme $\Pi_{\text{ID}}'$ that results from applying the Fiat-Shamir transform to $\Pi_{\text{ID}}$ is \emph{classically} existentially unforgeable under an adaptive chosen-message attack.
+Let $\Pi_{\text{ID}} = (\textbf{KeyGen}, \textbf{Commit}, \textbf{Prove}, \textbf{Verify})$ be a canonical identification scheme that is secure against a passive attack. Then, if $H$ is modeled as a random oracle, the signature scheme $\Pi_{\text{ID}}'$ that results from applying the Fiat-Shamir transform to $\Pi_{\text{ID}}$ is \emph{classically} existentially unforgeable under an adaptive chosen-message attack.
 \end{theorem}
 \end{tcolorbox}
 
