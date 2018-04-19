@@ -9,56 +9,60 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: refs.bib.bib
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Warning--empty journal in rewinding
+Warning--empty journal in pkcomp
 Warning--empty journal in effalg
 Warning--empty journal in pairings
 Warning--empty year in pairings
+Warning--empty journal in RSAbatch
 Warning--empty journal in djp
 Warning--empty journal in jvsig
 Warning--empty journal in fsproof
 Warning--empty journal in batching
 Warning--empty journal in seshsig
+Warning--empty journal in silverman
+Warning--empty year in silverman
 Warning--empty journal in sunsig
 Warning--empty journal in unruh
 Warning--empty journal in yoo
-You've used 13 entries,
+You've used 16 entries,
             3274 wiz_defined-function locations,
-            731 strings with 6941 characters,
-and the built_in function-call counts, 5586 in all, are:
-= -- 526
-> -- 268
-< -- 5
-+ -- 82
-- -- 81
-* -- 278
-:= -- 876
-add.period$ -- 38
-call.type$ -- 13
-change.case$ -- 80
-chr.to.int$ -- 13
-cite$ -- 25
-duplicate$ -- 185
-empty$ -- 440
-format.name$ -- 97
-if$ -- 1344
+            743 strings with 7198 characters,
+and the built_in function-call counts, 6814 in all, are:
+= -- 635
+> -- 330
+< -- 7
++ -- 102
+- -- 100
+* -- 345
+:= -- 1065
+add.period$ -- 46
+call.type$ -- 16
+change.case$ -- 100
+chr.to.int$ -- 16
+cite$ -- 32
+duplicate$ -- 226
+empty$ -- 535
+format.name$ -- 120
+if$ -- 1634
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 14
-newline$ -- 68
-num.names$ -- 39
-pop$ -- 152
+missing$ -- 17
+newline$ -- 82
+num.names$ -- 48
+pop$ -- 193
 preamble$ -- 1
-purify$ -- 94
+purify$ -- 117
 quote$ -- 0
-skip$ -- 415
+skip$ -- 500
 stack$ -- 0
-substring$ -- 120
+substring$ -- 142
 swap$ -- 11
-text.length$ -- 5
-text.prefix$ -- 4
+text.length$ -- 7
+text.prefix$ -- 6
 top$ -- 0
-type$ -- 100
-warning$ -- 12
-while$ -- 37
-width$ -- 14
-write$ -- 148
-(There were 12 warnings)
+type$ -- 124
+warning$ -- 16
+while$ -- 44
+width$ -- 17
+write$ -- 179
+(There were 16 warnings)

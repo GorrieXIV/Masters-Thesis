@@ -7,6 +7,12 @@ Andris Ambainis, Ansis Rosmanis, and Dominique Unruh.
   rewinding).
 \newblock pages 474--483, 2014.
 
+\bibitem[CJL{\etalchar{+}}17]{pkcomp}
+Craig Costello, David Jao, Patrick Longa, Michael Naehrig, Joost Renes, and
+  David Urbanik.
+\newblock Efficient compression of sidh public keys.
+\newblock 2017.
+
 \bibitem[CLN16]{effalg}
 Craig Costello, Patrick Longa, and Michael Naehrig.
 \newblock Efficient algorithms for supersingular isogeny diffie-hellman.
@@ -15,6 +21,11 @@ Craig Costello, Patrick Longa, and Michael Naehrig.
 \bibitem[Cos]{pairings}
 Craig Costello.
 \newblock Pairings for beginners.
+
+\bibitem[Fia89]{RSAbatch}
+Amos Fiat.
+\newblock Batch rsa.
+\newblock 1989.
 
 \bibitem[FJP12]{djp}
 Luca~De Feo, David Jao, and Jerome Plut.
@@ -52,17 +63,21 @@ M.~Seshadri Srinath and V.~Chandrasekaren.
 \newblock Isogeny-based quantum-resistant undeniable blind signature scheme.
 \newblock 2016.
 
+\bibitem[Sil]{silverman}
+Joseph~H. Silverman.
+\newblock The arithmetic of elliptic curves.
+
 \bibitem[STW12]{sunsig}
 Xi~Sun, Haibo Tian, and Yumin Wang.
 \newblock Toward quantum-resistant strong designated verifier signature from
   isogenies.
 \newblock 2012.
 
-\bibitem[Unr15]{unruh}
+\bibitem[Unr14]{unruh}
 Dominique Unruh.
 \newblock Non-interactive zero-knowledge proofs in the quantum random oracle
   model.
-\newblock 2015.
+\newblock 2014.
 
 \bibitem[YAJ{\etalchar{+}}12]{yoo}
 Youngho Yoo, Reza Azarderakhsh, Amir Jalali, David Jao, and Vladimir Soukharev.
