@@ -11,7 +11,7 @@ We will end this chapter by taking a detailed look at the performance gains offe
 
 \section{Partial Batched Inversions}
 
-We will now outline our first contribution to \sidh. The ``partial batched inversion" procedure in question reduces arbitrarily many \emph{unrelated}\footnote{To clarify; the elements subject to these inversion must all be over the same field, but can otherwise be unrelated.} $\mathbb{F}_{p^{2}}$ inversions to a sequence of $\mathbb{F}_{p}$ operations. The fact that the elements being inverted need not hold any relation will be significant to the applicability of this procedure. For brevity's sake, we will henceforth refer to this procedure as \code{pb\_inv} in the \sidh context, and \textbf{PartialBatchedInversion} in the more general mathematical context.
+We will now outline the procedure that is central to our first contribution. The ``partial batched inversion" procedure reduces arbitrarily many \emph{unrelated}\footnote{To clarify; the elements subject to these inversion must all be over the same field, but can otherwise be unrelated.} $\mathbb{F}_{p^{2}}$ inversions to a sequence of $\mathbb{F}_{p}$ operations. The fact that the elements being inverted need not hold any relation will be significant to the applicability of this procedure. For brevity's sake, we will henceforth refer to this procedure as \code{pb\_inv} in the \sidh context, and \textbf{PartialBatchedInversion} in the more general mathematical context.
 
 As mentioned above, \code{pb\_inv} is constructed by combining two distinct techniques. Both of these techniques improve the efficiency of computing field element inversions: the first is specific to extension fields (in our case, $\mathbb{F}_{p^{2}}$ elements,) but the second is a technique applicable to field element inversions in a more general setting.
 
@@ -81,12 +81,12 @@ Effectively, this procedure reduces one $\mathbb{F}_{p^{2}}$ inversion to the fo
 
 Let $C_{\textbf{PartialInv}}$ represent the performance of \textbf{PartialInv}, in the format outlined above. We have
 $$
-A = 2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}
+C_{\textbf{PartialInv}} = 2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}
 $$
 
 In some contexts, computing squares can be done more efficiently than the multiplication of two arbitrary elements. A noteworthy example of this is would be binary fields ($\mathbb{F}_{2^k}$) where squaring a number is equivalent to simply performing a bit-shift. However, because we are working in the quadratic extension of some prime field $\mathbb{F}_p$ for a large prime $p$, we can assume that computing the square of some arbitrary element $x$ is no more or less efficient than simply computing $x \cdot x$. With this in mind, we can further simplify $A$.
 $$
-A = 5\textbf{m} + \textbf{a} + \textbf{i}
+C_{\textbf{PartialInv}} = 5\textbf{m} + \textbf{a} + \textbf{i}
 $$
 
 We claim that this ``reduces" the computation time of field element inversion, but it may not be immediately clear that this technique is computationally favourable over any other approach to computing an $\mathbb{F}_{p^{2}}$ inversion. 
@@ -322,10 +322,10 @@ When doing so (using the arithmetic test cases included in \code{arith\_tests.c}
 \begin{center}
 \begin{tabular}{@{}lllll@{}}
 	\toprule
-	Operation & \sidh function & performance in clock cyckes\\
+	Operation & \sidh function & performance in clock cycles\\
 	\midrule
 	$\mathbb{F}_p$ addition & \code{fpadd751} & 206\\
-	$\mathbb{F}_p$ multiplication & \code{fpmult751\_mont} & 1009\\
+	$\mathbb{F}_p$ multiplication & \code{fpmult751\_mont} & 1,009\\
 	\bottomrule
 \end{tabular}
 \end{center}
@@ -340,18 +340,65 @@ If we query for the performance of other operations, including $\mathbb{F}_{p^2}
 	\toprule
 	Operation & \sidh function & performance in clock cycles\\
 	\midrule
-	$\mathbb{F}_p$ inversion & \code{fpinv751\_mont} & 826228\\
+	$\mathbb{F}_p$ inversion & \code{fpinv751\_mont} & 826,228\\
 	$\mathbb{F}_{p^2}$ addition & \code{fp2add751} & 172\\
-	$\mathbb{F}_{p^2}$ multiplication & \code{fp2mult751\_mont} & 2793\\
-	$\mathbb{F}_{p^2}$ inversion & \code{fp2inv751\_mont} & 829786\\
+	$\mathbb{F}_{p^2}$ multiplication & \code{fp2mult751\_mont} & 2,793\\
+	$\mathbb{F}_{p^2}$ inversion & \code{fp2inv751\_mont} & 829,786\\
 	\bottomrule
 \end{tabular}
 \end{center}
 \end{table}
 
-All of these results are computed as the average over 100 distinct applications. Furthermore, because they are measured in clock cycles they are independent of any CPU clock rate. Because of this they are indicative of the complexity of each operation, opposed to the performance of these operations on any one particular machine.
+All of these results are computed as the average over 100 distinct applications. Furthermore, because they are measured in clock cycles, they are independent of any CPU clock rate. Because of this they are indicative of the complexity of each operation (or rather, the complexity of these implementations,) opposed to the performance of these operations on any one particular machine.
 
-We conclude this section by using these results, along with the operation counts of each procedure, to compare the expected performances of \textbf{PartialBatchedInv}, \textbf{PartialBatchedInv}$_0$, and unbatched inversion. These results are shown in Table \ref{tab:compareprocs}. For these estimations we have set the number of elements ($n$) equal to 248. This closely reflects the setting in which \textbf{PartialBatchedInv} will be implemented in \sidh, as will be discussed in the following section.
+We conclude this section by using these results, along with the operation counts of each procedure, to compare the expected performances of \textbf{PartialBatchedInv}, \textbf{PartialBatchedInv}$_0$, and unbatched inversion. These results are shown in Table \ref{tab:compareprocs}. For these estimations we have set the number of elements ($n$) equal to 248. This closely reflects the setting in which \textbf{PartialBatchedInv} will be implemented in \sidh, as will be discussed in the following section.\\
+
+\noindent
+\textbf{PartialBatchedInv}$_0$:
+	
+	If we substitute the performance variables in $C_0$ with the corresponding results from the tables above, we have:
+$$
+C_0 \approx (12n + 5)\textbf{m} + \textbf{a} + \textbf{i}
+$$
+$$
+C_0 \approx (12n + 5)1,009 + 206 + 826,228
+$$
+$$
+C_0 \approx 12,108n + 831,479 
+$$
+
+\noindent
+unbatched $\mathbb{F}_{p^2}$ inversions:
+
+	The performance of $n$-many unbatched $\mathbb{F}_{p^2}$ inversions can be modelled plainly by $n\bar{\textbf{i}}$. The cost of $n$ unbatched inversions is therefore $829,786n$.\\
+
+\noindent
+\textbf{PartialBatchedInv}:
+$$
+C \approx 7n\textbf{m} + n\textbf{a} + \textbf{i}
+$$
+$$
+C \approx 7,269n + 826,228
+$$
+
+\begin{center}
+\begin{tikzpicture}
+	\begin{axis}[
+		domain=0:250,
+		xmin=-10, xmax=250,
+		ymin=-50000, ymax=3006928,
+		samples=400,
+		axis y line=center,
+		axis x line=middle,
+	]
+	
+	\addplot+[mark=none] {12108*x + 831479};
+	\addplot+[mark=none] {829786*x};
+	\addplot+[mark=none] {7269*x + 826228};
+	
+	\end{axis}
+\end{tikzpicture}
+\end{center}
 
 \begin{table}[!h]
 \label{tab:compareprocs}
@@ -360,9 +407,9 @@ We conclude this section by using these results, along with the operation counts
 	\toprule
 	Procedure & operation count & expected performance in clock cycles\\
 	\midrule
-	\textbf{PartialBatchedInv} & \code{fpinv751\_mont} & 826228\\
+	\textbf{PartialBatchedInv} & \code{fpinv751\_mont} & 826,228\\
 	\textbf{PartialBatchedInv}$_0$ & \code{fp2add751} & 172\\
-	248 unbatched $\mathbb{F}_{p^2}$ inversions & \code{fp2inv751\_mont} & 829786\\
+	248 unbatched $\mathbb{F}_{p^2}$ inversions & \code{fp2inv751\_mont} & 829,786\\
 	\bottomrule
 \end{tabular}
 \end{center}
@@ -406,40 +453,56 @@ The downside of this (for our work) is that the number opportunities for impleme
 
 With Algorithm \ref{alg:pbinvcode} we provide an explicit C definition for the function \code{pb\_inv}. For descriptions of the functions called in this procedure, the reader can refer to section \ref{subsec:functions}. For explicit definitions of some of these functions, the reader can refer to Appendix \ref{app:functions}.
 
-\begin{algorithm}
-\caption{-- \code{pb\_inv}}\label{alg:pbinvcode}
-\begin{algorithmic}[1]
-\Procedure{partial\_batched\_inv($\mathbb{F}_{p^{2}}$[ ] vec, $\mathbb{F}_{p^{2}}$[ ] dest, int n)}{}
-\State initialize $\mathbb{F}_{p}$ $den[n]$
-\For{\texttt{i = 0..(n-1)}}
-	\State $den[i] \gets a[i][0]^{2} + a[i][1]^{2}$
-\EndFor
+\begin{figure}
+\begin{lstlisting}
+void pb_inv (const f2elm_t* vec, f2elm_t* dest, const int n) {
+	felm_t t0[n];     //a portion of vec elements
+	felm_t t1[n];     //b portion of vec elements
+	felm_t den[n];    //denominator of vec elements
+	felm_t a[n];
 
-\State $a[0] \gets den[0]$
+	// upward-percolation phase -----------------------------------//
 
-\For{\texttt{i = 1..(n-1)}}
-	\State $a[i] \gets \texttt{a[i-1]*den[i]}$
-\EndFor
+	for (int i = 0; i < n; i++) {
+		//compute denp[i] = a[i][0]^2 + a[i][1]^2
+		fpsqr751_mont((vec[i])[0], t0[i]);
+		fpsqr751_mont((vec[i])[1], t1[i]);
+		fpadd751(t0[i], t1[i], den[i]);
+	}	
 
-\State $a_{inv} \gets \texttt{inv(a[n-1])}$
+	fpcopy751(den[0], a[0]);
+	for (int i = 1; i < n; i++) {
+		fpmul751_mont(a[i-1], den[i], a[i]);
+	}
 
-\For{\texttt{i = n-1..1}}
-	\State $a[i] \gets a_{inv}*dest[i-1]$
-	\State $a_{inv} \gets a_{inv}*den[i]$
-\EndFor
+	// inversion phase -------------------------------------------//
+	
+	felm_t a_inv;
+	fpcopy751(a[n-1], a_inv);
+	fpinv751_mont_bingcd(a_inv);
+    
+	// downward percolation phase --------------------------------//
 
-\State $dest[0] \gets a_{inv}$
+	for (int i = n-1; i >= 1; i--) {
+		fpmul751_mont(a[i-1], a_inv, a[i]);
+		fpmul751_mont(a_inv, den[i], a_inv);
+	}
 
-\For{\texttt{i = 0..(n-1)}}
-	\State $dest[i][0] \gets a[i]*vec[i][0]$
-	\State $vec[i][1] \gets -1*vec[i][1]$
-	\State $dest[i][1] \gets a[i]*vec[i][1]$
-\EndFor
-\EndProcedure
-\end{algorithmic}
-\end{algorithm}
+	fpcopy751(a_inv, a[0]);
 
-Recall the notion of a general side-channel attack: A side-channel attack is performed when an unauthorized individual is able to acquire information by measuring properties of the physical implementation of the system at hand. This can be done by analyzing the power consumption, timing properties, or electromagnetic leaks of a CPU while it operates on (or generates) confidential information.
+	for (int i = 0; i < n; i++) {
+		//convert back to extension field
+		fpmul751_mont(a[i],vec[i][0],dest[i][0]);
+		fpneg751((vec[i])[1]);
+		fpmul751_mont(a[i],vec[i][1],dest[i][1]);
+	}
+}
+\end{lstlisting}
+\caption{\code{pb\_inv}}
+\label{code:pbinv}
+\end{figure}
+
+\emph{Security Considerations.} Recall the notion of a general side-channel attack: A side-channel attack is performed when an unauthorized individual is able to acquire information by measuring properties of the physical implementation of the system at hand. This can be done by analyzing the power consumption, timing properties, or electromagnetic leaks of a CPU while it operates on (or generates) confidential information.
 
 In the context of information security, algorithms for performing operations over mathematical objects can be said to fall under one of two categories: \emph{constant time} and \emph{non-constant time} algorithms. Constant time algorithms are designed to protect confidential information from side-channel attacks, but come at the cost of computational efficiency.
 

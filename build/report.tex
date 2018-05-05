@@ -13,8 +13,9 @@
 \documentclass[12pt,a4paper]{report}
 
 \usepackage[pdftex]{graphicx}        %for embedding images
-\usepackage{xcolor}                 %for colouring in math mode
+\usepackage{xcolor}                  %for colouring in math mode
 \usepackage{url}                     %for proper url entries
+\usepackage{listings}                %for writing c code
 %\usepackage{hyperref}
 \usepackage{amssymb}                 %extended symbols
 \usepackage{amsthm}                  %theorem formatting
@@ -116,6 +117,13 @@
 \newcommand{\sidh}[0]{$\code{SIDH}_{\code{C}}$\xspace}
 \newcommand{\sidht}[0]{$\code{SIDH}_{\code{C}}\code{2.0}$\xspace}
 
+\lstset {
+	language=C++,
+	backgroundcolor=\color{black!5},
+	basicstyle=\footnotesize,
+	tabsize=4,
+	numbers=left,
+}
 
 \newcommand\tab[1][1cm]{\hspace*{#1}}
 
