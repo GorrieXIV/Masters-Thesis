@@ -331,7 +331,7 @@ When doing so (using the arithmetic test cases included in \code{arith\_tests.c}
 \end{center}
 \end{table}
 
-If we query for the performance of other operations, including $\mathbb{F}_{p^2}$ arithmetic, we can estimate to what degree roughly \textbf{PartialBatchedInv} outperforms \textbf{PartialBatchedInv}$_0$. We can also measure to what degree we can expect that it will outperform an unbatched implementation of $n$-many inversions.
+If we query for the performance of other operations (including $\mathbb{F}_{p^2}$ arithmetic) we can estimate to what degree roughly \textbf{PartialBatchedInv} outperforms \textbf{PartialBatchedInv}$_0$. We can also measure to what degree we can expect that it will outperform an unbatched implementation of $n$-many inversions.
 
 \begin{table}[!h]
 \label{tab:optimes2}
@@ -383,20 +383,35 @@ $$
 
 \begin{center}
 \begin{tikzpicture}
-	\begin{axis}[
-		domain=0:250,
-		xmin=-10, xmax=250,
-		ymin=-50000, ymax=3006928,
-		samples=400,
-		axis y line=center,
-		axis x line=middle,
-	]
-	
-	\addplot+[mark=none] {12108*x + 831479};
-	\addplot+[mark=none] {829786*x};
-	\addplot+[mark=none] {7269*x + 826228};
-	
-	\end{axis}
+	\begin{scope}[xshift=-3cm]
+		\begin{axis}[
+			domain=0:10,
+			xmin=0, xmax=10,
+			ymin=0, ymax=3006928,
+			samples=400,
+			axis y line=center,
+			axis x line=middle,
+		]
+
+		\addplot+[mark=none] {12108*x + 831479};
+		\addplot+[mark=none] {829786*x};
+		\addplot+[mark=none] {7269*x + 826228};
+		\end{axis}
+	\end{scope}
+	\begin{scope}[xshift=5cm]
+		\begin{axis}[
+			xmin=-10, xmax=250,
+			domain=0:250,
+			ymin=-50000, ymax=3006928,
+			samples=400,
+			axis y line=center,
+			axis x line=middle,
+		]
+
+		\addplot+[mark=none] {12108*x + 831479};
+		\addplot+[mark=none] {7269*x + 826228};
+		\end{axis}
+	\end{scope}
 \end{tikzpicture}
 \end{center}
 
@@ -418,14 +433,22 @@ $$
 \section{Implementation Details}
 \label{sec:pbinvimplementation}
 
-We will now take the work of the previous subsection and explain in detail how it can be applied to the Yoo et al. signature layer of \sidh. We will begin by exploring potential bottlenecks in the protocols performance, specifically in search of execution paths in the codebase where batching inversions could offer a performance increase. We will discuss properties of the signature scheme that can be leveraged to optimize the performance increases offered by \textbf{PartialBatchedInv}.
+We will now take the work of the previous subsection and explain in detail how it can be applied to the Yoo et al. signature layer of \sidh. We will begin with a high-level overview of the signature layer architecture. This mapping will allow efficient highlighting of the potential bottlenecks in the protocols performance. In this search for performance bottlenecks, we will specifically seek out execution paths in the codebase where-in batching inversions could offer a performance increase. Additionally, will discuss properties of the signature scheme that can be leveraged to optimize the performance increases offered by \textbf{PartialBatchedInv}.
 
-After this breif mapping of \sidh, we move into the lower-level details of our procedures implementation. We transcribe \textbf{PartialBatchedInversion} to its C variant, \code{pb\_inv}, which is defined almost entirely by means of the \sidh API. We will discuss some design specifics of \code{pb\_inv}, and look breifly at the security of the function with respect to the signature scheme.
+After this breif mapping of the signature layer, we move into the lower-level details of our procedures implementation. We transcribe \textbf{PartialBatchedInversion} to its C variant, \code{pb\_inv}, which is defined almost entirely by means of the \sidh API. We will discuss some design specifics of \code{pb\_inv}, and look breifly at the security of the function with respect to the signature scheme.
 
 We round off this subsection with a discussion of other possible ways in which \code{pb\_inv} (and operation batching in general) can offer performance improvements to the Yoo et al. signature scheme. This discussion is continued in the final Chapter of this dissertation, in Section \ref{sec:morebatch}. 
 
 \subsection{Parallelizing Signatures}
 
+Recall Figure \ref{fig:halfmap} which details the abstraction levels of the SIDH protocols as they relate to the modules of \sidh. We can further expand on this to figure to illustrate how the Yoo et al. signature layer interoperates with the original \sidh codebase. See Figure \ref{fig:fullmap} - ``SIDH\_signature.c" signifies the code module added by Yoo et al., which implements the 
+
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=0.7]{fullmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
+\caption{Relationship between SIDH based signatures \& the Yoo et al. fork of the SIDH C library}
+\label{fig:fullmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
+\end{figure}
 Because every $2\lambda$ iteration of the \textbf{Sign} and \textbf{Verify} procedures are entirely independent of each other, these functions present themselves as embarrassingly parallel.\footnote{in the field of high performance computing, a problem that is trivially parallizable is often referred to as \emph{embarrassingly} parallizable.} 
 
 Recall from section \ref{subsec:sigcode} the table of functions that can be found in \code{SIDH\_signature}. \code{isogey\_sign} acts as the entry point for \code{Sign} and spawns a POSIX thread for every instance of the for-loop; each one calling \code{sign\_thread} which performs \bob's interaction with \randall. Verification proceeds analogously; \code{isogeny\_verify} is executed and spawns a POSIX threads executing \code{verify\_thread} until all $2\lambda$ iterations are complete.
@@ -435,8 +458,63 @@ This parallelization of the signature scheme was the approach taken by Yoo et al
 \noindent
 \code{inv\_4\_way}.\\
 
+\begin{lstlisting}
+void inv_4_way(f2elm_t z1, f2elm_t z2, f2elm_t z3, f2elm_t z4) {
+  	f2elm_t t0, t1, t2;
+	int tempCnt;
+
+    fp2mul751_mont(z1, z2, t0);                      // t0 = z1*z2
+    fp2mul751_mont(z3, z4, t1);                      // t1 = z3*z4
+    fp2mul751_mont(t0, t1, t2);                      // t2 = z1*z2*z3*z4
+\end{lstlisting}
+\vspace{-\baselineskip}
+\begin{lstlisting}[backgroundcolor=\color{light-red}, firstnumber=8]
+    fp2inv751_mont(t2);                              // t2 = 1/(z1*z2*z3*z4)
+\end{lstlisting}
+\vspace{-\baselineskip}
+\begin{lstlisting}[firstnumber=9]
+    fp2mul751_mont(t0, t2, t0);                      // t0 = 1/(z3*z4) 
+    fp2mul751_mont(t1, t2, t1);                      // t1 = 1/(z1*z2) 
+    fp2mul751_mont(t0, z3, t2);                      // t2 = 1/z4
+    fp2mul751_mont(t0, z4, z3);                      // z3 = 1/z3
+    fp2copy751(t2, z4);                              // z4 = 1/z4
+    fp2mul751_mont(z1, t1, t2);                      // t2 = 1/z2
+    fp2mul751_mont(z2, t1, z1);                      // z1 = 1/z1
+    fp2copy751(t2, z2);                              // z2 = 1/z2
+}
+\end{lstlisting}
+
 \noindent
 \code{j\_inv}.\\
+
+\begin{lstlisting}
+void j_inv(const f2elm_t A, const f2elm_t C, f2elm_t jinv) {
+	f2elm_t t0, t1;
+
+	fp2sqr751_mont(A, jinv);                           // jinv = A^2        
+	fp2sqr751_mont(C, t1);                             // t1 = C^2
+	fp2add751(t1, t1, t0);                             // t0 = t1+t1
+	fp2sub751(jinv, t0, t0);                           // t0 = jinv-t0
+	fp2sub751(t0, t1, t0);                             // t0 = t0-t1
+	fp2sub751(t0, t1, jinv);                           // jinv = t0-t1
+	fp2sqr751_mont(t1, t1);                            // t1 = t1^2
+	fp2mul751_mont(jinv, t1, jinv);                    // jinv = jinv*t1
+	fp2add751(t0, t0, t0);                             // t0 = t0+t0
+	fp2add751(t0, t0, t0);                             // t0 = t0+t0
+	fp2sqr751_mont(t0, t1);                            // t1 = t0^2
+	fp2mul751_mont(t0, t1, t0);                        // t0 = t0*t1
+	fp2add751(t0, t0, t0);                             // t0 = t0+t0
+	fp2add751(t0, t0, t0);                             // t0 = t0+t0
+\end{lstlisting}
+\vspace{-\baselineskip}
+\begin{lstlisting}[backgroundcolor=\color{light-red}, firstnumber=18]
+	fp2inv751_mont(jinv);                              // jinv = 1/jinv
+\end{lstlisting}
+\vspace{-\baselineskip}
+\begin{lstlisting}[firstnumber=19]
+	fp2mul751_mont(jinv, t0, jinv);                    // jinv = t0*jinv
+}
+\end{lstlisting}
 
 \begin{figure}[htb]
 \centering
@@ -444,6 +522,62 @@ This parallelization of the signature scheme was the approach taken by Yoo et al
 \caption{<Caption here>}
 \label{fig:label} % insert suitable label, this is used to refer to a fig from within the text as shown above
 \end{figure}
+
+\begin{tikzpicture}
+    [auto,
+    block/.style={
+      rectangle,
+      draw=blue,
+      thick,
+      fill=gray!20,
+      text width=7em,
+      align=center,
+      rounded corners,
+      minimum height=2em
+    },
+    block1/.style={
+      rectangle,
+      draw=blue,
+      thick,
+      fill=blue!20,
+      text width=5em,
+      align=center,
+      rounded corners,
+      minimum height=2em
+    },
+    line/.style={
+      draw,thick,
+      -latex',
+      shorten >=2pt
+    },
+    cloud/.style={
+      draw=red,
+      thick,
+      ellipse,
+      fill=red!20,
+      minimum height=1em
+    }
+  ]
+    \draw (1,-2) node[block] (C) {\code{sign\_thread}};
+	\draw (5,-2) node[block] (C) {\code{verify\_thread}};
+    \path (0,-3) node[block] (G) {Pumlinga}
+          (0,-4) node[block] (H) {Strilinga}
+          (0,-5) node[block] (I) {Napumsaka}
+          (5,-3) node[block] (J) {Pumlinga}
+          (5,-4) node[block] (K) {Strilinga}
+          (5,-5) node[block] (L) {Napumsaka};
+    \draw (C.south) -- ++(0,-0.25) coordinate (linga);
+    \draw (linga) -- ++(-1,0) coordinate (ling);
+    \draw[-latex] (ling) |- (G.east);
+    \draw[-latex] (ling) |- (H.east);
+    \draw[-latex] (ling) |- (I.east);
+    \draw (linga) -- ++(1,0) coordinate (hling);
+    \draw[-latex] (hling) |- (J.west);
+    \draw[-latex] (hling) |- (K.west);
+    \draw[-latex] (hling) |- (L.west);
+    \draw[red,thick,dotted] ($(J.north west)+(-0.3,0.6)$)  rectangle ($(L.south east)+(0.3,-0.6)$);
+    \draw[thick,dotted]     ($(I.north west)+(-0.5,0.15)$) rectangle ($(L.south east)+(0.5,-0.15)$);
+\end{tikzpicture}
 
 Because the work of Yoo et al. was built on top of the original Microsoft SIDH library, all underlying field arithmetic (and as such, pointwise arithmetic) is performed in projective space using Montgomery representation. As was mentioned in the previous chapter, doing such allows us to avoid a great deal of field element inversions. We simply convert to Montgomery representation at the beginning of heavy arithmetic, perform the desired operations, and then convert back to standard representation when complete. Throughout the codebase, (most noticeably in \code{kex.c}) we can see an analogous approach taken in for pointwise arithmetic, by first converting to a projective space representation, performing operations, and then converting back to affine coordinates. 
 

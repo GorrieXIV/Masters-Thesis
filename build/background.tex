@@ -869,7 +869,7 @@ These observations are formalized in Algorithm 6, where we rewrite $\Sigma'$:\te
 
 Having now introduced all of the background material necessary for understanding SIDH and the isogeny based signature scheme in detail, we will investigate the portions of the SIDH C library which are relevent to our contributions.
 
-The SIDH C library, written by a research team at Microsoft Research, was released in 2016 alongside an article titled \emph{Efficient Algorithms for Supersingular Isogeny Diffie-Hellman} (see \cite{effalg}). The article in question details several adjustments to the algorithms and data-representations outlined in \cite{djp}, leading to improved performance and key-sizes. Their C implementation (which we will henceforth refer to as \sidh) is built on top of these improved algorithms and tailored to a specific set of parameters, all-in-all offering 128-bit quantum security and 192-bit classical security key exchange up to 2.9 times faster than any previous implementation. We will look at some of the details of \sidh below. 
+The SIDH C library, written by a research team at Microsoft Research, was released in 2016 alongside an article titled \emph{Efficient Algorithms for Supersingular Isogeny Diffie-Hellman} (see \cite{effalg}). The article in question details several adjustments to the algorithms and data-representations outlined in \cite{djp}, leading to improved performance and key-sizes. Their library (which we will henceforth refer to as \sidh) consists of C and assembly implementations of the algorithms outlined in \cite{effalg}. Much of these functions are tailored to a specific set of parameters allowing for increased performance. The library presents 128-bit quantum security and 192-bit classical security key exchange up to 2.9 times faster than any previous isogeny-based key-exchange system. We will look at some of the details of \sidh below. 
 
 Before proceeding, it may be advisable to briefly review the section on notation (\ref{sub:notation}) if one has not already.
 
@@ -881,7 +881,7 @@ $$
 By^2 = Cx^3 + Ax^2 + Cx
 $$
 
-\sidh uses the public parameter curve $E$ defined in Montgomery form with $A = 0$, $B = 1$, and $C = 1$. The point pairs ($\genpa,\genqa$) and ($\genpb, \genqb$), generating $E[\laea]$ and $E[\lbeb]$ respectively, are hard-coded as an array of bytes. This set of parameters (including related data such as the bitlength of certain constants) is referred to in the system as \code{SIDHp751}, and is stored in the struct \code{CurveIsogenyStaticData} which will be outlined below.\\
+\sidh uses the public parameter curve $E$ defined in Montgomery form with $A = 0$, $B = 1$, and $C = 1$. The point pairs ($\genpa,\genqa$) and ($\genpb, \genqb$), generating $E[\laea]$ and $E[\lbeb]$ respectively, are hard-coded as an array of bytes. These parameters (including related data such as the bitlength of certain constants) are stored in the struct type \code{CurveIsogenyStaticData} under the variable name \code{SIDHp751}. This struct, along with many other \sidh data types and representations, will be outlined in the coming subsection.\\
 
 \noindent
 \emph{Data Structures}. There are several custom-defined data structures that are integral to \sidh. Below, we will briefly cover the ones which are likely to arise in our discussion:\\
@@ -915,18 +915,22 @@ $$
 	\item \code{CurveIsogenyStaticData} -- The same as \code{CurveIsogenyStruct}, but with buffer sizes fixed for \code{SIDHp751}.
 \end{itemize}
 
-The reader may note that \code{publickey\_t} does not contain any information defining the user's co-domain curve $E/\langle S \rangle$ (with $S$ as the users secret key). It just so happens that in $\Pi_{\text{SIDH}}$ key exchange, the curves $E/\langle \ba \rangle$ and $E/\langle \rb \rangle$ are simply intermediary steps (useful for conceptualizing the protocol) and not necessary for computing the shared secret $j(E_{\ba\rb})$.
+The reader may note that \code{publickey\_t} does not contain any information defining the user's co-domain curve $E/\langle S \rangle$ (with $S$ as the users secret key). It just so happens that in $\Pi_{\text{SIDH}}$ key exchange, the curves $E/\langle \ba \rangle$ and $E/\langle \rb \rangle$ are simply intermediary steps (useful for conceptualizing the protocol) and not necessary for computing the shared secret $j(E_{\ba\rb})$. 
+
+Also worth noting is the lack of a specific data structure for representing curves. As it turns out, curves within $\Pi_{\text{SIDH}}$ can be distinctly represented by their $A$ value alone. As we are working with curves defined over $\mathbb{F}_{p^2}$, we have $A \in \mathbb{F}_{p^2}$ and thus we can succinctly represent any curve with a single \code{f2elm\_t}. 
 
 \subsection{Design Decisions}
 
+The following are, at an high-level, the algorithmic improvements upon $\Pi_{\text{SIDH}}$ as outlined in \cite{effalg}. Costella et al. do make additional contributions in their paper, however we will discuss only those contributions which pertain to the performance of SIDH.\\
+
 \noindent
-\emph{Projective Space}. As is common in ECC, a vast majority of the procedures of \sidh operate over the \emph{projective space} (Section \ref{snip:projspace}) representation of elliptic curve points. This widely-deployed technique is used to avoid the substantial cost of field element inversions (computing $x^{-1}$ for some element $x \in \mathbb{F}_{p^2}$). This means the majority of our calculations are performed over \code{point\_proj} structures using \emph{Montgomery arithmetic} (Section \ref{snip:montgomery}) and converted to \code{point\_affine} when necessary. This general design strategy is highly related to our first contribution, which will be elaborated upon in Section \ref{sec:batching}.\\
+\emph{Projective Space}. As is common in ECC, a vast majority of the procedures of \sidh operate over elliptic curve points which are defined over \emph{projective space} (recall Section \ref{snip:projspace}). This widely-deployed technique is used to avoid the substantial cost of field element inversions (computing $x^{-1}$ for some element $x \in \mathbb{F}_{p^2}$). This means the majority of our calculations are performed over \code{point\_proj} structures using \emph{Montgomery arithmetic} (Section \ref{snip:montgomery}) and converted to \code{point\_affine} when necessary. This general design strategy is highly related to our first contribution, which will be elaborated upon in Section \ref{sec:batching}.\\
 
 \noindent
 \emph{Secret Keys}. Recall the origin of an $\Pi_{\text{SIDH}}$ private key $(m, n)$: the goal is to randomly select a generator of the torsion group $E[\laea]$ (or $E[\lbeb]$ for \bob). It is noted in \cite{djp} that any generator of the required torsion group is sufficient. It is also noted that $m$, unless equal to the order of the torsion group, is invertible. Because of this, \alice, for example, can simple compute $R = \genpa + [m^{-1}n]\genqa$, thus enabling secret keys to be stored as a single $\mathbb{F}_{p^2}$ element (which is referred to as $m$). This technicality has been implemented in \sidh, which both saves on storage as well as offers a means for generating secret keys that is more efficient than the trivial scalar multiplication and point-wise addition approach to computing $[m]P + [n]Q$.\\
 
 \noindent
-\emph{Tailor-made Montgomery Multiplication}.
+\emph{Tailor-made Montgomery Multiplication}. The parameters of a default \sidh execution, stored in \code{SIDHp752}, support efficient arithmetic and grant access to a variety of modular arithmetic optimizations. These optimizations inlude esfs,esdfsef,sefsef.. Moreover, Costella et al. supply a modified version of the Montgomery multiplication algorithm which, when performing over the class of curves outlined by their set of parameters, yields faster modular arithmetic.  
 
 \subsection{Key Exchange \& Critical Functions}
 \label{subsec:functions}
@@ -1051,7 +1055,7 @@ The reader may note that \code{privateKeyA} (in \code{KeyGeneration\_A}) and \co
 \subsection{Signature Layer}
 \label{subsec:sigcode}
 
-Yoo et al. provided, along with their publication of \cite{yoo}, an implementation of their signature scheme as a fork to \sidh. All of their functions are written specifically for an instance of $\Sigma'$ where the signer is assuming the \rb role (meaning that \randall assumes the \ba role), but their algorithms could be trivially modified to provide versions supporting a signer in the \ba role. Their contributions to the \sidh codebase come in the form of the functions listed below -- their relation to the rest of \sidh is illustrated in Figure \ref{fig:fullmap}.
+Yoo et al. provided, along with their publication of \cite{yoo}, an implementation of their signature scheme as a fork to \sidh. All of their functions are written specifically for an instance of $\Sigma'$ where the signer is assuming the \rb role (meaning that \randall assumes the \ba role), but their algorithms could be trivially modified to provide versions supporting a signer in the \ba role. Their contributions to the \sidh codebase come in the form of the functions listed below.
 
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
@@ -1085,13 +1089,6 @@ To begin, \code{isogeny\_keygen} has a trivial definition; \code{KeyGeneration\_
 
 In their original fork of \sidh, Yoo et al. included these functions in the file \code{kex\_tests.c}. This file was originally intended for testing the functions of \code{kex.c}, and so our fork of the library has placed the signature functions in a new file \code{SIDH\_signature.c}. We have also included a file \code{sig\_tests.c} for testing the contents and performance of \code{SIDH\_signature.c} functions. 
 
-\begin{figure}[htp]
-\centering
-\includegraphics[scale=0.7]{fullmapwcurve.png} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
-\caption{Relationship between SIDH based signatures \& the Yoo et al. fork of the SIDH C library}
-\label{fig:fullmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
-\end{figure}
-
 If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Verify} (as described in Section \ref{subsec:sigsbackground}) to the language of the \sidh API, we have in essence the procedures \code{Sign} and \code{Verify} given by Algorithms \ref{alg:signcode} and \ref{alg:verifcode} respectively.\\
 
 \begin{algorithm}
@@ -1111,6 +1108,8 @@ If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Ve
 \State \Return $\sigma \gets ((\texttt{com}_{i})_{i}, (\texttt{ch}_{i,j})_{i,j}, (h_{i})_{i}, ((\texttt{resp})[J_{i}])$
 \end{algorithmic}
 \end{algorithm}
+
+I'm shook.
 
 \begin{algorithm}[H]
 \caption{-- \code{Verify($pk = \pb$, $m$, $\sigma$)}}\label{alg:verifcode}
