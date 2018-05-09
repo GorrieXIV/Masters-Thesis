@@ -939,7 +939,7 @@ In addition to traditional point-wise projective arithmetic, Costella et al. sho
 \subsection{Key Exchange \& Critical Functions}
 \label{subsec:functions}
 
-There are 3 central modules (C file) in \sidh, all dealing with different levels of abstraction in the $\Pi_{\text{SIDH}}$ protocol.  Figure \ref{fig:halfmap} illustrates the relationship between these modules and the abstraction levels of isogeny based key exchange. 
+There are 3 central modules (C files) in \sidh, all dealing with different levels of abstraction in the $\Pi_{\text{SIDH}}$ protocol.  Figure \ref{fig:halfmap} illustrates the relationship between these modules and the abstraction levels of isogeny based key exchange. 
 
 Operating at the lowest abstraction level is the module \code{fpx.c}, wherein functions for manipulating $\mathbb{F}_{p}$ and $\mathbb{F}_{p^2}$ elements are defined. One level up from \code{fpx.c} we have \code{ec\_isogeny.c}, containing functions pertaining to elliptic curves and point arithmetic (such as \code{j\_inv(...)} for computing the j-invariant of a curve and \code{secret\_pt(...)} for computing a users secret point $S$ given their private key $m$). The final, highest abstraction-level module we will discuss is \code{kex.c}. \code{kex.c} contains the protocol-level functions for performing $\Pi_{\text{SIDH}}$, namely \code{KeyGeneration\_A(...)} and \code{KeyGeneration\_B(...)} for generating \alice and \bob's private and public keys, as well as \code{SecretAgreement\_A(...)} and \code{SecretAgreement\_B(...)} for completing the secret agreement from both sides of the key exchange.
 
@@ -950,11 +950,9 @@ Operating at the lowest abstraction level is the module \code{fpx.c}, wherein fu
 \label{fig:halfmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
 \end{figure}
 
-The estbalished notation for functions in \code{fpx.c} is to prepend function names with either \code{fp} or \code{fp2} to signify if it is defined for elements of $\mathbb{F}_{p}$ or $\mathbb{F}_{p^2}$. Additionally, it is common to append \code{\_mont} to the name of functions which are defined using Montgomery arithmetic. Functions in \code{fpx.c} are largely defined by byte and memory arithmetic, with the exception of slightly higher-level functions such as field element inversion (\code{fpinv751\_mont(...)}) which are defined in terms of other \code{fpx.c} functions. Furthermore, for efficiency, functions of \code{fpx.c} are defined as \code{\_\_inline} when applicable.
+For functions defined in \code{fpx.c} the notational practice is to prepend function names with either \code{fp} or \code{fp2}, signifying whether the function is defined for elements of $\mathbb{F}_{p}$ or $\mathbb{F}_{p^2}$. Additionally, it is common to append \code{\_mont} to the name of functions which utilize Montgomery arithmetic, and thus expect elements in Montgomery representation. Functions in \code{fpx.c} are largely defined by byte and memory arithmetic, with the exception of slightly higher-level functions (such as field element inversion, \code{fpinv751\_mont(...)}) which are defined in terms of other \code{fpx.c} functions. Furthermore, for efficiency, functions of \code{fpx.c} are defined as \code{\_\_inline} when applicable.
 
-\code{ec\_isogeny.c} functions are defined almost exclusively in terms of \code{fpx.c} functions, with a few occurances of internal function calling. Functions in this module that are signifant to our our work are briefly summerized in Figure \ref{fig:ecfuncs}. The implementation specifics of most other \code{ec\_isogeny.c} functions are not critical to our work, and so have been excluded. The design and efficiency of these algorithms do, however, have a rich background and can be further read about in \cite{djp} and \cite{effalg}.
-
-The key exchange procedures found in \code{kex.c} are composed entirely of calls to \code{fpx.c} and \code{ec\_isogeny.c} functions, modulo some basic branching logic.
+In addition to the \code{fpx.c} functions we've outlined in Figure \ref{fig:fpfuncs} there are of course definitions for addition, copying elements, retrieving the zero element, Montgomery multiplication, squaring, and so on and so forth. 
 
 \begin{figure}
 \begin{center}
@@ -986,6 +984,8 @@ The key exchange procedures found in \code{kex.c} are composed entirely of calls
 \end{center}
 \label{fig:fpfuncs}
 \end{figure}
+
+\code{ec\_isogeny.c} functions are defined almost exclusively in terms of \code{fpx.c} functions, with a few occurances of internal function calling. Functions in this module that are significant to our our work are briefly summerized in Figure \ref{fig:ecfuncs}. The implementation specifics of most other \code{ec\_isogeny.c} functions are not critical to our work, and so have been excluded. The design and efficiency of these algorithms do, however, have a rich background and can be further read about in \cite{djp} and \cite{effalg}.
 
 \begin{figure}
 \begin{center}
@@ -1026,6 +1026,8 @@ The key exchange procedures found in \code{kex.c} are composed entirely of calls
 \label{fig:ecfuncs}
 \end{figure}
 
+The key exchange procedures found in \code{kex.c} are composed entirely of calls to \code{fpx.c} and \code{ec\_isogeny.c} functions, modulo some basic branching logic. All of the functions from this module are relevant to our work - we provide quick debriefings of these functions in Figure \ref{fig:kexfuncs}.
+
 \begin{figure}
 \begin{center}
 \code{kex.c} functions\\
@@ -1054,7 +1056,7 @@ The key exchange procedures found in \code{kex.c} are composed entirely of calls
 \label{fig:kexfuncs}
 \end{figure}
 
-The reader may note that \code{privateKeyA} (in \code{KeyGeneration\_A}) and \code{kerngen} (in both secret agreements) appear as both inputs and outputs. This is no mistake. In \code{KeyGeneration\_A}, if \code{generateRandom = false} is passed as an input, then \code{privateKeyA} is expected to be set, and the corresponding public key is computed. In secret agreement, if \code{kerngen} is set to null then the algorithm proceeds normally. If it is set to a valid point, however, it can be used in place of a secret key input (which in such a case is expected to be null). Both of these details are critical to the design of signature functions as they are described below.
+The reader may note that, in Figure \ref{fig:kexfuncs}, \code{privateKeyA} (in \code{KeyGeneration\_A}) and \code{kerngen} (in both secret agreements) appear as both inputs and outputs. This is not a mistake. In \code{KeyGeneration\_A}, if \code{generateRandom = false} is passed as an input, then \code{privateKeyA} is expected to be set, and the corresponding public key is computed. In secret agreement, if \code{kerngen} is set to null then the algorithm proceeds normally. If it is set to a valid point, however, it can be used in place of a secret key input (which in such a case is expected to be null). Both of these details are critical to the design of signature functions as they are described below.
 
 \subsection{Signature Layer}
 \label{subsec:sigcode}
