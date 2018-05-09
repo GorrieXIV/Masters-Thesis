@@ -24,7 +24,7 @@
 \contentsline {subsection}{\numberline {2.5.1}Algorithmic Definitions}{21}{subsection.2.5.1}
 \contentsline {section}{\numberline {2.6}Implementations of Isogeny Based Cryptographic Protocols}{24}{section.2.6}
 \contentsline {subsection}{\numberline {2.6.1}Parameters \& Data Representation}{24}{subsection.2.6.1}
-\contentsline {subsection}{\numberline {2.6.2}Design Decisions}{26}{subsection.2.6.2}
+\contentsline {subsection}{\numberline {2.6.2}$\texttt {SIDH}_{\texttt {C}}$\xspace Design Decisions}{26}{subsection.2.6.2}
 \contentsline {subsection}{\numberline {2.6.3}Key Exchange \& Critical Functions}{26}{subsection.2.6.3}
 \contentsline {subsection}{\numberline {2.6.4}Signature Layer}{29}{subsection.2.6.4}
 \contentsline {chapter}{\numberline {3}Batching Operations for Isogenies}{31}{chapter.3}
