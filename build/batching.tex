@@ -540,7 +540,7 @@ void j_inv(const f2elm_t A, const f2elm_t C, f2elm_t jinv) {
       draw=blue,
       thick,
       fill=blue!20,
-      text width=5em,
+      text width=9em,
       align=center,
       rounded corners,
       minimum height=2em
@@ -559,24 +559,21 @@ void j_inv(const f2elm_t A, const f2elm_t C, f2elm_t jinv) {
     }
   ]
     \draw (1,-2) node[block] (C) {\code{sign\_thread}};
-	\draw (5,-2) node[block] (C) {\code{verify\_thread}};
-    \path (0,-3) node[block] (G) {Pumlinga}
-          (0,-4) node[block] (H) {Strilinga}
-          (0,-5) node[block] (I) {Napumsaka}
-          (5,-3) node[block] (J) {Pumlinga}
-          (5,-4) node[block] (K) {Strilinga}
-          (5,-5) node[block] (L) {Napumsaka};
-    \draw (C.south) -- ++(0,-0.25) coordinate (linga);
-    \draw (linga) -- ++(-1,0) coordinate (ling);
-    \draw[-latex] (ling) |- (G.east);
-    \draw[-latex] (ling) |- (H.east);
-    \draw[-latex] (ling) |- (I.east);
-    \draw (linga) -- ++(1,0) coordinate (hling);
-    \draw[-latex] (hling) |- (J.west);
-    \draw[-latex] (hling) |- (K.west);
-    \draw[-latex] (hling) |- (L.west);
-    \draw[red,thick,dotted] ($(J.north west)+(-0.3,0.6)$)  rectangle ($(L.south east)+(0.3,-0.6)$);
-    \draw[thick,dotted]     ($(I.north west)+(-0.5,0.15)$) rectangle ($(L.south east)+(0.5,-0.15)$);
+	\draw (8,-2) node[block] (C) {\code{verify\_thread}};
+    \path (-1,-4) node[block1] (G) {\code{SecretAgreement\_B}}
+          (4,-4) node[block1] (H) {\code{KeyGeneration\_A}}
+          (9,-4) node[block1] (I) {\code{SecretAgreement\_B}};
+    %\draw (C.south) -- ++(0,-0.25) coordinate (linga);
+    %\draw (linga) -- ++(-1,0) coordinate (ling);
+    %\draw[-latex] (ling) |- (G.east);
+    %\draw[-latex] (ling) |- (H.east);
+    %\draw[-latex] (ling) |- (I.east);
+    %\draw (linga) -- ++(1,0) coordinate (hling);
+    %\draw[-latex] (hling) |- (J.west);
+    %\draw[-latex] (hling) |- (K.west);
+    %\draw[-latex] (hling) |- (L.west);
+    %\draw[red,thick,dotted] ($(J.north west)+(-0.3,0.6)$)  rectangle ($(L.south east)+(0.3,-0.6)$);
+    %\draw[thick,dotted]     ($(I.north west)+(-0.5,0.15)$) rectangle ($(L.south east)+(0.5,-0.15)$);
 \end{tikzpicture}
 
 Because the work of Yoo et al. was built on top of the original Microsoft SIDH library, all underlying field arithmetic (and as such, pointwise arithmetic) is performed in projective space using Montgomery representation. As was mentioned in the previous chapter, doing such allows us to avoid a great deal of field element inversions. We simply convert to Montgomery representation at the beginning of heavy arithmetic, perform the desired operations, and then convert back to standard representation when complete. Throughout the codebase, (most noticeably in \code{kex.c}) we can see an analogous approach taken in for pointwise arithmetic, by first converting to a projective space representation, performing operations, and then converting back to affine coordinates. 
