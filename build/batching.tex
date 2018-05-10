@@ -437,11 +437,11 @@ We will now take the work of the previous subsection and explain in detail how i
 
 After this breif mapping of the signature layer, we move into the lower-level details of our procedures implementation. We transcribe \textbf{PartialBatchedInversion} to its C variant, \code{pb\_inv}, which is defined almost entirely by means of the \sidh API. We will discuss some design specifics of \code{pb\_inv}, and look breifly at the security of the function with respect to the signature scheme.
 
-We round off this subsection with a discussion of other possible ways in which \code{pb\_inv} (and operation batching in general) can offer performance improvements to the Yoo et al. signature scheme. This discussion is continued in the final Chapter of this dissertation, in Section \ref{sec:morebatch}. 
+We round off this subsection with a discussion of other possible ways in which \code{pb\_inv} (and operation batching in general) can offer performance improvements to the Yoo et al. signature scheme. This discussion is continued in the final Chapter of this dissertation, in Section \ref{sec:morebatch}.
 
-\subsection{Parallelizing Signatures}
+\subsection{Embedding Partial Batched Inversions}
 
-Recall Figure \ref{fig:halfmap} which details the abstraction levels of the SIDH protocols as they relate to the modules of \sidh. We can further expand on this to figure to illustrate how the Yoo et al. signature layer interoperates with the original \sidh codebase. See Figure \ref{fig:fullmap} - ``SIDH\_signature.c" signifies the code module added by Yoo et al., which implements the 
+Recall Figure \ref{fig:halfmap} which details the abstraction levels of the SIDH protocols as they relate to the modules of \sidh. We can further expand on this to figure to illustrate how the Yoo et al. signature layer interoperates with the original \sidh codebase. See Figure \ref{fig:fullmap} - ``SIDH\_signature.c" signifies the code module added by Yoo et al., which implements $\Sigma':$\textbf{KeyGen}, $\Sigma':$\textbf{Sign}, and $\Sigma':$\textbf{Verify} as they are outlined in Section \ref{sec:sigsbackground}. For the remainder of this section we will refer to these higher-level procedures as simply \textbf{KeyGen}, \textbf{Sign}, and \textbf{Verify}.
 
 \begin{figure}[htp]
 \centering
@@ -449,11 +449,18 @@ Recall Figure \ref{fig:halfmap} which details the abstraction levels of the SIDH
 \caption{Relationship between SIDH based signatures \& the Yoo et al. fork of the SIDH C library}
 \label{fig:fullmap} % insert suitable label, this is used to refer to a fig from within the text as shown above
 \end{figure}
-Because every $2\lambda$ iteration of the \textbf{Sign} and \textbf{Verify} procedures are entirely independent of each other, these functions present themselves as embarrassingly parallel.\footnote{in the field of high performance computing, a problem that is trivially parallizable is often referred to as \emph{embarrassingly} parallizable.} 
 
-Recall from section \ref{subsec:sigcode} the table of functions that can be found in \code{SIDH\_signature}. \code{isogey\_sign} acts as the entry point for \code{Sign} and spawns a POSIX thread for every instance of the for-loop; each one calling \code{sign\_thread} which performs \bob's interaction with \randall. Verification proceeds analogously; \code{isogeny\_verify} is executed and spawns a POSIX threads executing \code{verify\_thread} until all $2\lambda$ iterations are complete.
+\noindent
+\emph{Parallelizing Signatures}. Recall now the construction of textbf{Sign} and \textbf{Verify} from Sectoin \ref{sec:sigsbackground}. The design of the sign procedure requires running $2\lambda$ distinct instances of the underlying key exchange protocol, after which these instances are reproduced in \textbf{Verify} to check for their validity. It is clear that, because every $2\lambda$ iteration of \textbf{Sign} and \textbf{Verify} are entirely independent of each other, these procedures present themselves as embarrassingly parallel.\footnote{in the field of high performance computing, a problem that is trivially parallizable is often referred to as \emph{embarrassingly} parallizable.} 
 
-This parallelization of the signature scheme was the approach taken by Yoo et al. in their original implementation. It also lends itself rather nicely\\
+This parallelization approach was exactly the one taken by Yoo et al. in their C implementation. Refer again to the \code{SIDH\_signature.c} functions outlined in Figure \ref{fig:sigfuncs}: \code{isogey\_sign} acts as the entry point for \textbf{Sign} and spawns a POSIX thread for every instance of the procedure's for-loop. So now, in parallel, every thread spawned by \code{isogeny\_sign} makes a call to \code{sign\_thread}, which in turn performs \bob's interaction with \randall. Verification proceeds analogously; \code{isogeny\_verify} is executed and spawns a POSIX threads executing \code{verify\_thread} until all $2\lambda$ iterations are complete.\\
+
+Now that we've concluded that the same sequence of operations will be carried out $2\lambda$ times in parallel, we need only one occurance of an $\mathbb{F}_{p^2}$ inversion in either \code{sign\_thread} or \code{verify\_thread} to be able to fill a element batch of size $2\lambda$, suitable for partial batched inversion. 
+
+Costella et al. have concisely outlined many of the \sidh isogeny and point-wise functions in Figure [ref] of \cite{effalg}. Examinig this Figure, we note that there are only three candidate functions containing element inversion calls: \code{j\_inv}, \code{inv\_4\_way}, and \code{getA}. The fact that so few functions require inversions is, again, thanks to the design decisions outlined in Section \ref{subsec:design}.
+
+\code{j\_inv} is a function returning the $j$-invariant of a curve which, as the reader may recall, is used in the computation of the shared secret. \code{inv\_4\_way} is a function which takes 4 $\mathbb{F}_{p^2}$ elements and returns each elements inversion by means of calculating only one inversion (via the same method outlined by \textbf{BatchedInversion}).  
+
 
 \noindent
 \code{inv\_4\_way}.\\
@@ -516,18 +523,11 @@ void j_inv(const f2elm_t A, const f2elm_t C, f2elm_t jinv) {
 }
 \end{lstlisting}
 
-\begin{figure}[htb]
-\centering
-\includegraphics[scale=0.5]{signandverifycall} % e.g. insert ./image for image.png in the working directory, adjust scale as necessary
-\caption{<Caption here>}
-\label{fig:label} % insert suitable label, this is used to refer to a fig from within the text as shown above
-\end{figure}
-
 \begin{tikzpicture}
     [auto,
     block/.style={
       rectangle,
-      draw=blue,
+      draw=black,
       thick,
       fill=gray!20,
       text width=7em,
@@ -537,10 +537,20 @@ void j_inv(const f2elm_t A, const f2elm_t C, f2elm_t jinv) {
     },
     block1/.style={
       rectangle,
-      draw=blue,
+      draw=black,
       thick,
-      fill=blue!20,
+      fill=gray!20,
       text width=9em,
+      align=center,
+      rounded corners,
+      minimum height=2em
+    },
+	block2/.style={
+      rectangle,
+      draw=black,
+      thick,
+      fill=red!20,
+      text width=8.5em,
       align=center,
       rounded corners,
       minimum height=2em
@@ -563,20 +573,96 @@ void j_inv(const f2elm_t A, const f2elm_t C, f2elm_t jinv) {
     \path (-1,-4) node[block1] (G) {\code{SecretAgreement\_B}}
           (4,-4) node[block1] (H) {\code{KeyGeneration\_A}}
           (9,-4) node[block1] (I) {\code{SecretAgreement\_B}};
-    %\draw (C.south) -- ++(0,-0.25) coordinate (linga);
-    %\draw (linga) -- ++(-1,0) coordinate (ling);
-    %\draw[-latex] (ling) |- (G.east);
-    %\draw[-latex] (ling) |- (H.east);
-    %\draw[-latex] (ling) |- (I.east);
-    %\draw (linga) -- ++(1,0) coordinate (hling);
-    %\draw[-latex] (hling) |- (J.west);
-    %\draw[-latex] (hling) |- (K.west);
-    %\draw[-latex] (hling) |- (L.west);
-    %\draw[red,thick,dotted] ($(J.north west)+(-0.3,0.6)$)  rectangle ($(L.south east)+(0.3,-0.6)$);
-    %\draw[thick,dotted]     ($(I.north west)+(-0.5,0.15)$) rectangle ($(L.south east)+(0.5,-0.15)$);
+	\draw (-1,-6) node[block2] (C) {\code{j\_inv}};
+	\draw (4,-6) node[block2] (C) {\code{inv\_4\_way}};
+	\draw (9,-6) node[block2] (C) {\code{j\_inv}};
+	\draw[->, line width=2.0] (1,-2.4) -- (-1.2,-3.6) node[right] {};
+		\draw (-0.3, -3) node[left] (LABEL1) {248x};
+	\draw[->, line width=2.0] (1,-2.4) -- (3.8,-3.6) node[above] {};
+		\draw (2.2, -3) node[left] (LABEL2) {248x};
+	\draw[->, line width=2.0] (8,-2.4) -- (-0.8,-3.6) node[right] {};
+		\draw (4, -2.9) node[above] (LABEL3) {$\sim$124x};
+	\draw[->, line width=2.0] (8,-2.4) -- (4.2,-3.6) node[above] {};
+		\draw (6.3, -3) node[right] (LABEL4) {$\sim$124x};
+	\draw[->, line width=2.0] (8,-2.4) -- (9,-3.6) node[right] {};
+		\draw (8.4, -3) node[right] (LABEL5) {$\sim$124x};
+	\draw[->, line width=2.0] (-1,-4.4) -- (-1,-5.6) node {};
+	\draw[->, line width=2.0] (4,-4.4) -- (4,-5.6) node {};
+	\draw[->, line width=2.0] (9,-4.4) -- (9,-5.6) node {};
+
 \end{tikzpicture}
 
-Because the work of Yoo et al. was built on top of the original Microsoft SIDH library, all underlying field arithmetic (and as such, pointwise arithmetic) is performed in projective space using Montgomery representation. As was mentioned in the previous chapter, doing such allows us to avoid a great deal of field element inversions. We simply convert to Montgomery representation at the beginning of heavy arithmetic, perform the desired operations, and then convert back to standard representation when complete. Throughout the codebase, (most noticeably in \code{kex.c}) we can see an analogous approach taken in for pointwise arithmetic, by first converting to a projective space representation, performing operations, and then converting back to affine coordinates. 
+Because the work of Yoo et al. was built on top of the original Microsoft SIDH library, all underlying field arithmetic (and as such, pointwise arithmetic) is performed in projective space using Montgomery representation. As was mentioned in the previous chapter, doing such allows us to avoid a great deal of field element inversions. We simply convert to Montgomery representation at the beginning of heavy arithmetic, perform the desired operations, and then convert back to standard representation when complete. Throughout the codebase, (most noticeably in \code{kex.c}) we can see an analogous approach taken in for pointwise arithmetic, by first converting to a projective space representation, performing 
+operations, and then converting back to affine coordinates. 
+
+\begin{tikzpicture}
+    [auto,
+    block/.style={
+      rectangle,
+      draw=black,
+      thick,
+      fill=gray!20,
+      text width=7em,
+      align=center,
+      rounded corners,
+      minimum height=2em
+    },
+    block1/.style={
+      rectangle,
+      draw=black,
+      thick,
+      fill=gray!20,
+      text width=9em,
+      align=center,
+      rounded corners,
+      minimum height=2em
+    },
+	block2/.style={
+      rectangle,
+      draw=black,
+      thick,
+      fill=green!20,
+      text width=8.5em,
+      align=center,
+      rounded corners,
+      minimum height=2em
+    },
+    line/.style={
+      draw,thick,
+      -latex',
+      shorten >=2pt
+    },
+    cloud/.style={
+      draw=red,
+      thick,
+      ellipse,
+      fill=red!20,
+      minimum height=1em
+    }
+  ]
+    \draw (1,-2) node[block] (C) {\code{sign\_thread}};
+	\draw (8,-2) node[block] (C) {\code{verify\_thread}};
+    \path (-1,-4) node[block1] (G) {\code{SecretAgreement\_B}}
+          (4,-4) node[block1] (H) {\code{KeyGeneration\_A}}
+          (9,-4) node[block1] (I) {\code{SecretAgreement\_B}};
+	\draw (-1,-6) node[block2] (C) {\code{j\_inv\_batch}};
+	\draw (4,-6) node[block2] (C) {\code{inv\_4\_way\_batch}};
+	\draw (9,-6) node[block2] (C) {\code{j\_inv\_batch}};
+	\draw[->, line width=2.0] (1,-2.4) -- (-1.2,-3.6) node[right] {};
+		\draw (-0.3, -3) node[left] (LABEL1) {248x};
+	\draw[->, line width=2.0] (1,-2.4) -- (3.8,-3.6) node[above] {};
+		\draw (2.2, -3) node[left] (LABEL2) {248x};
+	\draw[->, line width=2.0] (8,-2.4) -- (-0.8,-3.6) node[right] {};
+		\draw (4, -2.9) node[above] (LABEL3) {$\sim$124x};
+	\draw[->, line width=2.0] (8,-2.4) -- (4.2,-3.6) node[above] {};
+		\draw (6.3, -3) node[right] (LABEL4) {$\sim$124x};
+	\draw[->, line width=2.0] (8,-2.4) -- (9,-3.6) node[right] {};
+		\draw (8.4, -3) node[right] (LABEL5) {$\sim$124x};
+	\draw[->, line width=2.0] (-1,-4.4) -- (-1,-5.6) node {};
+	\draw[->, line width=2.0] (4,-4.4) -- (4,-5.6) node {};
+	\draw[->, line width=2.0] (9,-4.4) -- (9,-5.6) node {};
+
+\end{tikzpicture}
 
 The downside of this (for our work) is that the number opportunities for implementing the batched inversion algorithm becomes greatly limited.\\
 
@@ -642,7 +728,7 @@ In the \sidh library, there are two distinct functions for computing field eleme
 \begin{center}
 \begin{tabular}{@{}lllll@{}}
 	\toprule
-	Procedure & Performance in clock cyckes & System A With Batching\\
+	Procedure & Performance in clock cycles & System A With Batching\\
 	\midrule
 	\code{fp2inv751\_mont} & 68,881,331 & 68,881,331\\
 	\code{fp2inv751\_mont\_bingcd} & 15,744,477,032 & 15,565,738,003\\
@@ -660,6 +746,11 @@ While it is not the case for our implementations that the data on which \code{pb
 
 
 \section{Results}
+
+Our results come in several forms. First, there are the execution-time results of \code{pb\_inv} measured in clock cycles. Measurements of this first type are gathered from two environments, a general $\mathbb{F}_{p^2}$ environment constructed using the NTL C library, and \sidh. The first environment allows us to meaure how the performance of \code{pb\_inv} compares with an unbatched approach for arbitrarily sized moduli. Measurements in \sidh are limited to the parameters of the library, but more closely reflect the performance gains in that particular system.
+
+Following that, we measure the improvement in the performance of signature signing and verifying procedures offered by the inclusion of the batched partial inversion mechanism. These results are gathered both in a multi-core setting and a single-core environment, also measured in clock-cycles.  
+
 
 \begin{center}
 \begin{tabular}{@{}llll@{}}

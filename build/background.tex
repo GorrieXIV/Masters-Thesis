@@ -922,6 +922,7 @@ The reader may note that \code{publickey\_t} does not contain any information de
 Also worth noting is the lack of a specific data structure for representing curves. As it turns out, curves within $\Pi_{\text{SIDH}}$ can be distinctly represented by their $A$ value alone. As we are working with curves defined over $\mathbb{F}_{p^2}$, we have $A \in \mathbb{F}_{p^2}$ and thus we can succinctly represent any curve with a single \code{f2elm\_t}. 
 
 \subsection{\sidh Design Decisions}
+\label{subsec:design}
 
 The following are, at a high-level, the algorithmic improvements upon $\Pi_{\text{SIDH}}$ as outlined in \cite{effalg}. Costella et al. do make additional contributions in their paper, however we will discuss only those contributions which pertain to the performance of SIDH.\\
 
@@ -1063,6 +1064,7 @@ The reader may note that, in Figure \ref{fig:kexfuncs}, \code{privateKeyA} (in \
 
 Yoo et al. provided, along with their publication of \cite{yoo}, an implementation of their signature scheme as a fork to \sidh. All of their functions are written specifically for an instance of $\Sigma'$ where the signer is assuming the \rb role (meaning that \randall assumes the \ba role), but their algorithms could be trivially modified to provide versions supporting a signer in the \ba role. Their contributions to the \sidh codebase come in the form of the functions listed below.
 
+\begin{figure}
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 	\toprule
@@ -1090,6 +1092,8 @@ Yoo et al. provided, along with their publication of \cite{yoo}, an implementati
 	\bottomrule
 \end{tabular}
 \end{center}
+\label{fig:sigfuncs}
+\end{figure}
 
 To begin, \code{isogeny\_keygen} has a trivial definition; \code{KeyGeneration\_B} is called and populates the signer's public and private keys. \code{isogeny\_keygen} returns the success status of the call to \code{KeyGeneration\_B}.
 
@@ -1114,8 +1118,6 @@ If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Ve
 \State \Return $\sigma \gets ((\texttt{com}_{i})_{i}, (\texttt{ch}_{i,j})_{i,j}, (h_{i})_{i}, ((\texttt{resp})[J_{i}])$
 \end{algorithmic}
 \end{algorithm}
-
-I'm shook.
 
 \begin{algorithm}[H]
 \caption{-- \code{Verify($pk = \pb$, $m$, $\sigma$)}}\label{alg:verifcode}
