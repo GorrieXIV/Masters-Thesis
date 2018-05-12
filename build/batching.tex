@@ -504,7 +504,7 @@ This parallelization approach was exactly the one taken by Yoo et al. in their C
 \end{tikzpicture}
 \end{center}
 
-Now that we've concluded that the same sequence of operations will be carried out $2\lambda$ times in parallel, we need only one occurance of an $\mathbb{F}_{p^2}$ inversion in either \code{sign\_thread} or \code{verify\_thread} to be able to fill a element batch of size $2\lambda$, suitable for partial batched inversion. 
+Now that we've concluded that the same sequence of operations will be carried out $248$ times in parallel, we need only one occurance of an $\mathbb{F}_{p^2}$ inversion in either \code{sign\_thread} or \code{verify\_thread} to be able to fill a element batch of size $248$, suitable for partial batched inversion. 
 
 Costella et al. have concisely outlined many of the \sidh isogeny and point-wise functions in Table 1 of \cite{effalg}. Examinig this Figure, we note that there are only three candidate functions containing element inversion calls: \code{j\_inv}, \code{inv\_4\_way}, and \code{getA}. The fact that so few functions require inversions is, again, thanks to the design decisions outlined in Section \ref{subsec:design}.\\
 
