@@ -453,7 +453,7 @@ Recall Figure \ref{fig:halfmap} which details the abstraction levels of the SIDH
 \noindent
 \emph{Parallelizing Signatures}. Recall now the construction of \textbf{Sign} and \textbf{Verify} from Sectoin \ref{sec:sigsbackground}. The design of the sign procedure requires running $2\lambda$ distinct instances of the underlying key exchange protocol, after which these instances are reproduced in \textbf{Verify} to check for their validity. It is clear that, because every $2\lambda$ iteration of \textbf{Sign} and \textbf{Verify} are entirely independent of each other, these procedures present themselves as embarrassingly parallel.\footnote{in the field of high performance computing, a problem that is trivially parallizable is often referred to as \emph{embarrassingly} parallizable.} 
 
-This parallelization approach was exactly the one taken by Yoo et al. in their C implementation. Refer again to the \code{SIDH\_signature.c} functions outlined in Figure \ref{fig:sigfuncs}: \code{isogey\_sign} acts as the entry point for \textbf{Sign} and spawns a POSIX thread for every instance of the procedure's for-loop. So now, in parallel, every thread spawned by \code{isogeny\_sign} makes a call to \code{sign\_thread}, which in turn performs \bob's interaction with \randall. Verification proceeds analogously; \code{isogeny\_verify} is executed and spawns a POSIX threads executing \code{verify\_thread} until all $2\lambda$ iterations are complete.\\
+This parallelization approach was exactly the one taken by Yoo et al. in their C implementation. Refer again to the \code{SIDH\_signature.c} functions outlined in Figure \ref{fig:sigfuncs}: \code{isogey\_sign} acts as the entry point for \textbf{Sign} and spawns a POSIX thread for every instance of the procedure's for-loop. So now, in parallel, every thread spawned by \code{isogeny\_sign} makes a call to \code{sign\_thread}, which in turn performs \bob's interaction with \randall. Verification proceeds analogously; \code{isogeny\_verify} is executed and spawns a POSIX threads executing \code{verify\_thread} until all $2\lambda$ iterations are complete. $\lambda$ here denotes the security level in bits (128 by default in SIDH), and so 248 threads are spawned in both \code{sign\_thread} and \code{verify\_thread}. Refer to the Figure directly below, roughly illustrating a parallel call-graph for \code{isogeny\_sign} and \code{isogeny\_verify}.
 
 \begin{center}
 \begin{tikzpicture}
@@ -467,15 +467,40 @@ This parallelization approach was exactly the one taken by Yoo et al. in their C
 		  align=center,
 		  rounded corners,
 		  minimum height=2em
+		},
+		block1/.style={
+		  rectangle,
+		  draw=black,
+		  thick,
+		  fill=gray!20,
+		  text width=7em,
+		  align=center,
+		  rounded corners,
+		  minimum height=2em
 		}
 	]
-%\draw[thick] (-1,0) rectangle +(6,7.5);
-\filldraw[thick, top color=white,bottom color=red!50!] (0.5,0) rectangle node{$N_S$} +(1.3,0.5);
-\filldraw[top color=white,bottom color=blue!50!] (0.5,0.5) rectangle node{$P_{1}$} +(1.3,0.5);
-\filldraw[top color=white,bottom color=blue!50!] (0.5,1.0) rectangle node{$P_{3}$} +(1.3,1.5);
-\filldraw[top color=white,bottom color=blue!50!] (0.5,2.5) rectangle node{$P_{5}$} +(1.3,2.5);
+	\begin{scope}[xshift=0cm]
+		\draw (2.5,4.5) node[block] {$\code{sign\_thread}$};
+		\draw (0.7, 4.5) node {1};
+		\draw (2.5,3.5) node[block] {$\code{sign\_thread}$};
+		\draw (0.7, 3.5) node {2};
+		\draw[very thick, loosely dotted] (2,2.8) -- (2,2.1) node {};
+		\draw (2.5,1.5) node[block] {$\code{sign\_thread}$};
+		\draw (0.7, 1.5) node {248};
 
-\draw [decorate,decoration={brace,amplitude=10pt},xshift=-4pt,yshift=0pt] (0.5,0.5) -- (0.5,5.0) node [black,midway,xshift=-0.6cm,block] {\code{sign\_thread}};
+		\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (0.5,1) -- (0.5,5.0) node [black,midway,xshift=-0.6cm,block] {\code{isogeny\_sign}};
+	\end{scope}
+	\begin{scope}[xshift=8cm]
+		\draw (2.7,4.5) node[block1] {$\code{verify\_thread}$};
+		\draw (0.7, 4.5) node {1};
+		\draw (2.7,3.5) node[block1] {$\code{verify\_thread}$};
+		\draw (0.7, 3.5) node {2};
+		\draw[very thick, loosely dotted] (2,2.8) -- (2,2.1) node {};
+		\draw (2.7,1.5) node[block1] {$\code{verify\_thread}$};
+		\draw (0.7, 1.5) node {248};
+
+		\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (0.5,1) -- (0.5,5.0) node [black,midway,xshift=-0.6cm,block1] {\code{isogeny\_verify}};
+	\end{scope}
 \end{tikzpicture}
 \end{center}
 
@@ -484,7 +509,7 @@ Now that we've concluded that the same sequence of operations will be carried ou
 Costella et al. have concisely outlined many of the \sidh isogeny and point-wise functions in Table 1 of \cite{effalg}. Examinig this Figure, we note that there are only three candidate functions containing element inversion calls: \code{j\_inv}, \code{inv\_4\_way}, and \code{getA}. The fact that so few functions require inversions is, again, thanks to the design decisions outlined in Section \ref{subsec:design}.\\
 
 \noindent
-\code{j\_inv} is a function returning the $j$-invariant of a curve which, as the reader may recall, is used in the computation of the shared secret. \code{inv\_4\_way} is a function which takes 4 $\mathbb{F}_{p^2}$ elements and returns each elements inversion by means of calculating only one inversion (via the same method outlined by \textbf{BatchedInversion}).  
+\code{j\_inv} is a function returning the $j$-invariant of a curve which, as the reader may recall, is used in the computation of the shared secret.\\
 
 \begin{lstlisting}
 void j_inv(const f2elm_t A, const f2elm_t C, f2elm_t jinv) {
@@ -515,9 +540,8 @@ void j_inv(const f2elm_t A, const f2elm_t C, f2elm_t jinv) {
 }
 \end{lstlisting}
 
-
 \noindent
-\code{inv\_4\_way}.
+\code{inv\_4\_way} is a function which takes 4 $\mathbb{F}_{p^2}$ elements and returns each elements inversion by means of calculating only one inversion (via the same method outlined by \textbf{BatchedInversion}).
 
 \begin{lstlisting}
 void inv_4_way(f2elm_t z1, f2elm_t z2, f2elm_t z3, f2elm_t z4) {
