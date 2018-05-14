@@ -778,9 +778,10 @@ For \textbf{Sign($sk$, $m$)} and \textbf{Verify($pk$, $m$, $\sigma$)} we assume 
 \end{algorithm}
 
 \noindent
-If we write out \textbf{Sign()} using the $\Pi_{\text{SIDH}}$ API, we see that the only real computation is being performed by \textbf{KeyGen()} and \textbf{SecAgr()}, and our two random oracles \textbf{H()} and \textbf{G()}.  The rest of the algorithm is merely organizing the information we've generated into the transcript ($com$, $ch$, $resp$) and then finally into $\sigma$.
+If we write out \textbf{Sign} using the $\Pi_{\text{SIDH}}$ API, we see that the only real computation is being performed by \textbf{KeyGen} and \textbf{SecAgr}, and our two random oracles \textbf{H} and \textbf{G}.  The rest of the algorithm is merely organizing the information we've generated into the transcript ($com$, $ch$, $resp$) and then finally into $\sigma$.
 
 \begin{algorithm}
+\label{alg:signvia}
 \caption{-- \textbf{Sign($sk = \rb$, $m$)} via $\Pi_{\text{SIDH}}$}\label{euclid}
 \begin{algorithmic}[1]
 \For{\texttt{i = 1..2$\lambda$}}
