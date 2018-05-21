@@ -560,8 +560,8 @@ void j_inv(const f2elm_t A, const f2elm_t C, f2elm_t jinv) {
 	}
 	fp2copy751(batch->invDest[tempCnt], jinv);
 	batch->cntr = 0;
-\end{lstlisting}
-%\vspace{-\baselineskip}
+\end{lstlisting}%
+%\vspace{-0.75\baselineskip}
 \begin{lstlisting}[firstnumber=37]
 	fp2mul751_mont(jinv, t0, jinv);                    // jinv = t0*jinv
 }
@@ -599,7 +599,7 @@ void inv_4_way(f2elm_t z1, f2elm_t z2, f2elm_t z3, f2elm_t z4) {
 \noindent
 \code{get\_A}, while containing an extension field inversion, does not arise in the execution flow of the signature scheme. The potential candidacy of this function for partial batched inversion processing is discussed further in Section \ref{sec:compress}.
 
-In Figure \ref{fig:threadcallgraph} we illustrate a heavily simplified call-graph for the \code{sign\_thread} and \code{verify\_thread}
+In Figure \ref{fig:threadcallgraph} we illustrate a heavily simplified call-graph for the \code{sign\_thread} and \code{verify\_thread}.
 
 \begin{figure}[!h]
 \label{fig:threadcallgraph}
