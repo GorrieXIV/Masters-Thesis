@@ -36,7 +36,7 @@
 \contentsline {subsection}{\numberline {3.2.1}Embedding Partial Batched Inversions}{41}{subsection.3.2.1}
 \contentsline {subsection}{\numberline {3.2.2}Implementation \& Design Decisions}{44}{subsection.3.2.2}
 \contentsline {section}{\numberline {3.3}Results}{46}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}Analysis}{48}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.1}Analysis}{47}{subsection.3.3.1}
 \contentsline {subsection}{\numberline {3.3.2}Remaining Opportunities}{48}{subsection.3.3.2}
 \contentsline {chapter}{\numberline {4}Compressing Signatures}{49}{chapter.4}
 \contentsline {section}{\numberline {4.1}SIDH Key Compression Background}{49}{section.4.1}
@@ -55,3 +55,11 @@
 \contentsline {section}{\numberline {5.3}Future Work}{50}{section.5.3}
 \contentsline {chapter}{Appendices}{51}{section*.5}
 \contentsline {chapter}{\numberline {A}$\texttt {SIDH}_{\texttt {C}}$\xspace Functions}{52}{Appendix.a.A}
+\contentsline {section}{\numberline {A.1}$\mathbb {F}_p$ and $\mathbb {F}_{p^2}$ Functions}{52}{section.a.A.1}
+\contentsline {section}{\numberline {A.2}Isogeny and Point-wise Functions}{52}{section.a.A.2}
+\contentsline {subsection}{\numberline {A.2.1}\texttt {j\_inv}}{52}{subsection.a.A.2.1}
+\contentsline {subsection}{\numberline {A.2.2}\texttt {j\_inv\_batch}}{52}{subsection.a.A.2.2}
+\contentsline {subsection}{\numberline {A.2.3}\texttt {inv\_4\_way}}{53}{subsection.a.A.2.3}
+\contentsline {subsection}{\numberline {A.2.4}\texttt {inv\_4\_way\_batch}}{53}{subsection.a.A.2.4}
+\contentsline {section}{\numberline {A.3}Key Exchange Functions}{54}{section.a.A.3}
+\contentsline {section}{\numberline {A.4}Signature Layer Functions}{54}{section.a.A.4}

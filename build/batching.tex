@@ -433,7 +433,7 @@ $$
 \section{Implementation Details}
 \label{sec:pbinvimplementation}
 
-We will now take the work of the previous subsection and explain in detail how it can be applied to the Yoo et al. signature layer of \sidh. We will begin with a high-level overview of the signature layer architecture. This mapping will allow efficient highlighting of the potential bottlenecks in the protocols performance. In this search for performance bottlenecks, we will specifically seek out execution paths in the codebase where-in batching inversions could offer a performance increase. Additionally, will discuss properties of the signature scheme that can be leveraged to optimize the performance increases offered by \textbf{PartialBatchedInv}.
+We will now take the work of the previous subsection and explain in detail how it can be applied to the Yoo et al. signature layer of \sidh. We will begin with a high-level overview of the signature layer architecture. This mapping will allow efficient highlighting of the potential bottlenecks in the protocols performance. In this search for performance bottlenecks, we will specifically seek out execution paths in the codebase where-in batching inversions could offer a performance increase. Additionally, we will discuss properties of the signature scheme that can be leveraged to optimize the performance increases offered by \textbf{PartialBatchedInv}.
 
 After this breif mapping of the signature layer, we move into the lower-level details of our procedures implementation. We transcribe \textbf{PartialBatchedInversion} to its C variant, \code{pb\_inv}, which is defined almost entirely by means of the \sidh API. We will discuss some design specifics of \code{pb\_inv}, and look breifly at the security of the function with respect to the signature scheme.
 
@@ -451,7 +451,7 @@ Recall Figure \ref{fig:halfmap} which details the abstraction levels of the SIDH
 \end{figure}
 
 \noindent
-\emph{Parallelizing Signatures}. Recall now the construction of \textbf{Sign} and \textbf{Verify} from Sectoin \ref{sec:sigsbackground}. The sign procedure requires running $2\lambda$ distinct instances of the underlying key exchange protocol, after which these instances are reproduced in \textbf{Verify} to check for their validity. It is clear that, because every $2\lambda$ iteration of \textbf{Sign} and \textbf{Verify} are entirely independent of each other, these procedures present themselves as embarrassingly parallel.\footnote{in the field of high performance computing, a problem that is trivially parallizable is often referred to as \emph{embarrassingly} parallizable.} 
+\emph{Parallelizing Signatures}. Recall now the construction of \textbf{Sign} and \textbf{Verify} from Section \ref{sec:sigsbackground}. The sign procedure requires running $2\lambda$ distinct instances of the underlying key exchange protocol, after which these instances are reproduced in \textbf{Verify} to check for their validity. It is clear that, because every $2\lambda$ iteration of \textbf{Sign} and \textbf{Verify} are entirely independent of each other, these procedures present themselves as embarrassingly parallel.\footnote{in the field of high performance computing, a problem that is trivially parallizable is often referred to as \emph{embarrassingly} parallizable.} 
 
 This parallelization approach was exactly the one taken by Yoo et al. in their C implementation. Refer again to the \code{SIDH\_signature.c} functions outlined in Figure \ref{fig:sigfuncs}: \code{isogey\_sign} acts as the entry point for \textbf{Sign} and spawns a POSIX thread for every instance of the procedure's for-loop. So now, in parallel, every thread spawned by \code{isogeny\_sign} makes a call to \code{sign\_thread}, which in turn performs \bob's interaction with \randall. Verification proceeds analogously; \code{isogeny\_verify} is executed and spawns a POSIX threads executing \code{verify\_thread} until all $2\lambda$ iterations are complete. $\lambda$ here denotes the security level in bits (128 by default in SIDH), and so 248 threads are spawned in both \code{sign\_thread} and \code{verify\_thread}. Refer to the Figure directly below, roughly illustrating a parallel call-graph for \code{isogeny\_sign} and \code{isogeny\_verify}.
 
@@ -511,93 +511,11 @@ Costella et al. have concisely outlined many of the \sidh isogeny and point-wise
 \noindent
 \code{j\_inv} is a function returning the $j$-invariant of a curve which, as the reader may recall, is used in the computation of the shared secret. If we refer back to our definitions of \code{Sign} and \code{Verify} (Algorithms 9 and 10, respectively) we note that \code{Sign} contains a call to \code{SecretAgreement\_B} in every iteration of its for-loop. Similarly, \code{Verify} contains a call to \code{SercretAgreement\_A} in roughly have of the iterations of its for-loop, and a call to \code{SecretAgreement\_B} in the remaining iterations; totalling still to $248$ secret agreement computations. As expected, this means that \code{isogney\_sign} and \code{isogeny\_verify} contain calls to these secret agreement functions, illustrating the presence of 1 \code{j\_inv} function call (as by extension, 1 extension field inversion,) in every signing and verification thread.\\
 
-\begin{lstlisting}
-void j_inv(const f2elm_t A, const f2elm_t C, f2elm_t jinv) {
-	f2elm_t t0, t1;
-\end{lstlisting}
-\vspace{-\baselineskip}
-\begin{lstlisting}[backgroundcolor=\color{light-green}, firstnumber=3]
-	int tempCnt;
-\end{lstlisting}
-\vspace{-\baselineskip}
-\begin{lstlisting}[firstnumber=4]
-
-	fp2sqr751_mont(A, jinv);                           // jinv = A^2        
-	fp2sqr751_mont(C, t1);                             // t1 = C^2
-	fp2add751(t1, t1, t0);                             // t0 = t1+t1
-	fp2sub751(jinv, t0, t0);                           // t0 = jinv-t0
-	fp2sub751(t0, t1, t0);                             // t0 = t0-t1
-	fp2sub751(t0, t1, jinv);                           // jinv = t0-t1
-	fp2sqr751_mont(t1, t1);                            // t1 = t1^2
-	fp2mul751_mont(jinv, t1, jinv);                    // jinv = jinv*t1
-	fp2add751(t0, t0, t0);                             // t0 = t0+t0
-	fp2add751(t0, t0, t0);                             // t0 = t0+t0
-	fp2sqr751_mont(t0, t1);                            // t1 = t0^2
-	fp2mul751_mont(t0, t1, t0);                        // t0 = t0*t1
-	fp2add751(t0, t0, t0);                             // t0 = t0+t0
-	fp2add751(t0, t0, t0);                             // t0 = t0+t0
-\end{lstlisting}
-\vspace{-\baselineskip}
-\begin{lstlisting}[backgroundcolor=\color{light-red}, firstnumber=19]
-	fp2inv751_mont(jinv);                              // jinv = 1/jinv
-\end{lstlisting}
-\vspace{-\baselineskip}
-\begin{lstlisting}[backgroundcolor=\color{light-green}, firstnumber=20]
-	pthread_mutex_lock(&batch->arrayLock);
-	fp2copy751(jinv, batch->invArray[batch->cntr]);
-	tempCnt = batch->cntr;
-	batch->cntr++; 
-	pthread_mutex_unlock(&batch->arrayLock);	
-
-	int i;
-	if (tempCnt+1 == batch->batchSize) {
-		partial_batched_inv(batch->invArray, batch->invDest, batch->batchSize);
-		for (i = 0; i < batch->batchSize - 1; i++) {
-			sem_post(&batch->sign_sem);			
-		}
-	} else {
-		sem_wait(&batch->sign_sem);
-	}
-	fp2copy751(batch->invDest[tempCnt], jinv);
-	batch->cntr = 0;
-\end{lstlisting}%
-%\vspace{-0.75\baselineskip}
-\begin{lstlisting}[firstnumber=37]
-	fp2mul751_mont(jinv, t0, jinv);                    // jinv = t0*jinv
-}
-\end{lstlisting}
-
 \noindent
 \code{inv\_4\_way} is a function which takes 4 $\mathbb{F}_{p^2}$ elements and returns each elements inversion by means of calculating only one inversion (via the same method outlined by \textbf{BatchedInversion}). This function is used in the key generation to process to invert the Z-values of the public key values; $\phi(P)$, $\phi(Q)$, and $\phi(P-Q)$), so that they can be converted from projective to affine representation. Because every \code{sign\_thread} execution represents \bob's key exchange with a distinct and random \randall, \code{KeyGeneration\_A} must be called in each thread to generate \randall's public and private keys. This results in another candidate batch of size 248 for batched partial inversion.\\
 
-\begin{lstlisting}
-void inv_4_way(f2elm_t z1, f2elm_t z2, f2elm_t z3, f2elm_t z4) {
-  	f2elm_t t0, t1, t2;
-	int tempCnt;
-
-    fp2mul751_mont(z1, z2, t0);                      // t0 = z1*z2
-    fp2mul751_mont(z3, z4, t1);                      // t1 = z3*z4
-    fp2mul751_mont(t0, t1, t2);                      // t2 = z1*z2*z3*z4
-\end{lstlisting}
-\vspace{-\baselineskip}
-\begin{lstlisting}[backgroundcolor=\color{light-red}, firstnumber=8]
-    fp2inv751_mont(t2);                              // t2 = 1/(z1*z2*z3*z4)
-\end{lstlisting}
-\vspace{-\baselineskip}
-\begin{lstlisting}[firstnumber=9]
-    fp2mul751_mont(t0, t2, t0);                      // t0 = 1/(z3*z4) 
-    fp2mul751_mont(t1, t2, t1);                      // t1 = 1/(z1*z2) 
-    fp2mul751_mont(t0, z3, t2);                      // t2 = 1/z4
-    fp2mul751_mont(t0, z4, z3);                      // z3 = 1/z3
-    fp2copy751(t2, z4);                              // z4 = 1/z4
-    fp2mul751_mont(z1, t1, t2);                      // t2 = 1/z2
-    fp2mul751_mont(z2, t1, z1);                      // z1 = 1/z1
-    fp2copy751(t2, z2);                              // z2 = 1/z2
-}
-\end{lstlisting}
-
 \noindent
-\code{get\_A}, while containing an extension field inversion, does not arise in the execution flow of the signature scheme. The potential candidacy of this function for partial batched inversion processing is discussed further in Section \ref{sec:compress}.
+\code{get\_A}, while containing an extension field inversion, does not arise in the execution flow of the signature scheme. The potential candidacy of this function for partial batched inversion processing is discussed further in Section \ref{sec:compress}.\\
 
 In Figure \ref{fig:threadcallgraph} we illustrate a heavily simplified call-graph for the \code{sign\_thread} and \code{verify\_thread}.
 
@@ -673,8 +591,7 @@ In Figure \ref{fig:threadcallgraph} we illustrate a heavily simplified call-grap
 \end{tikzpicture}
 \end{figure}
 
-Because the work of Yoo et al. was built on top of the original Microsoft SIDH library, all underlying field arithmetic (and as such, pointwise arithmetic) is performed in projective space using Montgomery representation. As was mentioned in the previous chapter, doing such allows us to avoid a great deal of field element inversions. We simply convert to Montgomery representation at the beginning of heavy arithmetic, perform the desired operations, and then convert back to standard representation when complete. Throughout the codebase, (most noticeably in \code{kex.c}) we can see an analogous approach taken in for pointwise arithmetic, by first converting to a projective space representation, performing 
-operations, and then converting back to affine coordinates. 
+Because the work of Yoo et al. was built on top of the original Microsoft SIDH library, all underlying field arithmetic (and as such, pointwise arithmetic) is performed in projective space using Montgomery representation. As was mentioned in the previous chapter, doing such allows us to avoid a great deal of field element inversions. We simply convert to Montgomery representation at the beginning of heavy arithmetic, perform the desired operations, and then convert back to standard representation when complete. Throughout the codebase, (most noticeably in \code{kex.c}) we can see an analogous approach taken in for pointwise arithmetic, by first converting to a projective space representation, performing operations, and then converting back to affine coordinates. 
 
 \begin{figure}[!h]
 \label{fig:batchcallgraph}
@@ -747,6 +664,46 @@ operations, and then converting back to affine coordinates.
 
 \end{tikzpicture}
 \end{figure}
+
+\begin{center}
+\begin{tikzpicture}
+	[scale=1, auto,
+		block/.style={
+		  rectangle,
+		  draw=black,
+		  thick,
+		  fill=gray!20,
+		  text width=6em,
+		  align=center,
+		  rounded corners,
+		  minimum height=2em
+		},
+		blockgreen/.style={
+		  rectangle,
+		  draw=black,
+		  thick,
+		  fill=green!20,
+		  text width=7.2em,
+		  align=center,
+		  rounded corners,
+		  minimum height=2em
+		}
+	]
+	%\draw (2.5,4.5) node[block] {\code{sign\_thread}};
+	\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (4,3) -- (4,5.5) node [black,midway,xshift=-0.6cm,block] {\code{sign\_thread}};
+	\draw (6.5,4) node[blockgreen] {\code{j\_inv\_batch}};
+	\draw (6.5,5) node[blockgreen] {\code{inv\_4\_way\_batch}};
+	\draw (0.7, 4.5) node {1};
+	\draw[very thick, loosely dotted] (2,3.7) -- (2,2.2) node {};
+	%\draw (2.5,1.5) node[block] {\code{sign\_thread}};
+	%\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (0.5,1) -- (0.5,5.0) node [black,midway,xshift=-0.6cm,block] {\code{sign\_thread}};
+	\draw (6.5,1) node[blockgreen] {\code{j\_inv\_batch}};
+	\draw (6.5,2) node[blockgreen] {\code{inv\_4\_way\_batch}};
+	\draw (0.7, 1.5) node {248};
+
+	\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (0.5,1) -- (0.5,5.0) node [black,midway,xshift=-0.6cm,block] {\code{isogeny\_sign}};
+\end{tikzpicture}
+\end{center}
 
 \subsection{Implementation \& Design Decisions}
 
