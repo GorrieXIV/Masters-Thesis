@@ -439,6 +439,84 @@ After this breif mapping of the signature layer, we move into the lower-level de
 
 We round off this subsection with a discussion of other possible ways in which \code{pb\_inv} (and operation batching in general) can offer performance improvements to the Yoo et al. signature scheme. This discussion is continued in the final Chapter of this dissertation, in Section \ref{sec:morebatch}.
 
+\subsection{Implementation \& Design Decisions}
+
+With Algorithm \ref{alg:pbinvcode} we provide an explicit C definition for the function \code{pb\_inv}. For descriptions of the functions called in this procedure, the reader can refer to section \ref{subsec:functions}. For explicit definitions of some of these functions, the reader can refer to Appendix \ref{app:functions}.
+
+\begin{figure}
+\begin{lstlisting}
+void pb_inv (const f2elm_t* vec, f2elm_t* dest, const int n) {
+	felm_t t0[n];     //a portion of vec elements
+	felm_t t1[n];     //b portion of vec elements
+	felm_t den[n];    //denominator of vec elements
+	felm_t a[n];
+
+	// upward-percolation phase -----------------------------------//
+
+	for (int i = 0; i < n; i++) {
+		//compute denp[i] = a[i][0]^2 + a[i][1]^2
+		fpsqr751_mont((vec[i])[0], t0[i]);
+		fpsqr751_mont((vec[i])[1], t1[i]);
+		fpadd751(t0[i], t1[i], den[i]);
+	}	
+
+	fpcopy751(den[0], a[0]);
+	for (int i = 1; i < n; i++) {
+		fpmul751_mont(a[i-1], den[i], a[i]);
+	}
+
+	// inversion phase -------------------------------------------//
+	
+	felm_t a_inv;
+	fpcopy751(a[n-1], a_inv);
+	fpinv751_mont_bingcd(a_inv);
+    
+	// downward percolation phase --------------------------------//
+
+	for (int i = n-1; i >= 1; i--) {
+		fpmul751_mont(a[i-1], a_inv, a[i]);
+		fpmul751_mont(a_inv, den[i], a_inv);
+	}
+
+	fpcopy751(a_inv, a[0]);
+
+	for (int i = 0; i < n; i++) {
+		//convert back to extension field
+		fpmul751_mont(a[i],vec[i][0],dest[i][0]);
+		fpneg751((vec[i])[1]);
+		fpmul751_mont(a[i],vec[i][1],dest[i][1]);
+	}
+}
+\end{lstlisting}
+\caption{\code{pb\_inv}}
+\label{code:pbinv}
+\end{figure}
+
+\emph{Security Considerations.} Recall the notion of a general side-channel attack: A side-channel attack is performed when an unauthorized individual is able to acquire information by measuring properties of the physical implementation of the system at hand. This can be done by analyzing the power consumption, timing properties, or electromagnetic leaks of a CPU while it operates on (or generates) confidential information.
+
+In the context of information security, algorithms for performing operations over mathematical objects can be said to fall under one of two categories: \emph{constant time} and \emph{non-constant time} algorithms. Constant time algorithms are designed to protect confidential information from side-channel attacks, but come at the cost of computational efficiency.
+
+In the \sidh library, there are two distinct functions for computing field element inversions: \code{fp2inv751\_mont} and \code{fp2inv751\_mont\_bingcd}. \code{fp2inv751\_mont\_bingcd} performs inversion by means of the binary GCD (greatest common denominator) algorithm, and is a \emph{non-constant time} implementation. \code{fp2inv751\_mont} is a \emph{constant time} implementation, and as such runs slower than \code{fp2inv751\_mont\_bingcd} in nearly all cases, but protects against timing based side-channel attacks. They perform comparatively as such:
+
+\begin{center}
+\begin{tabular}{@{}lllll@{}}
+	\toprule
+	Procedure & Performance in clock cycles & System A With Batching\\
+	\midrule
+	\code{fp2inv751\_mont} & 68,881,331 & 68,881,331\\
+	\code{fp2inv751\_mont\_bingcd} & 15,744,477,032 & 15,565,738,003\\
+	\bottomrule
+\end{tabular}
+\end{center}
+
+Take for example some private data $c$ being manipulated or operated on by some algorithm $\textbf{A}$. In order to be entirely certain that $c$ in \textbf{P($c$)} is not vulnerable to \emph{any} imagineable side-channel attack it must be the case that the structure of \textbf{P} does not in anyway depend on the information stored in $c$.
+
+Let us look more closely at the elements that are inverted by \code{pb\_inv}. In \code{KeyGeneration\_A} the elements being passed to \code{pb\_inv} are simply the constituents of \randall's public key for every iteration of the signing procedure. Because the data being operated on is publicly available information, we needn't consider if it is vulnerable to side-channel analysis. 
+
+In \code{SecretAgreement\_A}, \code{pb\_inv} is called by \code{j\_inv}, which produces the \emph{j}-invariant of a particular curve. When \code{SecretAgreement\_A} is used in the context of SIDH key exchange, \code{j\_inv} is used to compute the shared secret between party members \ba and \rb, and so would need to be protected against side-channel attacks. This is not the case in the context of signatures, however. Recall the structure of SIDH signatures: every signature includes, for every $2\lambda$ iterations, the commitment $E_1$, which is precisely the shared secret between the signer and \randall. And so, every use of \code{pb\_inv} \emph{in the context of signatures} does not require extra precautions to side-channel analysis. The same is true for \code{SecretAgreement\_B}.
+
+While it is not the case for our implementations that the data on which \code{pb\_inv} operates would find itself the subject of side-channel analysis, it is not difficult to imagine a scenario where this might be the case. 
+
 \subsection{Embedding Partial Batched Inversions}
 
 Recall Figure \ref{fig:halfmap} which details the abstraction levels of the SIDH protocols as they relate to the modules of \sidh. We can further expand on this figure to illustrate how the Yoo et al. signature layer interoperates with the original \sidh codebase. See Figure \ref{fig:fullmap} - ``SIDH\_signature.c" signifies the C module added by Yoo et al., which implements $\Sigma':$\textbf{KeyGen}, $\Sigma':$\textbf{Sign}, and $\Sigma':$\textbf{Verify} as they are outlined in Section \ref{sec:sigsbackground}. For the remainder of this section we will refer to these higher-level procedures as simply \textbf{KeyGen}, \textbf{Sign}, and \textbf{Verify}.
@@ -453,7 +531,7 @@ Recall Figure \ref{fig:halfmap} which details the abstraction levels of the SIDH
 \noindent
 \emph{Parallelizing Signatures}. Recall now the construction of \textbf{Sign} and \textbf{Verify} from Section \ref{sec:sigsbackground}. The sign procedure requires running $2\lambda$ distinct instances of the underlying key exchange protocol, after which these instances are reproduced in \textbf{Verify} to check for their validity. It is clear that, because every $2\lambda$ iteration of \textbf{Sign} and \textbf{Verify} are entirely independent of each other, these procedures present themselves as embarrassingly parallel.\footnote{in the field of high performance computing, a problem that is trivially parallizable is often referred to as \emph{embarrassingly} parallizable.} 
 
-This parallelization approach was exactly the one taken by Yoo et al. in their C implementation. Refer again to the \code{SIDH\_signature.c} functions outlined in Figure \ref{fig:sigfuncs}: \code{isogey\_sign} acts as the entry point for \textbf{Sign} and spawns a POSIX thread for every instance of the procedure's for-loop. So now, in parallel, every thread spawned by \code{isogeny\_sign} makes a call to \code{sign\_thread}, which in turn performs \bob's interaction with \randall. Verification proceeds analogously; \code{isogeny\_verify} is executed and spawns a POSIX threads executing \code{verify\_thread} until all $2\lambda$ iterations are complete. $\lambda$ here denotes the security level in bits (128 by default in SIDH), and so 248 threads are spawned in both \code{sign\_thread} and \code{verify\_thread}. Refer to the Figure directly below, roughly illustrating a parallel call-graph for \code{isogeny\_sign} and \code{isogeny\_verify}.
+This parallelization approach was exactly the one taken by Yoo et al. in their C implementation. Refer again to the \code{SIDH\_signature.c} functions outlined in Figure \ref{fig:sigfuncs}: \code{isogey\_sign} acts as the entry point for \textbf{Sign} and spawns a POSIX thread for every instance of the procedure's for-loop. So now, in parallel, every thread spawned by \code{isogeny\_sign} makes a call to \code{sign\_thread}, which in turn performs \bob's interaction with \randall. Verification proceeds analogously; \code{isogeny\_verify} is executed and spawns POSIX threads executing \code{verify\_thread} until all $2\lambda$ iterations are complete. $\lambda$ here denotes the security level in bits (128 by default in SIDH), and so 248 threads are spawned in both \code{sign\_thread} and \code{verify\_thread}. Refer to the Figure directly below, roughly illustrating a parallel call-graph for \code{isogeny\_sign} and \code{isogeny\_verify}.
 
 \begin{center}
 \begin{tikzpicture}
@@ -517,7 +595,7 @@ Costella et al. have concisely outlined many of the \sidh isogeny and point-wise
 \noindent
 \code{get\_A}, while containing an extension field inversion, does not arise in the execution flow of the signature scheme. The potential candidacy of this function for partial batched inversion processing is discussed further in Section \ref{sec:compress}.\\
 
-In Figure \ref{fig:threadcallgraph} we illustrate a heavily simplified call-graph for the \code{sign\_thread} and \code{verify\_thread}.
+In Figure \ref{fig:threadcallgraph} we illustrate a heavily simplified call-graph for the \code{sign\_thread} and \code{verify\_thread}, demonstrating where in the execution pipeline \code{j\_inv} and \code{inv\_4\_way} occur. The reader may suspect that, in \code{sign\_thread} for example, the inversions in \code{SecretAgreement\_B} and \code{KeyGeneration\_A} could be batched together to form a batch of 512 elements and to reduce the total number of inversions in \code{isogeny\_sign} to one. This is not possible, however, because the valid execution of \code{SecretAgreement\_B} relies on information returned by \code{KeyGeneration\_A}, and so these inversions must occur sequentially. 
 
 \begin{figure}[!h]
 \label{fig:threadcallgraph}
@@ -570,7 +648,7 @@ In Figure \ref{fig:threadcallgraph} we illustrate a heavily simplified call-grap
 	\draw (8,-2) node[block] (C) {\code{verify\_thread}};
     \path (-1,-4) node[block1] (G) {\code{SecretAgreement\_B}}
           (4,-4) node[block1] (H) {\code{KeyGeneration\_A}}
-          (9,-4) node[block1] (I) {\code{SecretAgreement\_B}};
+          (9,-4) node[block1] (I) {\code{SecretAgreement\_A}};
 	\draw (-1,-6) node[block2] (C) {\code{j\_inv}};
 	\draw (4,-6) node[block2] (C) {\code{inv\_4\_way}};
 	\draw (9,-6) node[block2] (C) {\code{j\_inv}};
@@ -591,7 +669,9 @@ In Figure \ref{fig:threadcallgraph} we illustrate a heavily simplified call-grap
 \end{tikzpicture}
 \end{figure}
 
-Because the work of Yoo et al. was built on top of the original Microsoft SIDH library, all underlying field arithmetic (and as such, pointwise arithmetic) is performed in projective space using Montgomery representation. As was mentioned in the previous chapter, doing such allows us to avoid a great deal of field element inversions. We simply convert to Montgomery representation at the beginning of heavy arithmetic, perform the desired operations, and then convert back to standard representation when complete. Throughout the codebase, (most noticeably in \code{kex.c}) we can see an analogous approach taken in for pointwise arithmetic, by first converting to a projective space representation, performing operations, and then converting back to affine coordinates. 
+In order to implement \code{pb\_inv} in these functions, we modified every function along the call stack leading up to \code{j\_inv} and \code{inv\_4\_way}. Our modifications allowed these functions to optionally pass a C struct we defined to hold all the information necessary for a successfull execution of \code{pb\_inv}. Included in this struct is a semaphore so that each thread knows to wait until the batch has been filled (248 elements in the signing case, ~128 in the verification cases) A mutex lock can also be found in this struct, allowing \code{j\_inv} and \code{inv\_4\_way} to increment the size of the batch safely across threads. 
+
+We also added the functions \code{j\_inv\_batch} and \code{inv\_4\_way\_batch} into \code{ec\_isogeny}. These functions are simple revisions of \code{j\_inv} and \code{inv\_4\_way} which behave the same 
 
 \begin{figure}[!h]
 \label{fig:batchcallgraph}
@@ -683,106 +763,45 @@ Because the work of Yoo et al. was built on top of the original Microsoft SIDH l
 		  draw=black,
 		  thick,
 		  fill=green!20,
-		  text width=7.2em,
+		  text width=7.3em,
 		  align=center,
 		  rounded corners,
 		  minimum height=2em
+		},
+		batchblock/.style={
+		  rectangle,
+		  draw=black,
+		  thick,
+		  fill=gray!20,
+		  text width=7em,
+		  align=center,
+		  rounded corners,
+		  minimum height=4em
 		}
 	]
-	%\draw (2.5,4.5) node[block] {\code{sign\_thread}};
-	\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (4,3) -- (4,5.5) node [black,midway,xshift=-0.6cm,block] {\code{sign\_thread}};
-	\draw (6.5,4) node[blockgreen] {\code{j\_inv\_batch}};
-	\draw (6.5,5) node[blockgreen] {\code{inv\_4\_way\_batch}};
+	\draw (2.5,4.5) node[block] {\code{sign\_thread}};
+	\draw[->, line width=1.0] (4,4.5) -- (4.8,4.5) node {};
+	%\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (4.7,3.2) -- (4.7,5.7) node [black,midway,xshift=-0.6cm,block] {\code{sign\_thread}};
+	\draw (6.5,3.5) node[blockgreen] {\code{j\_inv\_batch}};
+	\draw (6.5,4.5) node[blockgreen] {\code{inv\_4\_way\_batch}};
 	\draw (0.7, 4.5) node {1};
+	
 	\draw[very thick, loosely dotted] (2,3.7) -- (2,2.2) node {};
-	%\draw (2.5,1.5) node[block] {\code{sign\_thread}};
-	%\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (0.5,1) -- (0.5,5.0) node [black,midway,xshift=-0.6cm,block] {\code{sign\_thread}};
-	\draw (6.5,1) node[blockgreen] {\code{j\_inv\_batch}};
-	\draw (6.5,2) node[blockgreen] {\code{inv\_4\_way\_batch}};
+	
+	\draw (2.5,1.5) node[block] {\code{sign\_thread}};
+	\draw[->, line width=1.0] (4,1.5) -- (4.8,1.5) node {};
+	%\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (4.7,0.3) -- (4.7,2.8) node [black,midway,xshift=-0.6cm,block] {\code{sign\_thread}};
+	\draw (6.5,0.5) node[blockgreen] {\code{j\_inv\_batch}};
+	\draw (6.5,1.5) node[blockgreen] {\code{inv\_4\_way\_batch}};
 	\draw (0.7, 1.5) node {248};
 
 	\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (0.5,1) -- (0.5,5.0) node [black,midway,xshift=-0.6cm,block] {\code{isogeny\_sign}};
+	
+	\draw (6.5,0.5) node[batchblock] {batch 1};
+	\draw (6.5,0.5) node[batchblock] {batch 1};
+	
 \end{tikzpicture}
 \end{center}
-
-\subsection{Implementation \& Design Decisions}
-
-With Algorithm \ref{alg:pbinvcode} we provide an explicit C definition for the function \code{pb\_inv}. For descriptions of the functions called in this procedure, the reader can refer to section \ref{subsec:functions}. For explicit definitions of some of these functions, the reader can refer to Appendix \ref{app:functions}.
-
-\begin{figure}
-\begin{lstlisting}
-void pb_inv (const f2elm_t* vec, f2elm_t* dest, const int n) {
-	felm_t t0[n];     //a portion of vec elements
-	felm_t t1[n];     //b portion of vec elements
-	felm_t den[n];    //denominator of vec elements
-	felm_t a[n];
-
-	// upward-percolation phase -----------------------------------//
-
-	for (int i = 0; i < n; i++) {
-		//compute denp[i] = a[i][0]^2 + a[i][1]^2
-		fpsqr751_mont((vec[i])[0], t0[i]);
-		fpsqr751_mont((vec[i])[1], t1[i]);
-		fpadd751(t0[i], t1[i], den[i]);
-	}	
-
-	fpcopy751(den[0], a[0]);
-	for (int i = 1; i < n; i++) {
-		fpmul751_mont(a[i-1], den[i], a[i]);
-	}
-
-	// inversion phase -------------------------------------------//
-	
-	felm_t a_inv;
-	fpcopy751(a[n-1], a_inv);
-	fpinv751_mont_bingcd(a_inv);
-    
-	// downward percolation phase --------------------------------//
-
-	for (int i = n-1; i >= 1; i--) {
-		fpmul751_mont(a[i-1], a_inv, a[i]);
-		fpmul751_mont(a_inv, den[i], a_inv);
-	}
-
-	fpcopy751(a_inv, a[0]);
-
-	for (int i = 0; i < n; i++) {
-		//convert back to extension field
-		fpmul751_mont(a[i],vec[i][0],dest[i][0]);
-		fpneg751((vec[i])[1]);
-		fpmul751_mont(a[i],vec[i][1],dest[i][1]);
-	}
-}
-\end{lstlisting}
-\caption{\code{pb\_inv}}
-\label{code:pbinv}
-\end{figure}
-
-\emph{Security Considerations.} Recall the notion of a general side-channel attack: A side-channel attack is performed when an unauthorized individual is able to acquire information by measuring properties of the physical implementation of the system at hand. This can be done by analyzing the power consumption, timing properties, or electromagnetic leaks of a CPU while it operates on (or generates) confidential information.
-
-In the context of information security, algorithms for performing operations over mathematical objects can be said to fall under one of two categories: \emph{constant time} and \emph{non-constant time} algorithms. Constant time algorithms are designed to protect confidential information from side-channel attacks, but come at the cost of computational efficiency.
-
-In the \sidh library, there are two distinct functions for computing field element inversions: \code{fp2inv751\_mont} and \code{fp2inv751\_mont\_bingcd}. \code{fp2inv751\_mont\_bingcd} performs inversion by means of the binary GCD (greatest common denominator) algorithm, and is a \emph{non-constant time} implementation. \code{fp2inv751\_mont} is a \emph{constant time} implementation, and as such runs slower than \code{fp2inv751\_mont\_bingcd} in nearly all cases, but protects against timing based side-channel attacks. They perform comparatively as such:
-
-\begin{center}
-\begin{tabular}{@{}lllll@{}}
-	\toprule
-	Procedure & Performance in clock cycles & System A With Batching\\
-	\midrule
-	\code{fp2inv751\_mont} & 68,881,331 & 68,881,331\\
-	\code{fp2inv751\_mont\_bingcd} & 15,744,477,032 & 15,565,738,003\\
-	\bottomrule
-\end{tabular}
-\end{center}
-
-Take for example some private data $c$ being manipulated or operated on by some algorithm $\textbf{A}$. In order to be entirely certain that $c$ in \textbf{P($c$)} is not vulnerable to \emph{any} imagineable side-channel attack it must be the case that the structure of \textbf{P} does not in anyway depend on the information stored in $c$.
-
-Let us look more closely at the elements that are inverted by \code{pb\_inv}. In \code{KeyGeneration\_A} the elements being passed to \code{pb\_inv} are simply the constituents of \randall's public key for every iteration of the signing procedure. Because the data being operated on is publicly available information, we needn't consider if it is vulnerable to side-channel analysis. 
-
-In \code{SecretAgreement\_A}, \code{pb\_inv} is called by \code{j\_inv}, which produces the \emph{j}-invariant of a particular curve. When \code{SecretAgreement\_A} is used in the context of SIDH key exchange, \code{j\_inv} is used to compute the shared secret between party members \ba and \rb, and so would need to be protected against side-channel attacks. This is not the case in the context of signatures, however. Recall the structure of SIDH signatures: every signature includes, for every $2\lambda$ iterations, the commitment $E_1$, which is precisely the shared secret between the signer and \randall. And so, every use of \code{pb\_inv} \emph{in the context of signatures} does not require extra precautions to side-channel analysis. The same is true for \code{SecretAgreement\_B}.
-
-While it is not the case for our implementations that the data on which \code{pb\_inv} operates would find itself the subject of side-channel analysis, it is not difficult to imagine a scenario where this might be the case. 
-
 
 \section{Results}
 
