@@ -669,9 +669,13 @@ In Figure \ref{fig:threadcallgraph} we illustrate a heavily simplified call-grap
 \end{tikzpicture}
 \end{figure}
 
-In order to implement \code{pb\_inv} in these functions, we modified every function along the call stack leading up to \code{j\_inv} and \code{inv\_4\_way}. Our modifications allowed these functions to optionally pass a C struct we defined to hold all the information necessary for a successfull execution of \code{pb\_inv}. Included in this struct is a semaphore so that each thread knows to wait until the batch has been filled (248 elements in the signing case, ~128 in the verification cases) A mutex lock can also be found in this struct, allowing \code{j\_inv} and \code{inv\_4\_way} to increment the size of the batch safely across threads. 
+In order to implement \code{pb\_inv} in these functions, we modified every function along the call stack leading up to the \code{j\_inv} and \code{inv\_4\_way}: \code{SecretAgreement\_A}, \code{SecretAgreement\_B}, and \code{KeyGeneration\_A}. Our modifications allow these functions to optionally pass a C struct we've defined which holds all of the information necessary for a successfull execution of \code{pb\_inv}. We refer to this structure as \code{batch\_struct}, and it holds the following: an integer \code{batchSize} denoting the number of elements in the batch, a \code{f2elm\_t} buffer \code{invArray} for storing the elements to be inverted, and a \code{f2elm\_t} buffer \code{invDest} for storing the inversion results.
 
-We also added the functions \code{j\_inv\_batch} and \code{inv\_4\_way\_batch} into \code{ec\_isogeny}. These functions are simple revisions of \code{j\_inv} and \code{inv\_4\_way} which behave the same 
+In addition to the modification of the aforementioned \code{kex.c} functions, we've included modified versions of \code{j\_inv} and \code{inv\_4\_way}, labelled as \code{j\_inv\_batch} and \code{inv\_4\_way\_batch}.  into \code{ec\_isogeny}. These functions are simple revisions of \code{j\_inv} and \code{inv\_4\_way} which behave the same 
+
+In order to ensure synchronization across threads, a semaphore and mutex lock are included in \code{batch\_struct}. the function of which is to ensure that each thread knows to wait until the batch has been filled (248 elements in the signing case, ~128 in the verification cases).  A mutex lock can also be found in this struct, allowing \code{j\_inv} and \code{inv\_4\_way} to increment the size of the batch safely across threads. 
+
+
 
 \begin{figure}[!h]
 \label{fig:batchcallgraph}
