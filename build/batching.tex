@@ -587,10 +587,10 @@ And so, there are two settings in which the same sequence of operations will be 
 Costella et al. have concisely outlined many of the \sidh isogeny and point-wise functions in Table 1 of \cite{effalg}. Examinig this Figure, we note that there are only three candidate functions containing element inversion calls: \code{j\_inv}, \code{inv\_4\_way}, and \code{get\_A}. The fact that so few functions require inversions is, again, thanks to the design decisions outlined in Section \ref{subsec:design}.\\
 
 \noindent
-\code{j\_inv} is a function returning the $j$-invariant of a curve which, as the reader may recall, is used in the computation of the shared secret. If we refer back to our definitions of \code{Sign} and \code{Verify} (Algorithms 9 and 10, respectively) we note that \code{Sign} contains a call to \code{SecretAgreement\_B} in every iteration of its for-loop. Similarly, \code{Verify} contains a call to \code{SercretAgreement\_A} in roughly have of the iterations of its for-loop, and a call to \code{SecretAgreement\_B} in the remaining iterations; totalling still to $248$ secret agreement computations. As expected, this means that \code{isogney\_sign} and \code{isogeny\_verify} contain calls to these secret agreement functions, illustrating the presence of 1 \code{j\_inv} function call (as by extension, 1 extension field inversion,) in every signing and verification thread.\\
+\code{j\_inv} is a function returning the $j$-invariant of a curve which, as the reader may recall, is used in the computation of the shared secret. If we refer back to our definitions of \code{Sign} and \code{Verify} (Algorithms 9 and 10, respectively) we note that \code{Sign} contains a call to \code{SecretAgreement\_B} in every iteration of its for-loop. Similarly, \code{Verify} contains a call to \code{SercretAgreement\_A} in roughly half of the iterations of its for-loop, and a call to \code{SecretAgreement\_B} in the remaining iterations. This totals to $248$ secret agreement computations in both signature signing and verifying procedures. This means that somewhere in the exeuction flow of \code{isogney\_sign} and \code{isogeny\_verify} there are calls to these secret agreement functions, illustrating the presence of 1 \code{j\_inv} function call (and by extension, 1 extension field inversion,) in every signing and verification thread.\\
 
 \noindent
-\code{inv\_4\_way} is a function which takes 4 $\mathbb{F}_{p^2}$ elements and returns each elements inversion by means of calculating only one inversion (via the same method outlined by \textbf{BatchedInversion}). This function is used in the key generation to process to invert the Z-values of the public key values; $\phi(P)$, $\phi(Q)$, and $\phi(P-Q)$), so that they can be converted from projective to affine representation. Because every \code{sign\_thread} execution represents \bob's key exchange with a distinct and random \randall, \code{KeyGeneration\_A} must be called in each thread to generate \randall's public and private keys. This results in another candidate batch of size 248 for batched partial inversion.\\
+\code{inv\_4\_way} is a function which takes 4 $\mathbb{F}_{p^2}$ elements and returns each elements inversion by means of calculating only one inversion (via the same method outlined by \textbf{BatchedInversion}). This function is used in the key generation to process to invert the Z-values of the public key curve elements; $\phi(P)$, $\phi(Q)$, and $\phi(P-Q)$), so that they can be converted from projective to affine representation. Because every \code{sign\_thread} execution represents \bob's key exchange with a distinct and random \randall, \code{KeyGeneration\_A} must be called in each thread to generate \randall's public and private keys. This results in another candidate batch of size 248 for batched partial inversion.\\
 
 \noindent
 \code{get\_A}, while containing an extension field inversion, does not arise in the execution flow of the signature scheme. The potential candidacy of this function for partial batched inversion processing is discussed further in Section \ref{sec:compress}.\\
@@ -644,34 +644,35 @@ In Figure \ref{fig:threadcallgraph} we illustrate a heavily simplified call-grap
       minimum height=1em
     }
   ]
-    \draw (1,-2) node[block] (C) {\code{sign\_thread}};
-	\draw (8,-2) node[block] (C) {\code{verify\_thread}};
-    \path (-1,-4) node[block1] (G) {\code{SecretAgreement\_B}}
-          (4,-4) node[block1] (H) {\code{KeyGeneration\_A}}
-          (9,-4) node[block1] (I) {\code{SecretAgreement\_A}};
-	\draw (-1,-6) node[block2] (C) {\code{j\_inv}};
-	\draw (4,-6) node[block2] (C) {\code{inv\_4\_way}};
-	\draw (9,-6) node[block2] (C) {\code{j\_inv}};
-	\draw[->, line width=2.0] (1,-2.4) -- (-1.2,-3.6) node[right] {};
-		\draw (-0.3, -3) node[left] (LABEL1) {248x};
-	\draw[->, line width=2.0] (1,-2.4) -- (3.8,-3.6) node[above] {};
-		\draw (2.2, -3) node[left] (LABEL2) {248x};
-	\draw[->, line width=2.0] (8,-2.4) -- (-0.8,-3.6) node[right] {};
-		\draw (4, -2.9) node[above] (LABEL3) {$\sim$124x};
-	\draw[->, line width=2.0] (8,-2.4) -- (4.2,-3.6) node[above] {};
+    \draw (1,-2) node[block] (A) {\code{sign\_thread}};
+	\draw (9.5,-2) node[block] (B) {\code{verify\_thread}};
+    \path (1,-4) node[block1] (C) {\code{KeyGeneration\_A}}
+		  (1,-6) node[block1] (D) {\code{SecretAgreement\_B}}
+		  (11.6,-4) node[block1] (E) {\code{KeyGeneration\_A}}
+          (11.6,-6) node[block1] (F) {\code{SecretAgreement\_A}}
+		  (7.4,-4) node[block1] (G) {\code{SecretAgreement\_B}};
+	\draw (3,-7) node[block2] (H) {\code{j\_inv}};
+	\draw (3,-5) node[block2] (I) {\code{inv\_4\_way}};
+	\draw (7.4,-5) node[block2] (J) {\code{j\_inv}};
+	\draw (13.6,-5) node[block2] (K) {\code{inv\_4\_way}};
+	\draw (13.6,-7) node[block2] (L) {\code{j\_inv}};
+	\draw[->, line width=2.0] (1,-2.4) -- (1,-3.6) node[right] {};
+		\draw (1, -3) node[left] (LABEL1) {$248x$};
+	\draw[->, line width=2.0] (9.5,-2.4) to (E) node[above] {};
 		\draw (6.3, -3) node[right] (LABEL4) {$\sim$124x};
-	\draw[->, line width=2.0] (8,-2.4) -- (9,-3.6) node[right] {};
+	\draw[->, line width=2.0] (9.5,-2.4) to (G) node[right] {};
 		\draw (8.4, -3) node[right] (LABEL5) {$\sim$124x};
-	\draw[->, line width=2.0] (-1,-4.4) -- (-1,-5.6) node {};
-	\draw[->, line width=2.0] (4,-4.4) -- (4,-5.6) node {};
-	\draw[->, line width=2.0] (9,-4.4) -- (9,-5.6) node {};
+	\draw[->, line width=2.0] (-0.3,-4.4) -- (-0.3,-5.6) node {};
+		\draw (-0.3, -5) node[left] (LABEL6) {$248x$};
+	\draw[->, line width=2.0] (C.east) to [in=90] (4,-4.6);
+	\draw[->, line width=2.0] (D.east) to [in=90] (4,-6.6);
 
 \end{tikzpicture}
 \end{figure}
 
 In order to implement \code{pb\_inv} in these functions, we modified every function along the call stack leading up to the \code{j\_inv} and \code{inv\_4\_way}: \code{SecretAgreement\_A}, \code{SecretAgreement\_B}, and \code{KeyGeneration\_A}. Our modifications allow these functions to optionally pass a C struct we've defined which holds all of the information necessary for a successfull execution of \code{pb\_inv}. We refer to this structure as \code{batch\_struct}, and it holds the following: an integer \code{batchSize} denoting the number of elements in the batch, a \code{f2elm\_t} buffer \code{invArray} for storing the elements to be inverted, and a \code{f2elm\_t} buffer \code{invDest} for storing the inversion results.
 
-In addition to the modification of the aforementioned \code{kex.c} functions, we've included modified versions of \code{j\_inv} and \code{inv\_4\_way}, labelled as \code{j\_inv\_batch} and \code{inv\_4\_way\_batch}.  into \code{ec\_isogeny}. These functions are simple revisions of \code{j\_inv} and \code{inv\_4\_way} which behave the same 
+In addition to the modification of the aforementioned \code{kex.c} functions, we've included modified versions of \code{j\_inv} and \code{inv\_4\_way}, labelled as \code{j\_inv\_batch} and \code{inv\_4\_way\_batch}. \code{ec\_isogeny}. These functions are simple revisions of \code{j\_inv} and \code{inv\_4\_way} which behave the same 
 
 In order to ensure synchronization across threads, a semaphore and mutex lock are included in \code{batch\_struct}. the function of which is to ensure that each thread knows to wait until the batch has been filled (248 elements in the signing case, ~128 in the verification cases).  A mutex lock can also be found in this struct, allowing \code{j\_inv} and \code{inv\_4\_way} to increment the size of the batch safely across threads. 
 
