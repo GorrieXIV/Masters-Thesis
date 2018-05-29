@@ -531,9 +531,10 @@ Recall Figure \ref{fig:halfmap} which details the abstraction levels of the SIDH
 \noindent
 \emph{Parallelizing Signatures}. Recall now the construction of \textbf{Sign} and \textbf{Verify} from Section \ref{sec:sigsbackground}. The sign procedure requires running $2\lambda$ distinct instances of the underlying key exchange protocol, after which these instances are reproduced in \textbf{Verify} to check for their validity. It is clear that, because every $2\lambda$ iteration of \textbf{Sign} and \textbf{Verify} are entirely independent of each other, these procedures present themselves as embarrassingly parallel.\footnote{in the field of high performance computing, a problem that is trivially parallizable is often referred to as \emph{embarrassingly} parallizable.} 
 
-This parallelization approach was exactly the one taken by Yoo et al. in their C implementation. Refer again to the \code{SIDH\_signature.c} functions outlined in Figure \ref{fig:sigfuncs}: \code{isogey\_sign} acts as the entry point for \textbf{Sign} and spawns a POSIX thread for every instance of the procedure's for-loop. So now, in parallel, every thread spawned by \code{isogeny\_sign} makes a call to \code{sign\_thread}, which in turn performs \bob's interaction with \randall. Verification proceeds analogously; \code{isogeny\_verify} is executed and spawns POSIX threads executing \code{verify\_thread} until all $2\lambda$ iterations are complete. $\lambda$ here denotes the security level in bits (128 by default in SIDH), and so 248 threads are spawned in both \code{sign\_thread} and \code{verify\_thread}. Refer to the Figure directly below, roughly illustrating a parallel call-graph for \code{isogeny\_sign} and \code{isogeny\_verify}.
+This parallelization approach was exactly the one taken by Yoo et al. in their C implementation. Refer again to the \code{SIDH\_signature.c} functions outlined in Figure \ref{fig:sigfuncs}: \code{isogey\_sign} acts as the entry point for \textbf{Sign} and spawns a POSIX thread for every instance of the procedure's for-loop. So now, in parallel, every thread spawned by \code{isogeny\_sign} makes a call to \code{sign\_thread}, which in turn performs \bob's interaction with \randall. This is outlined below in Figure \ref{fig:parallelcall}. Verification proceeds analogously; \code{isogeny\_verify} is executed and spawns POSIX threads executing \code{verify\_thread} until all $2\lambda$ iterations are complete. $\lambda$ here denotes the security level in bits (128 by default in SIDH), and so 248 threads are spawned in both \code{sign\_thread} and \code{verify\_thread}. Refer to the Figure directly below, roughly illustrating a parallel call-graph for \code{isogeny\_sign} and \code{isogeny\_verify}.
 
-\begin{center}
+\begin{figure}
+\label{fig:parallelcall}
 \begin{tikzpicture}
 	[scale=1, auto,
 		block/.style={
@@ -580,7 +581,8 @@ This parallelization approach was exactly the one taken by Yoo et al. in their C
 		\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (0.5,1) -- (0.5,5.0) node [black,midway,xshift=-0.6cm,block1] {\code{isogeny\_verify}};
 	\end{scope}
 \end{tikzpicture}
-\end{center}
+\caption{The implementations of \textbf{Sign} and \textbf{Verify}, divided into serial segments \code{isogeny\_sign} and \code{isogeny\_verify} and then parallel segments \code{sign\_thread} and \code{verify\_thread}.}
+\end{figure}
 
 And so, there are two settings in which the same sequence of operations will be carried out $248$ times in parallel. This means that we need only one occurance of an $\mathbb{F}_{p^2}$ inversion in either \code{sign\_thread} or \code{verify\_thread} to be able to fill a element batch of size $248$, suitable for partial batched inversion. 
 
@@ -674,6 +676,7 @@ In Figure \ref{fig:threadcallgraph} we illustrate a heavily simplified call-grap
 	\draw[->, line width=2.0] (F.east) to [in=90] (14.6,-6.6);
 
 \end{tikzpicture}
+\caption{The execution flow of \code{sign\_thread} and \code{verify\_thread} as originally implemented by Yoo et al.}
 \end{figure}
 
 To enable batching across execution instances of \code{j\_inv} and \code{inv\_4\_way}, we've supplied new functions \code{j\_inv\_batch} and \code{inv\_4\_way\_batch}. These functions, upon reaching what were originally $\mathbb{F}_{p^2}$ inversions (calls to \code{fp2inv751\_mont}), add their elements that are awaiting inversion to a buffer. Once the buffer of elements has reached its predefined capacity, the final thread to add its element executes \code{pb\_inv} on the buffer. Each thread thereafter, having kept track of where in the buffer they entered their element, retrieves their now inverted element from the buffer returned by \code{pb\_inv}.
@@ -756,6 +759,7 @@ To enable batching across execution instances of \code{j\_inv} and \code{inv\_4\
 	\draw[->, line width=2.0] (F.east) to [in=90] (14.6,-6.6);
 
 \end{tikzpicture}
+\caption{The execution flow of \code{sign\_thread} and \code{verify\_thread} when run with inversion batching enabled}
 \end{figure}
 
 To properly implement \code{pb\_inv} in these functions, we modify every function along the call stack leading up to \code{j\_inv} and \code{inv\_4\_way}: \code{SecretAgreement\_A}, \code{SecretAgreement\_B}, and \code{KeyGeneration\_A}. Our modifications allow these functions to optionally pass a C struct we've defined which holds all of the information necessary for a successfull execution of \code{pb\_inv}. We refer to this structure as \code{batch\_struct}, and it holds the following: an integer \code{batchSize} denoting the number of elements in the batch, an integer \code{cntr} which tracks how many elements are currently in the batch (and is invariably less than or equal to \code{batchSize}), an \code{f2elm\_t} buffer \code{invArray} for storing the elements to be inverted, and an \code{f2elm\_t} buffer \code{invDest} for storing the inversion results.
@@ -771,9 +775,7 @@ A mutex lock can also be found in the \code{batch\_struct}, allowing \code{j\_in
 \item release the lock
 \end{enumerate}
 
-A semaphore has also been included in \code{batch\_struct}, the function of which is to ensure that each thread knows to wait until the batch has been filled (248 elements in the signing case, ~128 in the verification cases) before it attempts to access its inverted element. If the locally stored \code{cntr} is less than \code{batchSize}, the current thread waits on the semaphore. If the locally stored \code{cntr} is equal to \code{batchSize}, this implies the current thread is the last to add its element - this thread then carries out execution of \code{pb\_inv} and upon completion posts the sempahore. After the semaphore has been posted, all other threads are able to resume execution and retrieve their now inverted elements. 
-
-C code for all of these functions (with comparable differences highlighted) can be found in Appendix \ref{app:functions}.
+A semaphore has also been included in \code{batch\_struct}, the function of which is to ensure that each thread knows to wait until the batch has been filled (248 elements in the signing case, ~128 in the verification cases) before it attempts to access its inverted element. If the locally stored \code{cntr} is less than \code{batchSize}, the current thread waits on the semaphore. If the locally stored \code{cntr} is equal to \code{batchSize}, this implies the current thread is the last to add its element - this thread then carries out execution of \code{pb\_inv} and upon completion posts the sempahore. After the semaphore has been posted, all other threads are able to resume execution and retrieve their now inverted elements.\\
 
 \begin{center}
 \begin{tikzpicture}
@@ -812,8 +814,8 @@ C code for all of these functions (with comparable differences highlighted) can 
 	\draw (2.5,4.5) node[block] {\code{sign\_thread}};
 	\draw[->, line width=1.0] (4,4.5) -- (4.8,4.5) node {};
 	%\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (4.7,3.2) -- (4.7,5.7) node [black,midway,xshift=-0.6cm,block] {\code{sign\_thread}};
-	\draw (6.5,3.5) node[blockgreen] {\code{j\_inv\_batch}};
-	\draw (6.5,4.5) node[blockgreen] {\code{inv\_4\_way\_batch}};
+	\draw (6.5,3.5) node[blockgreen] (JINV1) {\code{j\_inv\_batch}};
+	\draw (6.5,4.5) node[blockgreen] (INV1) {\code{inv\_4\_way\_batch}};
 	\draw (0.7, 4.5) node {1};
 	
 	\draw[very thick, loosely dotted] (2,3.7) -- (2,2.2) node {};
@@ -821,17 +823,26 @@ C code for all of these functions (with comparable differences highlighted) can 
 	\draw (2.5,1.5) node[block] {\code{sign\_thread}};
 	\draw[->, line width=1.0] (4,1.5) -- (4.8,1.5) node {};
 	%\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (4.7,0.3) -- (4.7,2.8) node [black,midway,xshift=-0.6cm,block] {\code{sign\_thread}};
-	\draw (6.5,0.5) node[blockgreen] {\code{j\_inv\_batch}};
-	\draw (6.5,1.5) node[blockgreen] {\code{inv\_4\_way\_batch}};
+	\draw (6.5,0.5) node[blockgreen] (JINV2) {\code{j\_inv\_batch}};
+	\draw (6.5,1.5) node[blockgreen] (INV2) {\code{inv\_4\_way\_batch}};
 	\draw (0.7, 1.5) node {248};
+	
+	\draw[->, line width=1.0] (4.4,4.5) to [out=-90] (JINV1.west);
+	\draw[->, line width=1.0] (4.4,1.5) to [out=-90] (JINV2.west);
 
 	\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (0.5,1) -- (0.5,5.0) node [black,midway,xshift=-0.6cm,block] {\code{isogeny\_sign}};
 	
-	\draw (6.5,0.5) node[batchblock] {batch 1};
-	\draw (6.5,0.5) node[batchblock] {batch 1};
+	\draw (12,3.5) node[batchblock] (BATCH1) {batch 1};
+	\draw (12,1.5) node[batchblock] (BATCH2) {batch 2};
 	
+	\draw[->, line width=1.0] (JINV1.east) to (BATCH1.west) node {};
+	\draw[->, line width=1.0] (JINV2.east) to (BATCH1.west) node {};
+	\draw[->, line width=1.0] (INV1.east) to (BATCH2.west) node {};
+	\draw[->, line width=1.0] (INV2.east) to (BATCH2.west) node {};
 \end{tikzpicture}
 \end{center}
+
+C code for all of these functions (with comparable differences highlighted) can be found in Appendix \ref{app:functions}.
 
 \section{Results}
 
