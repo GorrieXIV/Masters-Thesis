@@ -62,4 +62,4 @@
 \contentsline {subsection}{\numberline {A.2.3}\texttt {inv\_4\_way}}{54}{subsection.a.A.2.3}
 \contentsline {subsection}{\numberline {A.2.4}\texttt {inv\_4\_way\_batch}}{54}{subsection.a.A.2.4}
 \contentsline {section}{\numberline {A.3}Key Exchange Functions}{55}{section.a.A.3}
-\contentsline {section}{\numberline {A.4}Signature Layer Functions}{55}{section.a.A.4}
+\contentsline {section}{\numberline {A.4}Signature Layer Functions}{57}{section.a.A.4}

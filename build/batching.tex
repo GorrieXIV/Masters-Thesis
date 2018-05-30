@@ -10,6 +10,7 @@ As we then venture into the lower-level implementation details, we will explore 
 We will end this chapter by taking a detailed look at the performance gains offered by the inclusion of partial batched inversions in \sidh. More precisely, we will be examining the effects of the procedure on the Yoo et al. signature layer. We will contrast the measured performance of our implementation with an analytical calculation of the expected improvement, and discuss the possible origins of divergent behaviour.  
 
 \section{Partial Batched Inversions}
+\label{sec:pbi}
 
 We will now outline the procedure that is central to our first contribution. The ``partial batched inversion" procedure reduces arbitrarily many \emph{unrelated}\footnote{To clarify; the elements subject to these inversion must all be over the same field, but can otherwise be unrelated.} $\mathbb{F}_{p^{2}}$ inversions to a sequence of $\mathbb{F}_{p}$ operations. The fact that the elements being inverted need not hold any relation will be significant to the applicability of this procedure. For brevity's sake, we will henceforth refer to this procedure as \code{pb\_inv} in the \sidh context, and \textbf{PartialBatchedInversion} in the more general mathematical context.
 
@@ -26,6 +27,7 @@ $$
 Which denotes that $P$ is a procedure composed of 2 $\mathbb{F}_{p^{2}}$ additions, $x$-many $\mathbb{F}_{p^{2}}$ inversions, $y$-many $\mathbb{F}_{p}$ multiplications, and a single $\mathbb{F}_{p}$ squaring. We reserve uppercase bold letters for arithmetic over elliptic curve points (such as \textbf{A} to denote the point-wise addition operation).
 
 \subsection{$\mathbb{F}_{p^{2}}$ Inversions done in $\mathbb{F}_{p}$}
+\label{subsec:partialinv}
 
 There is a simple way in which we can perform one $\mathbb{F}_{p^{2}}$ inversion by means of doing several $\mathbb{F}_{p}$ operations. We will begin by considering multiplicative inverses of complex numbers. Fields of the form $\mathbb{F}_{q^{2}}$ for some prime $q$ are, after all, quadratic extension fields; because of this $\mathbb{F}_{p^{2}}$ arithmetic is treated, for the most part, analogously to complex number arithmetic.
 
@@ -52,6 +54,7 @@ $$
 Now it is clear that we can compute the multiplicative inverse of $x$ by computing the inverse of $x_{a}^2 + x_{b}^2$ (an inversion in $\mathbb{F}_{p}$) and $-x_{b}$ (a relatively inexpensive operation, also in the base field). We formulate this technique in Algorithm \ref{alg:partialinv}, which we refer to as \textbf{PartialInv}.\\
 
 \begin{algorithm}[!h]
+\label{alg:partialinv}
 \caption{-- \textbf{PartialInv($x \in \mathbb{F}_{p^{2}}$)}}\label{alg:partialinv}
 \begin{algorithmic}[1]
 \State $den \gets x_{a}^{2} + x_{b}^{2}$
@@ -92,6 +95,7 @@ $$
 We claim that this ``reduces" the computation time of field element inversion, but it may not be immediately clear that this technique is computationally favourable over any other approach to computing an $\mathbb{F}_{p^{2}}$ inversion. 
 
 \subsection{Batching Field Element Inversions}
+\label{subsec:batching}
 
 The second technique used in the composition of \code{pb\_inv} reduces arbitrarily many (general) field element inversions to \emph{one} inversion and a linearly scaling amount of multiplcations in the \emph{same} field.
 
@@ -196,6 +200,7 @@ $$
 And so, because $n^2$ is always larger than $2(n-1)$ for all $n \in \mathbb{R}$, \textbf{BatchedInv} outperforms $\textbf{BatchedInv}_0$ for every possible batch size. This can be checked, if one so wishes, by setting $n^2 = 2(n-1)$, simplifying to $n^2 - 2n + 2 = 0$, and noting that the discriminant ($2^2 - 4\cdot 2$) is negative. 
 
 \subsection{Partial Batched Inversions}
+\label{subsec:pbi}
 
 We have now outlined the following: \textbf{PartialInv} as a technique for computing $\mathbb{F}_{p^2}$ inversions by means of $\mathbb{F}_{p}$ arithmetic, and \textbf{BatchedInv} as a technique for batching together arbitrarily many inversion operations. We will now combine these procedures to achieve the partial batched inversion algorithm.
 
@@ -433,17 +438,16 @@ $$
 \section{Implementation Details}
 \label{sec:pbinvimplementation}
 
-We will now take the work of the previous subsection and explain in detail how it can be applied to the Yoo et al. signature layer of \sidh. We will begin with a high-level overview of the signature layer architecture. This mapping will allow efficient highlighting of the potential bottlenecks in the protocols performance. In this search for performance bottlenecks, we will specifically seek out execution paths in the codebase where-in batching inversions could offer a performance increase. Additionally, we will discuss properties of the signature scheme that can be leveraged to optimize the performance increases offered by \textbf{PartialBatchedInv}.
+We will now take the work of the previous subsection and explain in detail how it can be applied to the Yoo et al. signature layer of \sidh. We will begin with an examination of the lower-level details of our procedures implementation. In this first subsection, we transcribe \textbf{PartialBatchedInversion} to its C variant, \code{pb\_inv}, which is defined almost entirely by means of the \sidh API. We will discuss some design specifics of \code{pb\_inv}, and look breifly at the security of the function with respect to the signature scheme.
 
-After this breif mapping of the signature layer, we move into the lower-level details of our procedures implementation. We transcribe \textbf{PartialBatchedInversion} to its C variant, \code{pb\_inv}, which is defined almost entirely by means of the \sidh API. We will discuss some design specifics of \code{pb\_inv}, and look breifly at the security of the function with respect to the signature scheme.
-
-We round off this subsection with a discussion of other possible ways in which \code{pb\_inv} (and operation batching in general) can offer performance improvements to the Yoo et al. signature scheme. This discussion is continued in the final Chapter of this dissertation, in Section \ref{sec:morebatch}.
+After outline the specifics of our C implementation, we will move onto a high-level overview of the signature layer architecture. This mapping will allow efficient highlighting of execution paths in the codebase where batching inversions could offer a performance increase. Additionally, we will discuss properties of the signature scheme that can be leveraged to optimize the performance increases offered by \pbinv.
 
 \subsection{Implementation \& Design Decisions}
 
-With Algorithm \ref{alg:pbinvcode} we provide an explicit C definition for the function \code{pb\_inv}. For descriptions of the functions called in this procedure, the reader can refer to section \ref{subsec:functions}. For explicit definitions of some of these functions, the reader can refer to Appendix \ref{app:functions}.
+With Figure \ref{code:pbinv} we provide an explicit C definition for the function \code{pb\_inv}. For descriptions of the functions called in this procedure, the reader can refer to section \ref{subsec:functions}. For explicit definitions of some of these functions, the reader can refer to Appendix \ref{app:functions}.\\
 
-\begin{figure}
+\begin{figure}[!h]
+\label{code:pbinv}
 \begin{lstlisting}
 void pb_inv (const f2elm_t* vec, f2elm_t* dest, const int n) {
 	felm_t t0[n];     //a portion of vec elements
@@ -451,14 +455,15 @@ void pb_inv (const f2elm_t* vec, f2elm_t* dest, const int n) {
 	felm_t den[n];    //denominator of vec elements
 	felm_t a[n];
 
-	// upward-percolation phase -----------------------------------//
+	// conversion to base field ----------------------------------//
 
 	for (int i = 0; i < n; i++) {
-		//compute denp[i] = a[i][0]^2 + a[i][1]^2
 		fpsqr751_mont((vec[i])[0], t0[i]);
 		fpsqr751_mont((vec[i])[1], t1[i]);
 		fpadd751(t0[i], t1[i], den[i]);
 	}	
+	
+	// upward-percolation phase ----------------------------------//
 
 	fpcopy751(den[0], a[0]);
 	for (int i = 1; i < n; i++) {
@@ -471,27 +476,34 @@ void pb_inv (const f2elm_t* vec, f2elm_t* dest, const int n) {
 	fpcopy751(a[n-1], a_inv);
 	fpinv751_mont_bingcd(a_inv);
     
-	// downward percolation phase --------------------------------//
+	// downward-percolation phase --------------------------------//
 
 	for (int i = n-1; i >= 1; i--) {
 		fpmul751_mont(a[i-1], a_inv, a[i]);
 		fpmul751_mont(a_inv, den[i], a_inv);
 	}
 
+	// conversion back to extension field ------------------------//
+
 	fpcopy751(a_inv, a[0]);
 
 	for (int i = 0; i < n; i++) {
-		//convert back to extension field
 		fpmul751_mont(a[i],vec[i][0],dest[i][0]);
 		fpneg751((vec[i])[1]);
 		fpmul751_mont(a[i],vec[i][1],dest[i][1]);
 	}
 }
 \end{lstlisting}
-\caption{\code{pb\_inv}}
-\label{code:pbinv}
+\caption{\pbinv}
 \end{figure}
 
+\noindent
+\pbinv. The \pbinv function can be divided into six sections: local variable declaration, conversion to the base field, the upward-percolation phase, the inversion phase, the downward-percolation phase, and finally conversion back to the extension field.
+
+In converting to the base field (beginning at line ) we are peforming line 1 of Algorithm \ref{alg:partialinv} (as outlined in Subsection \ref{subsec:partialinv}) for all elements in the batch. This constructs the ``denominator" for each element $x_i$ as if we were going to compute each inverse individually by means of $x_i^{-1} = \{\frac {(x_i)_{a}}{(x_i)_{a}^2 + (x_i)_{b}^2}, \frac {-(x_i)_{b}}{(x_i)_{a}^2 + (x_i)_{b}^2}\}$. This memory cost of this section is $2n$ \code{felm\_t}'s, in space where $n$ is the number of inputs
+\\
+
+\noindent
 \emph{Security Considerations.} Recall the notion of a general side-channel attack: A side-channel attack is performed when an unauthorized individual is able to acquire information by measuring properties of the physical implementation of the system at hand. This can be done by analyzing the power consumption, timing properties, or electromagnetic leaks of a CPU while it operates on (or generates) confidential information.
 
 In the context of information security, algorithms for performing operations over mathematical objects can be said to fall under one of two categories: \emph{constant time} and \emph{non-constant time} algorithms. Constant time algorithms are designed to protect confidential information from side-channel attacks, but come at the cost of computational efficiency.
