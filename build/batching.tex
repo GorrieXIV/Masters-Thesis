@@ -500,7 +500,9 @@ void pb_inv (const f2elm_t* vec, f2elm_t* dest, const int n) {
 \noindent
 \pbinv. The \pbinv function can be divided into six sections: local variable declaration, conversion to the base field, the upward-percolation phase, the inversion phase, the downward-percolation phase, and finally conversion back to the extension field.
 
-In converting to the base field (beginning at line ) we are peforming line 1 of Algorithm \ref{alg:partialinv} (as outlined in Subsection \ref{subsec:partialinv}) for all elements in the batch. This constructs the ``denominator" for each element $x_i$ as if we were going to compute each inverse individually by means of $x_i^{-1} = \{\frac {(x_i)_{a}}{(x_i)_{a}^2 + (x_i)_{b}^2}, \frac {-(x_i)_{b}}{(x_i)_{a}^2 + (x_i)_{b}^2}\}$. This memory cost of this section is $2n$ \code{felm\_t}'s, in space where $n$ is the number of inputs
+In converting to the base field (beginning at line 9) we are peforming line 1 of Algorithm \ref{alg:partialinv} (as outlined in Subsection \ref{subsec:partialinv}) for all elements in the batch. This constructs the ``denominator" for each element $x_i$ as if we were going to compute each inverse individually by means of $x_i^{-1} = \{\frac {(x_i)_{a}}{(x_i)_{a}^2 + (x_i)_{b}^2}, \frac {-(x_i)_{b}}{(x_i)_{a}^2 + (x_i)_{b}^2}\}$. The memory cost for this portion of the function is $2n$ \code{felm\_t}'s. We save memory by using \code{den} temporarily to store ${(x_i)_{b}}^2$, then summing both powers into memory at \code{den}.
+
+The succeeding sections of the function require the use of the temporary buffer \code{a}, adding an additional $n$ \code{felm\_t}'s to local memory usage.
 \\
 
 \noindent
@@ -511,23 +513,23 @@ In the context of information security, algorithms for performing operations ove
 In the \sidh library, there are two distinct functions for computing field element inversions: \code{fp2inv751\_mont} and \code{fp2inv751\_mont\_bingcd}. \code{fp2inv751\_mont\_bingcd} performs inversion by means of the binary GCD (greatest common denominator) algorithm, and is a \emph{non-constant time} implementation. \code{fp2inv751\_mont} is a \emph{constant time} implementation, and as such runs slower than \code{fp2inv751\_mont\_bingcd} in nearly all cases, but protects against timing based side-channel attacks. They perform comparatively as such:
 
 \begin{center}
-\begin{tabular}{@{}lllll@{}}
+\begin{tabular}{@{}lll@{}}
 	\toprule
-	Procedure & Performance in clock cycles & System A With Batching\\
+	Procedure & Performance in clock cycles\\
 	\midrule
-	\code{fp2inv751\_mont} & 68,881,331 & 68,881,331\\
-	\code{fp2inv751\_mont\_bingcd} & 15,744,477,032 & 15,565,738,003\\
+	\code{fp2inv751\_mont} & 68,881,331\\
+	\code{fp2inv751\_mont\_bingcd} & 15,744,477,032\\
 	\bottomrule
 \end{tabular}
 \end{center}
 
-Take for example some private data $c$ being manipulated or operated on by some algorithm $\textbf{A}$. In order to be entirely certain that $c$ in \textbf{P($c$)} is not vulnerable to \emph{any} imagineable side-channel attack it must be the case that the structure of \textbf{P} does not in anyway depend on the information stored in $c$.
+Take for example some private data $c$ being manipulated or operated on by some algorithm $\textbf{A}$. In order to be entirely certain that $c$ in \textbf{A($c$)} is not vulnerable to \emph{any} imagineable side-channel attack it must be the case that the structure of \textbf{A} does not in anyway depend on the information stored in $c$.
 
-Let us look more closely at the elements that are inverted by \code{pb\_inv}. In \code{KeyGeneration\_A} the elements being passed to \code{pb\_inv} are simply the constituents of \randall's public key for every iteration of the signing procedure. Because the data being operated on is publicly available information, we needn't consider if it is vulnerable to side-channel analysis. 
+As will be illuminated in the following subsection, there are two settings in our implementation where \code{pb\_inv} us called. In the first case, the elements passed to \code{pb\_inv} are the constituents of \randall's public key as derived in \code{KeyGeneration\_A}. Because \randall's public key values appear as public information in the signature (as commitment $E_0$) they needn't consider for protection from side-channel analysis. 
 
-In \code{SecretAgreement\_A}, \code{pb\_inv} is called by \code{j\_inv}, which produces the \emph{j}-invariant of a particular curve. When \code{SecretAgreement\_A} is used in the context of SIDH key exchange, \code{j\_inv} is used to compute the shared secret between party members \ba and \rb, and so would need to be protected against side-channel attacks. This is not the case in the context of signatures, however. Recall the structure of SIDH signatures: every signature includes, for every $2\lambda$ iterations, the commitment $E_1$, which is precisely the shared secret between the signer and \randall. And so, every use of \code{pb\_inv} \emph{in the context of signatures} does not require extra precautions to side-channel analysis. The same is true for \code{SecretAgreement\_B}.
+In the second case, the inputs to \code{pb\_inv} are the $j$-invariant representations of \bob and \randall's shared secret, as derived in \code{SecretAgreement\_A} and \code{SecretAgreement\_B}.  When one of these secret agreement functions are used in the context of SIDH key exchange, the same $j$-invariant is used as the shared secret between party members \ba and \rb, and so would need to be protected against side-channel attacks. This is not the case in the context of signatures, however, because every signature includes the commitments $E_1$ which are precisely the shared secrets between the signer and \randall. And so this second case is also free from concerns of side-channel analysis.
 
-While it is not the case for our implementations that the data on which \code{pb\_inv} operates would find itself the subject of side-channel analysis, it is not difficult to imagine a scenario where this might be the case. 
+Because our deployments of \pbinv are only concerned with public data, we are able to opt for \code{fp2inv751\_mont} in the definition of our function and significantly save on execution cost. While there are no occurances of \pbinv in our implementation that require protection from side-channel analysis, there are scenarios in isogeny based cryptography where \code{pb\_inv} could be deployed over confidential information. In these cases, changes to the definition of \pbinv would need to made. Such scenarios are explored in Section \ref{sec:morebatch}. 
 
 \subsection{Embedding Partial Batched Inversions}
 
@@ -844,8 +846,8 @@ A semaphore has also been included in \code{batch\_struct}, the function of whic
 
 	\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (0.5,1) -- (0.5,5.0) node [black,midway,xshift=-0.6cm,block] {\code{isogeny\_sign}};
 	
-	\draw (12,3.5) node[batchblock] (BATCH1) {batch 1};
-	\draw (12,1.5) node[batchblock] (BATCH2) {batch 2};
+	\draw (12,3.5) node[batchblock] (BATCH1) {\code{pb\_inv}};
+	\draw (12,1.5) node[batchblock] (BATCH2) {\code{pb\_inv}};
 	
 	\draw[->, line width=1.0] (JINV1.east) to (BATCH1.west) node {};
 	\draw[->, line width=1.0] (JINV2.east) to (BATCH1.west) node {};
@@ -858,7 +860,7 @@ C code for all of these functions (with comparable differences highlighted) can 
 
 \section{Results}
 
-Our results come in several forms. First, there are the execution-time results of \code{pb\_inv} measured in clock cycles. Measurements of this first type are gathered from two environments, a general $\mathbb{F}_{p^2}$ environment constructed using the NTL C library, and \sidh. The first environment allows us to meaure how the performance of \code{pb\_inv} compares with an unbatched approach for arbitrarily sized moduli. Measurements in \sidh are limited to the parameters of the library, but more closely reflect the performance gains in that particular system.
+Our results come in several forms. First, there are the execution-time results of \code{pb\_inv} measured in clock cycles. Measurements of this first type are gathered from two environments, a general $\mathbb{F}_{p^2}$ environment constructed using the NTL C library, and the \sidh exeuction environment using the API provided by Costello et al. The first environment allows us to meaure how the performance of \code{pb\_inv} compares with an unbatched approach for arbitrarily sized moduli. Measurements in \sidh are limited to the parameters of the library, but more closely reflect the performance gains in that particular system.
 
 Following that, we measure the improvement in the performance of signature signing and verifying procedures offered by the inclusion of the batched partial inversion mechanism. These results are gathered both in a multi-core setting and a single-core environment, also measured in clock-cycles.  
 
@@ -911,9 +913,10 @@ Following that, we measure the improvement in the performance of signature signi
 \end{tabular}
 \end{center}
 
-Two different machines were used for benchmarking. System A denotes a single-core, 1.70 GHz Intel Celeron CPU. System B denotes a quad-core, 3.1 GHz AMD A8-7600.\\
-
+\noindent
 The two figures below provide benchmarks for KeyGen, Sign, and Verify procedures with both batched partial inversion implemented (in the previously mentioned locations) and not implemented. All benchmarks are averages computed from 100 randomized sample runs. All results are measured in clock cycles.
+
+Two different machines were used for benchmarking. System A denotes a single-core, 1.70 GHz Intel Celeron CPU. System B denotes a quad-core, 3.1 GHz AMD A8-7600.\\
 
 \begin{center}
 \begin{tabular}{@{}lllll@{}}
@@ -921,8 +924,8 @@ The two figures below provide benchmarks for KeyGen, Sign, and Verify procedures
 	Procedure & System A Without Batching & System A With Batching\\
 	\midrule
 	KeyGen & 68,881,331 & 68,881,331\\
-	Signature Sign & 15,744,477,032 & 15,565,738,003\\
-	Signature Verify & 11,183,112,648 & 10,800,158,871\\
+	Signature Signing & 15,744,477,032 & 15,565,738,003\\
+	Signature Verification & 11,183,112,648 & 10,800,158,871\\
 	\bottomrule
 \end{tabular}
 \end{center}
@@ -979,10 +982,3 @@ The following are all measured in clock cycles, as the computed average of 1000 
 \end{center}
 
 Do performance increases observed make sense?\\
-
-\subsection{Remaining Opportunities}
-There are two functions called in the isogeny signature system that perform a $\mathbb{F}_{p^{2}}$ inversion: \code{j\_inv} and \code{inv\_4\_way}. These functions are called once in SecretAgreement and KeyGeneration operations respectively. SecretAgreement and KeyGeneration are in turn called from each signing and verification thread.
-
-This means that in the signing procedure there are 2 opportunities for implementing batched partial-inversion with a batch size of 248 elements. In the verify procedure, however, there are 3 opportunities for implementing batched inversion with a batch size of roughly ~124 elements.
-
-Another avenue for implementation of this procedure, much in line with Fiat's original RSA batch, lies in . We discuss this approach in greater detail in section \ref{sec:morebatch}.

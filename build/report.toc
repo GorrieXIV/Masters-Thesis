@@ -37,7 +37,6 @@
 \contentsline {subsection}{\numberline {3.2.2}Embedding Partial Batched Inversions}{43}{subsection.3.2.2}
 \contentsline {section}{\numberline {3.3}Results}{47}{section.3.3}
 \contentsline {subsection}{\numberline {3.3.1}Analysis}{48}{subsection.3.3.1}
-\contentsline {subsection}{\numberline {3.3.2}Remaining Opportunities}{49}{subsection.3.3.2}
 \contentsline {chapter}{\numberline {4}Compressing Signatures}{50}{chapter.4}
 \contentsline {section}{\numberline {4.1}SIDH Key Compression Background}{50}{section.4.1}
 \contentsline {subsection}{\numberline {4.1.1}Motivation \& Overview}{50}{subsection.4.1.1}
