@@ -1,64 +1,63 @@
 \contentsline {chapter}{Acknowledgements}{1}{section*.3}
 \contentsline {chapter}{\numberline {1}Introduction}{2}{chapter.1}
 \contentsline {section}{\numberline {1.1}Motivation}{2}{section.1.1}
-\contentsline {subsection}{\numberline {1.1.1}Literature Survey}{2}{subsection.1.1.1}
 \contentsline {section}{\numberline {1.2}Contributions}{2}{section.1.2}
 \contentsline {section}{\numberline {1.3}Structure}{2}{section.1.3}
 \contentsline {subsection}{\numberline {1.3.1}Layout}{2}{subsection.1.3.1}
 \contentsline {subsection}{\numberline {1.3.2}Notation}{2}{subsection.1.3.2}
-\contentsline {chapter}{\numberline {2}Technical Background}{3}{chapter.2}
-\contentsline {section}{\numberline {2.1}Cryptographic Primitives}{4}{section.2.1}
-\contentsline {subsection}{\numberline {2.1.1}Key Exchange}{5}{subsection.2.1.1}
-\contentsline {subsection}{\numberline {2.1.2}Interactive Identification Schemes}{5}{subsection.2.1.2}
-\contentsline {subsection}{\numberline {2.1.3}Signature Schemes}{7}{subsection.2.1.3}
-\contentsline {section}{\numberline {2.2}Algebraic Geometry \& Isogenies}{8}{section.2.2}
-\contentsline {subsection}{\numberline {2.2.1}Fields \& Field Extensions}{9}{subsection.2.2.1}
-\contentsline {subsection}{\numberline {2.2.2}Elliptic Curves}{11}{subsection.2.2.2}
-\contentsline {subsection}{\numberline {2.2.3}Isogenies \& Their Properties}{14}{subsection.2.2.3}
-\contentsline {section}{\numberline {2.3}Supersingular Isogeny Diffie-Hellman}{14}{section.2.3}
-\contentsline {subsection}{\numberline {2.3.1}SIDH Key Exchange}{15}{subsection.2.3.1}
-\contentsline {subsection}{\numberline {2.3.2}Zero-Knowledge Proof of Identity}{17}{subsection.2.3.2}
-\contentsline {section}{\numberline {2.4}Fiat-Shamir Construction}{18}{section.2.4}
-\contentsline {subsection}{\numberline {2.4.1}Unruh's Post-Quantum Adaptation}{19}{subsection.2.4.1}
-\contentsline {section}{\numberline {2.5}Isogeny Based Signatures}{20}{section.2.5}
-\contentsline {subsection}{\numberline {2.5.1}Algorithmic Definitions}{21}{subsection.2.5.1}
-\contentsline {section}{\numberline {2.6}Implementations of Isogeny Based Cryptographic Protocols}{24}{section.2.6}
-\contentsline {subsection}{\numberline {2.6.1}Parameters \& Data Representation}{24}{subsection.2.6.1}
-\contentsline {subsection}{\numberline {2.6.2}$\texttt {SIDH}_{\texttt {C}}$\xspace Design Decisions}{26}{subsection.2.6.2}
-\contentsline {subsection}{\numberline {2.6.3}Key Exchange \& Critical Functions}{27}{subsection.2.6.3}
-\contentsline {subsection}{\numberline {2.6.4}Signature Layer}{29}{subsection.2.6.4}
-\contentsline {chapter}{\numberline {3}Batching Operations for Isogenies}{32}{chapter.3}
-\contentsline {section}{\numberline {3.1}Partial Batched Inversions}{32}{section.3.1}
-\contentsline {subsection}{\numberline {3.1.1}$\mathbb {F}_{p^{2}}$ Inversions done in $\mathbb {F}_{p}$}{33}{subsection.3.1.1}
-\contentsline {subsection}{\numberline {3.1.2}Batching Field Element Inversions}{35}{subsection.3.1.2}
-\contentsline {subsection}{\numberline {3.1.3}Partial Batched Inversions}{37}{subsection.3.1.3}
-\contentsline {section}{\numberline {3.2}Implementation Details}{40}{section.3.2}
-\contentsline {subsection}{\numberline {3.2.1}Implementation \& Design Decisions}{41}{subsection.3.2.1}
-\contentsline {subsection}{\numberline {3.2.2}Embedding Partial Batched Inversions}{43}{subsection.3.2.2}
-\contentsline {section}{\numberline {3.3}Results}{47}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}Analysis}{48}{subsection.3.3.1}
-\contentsline {chapter}{\numberline {4}Compressing Signatures}{50}{chapter.4}
-\contentsline {section}{\numberline {4.1}SIDH Key Compression Background}{50}{section.4.1}
-\contentsline {subsection}{\numberline {4.1.1}Motivation \& Overview}{50}{subsection.4.1.1}
-\contentsline {subsection}{\numberline {4.1.2}Construction of Bases}{50}{subsection.4.1.2}
-\contentsline {subsection}{\numberline {4.1.3}Pohlig-Hellman}{50}{subsection.4.1.3}
-\contentsline {subsection}{\numberline {4.1.4}Decompression}{50}{subsection.4.1.4}
-\contentsline {section}{\numberline {4.2}Implementation Details}{50}{section.4.2}
-\contentsline {subsection}{\numberline {4.2.1}Tailoring Compression for Signatures}{50}{subsection.4.2.1}
-\contentsline {subsection}{\numberline {4.2.2}Decompressing $\psi (S)$}{50}{subsection.4.2.2}
-\contentsline {section}{\numberline {4.3}Results}{50}{section.4.3}
-\contentsline {section}{\numberline {4.4}Analysis}{50}{section.4.4}
-\contentsline {chapter}{\numberline {5}Discussion \& Conclusion}{51}{chapter.5}
-\contentsline {section}{\numberline {5.1}Results \& Comparisons}{51}{section.5.1}
-\contentsline {section}{\numberline {5.2}Additional Opportunities for Batching}{51}{section.5.2}
-\contentsline {section}{\numberline {5.3}Future Work}{51}{section.5.3}
-\contentsline {chapter}{Appendices}{52}{section*.5}
-\contentsline {chapter}{\numberline {A}$\texttt {SIDH}_{\texttt {C}}$\xspace Functions}{53}{Appendix.a.A}
-\contentsline {section}{\numberline {A.1}$\mathbb {F}_p$ and $\mathbb {F}_{p^2}$ Functions}{53}{section.a.A.1}
-\contentsline {section}{\numberline {A.2}Isogeny and Point-wise Functions}{53}{section.a.A.2}
-\contentsline {subsection}{\numberline {A.2.1}\texttt {j\_inv}}{53}{subsection.a.A.2.1}
-\contentsline {subsection}{\numberline {A.2.2}\texttt {j\_inv\_batch}}{53}{subsection.a.A.2.2}
-\contentsline {subsection}{\numberline {A.2.3}\texttt {inv\_4\_way}}{54}{subsection.a.A.2.3}
-\contentsline {subsection}{\numberline {A.2.4}\texttt {inv\_4\_way\_batch}}{54}{subsection.a.A.2.4}
-\contentsline {section}{\numberline {A.3}Key Exchange Functions}{55}{section.a.A.3}
-\contentsline {section}{\numberline {A.4}Signature Layer Functions}{57}{section.a.A.4}
+\contentsline {chapter}{\numberline {2}Technical Background}{4}{chapter.2}
+\contentsline {section}{\numberline {2.1}Cryptographic Primitives}{5}{section.2.1}
+\contentsline {subsection}{\numberline {2.1.1}Key Exchange}{6}{subsection.2.1.1}
+\contentsline {subsection}{\numberline {2.1.2}Interactive Identification Schemes}{6}{subsection.2.1.2}
+\contentsline {subsection}{\numberline {2.1.3}Signature Schemes}{8}{subsection.2.1.3}
+\contentsline {section}{\numberline {2.2}Algebraic Geometry \& Isogenies}{9}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}Fields \& Field Extensions}{10}{subsection.2.2.1}
+\contentsline {subsection}{\numberline {2.2.2}Elliptic Curves}{12}{subsection.2.2.2}
+\contentsline {subsection}{\numberline {2.2.3}Isogenies \& Their Properties}{15}{subsection.2.2.3}
+\contentsline {section}{\numberline {2.3}Supersingular Isogeny Diffie-Hellman}{15}{section.2.3}
+\contentsline {subsection}{\numberline {2.3.1}SIDH Key Exchange}{16}{subsection.2.3.1}
+\contentsline {subsection}{\numberline {2.3.2}Zero-Knowledge Proof of Identity}{18}{subsection.2.3.2}
+\contentsline {section}{\numberline {2.4}Fiat-Shamir Construction}{19}{section.2.4}
+\contentsline {subsection}{\numberline {2.4.1}Unruh's Post-Quantum Adaptation}{20}{subsection.2.4.1}
+\contentsline {section}{\numberline {2.5}Isogeny Based Signatures}{21}{section.2.5}
+\contentsline {subsection}{\numberline {2.5.1}Algorithmic Definitions}{22}{subsection.2.5.1}
+\contentsline {section}{\numberline {2.6}Implementations of Isogeny Based Cryptographic Protocols}{25}{section.2.6}
+\contentsline {subsection}{\numberline {2.6.1}Parameters \& Data Representation}{25}{subsection.2.6.1}
+\contentsline {subsection}{\numberline {2.6.2}$\texttt {SIDH}_{\texttt {C}}$\xspace Design Decisions}{27}{subsection.2.6.2}
+\contentsline {subsection}{\numberline {2.6.3}Key Exchange \& Critical Functions}{28}{subsection.2.6.3}
+\contentsline {subsection}{\numberline {2.6.4}Signature Layer}{30}{subsection.2.6.4}
+\contentsline {chapter}{\numberline {3}Batching Operations for Isogenies}{33}{chapter.3}
+\contentsline {section}{\numberline {3.1}Partial Batched Inversions}{33}{section.3.1}
+\contentsline {subsection}{\numberline {3.1.1}$\mathbb {F}_{p^{2}}$ Inversions done in $\mathbb {F}_{p}$}{34}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}Batching Field Element Inversions}{36}{subsection.3.1.2}
+\contentsline {subsection}{\numberline {3.1.3}Partial Batched Inversions}{38}{subsection.3.1.3}
+\contentsline {section}{\numberline {3.2}Implementation Details}{41}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Implementation \& Design Decisions}{42}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}Embedding Partial Batched Inversions}{44}{subsection.3.2.2}
+\contentsline {section}{\numberline {3.3}Results}{48}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Analysis}{49}{subsection.3.3.1}
+\contentsline {chapter}{\numberline {4}Compressing Signatures}{51}{chapter.4}
+\contentsline {section}{\numberline {4.1}SIDH Key Compression Background}{51}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}Motivation \& Overview}{51}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}Construction of Bases}{51}{subsection.4.1.2}
+\contentsline {subsection}{\numberline {4.1.3}Pohlig-Hellman}{51}{subsection.4.1.3}
+\contentsline {subsection}{\numberline {4.1.4}Decompression}{51}{subsection.4.1.4}
+\contentsline {section}{\numberline {4.2}Implementation Details}{51}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}Tailoring Compression for Signatures}{51}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}Decompressing $\psi (S)$}{51}{subsection.4.2.2}
+\contentsline {section}{\numberline {4.3}Results}{51}{section.4.3}
+\contentsline {section}{\numberline {4.4}Analysis}{51}{section.4.4}
+\contentsline {chapter}{\numberline {5}Discussion \& Conclusion}{52}{chapter.5}
+\contentsline {section}{\numberline {5.1}Results \& Comparisons}{52}{section.5.1}
+\contentsline {section}{\numberline {5.2}Additional Opportunities for Batching}{52}{section.5.2}
+\contentsline {section}{\numberline {5.3}Future Work}{52}{section.5.3}
+\contentsline {chapter}{Appendices}{53}{section*.5}
+\contentsline {chapter}{\numberline {A}$\texttt {SIDH}_{\texttt {C}}$\xspace Functions}{54}{Appendix.a.A}
+\contentsline {section}{\numberline {A.1}$\mathbb {F}_p$ and $\mathbb {F}_{p^2}$ Functions}{54}{section.a.A.1}
+\contentsline {section}{\numberline {A.2}Isogeny and Point-wise Functions}{54}{section.a.A.2}
+\contentsline {subsection}{\numberline {A.2.1}\texttt {j\_inv}}{54}{subsection.a.A.2.1}
+\contentsline {subsection}{\numberline {A.2.2}\texttt {j\_inv\_batch}}{54}{subsection.a.A.2.2}
+\contentsline {subsection}{\numberline {A.2.3}\texttt {inv\_4\_way}}{55}{subsection.a.A.2.3}
+\contentsline {subsection}{\numberline {A.2.4}\texttt {inv\_4\_way\_batch}}{55}{subsection.a.A.2.4}
+\contentsline {section}{\numberline {A.3}Key Exchange Functions}{56}{section.a.A.3}
+\contentsline {section}{\numberline {A.4}Signature Layer Functions}{58}{section.a.A.4}
