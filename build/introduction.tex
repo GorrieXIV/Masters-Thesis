@@ -1,8 +1,14 @@
 \chapter{Introduction}
 
-The past 30 years have brought with them astonishing developments in the field of Quantum Computing. As physicists and engineers race towards error-free and energy efficient implementations of quantum computers, we steadfastly approach a New Age for the art and science of Cryptography.  have come also remarkably. Quantum computers 
+The past 30 years have brought with them astonishing developments in the field of Quantum Computing. As physicists and engineers race towards error-free and energy efficient implementations of quantum computers, we steadfastly approach a New Age for the art and science of Cryptography. 
+
+Over the course of the past decade, elliptic curve cryptography (ECC) has proven itself a mainstay in the wide world of applied cryptology. While isogeny based cryptography does build itself up from the same underlying field of mathematics as ECC, it simultaneously draws from a slightly more complicated space of algebraic notions. Much of this chapter will be dedicated to illuminating these notions in a manner that should be digestable for those without serious background in algebraic geometry, or abstract algebra in general.
+
 
 \section{Motivation}
+
+
+We can provide a quickly sketched survey of the many post-quantum schemes and contrast their
 
 Our aim is to improve the efficiency (thus improving the practicality) of isogeny based schemes. More specifically, we will be investigating the C implementation of the Yoo et al. isogeny based signature scheme. 
 
@@ -19,12 +25,17 @@ Additionally, because the compression algorithm in question is itself tenable tw
 
 \section{Structure}
 
-This dissertation is divided into 5 main sections. This section and the one that follows contain the relevent preliminary information for understanding the contributions of the thesis. The two following sections thereafter outline in detail the two contributions of this dissertation. The 5$^{th}$ and final section concludes the dissertation while offering final remarks and suggestions for continued research. 
+This dissertation is divided into 5 Chapters. This Chapter and the one that follows contain the relevent preliminary information for understanding the contributions of the thesis. The two following Chapters thereafter outline in detail the two contributions of this dissertation. The 5$^{\text{th}}$ and final Chapter concludes the dissertation while offering any final remarks and suggestions for continued research.
+
+Chapter 2, the chapter covering relevant mathematical and API background, is far and away the longest Chapter. It is worth noting that thorough and complete coverage of this chapter is not necessary for understanding the contributions we present, as well as the conclusions we come to make about the usefulness (and limitations) of our techniques, and of the studied isogeny-based signature scheme at large.
+
+If, however, the reader desires to pursue isogeny-based cryptosystems in a research setting, then Chapter 2 will (hopefully) prove to be an effective and digestible surface-level introduction to this subfield.  
 
 \subsection{Layout}
 
-Over the course of the past decade, elliptic curve cryptography (ECC) has proven itself a mainstay in the wide world of applied cryptology. While isogeny based cryptography does build itself up from the same underlying field of mathematics as ECC, it simultaneously draws from a slightly more complicated space of algebraic notions. Much of this chapter will be dedicated to illuminating these notions in a manner that should be digestable for those without serious background in algebraic geometry, or abstract algebra in general.
 
 \subsection{Notation}
+
+It is worth to take some time now formalizing the plethora of different notation used
 
 To denote high-level procedures, we write their titls in \textbf{bold}. Procedures intended for machine execution are titled with \code{monospace} font - and we use the same notation for C modules, functions, and variable name. 
