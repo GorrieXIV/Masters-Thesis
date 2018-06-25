@@ -7,10 +7,11 @@ Over the course of the past decade, elliptic curve cryptography (ECC) has proven
 
 \section{Motivation}
 
-
-We can provide a quickly sketched survey of the many post-quantum schemes and contrast their
-
 Our aim is to improve the efficiency (thus improving the practicality) of isogeny based schemes. More specifically, we will be investigating the C implementation of the Yoo et al. isogeny based signature scheme. 
+
+We can provide a quickly sketched survey of the many post-quantum schemes and contrast their performance (both temporally in terms of exeuction time, and spatially in terms of key and signature sizes) with popular non-quantum-safe systems.
+
+It's clear that isogeny based schemes have a long way to go in terms of temporal performance before they can hold their own against protocols such as \_\_\_ or even the post-quantum \_\_\_. The exceptionally small key sizes of SIDH and other isogeny-based schemes, however, are an advantage worth noting. 
 
 \subsection{Related Works}
 
@@ -34,8 +35,21 @@ If, however, the reader desires to pursue isogeny-based cryptosystems in a resea
 \subsection{Layout}
 
 
-\subsection{Notation}
+\subsection{Notation \& Style}
 
-It is worth to take some time now formalizing the plethora of different notation used
+It is worth to take some time now formalizing the plethora of different notation used\\
 
-To denote high-level procedures, we write their titls in \textbf{bold}. Procedures intended for machine execution are titled with \code{monospace} font - and we use the same notation for C modules, functions, and variable name. 
+One technique employed throughout this dissertation is the use of non-indented paragraphs which follow horizontal spaces. 
+
+\noindent
+\textit{General Conventions.} Throughout the text, \textit{italics} are used as a means of applying emphasis. This is done frequently to draw attention to newly introduced terms, sometimes in a literary-rhetoric sense, , and othertimes to 
+
+To denote high-level procedures, we write their titls in \textbf{bold}. Procedures intended for machine execution are titled with \code{monospace} font - and we use the same notation for C modules, functions, and variable name.\\
+
+\noindent
+\textit{Functions \& Procedures}. Throughout the dissertation, general functions and procedures are denoted by the use of a \textbf{bold font face}. This is true for procedures introduced both formally and informally. Functions that are defined within the \sidh C codebase (either by us or others), however, are denoted by the use of a \code{monospace font}. This monospace notation is also sometimes used to denote routines or subroutines composed of by a sequence of functions or a portion of code. 
+
+When referring to a function in any general sense, we will write only its name using the aforemention convention. By contrast, when we refer to the result of a function executed over input $x_{1}, ..., x_{n}$, we append on the function identifier the set of parameters enclosed in parathesis (e.g. \textbf{GenericFunction($x_{1}, ..., x_{n}$) or \code{GenericFunction($x_{1}, ..., x_{n}$)}}. 
+
+It is also worth noting that we frequently refer to these abstract, bold-identified functions as \textit{procedures}, whereas we try to reserve use of the term \textit{function} for C-defined \sidh functions.  
+
