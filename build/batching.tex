@@ -5,7 +5,7 @@ Our first contribution to the \sidh codebase is the implementation and integrati
 
 In the first section of this chapter we will detail the specifics of the partial batched inversion procedure. We will show how the procedure can be constructed by combining two techniques: a well known method for reducing a $\mathbb{F}_{p^2}$ inversion to several $\mathbb{F}_{p}$ operations, and an inversion batching technique outlined in \cite{batching}. 
 
-As we then venture into the lower-level implementation details, we will explore how the procedure can be leveraged efficiently and intelligently in the codebase. We will take a closer look at several of the aforementioned \sidh functions as we illustrate some of the performance bottlenecks in the system. At this time, we will also discuss the design decisions made while implementing the partial batched inversion procedure as well as some of the function's lower-level minutiae.
+As we then venture into the lower-level implementation details, we will explore how the procedure can be leveraged efficiently in the codebase. We will take a closer look at several of the aforementioned \sidh functions as we illustrate some of the performance bottlenecks in the system. At this time, we will also discuss the design decisions made while implementing the partial batched inversion procedure as well as some of the function's lower-level minutiae.
 
 We will end this chapter by taking a detailed look at the performance gains offered by the inclusion of partial batched inversions in \sidh. More precisely, we will be examining the effects of the procedure on the Yoo et al. signature layer. We will contrast the measured performance of our implementation with an analytical calculation of the expected improvement, and discuss the possible origins of divergent behaviour.  
 
@@ -18,7 +18,7 @@ As mentioned above, \code{pb\_inv} is constructed by combining two distinct tech
 
 We will begin with a dissection of these two techniques, starting first with the ``partial" inversion technique and then looking at batched inversions. The definitions we will give for these techniques below are given at the level of field arithmetic. When we proceed to sketch \code{pb\_inv}, we will offer two definitions: one in this section given at the abstraction-level of field arithmetic, and one in the proceeding section given in terms of \sidh syntax.
 
-In the subsections to come, when we are working at the level of field arithmetic we will denote the first and second portions of an arbitrary $x \in \mathbb{F}_{p^{2}}$ as $x_{a}$ and $x_{b}$ respectively, where $x = x_{a} + x_{b}\cdot i$. Additionally, we may write $x$ as $\{x_{a}, x_{b}\}$, as this more closely reflects the structure of $\mathbb{F}_{p^{2}}$ elements in \sidh. Recall from Section \ref{subsec:fields} that both $x_{a}$ and $x_{b}$ are valid $\mathbb{F}_{p}$ elements. 
+In the subsections to come, when we are working at the level of field arithmetic we will denote the first and second portions of an arbitrary $x \in \mathbb{F}_{p^{2}}$ as $x_{a}$ and $x_{b}$ respectively, where $x = x_{a} + x_{b}\cdot i$. Additionally, we may write $x$ as $(x_{a}, x_{b})$, as this more closely reflects the structure of $\mathbb{F}_{p^{2}}$ elements in \sidh. Recall from Section \ref{subsec:fields} that both $x_{a}$ and $x_{b}$ are valid $\mathbb{F}_{p}$ elements. 
 
 We will express the time-complexity of the coming procedures in terms of the number of underlying field operations within them. We denote the computation time for base field arithmetic with bold letters (such as \textbf{a} for $\mathbb{F}_p$ \textbf{a}ddition), and we use bold letters accented with a ``closure" bar for extension field arithmetic ($\bar{\textbf{a}}$ for $\mathbb{F}_{p^2}$ \textbf{a}ddition). For example, the time-complexity of some procedure $P$, which we might write as $C_{P}$, may look like the following:
 $$
@@ -38,7 +38,7 @@ $$
 $$
 C^{-1} = \frac {a - bi}{(a + bi)(a - bi)}
 $$
-Here we note that $(a + bi)(a - bi)$ is equivalently $(a^2 - b^2)$ and so we can rewrite $C^{-1}$ as the following:
+Here we note that $(a + bi)(a - bi)$ is equivalently $(a^2 + b^2)$ and so we can rewrite $C^{-1}$ as the following:
 $$
 C^{-1} = \frac {a - bi}{(a)^2 - (bi)^2}
 $$
@@ -46,9 +46,9 @@ $$
 C^{-1} = \frac {a - bi}{a^2 + b^2}.
 $$
 
-Elements in the quadratic extension of a finite field are treated similarly, such that if we take some element $x = \{x_{a}, x_{b}\} \in \mathbb{F}_{p^{2}}$ for some prime $p$, we can equivalently represent $x$ as $x_{a} + x_{b}i$ and treat arithmetic on $x$ exactly as we would for a complex number (modulo $p$, of course). From this we can see that $x^{-1}$ can be defined as:
+Elements in the quadratic extension of a finite field are treated similarly, such that if we take some element $x = (x_{a}, x_{b}) \in \mathbb{F}_{p^{2}}$ for some prime $p$, we can equivalently represent $x$ as $x_{a} + x_{b}i$ and treat arithmetic on $x$ exactly as we would for a complex number (modulo $p$, of course). From this we can see that $x^{-1}$ can be defined as:
 $$
-x^{-1} = \{\frac {x_{a}}{x_{a}^2 + x_{b}^2}, \frac {-x_{b}}{x_{a}^2 + x_{b}^2}\}
+x^{-1} = (\frac {x_{a}}{x_{a}^2 + x_{b}^2}, \frac {-x_{b}}{x_{a}^2 + x_{b}^2})
 $$
 
 Now it is clear that we can compute the multiplicative inverse of $x$ by computing the inverse of $x_{a}^2 + x_{b}^2$ (an inversion in $\mathbb{F}_{p}$) and $-x_{b}$ (a relatively inexpensive operation, also in the base field). We formulate this technique in Algorithm \ref{alg:partialinv}, which we refer to as \textbf{PartialInv}.\\
@@ -82,7 +82,7 @@ Effectively, this procedure reduces one $\mathbb{F}_{p^{2}}$ inversion to the fo
 \end{itemize}
 \end{center}
 
-Let $C_{\textbf{PartialInv}}$ represent the performance of \textbf{PartialInv}, in the format outlined above. We have
+Let $C_{\textbf{PartialInv}}$ represent the time complexity of \textbf{PartialInv}, in the format outlined above. We have
 $$
 C_{\textbf{PartialInv}} = 2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}
 $$
@@ -99,7 +99,7 @@ We claim that this ``reduces" the computation time of field element inversion, b
 
 The second technique used in the composition of \code{pb\_inv} reduces arbitrarily many (general) field element inversions to \emph{one} inversion and a linearly scaling amount of multiplcations in the \emph{same} field.
 
-This technique was outlined by Shacham and Boneh in \cite{batching}. Shacham and Boneh provided several techniques for improving the performance of SSL handshakes, most of which built on the earlier efforts of Amos Fiat in batching multiple RSA decryptions (\cite{RSAbatch}). While somewhat related, Fiat's work admittedly is only applicable to the RSA cryptosystem, and requires additional constraints on the elements being batched. 
+This technique was outlined by Shacham and Boneh in \cite{batching}. Shacham and Boneh provided several techniques for improving the performance of SSL handshakes, most of which built on the earlier efforts of Fiat in batching multiple RSA decryptions \cite{RSAbatch}. While somewhat related, Fiat's work admittedly is only applicable to the RSA cryptosystem, and requires additional constraints on the elements being batched. 
 
 One improvement offered by Shacham and Boneh, however, is their proposed notion of batching together divisions from across multiple unrelated SSL instances. 
 
