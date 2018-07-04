@@ -29,19 +29,27 @@ Most notably, this research is built upon an isogeny-based signature scheme publ
 
 Our explicit contributions to the implementation of this protocol are twofold. Our first contribution involves the implementation of a procedure for batching . This scheme leverages the already parallel nature of the protocol, and.
 
-Additionally, because the compression algorithm in question is itself tenable two contributions can be 
+Additionally, because the compression algorithm in question is itself tenable two contributions can be \\
+
+All of these contributions can be found (and put to test) at https://github.com/GorrieXIV/SIDH2.0-SignatureExtension .
+
+\subsection{Protocol Performance}
+
+\subsection{Signature Size}
 
 
 \section{Structure}
 
-This dissertation is divided into 5 Chapters. This Chapter and the one that follows contain the relevent preliminary information for understanding the contributions of the thesis. The two following Chapters thereafter outline in detail the two contributions of this dissertation. The 5$^{\text{th}}$ and final Chapter concludes the dissertation while offering any final remarks and suggestions for continued research.
-
-Chapter 2, the chapter covering relevant mathematical and API background, is far and away the longest Chapter. It is worth noting that thorough and complete coverage of this chapter is not necessary for understanding the contributions we present, as well as the conclusions we come to make about the usefulness (and limitations) of our techniques, and of the studied isogeny-based signature scheme at large.
-
-If, however, the reader desires to pursue isogeny-based cryptosystems in a research setting, then Chapter 2 will (hopefully) prove to be an effective and digestible surface-level introduction to this subfield.  
 
 \subsection{Layout}
 
+This dissertation is divided into 5 Chapters. This Chapter and the one that follows contain the relevent preliminary information for understanding the contributions of the thesis. The two following Chapters thereafter outline in detail the two contributions of this dissertation. The 5$^{\text{th}}$ and final Chapter concludes the dissertation while offering any final remarks and suggestions for continued research.
+
+Chapter 2 covers the relevant mathematics background and is far and away the longest Chapter. Within this Chapter we also cover the portions of the SIDH C library that are utilized and/or modified in our implementations. It is worth noting that thorough and complete coverage of this chapter is not necessary for a satisfactory understanding of our contributions, nor is it necessary for understanding the conclusions we come to make about the usefulness of our techniques, and of the studied isogeny-based signature scheme at large.
+
+If, however, the reader desires to pursue isogeny-based cryptosystems in a research setting, then Chapter 2 will (hopefully) prove to be an effective and digestible surface-level introduction to this subfield.  
+
+Chapters 3 \& 4 are rather similar in structure. Both begin with an introduction of their contribution's components - doing so in a general setting. Following this, the implementation specifics of the Chapters contribution are layed out. For these Sections, we attempt to convey the implementation details with a level of granularity we find easily accessible, while also providing enough information such that if the reader were to dive into the codebase they could do so comfortably. The final Sections of Chapters 4 \& 5 include the implementation results, benchmarks, and analysis. The main structural difference between these two Chapters is that Chapter 4 requires additional background. We found it more appropriate to include this material here, in the introduction to Chapter 4, rather than in Chapter 2.
 
 \subsection{Notation \& Style}
 
@@ -59,5 +67,42 @@ To denote high-level procedures, we write their titls in \textbf{bold}. Procedur
 
 When referring to a function in any general sense, we will write only its name using the aforemention convention. By contrast, when we refer to the result of a function executed over input $x_{1}, ..., x_{n}$, we append on the function identifier the set of parameters enclosed in parathesis (e.g. \textbf{GenericFunction($x_{1}, ..., x_{n}$) or \code{GenericFunction($x_{1}, ..., x_{n}$)}}. 
 
-It is also worth noting that we frequently refer to these abstract, bold-identified functions as \textit{procedures}, whereas we try to reserve use of the term \textit{function} for C-defined \sidh functions.  
+It is also worth noting that we frequently refer to these abstract, bold-identified functions as \textit{procedures}, whereas we try to reserve use of the term \textit{function} for C-defined \sidh functions. When giving precise definitions of procedures, we opt for a pseudocode/algorithmic approach. For functions, on the otherhand, we enclose our definitions in an environment with a light-gray background. Consider the following: \\
 
+\begin{algorithm}
+\caption{-- \textbf{ProcedureExample(\textbf{P}$_{\Pi}$)}}\label{alg:unruhconst}
+\begin{algorithmic}[1]
+\If{$User$ = $\alice$}
+	\State Pick a random point $S$ of order $\laea$
+\EndIf
+\If{$User$ = $\bob$}
+	\State Pick a random point $S$ of order $\lbeb$
+\EndIf
+\State Compute the isogeny $\phi: E \rightarrow E/\langle S \rangle$
+\State $pk \gets (E/\langle S \rangle, \phi(P_{User}), \phi(Q_{User}))$
+\State $sk \gets S$
+\State \Return ($sk$, $pk$)
+\end{algorithmic}
+\end{algorithm}
+
+\begin{figure}[!h]
+\label{code:pbinv}
+\begin{lstlisting}
+void function_example (const f2elm_t* vec, f2elm_t* dest, const int n) {
+	felm_t t0[n];     //a portion of vec elements
+	felm_t t1[n];     //b portion of vec elements
+	felm_t den[n];    //denominator of vec elements
+	felm_t a[n];
+
+	for (int i = 0; i < n; i++) {
+		fpsqr751_mont((vec[i])[0], t0[i]);
+		fpsqr751_mont((vec[i])[1], t1[i]);
+		fpadd751(t0[i], t1[i], den[i]);
+	}	
+}
+\end{lstlisting}
+\caption{Function example.}
+\end{figure}
+
+\noindent
+\textit{Math Conventions}. To donate isogonies (and other functions between elliptic curves) we will opt to use upper-case greek letters. Elliptic curves discussed in a general setting are refered to, when possible, as $E$; if a more unique identifier is necessary, $E$ with a unique subscript is used. For example, $E_{Alice}$ might refer to a curve created by Alice.  
