@@ -70,35 +70,25 @@ When referring to a function in any general sense, we will write only its name u
 It is also worth noting that we frequently refer to these abstract, bold-identified functions as \textit{procedures}, whereas we try to reserve use of the term \textit{function} for C-defined \sidh functions. When giving precise definitions of procedures, we opt for a pseudocode/algorithmic approach. For functions, on the otherhand, we enclose our definitions in an environment with a light-gray background. Consider the following: \\
 
 \begin{algorithm}
-\caption{-- \textbf{ProcedureExample(\textbf{P}$_{\Pi}$)}}\label{alg:unruhconst}
+\caption{-- \textbf{ProcedureExample($\{a_0, a_1, ... , a_b\}$, $c$)}}\label{alg:procedureexample}
 \begin{algorithmic}[1]
-\If{$User$ = $\alice$}
-	\State Pick a random point $S$ of order $\laea$
+\If{$c \leq b$}
+	\State \Return $a_c$
+\Else
+	\State \Return $-1$
 \EndIf
-\If{$User$ = $\bob$}
-	\State Pick a random point $S$ of order $\lbeb$
-\EndIf
-\State Compute the isogeny $\phi: E \rightarrow E/\langle S \rangle$
-\State $pk \gets (E/\langle S \rangle, \phi(P_{User}), \phi(Q_{User}))$
-\State $sk \gets S$
-\State \Return ($sk$, $pk$)
 \end{algorithmic}
 \end{algorithm}
 
 \begin{figure}[!h]
 \label{code:pbinv}
 \begin{lstlisting}
-void function_example (const f2elm_t* vec, f2elm_t* dest, const int n) {
-	felm_t t0[n];     //a portion of vec elements
-	felm_t t1[n];     //b portion of vec elements
-	felm_t den[n];    //denominator of vec elements
-	felm_t a[n];
-
-	for (int i = 0; i < n; i++) {
-		fpsqr751_mont((vec[i])[0], t0[i]);
-		fpsqr751_mont((vec[i])[1], t1[i]);
-		fpadd751(t0[i], t1[i], den[i]);
-	}	
+void function_example (int* a, int b, int c) {
+	if (c <= b) {
+		return a[c];
+	} else {
+		return -1;
+	}
 }
 \end{lstlisting}
 \caption{Function example.}
