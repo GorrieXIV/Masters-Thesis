@@ -1,14 +1,15 @@
 \chapter{Compressing Signatures}
 \label{sec:compress}
 
-Our second contribution, also in the form of an addendum to the \sidh signature extension, is a mechanism for compressing signatures to reduce the size.
+Our second contribution, also in the form of an addition to the \sidh signature extension, is a mechanism for compressing signatures. The following Chapter will cover the compression technique used. This Chapter, much like the last, will be split into three Sections: the first will cover the mathematics and high-level details of the compression technique used, the second will explain our implementation and integration of this technique into \sidh, and the third and final Section of this Chapter we will analyze in detail the results of this contribution.
 
 We explore two approaches to reducing the size of the Yoo et al. signatures. Both of these approaches, soon to be discussed, leverage the recently publishes point compression technique as seen in \cite{pkcomp}. 
 
-Costello et al. showed in \cite{pkcomp} that  
+
 
 \section{SIDH Key Compression Background}
 
+Costello et al. showed in \cite{pkcomp} that  
 We discussed rejection sampling A values from signature public keys until we found an A that was also the x-coord of a point. After some simple analysis, however, we found that it was extremely unlikely for A to be a point on the curve.
 
 \subsection{Construction of Bases}

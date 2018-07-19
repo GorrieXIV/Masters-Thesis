@@ -6,13 +6,14 @@ Quantum computers have been shown to possess computing power beyond that of our 
 
 And so, as physicists and engineers race towards error-free and energy efficient implementations of quantum computers, we steadfastly approach a New Age for the art and science of Cryptography. 
 
-Over the course of the past decade, elliptic curve cryptography (ECC) has proven itself a mainstay in the wide world of applied cryptology. While isogeny based cryptography does build itself up from the same underlying field of mathematics as ECC, it simultaneously draws from a slightly more complicated space of algebraic notions. Much of this chapter will be dedicated to illuminating these notions in a manner that should be digestable for those without serious background in algebraic geometry, or abstract algebra in general.
+
+\textit{Isogeny Based Cryptography}. Over the course of the past decade, elliptic curve cryptography (ECC) has proven itself a mainstay in the wide world of applied cryptology. While isogeny based cryptography does build itself up from the same underlying field of mathematics as ECC, it simultaneously draws from a slightly more complicated space of algebraic notions.
 
 
 \section{Motivation}
 \label{sec:motivation}
 
-Our aim is to improve the efficiency (thus improving the practicality) of isogeny based schemes. More specifically, we will be investigating the C implementation of the Yoo et al. isogeny based signature scheme. 
+The aim of this dissertation is to improve the efficiency (thus improving the practicality) of isogeny based schemes. More specifically, we will be investigating the C implementation of the Yoo et al. isogeny based signature scheme. 
 
 We can provide a quickly sketched survey of the many post-quantum schemes and contrast their performance (both temporally in terms of exeuction time, and spatially in terms of key and signature sizes) with popular non-quantum-safe systems.
 
@@ -28,16 +29,19 @@ Most notably, this research is built upon an isogeny-based signature scheme publ
 
 \section{Contributions}
 
-Our explicit contributions to the implementation of this protocol are twofold. Our first contribution involves the implementation of a procedure for batching . This scheme leverages the already parallel nature of the protocol, and.
+Our noteworthy contributions to the implementation of this protocol are twofold. Both of these contributions are designed with the intent of improving the performance of the Yoo et al. signature scheme: the first offers an improvement in the run-time of the signature scheme and the second 
 
-Additionally, because the compression algorithm in question is itself tenable two contributions can be \\
 
 All of these contributions can be found (and put to test) at https://github.com/GorrieXIV/SIDH2.0-SignatureExtension .
 
 \subsection{Protocol Performance}
 
+Our first contribution involves the implementation of a procedure which batches together many of the same operations to offer a drastic reduction in runtime. This scheme leverages the already parallel nature of the protocol by waiting for expensive operations that are due to occur accross all threads, suspending the threads and performing the batching procedure, and then resuming the run.
+
+
 \subsection{Signature Size}
 
+Additionally, because the compression algorithm in question is itself tenable two contributions can be \\
 
 \section{Structure}
 
