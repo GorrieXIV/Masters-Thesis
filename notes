@@ -1,3 +1,15 @@
 listings 
 inputlistings 
 wikibooks latex
+
+
+- if we convert from seconds to clockcycles, make note of that in the writing
+
+- openssl speed ecdsap256
+
+- sphincs, qtesla, rainbow, 
+
+- compare algorithms at the same security level
+  - only select things from level one NIST security leve (or equivalently 128 bit security) to compare with SIDH numbers
+
+- api.h in dan's LibPQCrypto

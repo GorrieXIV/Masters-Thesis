@@ -2,37 +2,104 @@
 
 The past 30 years have brought with them astonishing developments in the field of quantum computing.
 
-Quantum computers have been shown to possess computing power beyond that of our current binary, Von-Neumann, classical architectures. Since the articulation of quantum algorithms, we have witnessed the  algorithms capable of efficiently solving problems that, up until the discovery of such algorithms, had no subexponential solution. This class of problems resides in the complexity class known as BQP, or \textit{bounded-error quantum polynomial-time}. Included in this class of problems is the hidden subgroup problem. It is this problem which lies at the heart of nearly all asymmetric cryptosystems in common use. Efficiently solve the hidden subgroup problem and you have efficiently compramised the backbone of Internet security.  
+Quantum computers have been shown to possess computing power beyond that of our classically binary architectures. Through the continually developing articulation of quantum algorithms, we have witnessed the discovery of algorithms capable of efficiently solving problems with no previously known subexponential solution. This class of problems resides in the complexity class known as BQP, or \textit{bounded-error quantum polynomial-time}. Included in this class of problems is the hidden subgroup problem. It is this problem which lies at the heart of nearly all asymmetric cryptosystems in common use. Thus, the potential of implementing a quantum computer capable of carrying out such an algorithm poses a serious threat to the backbone of modern Internet security.  
 
-And so, as physicists and engineers race towards error-free and energy efficient implementations of quantum computers, we steadfastly approach a New Age for the art and science of Cryptography. 
+And so, as physicists and engineers race towards error-free and energy efficient implementations of quantum computers, we steadfastly approach a New Age for the art and science of Cryptography. This ``post-quantum" cryptography.\\
 
-
-\textit{Isogeny Based Cryptography}. Over the course of the past decade, elliptic curve cryptography (ECC) has proven itself a mainstay in the wide world of applied cryptology. While isogeny based cryptography does build itself up from the same underlying field of mathematics as ECC, it simultaneously draws from a slightly more complicated space of algebraic notions.
+\noindent
+\textit{Isogeny Based Cryptography}. Over the course of the past decade, elliptic curve cryptography (ECC) has proven itself a mainstay in the wide world of applied cryptology. While isogeny based cryptography and ECC are constructed from the same underlying field of mathematics, they differ in their fundamental presuppositions.
 
 
 \section{Motivation}
 \label{sec:motivation}
 
-The aim of this dissertation is to improve the efficiency (thus improving the practicality) of isogeny based schemes. More specifically, we will be investigating the C implementation of the Yoo et al. isogeny based signature scheme. 
 
-We can provide a quickly sketched survey of the many post-quantum schemes and contrast their performance (both temporally in terms of exeuction time, and spatially in terms of key and signature sizes) with popular non-quantum-safe systems.
+
+The aim of this dissertation is to improve the efficiency of a particular isogeny based scheme. We hope to showcase that, through intelligent implementation, isogeny based protocols still have a lot of improvement potential in terms of run-time and storage performance. 
+
+More specifically, we will be investigating the C implementation of the Yoo et al. isogeny based signature scheme. 
+
+\noindent
+\textit{Lattice-based Cryptography}.\\
+
+\noindent
+\textit{Hash-based Cryptography}.\\
+
+\noindent
+\textit{Multivariate Cryptography}.\\
+
+\noindent
+\textit{Code-based Cryptography}.\\
+
 
 It's clear that isogeny based schemes have a long way to go in terms of temporal performance before they can hold their own against protocols such as \_\_\_ or even the post-quantum \_\_\_. The exceptionally small key sizes of SIDH and other isogeny-based schemes, however, are an advantage worth noting. 
 
-\subsection{Related Works}
 
-Post-quantum cryptography has been the subject of rigorous and bountiful research for over a decade now. 
+\subsection{Performance History of Isogeny Based Cryptosystems}
+
+Post-quantum cryptography has been the subject of rigorous research for over a decade now. 
 
 Progress in the subfield of isogeny-based cryptography has been made slowly yet surely in this time, with the majority of its contributions arriving from one of two sources: the Institute for Quantum Computing (IQC) at Waterloo University, and the Microsoft Research team in \_\_\_. 
 
 Most notably, this research is built upon an isogeny-based signature scheme published by Yoo et al. 
 
+\subsection{Post-Quantum and Classical Performance Comparisons}
+
+We will now provide a rough survey of the many post-quantum schemes and contrast their performance (both temporally in terms of exeuction time, and spatially in terms of key and signature sizes) with popular non-quantum-safe systems.\\
+
+\noindent
+\textit{Key Exchange Run-times}.
+
+All numbers are taken at a 128-bit post-quantum security level.
+
+\begin{itemize}
+\item NTRU -- Lattice-based key-exchange
+\item NewHope -- Lattice-based key-exchange (Ring variant)
+\item McEliece -- Code-based key-exchange
+\item ECDH -- elliptic curve classical key-exchange
+\end{itemize}
+
+\noindent
+\textit{Signature Scheme Run-times}.
+
+\begin{itemize}
+\item Sphincs -- Hash-based signature
+\item Rainbow -- Multivariate-based signature
+\item qTESLA -- Lattice-based signature (Ring variant)
+\item Picnic -- Hash-based zero-knowledge proof signature
+\item DSA -- Classical signature scheme
+\item ECDSA -- Classical elliptic curve signature scheme
+\end{itemize}
+
+\noindent
+\texit{Signature Sizes}.
+
+\begin{itemize}
+\item Sphincs -- Hash-based signature -- 16976 byte signatures
+\item Rainbow -- Multivariate-based signature -- 64 - 104 byte signatures
+\item qTESLA -- Lattice-based signature (Ring variant) -- 3104 byte signatures
+\item Picnic -- Hash-based zero-knowledge proof signature -- 34004 - 53933 byte signatures
+\item DSA -- Classical signature scheme
+\item ECDSA -- Classical elliptic curve signature scheme
+\end{itemize}
+
+\noindent
+\texit{Public Key Sizes}.
+
+\begin{itemize}
+\item Sphincs -- Hash-based signature -- 32 byte public keys
+\item Rainbow -- Multivariate-based signature -- 152097 - 192241 byte public key
+\item qTESLA -- Lattice-based signature (Ring variant) -- 4128 byte public keys
+\item Picnic -- Hash-based zero-knowledge proof signature -- 33 byte public keys
+\item DSA -- Classical signature scheme
+\item ECDSA -- Classical elliptic curve signature scheme
+\end{itemize}
+
 \section{Contributions}
 
-Our noteworthy contributions to the implementation of this protocol are twofold. Both of these contributions are designed with the intent of improving the performance of the Yoo et al. signature scheme: the first offers an improvement in the run-time of the signature scheme and the second 
+We offer two main contributions to the Yoo et al. signature scheme implementation. Both of these contributions are designed with the intent of improving the performance of the Yoo et al. signature scheme: the first offers an improvement in the run-time of the signature scheme and the second 
 
-
-All of these contributions can be found (and put to test) at https://github.com/GorrieXIV/SIDH2.0-SignatureExtension .
+All of these contributions can be found and tested at https://github.com/GorrieXIV/SIDH2.0-SignatureExtension .
 
 \subsection{Protocol Performance}
 
@@ -40,6 +107,8 @@ Our first contribution involves the implementation of a procedure which batches 
 
 
 \subsection{Signature Size}
+
+
 
 Additionally, because the compression algorithm in question is itself tenable two contributions can be \\
 
@@ -58,14 +127,10 @@ Chapters 3 \& 4 are rather similar in structure. Both begin with an introduction
 
 \subsection{Notation \& Style}
 
-It is worth to take some time now formalizing the plethora of different notation used\\
-
-One technique employed throughout this dissertation is the use of non-indented paragraphs which follow horizontal spaces. 
+We will now take some time for formalizing the variety of notation and formatting  used in this dissertation.\\
 
 \noindent
-\textit{General Conventions.} Throughout the text, \textit{italics} are used as a means of applying emphasis. This is done frequently to draw attention to newly introduced terms, sometimes in a literary-rhetoric sense, , and othertimes to 
-
-To denote high-level procedures, we write their titls in \textbf{bold}. Procedures intended for machine execution are titled with \code{monospace} font - and we use the same notation for C modules, functions, and variable name.\\
+\textit{General Conventions.} Throughout the text, \textit{italics} are used as a means of applying emphasis. This is done frequently to draw attention to newly introduced terms or to suggest the cadence of a sentence. Additionally, italics are employed to add further structure to (sub)sections; a non-indented paragraph following a horizontal space will often begin with an italicized term or concept. These italicized sentences denote the beginning of a new discussion topic.\\
 
 \noindent
 \textit{Functions \& Procedures}. Throughout the dissertation, general functions and procedures are denoted by the use of a \textbf{bold font face}. This is true for procedures introduced both formally and informally. Functions that are defined within the \sidh C codebase (either by us or others), however, are denoted by the use of a \code{monospace font}. This monospace notation is also sometimes used to denote routines or subroutines composed of by a sequence of functions or a portion of code. 
