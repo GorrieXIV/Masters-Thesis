@@ -3,9 +3,6 @@
 
 Our second contribution, also in the form of an addition to the \sidh signature extension, is a mechanism for compressing signatures. The following Chapter will cover the compression technique used. This Chapter, much like the last, will be split into three Sections: the first will cover the mathematics and high-level details of the compression technique used, the second will explain our implementation and integration of this technique into \sidh, and the third and final Section of this Chapter we will analyze in detail the results of this contribution.
 
-We explore two approaches to reducing the size of the Yoo et al. signatures. Both of these approaches, soon to be discussed, leverage the recently publishes point compression technique as seen in \cite{pkcomp}. 
-
-
 
 \section{SIDH Key Compression Background}
 
@@ -21,21 +18,12 @@ We discussed rejection sampling A values from signature public keys until we fou
 \section{Implementation Details}
 \label{sec:compimplementation}
 
-\subsection{Partial Compression of $\psi(S)$}
+\subsection{Implementation Details}
+
+\subsection{$\psi(S)$ Compression}
 
 \noindent
-\textit{Compression}.\\
-
-\noindent
-\textit{Decompression}.
-
-\subsection{Full Compression of $\psi(S)$}
-
-\noindent
-\textit{Compression}.\\
-
-\noindent
-\textit{Decompression}.
+\textit{Potential Tradeoffs}.
 
 \section{Results}
 
