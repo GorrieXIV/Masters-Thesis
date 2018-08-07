@@ -1,8 +1,13 @@
 \chapter{Compressing Signatures}
 \label{sec:compress}
 
-Our second contribution, also in the form of an addition to the \sidh signature extension, is a mechanism for compressing signatures. The following Chapter will cover the compression technique used. This Chapter, much like the last, will be split into three Sections: the first will cover the mathematics and high-level details of the compression technique used, the second will explain our implementation and integration of this technique into \sidh, and the third and final Section of this Chapter we will analyze in detail the results of this contribution.
+Our second contribution, also in the form of an addition to the \sidh signature extension, is a mechanism for compressing signatures. The following Chapter will cover the compression technique used. This Chapter, much like the last, will be split into three Sections: a brief coverage of the employed compression technique, the details of our implementation and integration of this technique into \sidh, and finally an analysis of the results of this contribution.
 
+In the first Section of this Chapter, we discuss the SIDH public key compression technique outlined in \cite{pkcomp}. We attempt to provide a sufficient overview of the technique while only covering in detail the components that are of significant relevance to our implementation. For those who seek to better understand the ins and outs of this technique should direct themselves to the original paper.  
+
+The second Section covers in detail how we apply this public key compression to Yoo et al. signatures. 
+
+Finally, we round off the Chapter with an analysis of the memory improvement offered by this technique. We contrast this spatial improvement with the computational cost of compressing points, and discuss the practicality of employing this technique. 
 
 \section{SIDH Key Compression Background}
 

@@ -3,11 +3,11 @@
 
 Our first contribution to the \sidh codebase is the implementation and integration of a procedure for batching together many $\mathbb{F}_{p^2}$ element inversions. This contribution is discussed in detail in the following Chapter. The chapter is split into three sections: a high-level discussion of the procedure itself, the low-level details of its integration into \sidh, and finally, the resulting affects of this procedure on the performance of \sidh. 
 
-In the first section of this chapter we will detail the specifics of the partial batched inversion procedure. We will show how the procedure can be constructed by combining two techniques: a well known method for reducing a $\mathbb{F}_{p^2}$ inversion to several $\mathbb{F}_{p}$ operations, and an inversion batching technique outlined in \cite{batching}. 
+In the first Section of this Chapter we will detail the specifics of the partial batched inversion procedure. We will show how the procedure can be constructed by combining two techniques: a well known method for reducing a $\mathbb{F}_{p^2}$ inversion to several $\mathbb{F}_{p}$ operations, and an inversion batching technique outlined in \cite{batching}. 
 
 As we then venture into the lower-level implementation details, we will explore how the procedure can be leveraged efficiently in the codebase. We will take a closer look at several of the aforementioned \sidh functions as we illustrate some of the performance bottlenecks in the system. At this time, we will also discuss the design decisions made while implementing the partial batched inversion procedure as well as some of the function's lower-level minutiae.
 
-We will end this chapter by taking a detailed look at the performance gains offered by the inclusion of partial batched inversions in \sidh. More precisely, we will be examining the effects of the procedure on the Yoo et al. signature layer. We will contrast the measured performance of our implementation with an analytical calculation of the expected improvement, and discuss the possible origins of divergent behaviour.\\ 
+We will end this Chapter by taking a detailed look at the performance gains offered by the inclusion of partial batched inversions in \sidh. More precisely, we will be examining the effects of the procedure on the Yoo et al. signature layer. We will contrast the measured performance of our implementation with an analytical calculation of the expected improvement, and discuss the possible origins of divergent behaviour.\\ 
 
 \section{Partial Batched Inversions}
 \label{sec:pbi}
