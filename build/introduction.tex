@@ -112,7 +112,11 @@ All of these contributions can be found and tested at https://github.com/GorrieX
 
 \subsection{Protocol Performance}
 
-Our first contribution involves the implementation of a procedure which batches together many of the same operations to offer a drastic reduction in runtime. This scheme leverages the already parallel nature of the protocol by waiting for expensive operations that are due to occur accross all threads, suspending the threads and performing the batching procedure, and then resuming the run.
+Our first contribution involves the implementation of a procedure which batches together many occurances of the same low level operation.
+
+We offer C code incorporating this batching procedure into the Yoo et al. signature scheme. Our implementation leverages the already parallel nature of the scheme to track the occurance of expensive operations that occur across multiple threads.
+
+In the Section detailing this contribution, we offer extensive measurements of the performance increases offered by the inclusion of the batching procedure. We include also a discussion of other possible use-cases for operation batching in isogeny based schemes, not covered by out implementation.
 
 
 \subsection{Signature Size}
