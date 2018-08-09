@@ -13,7 +13,7 @@
 \documentclass[12pt,a4paper]{report}
 
 \usepackage[pdftex]{graphicx}        %for embedding images
-\usepackage{xcolor}                  %for colouring in math mode
+\usepackage{xcolor,colortbl}         %for colouring in math mode
 \usepackage{url}                     %for proper url entries
 \usepackage{listings}                %for writing c code
 %\usepackage{hyperref}
@@ -89,6 +89,12 @@
 \newcommand{\mr}[0]{\textcolor{cyan}{m_R}}
 \newcommand{\nr}[0]{\textcolor{cyan}{n_R}}
 
+
+\newcommand{\mc}[2]{\multicolumn{#1}{c}{#2}}
+\definecolor{Gray}{gray}{0.85}
+\definecolor{LightCyan}{rgb}{0.88,1,1}
+\newcolumntype{a}{>{\columncolor{Gray}}c}
+\newcolumntype{b}{>{\columncolor{white}}c}
 
 %this command requires the tex edit found at http://pbelmans.ncag.info/blog/2010/11/11/howto-draw-algebraic-curves-using-pgftikz/
 \newcommand{\plotcurve}[3][thick, every plot/.style={smooth}]{

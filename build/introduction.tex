@@ -46,61 +46,69 @@ Most notably, this research is built upon an isogeny-based signature scheme publ
 
 We will now provide a rough survey of the many post-quantum schemes and contrast their performance (both temporally in terms of exeuction time, and spatially in terms of key and signature sizes) with popular non-quantum-safe systems.\\
 
-All of the following measurements reflect implementations which offer 128 bit security.
+All of the following measurements reflect implementations which offer 128 bit post-quantum security, with the exception of classical protocols ECDH, RSA, and ECDSA, where numbers are taken at the 128-bit classical security level.
 
 \noindent
 \textit{Key Exchange Run-times}.
 
-All numbers are taken at a 128-bit post-quantum security level.
 
-\begin{itemize}
-\item SIDH -- Isogeny-based key-exchange
-\item NTRU -- Lattice-based key-exchange
-\item NewHope -- Lattice-based key-exchange (Ring variant)
-\item McEliece -- Code-based key-exchange
-\item ECDH -- elliptic curve classical key-exchange
-\end{itemize}
 
-It is quite clear that SIDH 
+\begin{center}
+\begin{tabular}{l | a }
+\hline
+\rowcolor{LightCyan}
+\mc{1}{} & \mc{1}{Cycles}\\
+\hline
+SIDH & c \\
+NTRU & c \\
+NewHope & c \\
+McEliece & c \\
+ECDH & c \\
+\hline
+\end{tabular}
+\end{center}
 
 \noindent
 \textit{Signature Scheme Run-times}.
 
-\begin{itemize}
-\item SIDH --
-\item Sphincs -- Hash-based signature
-\item Rainbow -- Multivariate-based signature
-\item qTESLA -- Lattice-based signature (Ring variant)
-\item Picnic -- Hash-based zero-knowledge proof signature
-\item RSA -- Classical signature scheme
-\item ECDSA -- Classical elliptic curve signature scheme
-\end{itemize}
+\begin{center}
+\begin{tabular}{l | a | a | a }
+\hline
+\rowcolor{LightCyan}
+\mc{1}{}  & \mc{1}{Key Gen} & \mc{1}{Sign} & \mc{1}{Verify}\\
+\hline
+SIDH & a & b & c \\
+Sphincs & a & b & c \\
+Rainbow & a & b & c \\
+qTESLA & a & b & c \\
+Picnic & a & b & c \\
+RSA & a & b & c \\
+ECDSA & a & b & c \\
+\hline
+\end{tabular}
+\end{center}
+
+TODO: mention which variant was used for numbers
 
 \noindent
-\textit{Signature Sizes}.
+\textit{Key/Signature Sizes}.
 
-\begin{itemize}
-\item SIDH --
-\item Sphincs -- Hash-based signature -- 16976 byte signatures
-\item Rainbow -- Multivariate-based signature -- 64 - 104 byte signatures
-\item qTESLA -- Lattice-based signature (Ring variant) -- 3104 byte signatures
-\item Picnic -- Hash-based zero-knowledge proof signature -- 34004 - 53933 byte signatures
-\item RSA -- Classical signature scheme -- 384 byte signature
-\item ECDSA -- Classical elliptic curve signature scheme -- 32 byte signature
-\end{itemize}
-
-\noindent
-\textit{Public Key Sizes}.
-
-\begin{itemize}
-\item SIDH --
-\item Sphincs -- Hash-based signature -- 32 byte public keys
-\item Rainbow -- Multivariate-based signature -- 152097 - 192241 byte public key
-\item qTESLA -- Lattice-based signature (Ring variant) -- 4128 byte public keys
-\item Picnic -- Hash-based zero-knowledge proof signature -- 33 byte public keys
-\item RSA -- Classical signature scheme --  384 byte public keys
-\item ECDSA -- Classical elliptic curve signature scheme -- 32 byte public keys
-\end{itemize}
+\begin{center}
+\begin{tabular}{l | a | a | a }
+\hline
+\rowcolor{LightCyan}
+\mc{1}{}  & \mc{1}{Public Key} & \mc{1}{Private Key} & \mc{1}{Signature}\\
+\hline
+SIDH & 768 & b & 141,312 \\
+Sphincs & 32 & 64 & 8,080 - 16,976 \\
+Rainbow & 152,097 - 192,241 & 100,209 - 114,308 & 64 - 104 \\
+qTESLA & 4,128 & 2,112 & 3,104 \\
+Picnic & 33 & 49 & 34,004 - 53,933 \\
+RSA & 384 & b & 384 \\
+ECDSA & 32 & b & 32 \\
+\hline
+\end{tabular}
+\end{center}
 
 It's clear that isogeny based schemes have a long way to go in terms of temporal performance before they can hold their own against protocols such as \_\_\_ or even the post-quantum \_\_\_. The exceptionally small key sizes of SIDH and other isogeny-based schemes, however, are an advantage worth noting. 
 
