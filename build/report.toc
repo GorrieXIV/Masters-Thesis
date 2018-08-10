@@ -1,8 +1,8 @@
 \contentsline {chapter}{Acknowledgements}{1}{section*.3}
 \contentsline {chapter}{\numberline {1}Introduction}{2}{chapter.1}
 \contentsline {section}{\numberline {1.1}Motivation}{2}{section.1.1}
-\contentsline {subsection}{\numberline {1.1.1}Performance History of Isogeny Based Cryptosystems}{3}{subsection.1.1.1}
-\contentsline {subsection}{\numberline {1.1.2}Post-Quantum and Classical Performance Comparisons}{3}{subsection.1.1.2}
+\contentsline {subsection}{\numberline {1.1.1}Post-Quantum and Classical Performance Comparisons}{3}{subsection.1.1.1}
+\contentsline {subsection}{\numberline {1.1.2}Performance History of Isogeny Based Cryptosystems}{4}{subsection.1.1.2}
 \contentsline {section}{\numberline {1.2}Contributions}{4}{section.1.2}
 \contentsline {subsection}{\numberline {1.2.1}Protocol Performance}{4}{subsection.1.2.1}
 \contentsline {subsection}{\numberline {1.2.2}Signature Size}{4}{subsection.1.2.2}
@@ -55,7 +55,7 @@
 \contentsline {section}{\numberline {5.1}Results \& Comparisons}{56}{section.5.1}
 \contentsline {section}{\numberline {5.2}Additional Opportunities for Batching}{56}{section.5.2}
 \contentsline {section}{\numberline {5.3}Future Work}{56}{section.5.3}
-\contentsline {chapter}{Appendices}{57}{section*.5}
+\contentsline {chapter}{Appendices}{57}{section*.25}
 \contentsline {chapter}{\numberline {A}$\texttt {SIDH}_{\texttt {C}}$\xspace Functions}{58}{Appendix.a.A}
 \contentsline {section}{\numberline {A.1}$\mathbb {F}_p$ and $\mathbb {F}_{p^2}$ Functions}{58}{section.a.A.1}
 \contentsline {section}{\numberline {A.2}Isogeny and Point-wise Functions}{58}{section.a.A.2}

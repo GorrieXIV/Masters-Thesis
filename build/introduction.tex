@@ -13,17 +13,17 @@ And so, as physicists and engineers race towards error-free and energy efficient
 \section{Motivation}
 \label{sec:motivation}
 
-There are several branches of post-quantum cryptography, each defined by differently underlying mathematical problems and assumptions of their difficulty. These distinct branches possess apparant strengths and weaknesses. 
+The following Sections will discuss or make reference to cryptography concepts that may be foreign to the reader. Section  \ref{sec:crypto} provides detailed definitions of these concepts in a ground-up manner, and may prove helpful in illuminating some of the coming discussion.
 
-The aim of this dissertation is to improve the efficiency of a particular isogeny based scheme. We hope to showcase that, through intelligent implementation, isogeny based protocols still have a lot of improvement potential in terms of run-time and storage performance. 
+There are several subfields that currently occupy the research space of post-quantum cryptography. These subfields are each predicated on their own underlying mathematical problems, and more importantly, assumptions on the difficulty of those problems.
 
-More specifically, we will be investigating the C implementation of the Yoo et al. isogeny based signature scheme.\\
-
-\noindent
-\textit{Lattice-based Cryptography}.\\
+The most commonly referenced categories of post-quantum cryptography are the following:
 
 \noindent
-\textit{Hash-based Cryptography}.\\
+\textit{Lattice-based Cryptography}. Within lattice-based cryptography there are two different approaches; default lattice-based crypto and its ring variant. \\
+
+\noindent
+\textit{Hash-based Cryptography}. This particular branch is limited to the domain of digital signatures. Signature schemes designed in this paradigm employ cryptographic hash functions \\
 
 \noindent
 \textit{Multivariate Cryptography}.\\
@@ -31,16 +31,11 @@ More specifically, we will be investigating the C implementation of the Yoo et a
 \noindent
 \textit{Code-based Cryptography}.\\
 
+For this dissertation, however, we will focus on a younger subfield of post-quantum cryptography, namely, isogeny-based cryptography. 
+
+The aim of this dissertation is to improve the efficiency of a particular isogeny based scheme. We hope to showcase that, through intelligent implementation, isogeny based protocols still have a lot of improvement potential in terms of run-time and storage performance. 
+
 Many post-quantum secure protocols suffer one dimension or another when compared to non-post-quantum protocols.
-
-
-\subsection{Performance History of Isogeny Based Cryptosystems}
-
-Post-quantum cryptography has been the subject of rigorous research for over a decade now. 
-
-Progress in the subfield of isogeny-based cryptography has been made slowly yet surely in this time, with the majority of its contributions arriving from one of two sources: the Institute for Quantum Computing (IQC) at Waterloo University, and the Microsoft Research team in \_\_\_. 
-
-Most notably, this research is built upon an isogeny-based signature scheme published by Yoo et al. 
 
 \subsection{Post-Quantum and Classical Performance Comparisons}
 
@@ -49,49 +44,48 @@ We will now provide a rough survey of the many post-quantum schemes and contrast
 All of the following measurements reflect implementations which offer 128 bit post-quantum security, with the exception of classical protocols ECDH, RSA, and ECDSA, where numbers are taken at the 128-bit classical security level.
 
 \noindent
-\textit{Key Exchange Run-times}.
+\textit{Run-time Performance of Post-Quantum and Classical Protocols}.
 
-
-
-\begin{center}
-\begin{tabular}{l | a }
-\hline
-\rowcolor{LightCyan}
-\mc{1}{} & \mc{1}{Cycles}\\
-\hline
-SIDH & c \\
-NTRU & c \\
-NewHope & c \\
-McEliece & c \\
-ECDH & c \\
-\hline
-\end{tabular}
-\end{center}
+\begin{figure}[!h]
+\centering
+\begin{minipage}{.5\textwidth}
+	\centering
+	\begin{tabular}{l | a }
+	\hline
+	\rowcolor{LightCyan}
+	\mc{1}{} & \mc{1}{Cycles}\\
+	\hline
+	SIDH & c \\
+	NTRU & c \\
+	NewHope & c \\
+	McEliece & c \\
+	ECDH & c \\
+	\hline
+	\end{tabular}
+	\captionof{figure}{Benchmarks for popular key-exchange protocols}
+\end{minipage}%
+\begin{minipage}{.5\textwidth}
+	\centering
+	\begin{tabular}{l | a | a | a }
+	\hline
+	\rowcolor{LightCyan}
+	\mc{1}{}  & \mc{1}{Key Gen} & \mc{1}{Sign} & \mc{1}{Verify}\\
+	\hline
+	SIDH & a & b & c \\
+	Sphincs & a & b & c \\
+	Rainbow & a & b & c \\
+	qTESLA & a & b & c \\
+	Picnic & a & b & c \\
+	RSA & a & b & c \\
+	ECDSA & a & b & c \\
+	\hline
+	\end{tabular}
+	\captionof{figure}{Benchmarks for popular signature schemes}
+\end{minipage}
+\end{figure}
 
 \noindent
-\textit{Signature Scheme Run-times}.
-
-\begin{center}
-\begin{tabular}{l | a | a | a }
-\hline
-\rowcolor{LightCyan}
-\mc{1}{}  & \mc{1}{Key Gen} & \mc{1}{Sign} & \mc{1}{Verify}\\
-\hline
-SIDH & a & b & c \\
-Sphincs & a & b & c \\
-Rainbow & a & b & c \\
-qTESLA & a & b & c \\
-Picnic & a & b & c \\
-RSA & a & b & c \\
-ECDSA & a & b & c \\
-\hline
-\end{tabular}
-\end{center}
-
-TODO: mention which variant was used for numbers
-
-\noindent
-\textit{Key/Signature Sizes}.
+\textit{Key/Signature Sizes of Post-Quantum}.
 
 \begin{center}
 \begin{tabular}{l | a | a | a }
@@ -111,6 +105,14 @@ ECDSA & 32 & b & 32 \\
 \end{center}
 
 It's clear that isogeny based schemes have a long way to go in terms of temporal performance before they can hold their own against protocols such as \_\_\_ or even the post-quantum \_\_\_. The exceptionally small key sizes of SIDH and other isogeny-based schemes, however, are an advantage worth noting. 
+
+\subsection{Performance History of Isogeny Based Cryptosystems}
+
+Post-quantum cryptography has been the subject of rigorous research for over a decade now. 
+
+Progress in the subfield of isogeny-based cryptography has been made slowly yet surely in this time, with the majority of its contributions arriving from one of two sources: the Institute for Quantum Computing (IQC) at Waterloo University, and the Microsoft Research team in \_\_\_. 
+
+Most notably, this research is built upon an isogeny-based signature scheme published by Yoo et al. 
 
 \section{Contributions}
 
