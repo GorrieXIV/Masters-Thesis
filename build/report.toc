@@ -5,7 +5,7 @@
 \contentsline {subsection}{\numberline {1.1.2}Performance History of Isogeny Based Cryptosystems}{4}{subsection.1.1.2}
 \contentsline {section}{\numberline {1.2}Contributions}{4}{section.1.2}
 \contentsline {subsection}{\numberline {1.2.1}Protocol Performance}{4}{subsection.1.2.1}
-\contentsline {subsection}{\numberline {1.2.2}Signature Size}{4}{subsection.1.2.2}
+\contentsline {subsection}{\numberline {1.2.2}Signature Size}{5}{subsection.1.2.2}
 \contentsline {section}{\numberline {1.3}Structure}{5}{section.1.3}
 \contentsline {subsection}{\numberline {1.3.1}Layout}{5}{subsection.1.3.1}
 \contentsline {subsection}{\numberline {1.3.2}Notation \& Style}{5}{subsection.1.3.2}

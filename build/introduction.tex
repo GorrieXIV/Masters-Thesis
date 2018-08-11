@@ -1,14 +1,10 @@
 \chapter{Introduction}
 
-The past 30 years have brought with them astonishing developments in the field of quantum computing.
+The past 30 years have brought with them astonishing developments in the field of quantum computing. With these developments, quantum computers have been shown to possess computing power beyond that of our classical, binary architectures. Through the continually developing articulation of quantum algorithms, we have witnessed the discovery of algorithms capable of efficiently solving problems which had no prior known subexponential solution. 
 
-Quantum computers have been shown to possess computing power beyond that of our classically binary architectures. Through the continually developing articulation of quantum algorithms, we have witnessed the discovery of algorithms capable of efficiently solving problems with no previously known subexponential solution. This class of problems resides in the complexity class known as BQP, or \textit{bounded-error quantum polynomial-time}. Included in this class of problems is the hidden subgroup problem. It is this problem which lies at the heart of nearly all asymmetric cryptosystems in common use. Thus, the potential of implementing a quantum computer capable of carrying out such an algorithm poses a serious threat to the backbone of modern Internet security.  
+These problems with newly discovered subexponential solutions reside in the complexity class known as BQP, or ``bounded-error quantum polynomial-time". Included in this class of problems is what is known as the \textit{hidden subgroup problem}. It is also the case that the difficulty of this particular problem is crucial to the security of nearly all asymmetric cryptosystems in common use. Thus, the implementation of a sufficiently large quantum computer would be a catastrophic threat to the backbone of modern Internet security.  
 
-And so, as physicists and engineers race towards error-free and energy efficient implementations of quantum computers, we steadfastly approach a New Age for the art and science of Cryptography. This ``post-quantum" cryptography.\\
-
-\noindent
-\textit{Isogeny Based Cryptography}. Over the course of the past decade, elliptic curve cryptography (ECC) has proven itself a mainstay in the wide world of applied cryptology. While isogeny based cryptography and ECC are constructed from the same underlying field of mathematics, they differ in their fundamental presuppositions.
-
+And so, as physicists and engineers race towards error-free and energy efficient implementations of quantum computers, we steadfastly approach a New Age for the art and science of Cryptography. The looming threat of large-scale quantum computing has driven the field of ``post-quantum" cryptography; the aspiration of which is to develop efficient and secure cryptographic algorithms that are resistant to quantum cryptanalysis. Post-quantum cryptosystems are those which avoid any assumptions of the difficulty of the hidden subgroup problem.\\
 
 \section{Motivation}
 \label{sec:motivation}
@@ -32,6 +28,9 @@ The most commonly referenced categories of post-quantum cryptography are the fol
 \textit{Code-based Cryptography}.\\
 
 For this dissertation, however, we will focus on a younger subfield of post-quantum cryptography, namely, isogeny-based cryptography. 
+
+\noindent
+\textit{Isogeny Based Cryptography}. Over the course of the past decade, elliptic curve cryptography (ECC) has proven itself a mainstay in the wide world of applied cryptology. While isogeny based cryptography and ECC are constructed from the same underlying field of mathematics, they differ in their fundamental presuppositions.
 
 The aim of this dissertation is to improve the efficiency of a particular isogeny based scheme. We hope to showcase that, through intelligent implementation, isogeny based protocols still have a lot of improvement potential in terms of run-time and storage performance. 
 
