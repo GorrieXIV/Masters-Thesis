@@ -54,7 +54,7 @@
 \contentsline {section}{\numberline {5.1}Results \& Comparisons}{56}{section.5.1}
 \contentsline {section}{\numberline {5.2}Additional Opportunities for Batching}{56}{section.5.2}
 \contentsline {section}{\numberline {5.3}Future Work}{56}{section.5.3}
-\contentsline {chapter}{Appendices}{57}{section*.25}
+\contentsline {chapter}{Appendices}{57}{section*.27}
 \contentsline {chapter}{\numberline {A}$\texttt {SIDH}_{\texttt {C}}$\xspace Functions}{58}{Appendix.a.A}
 \contentsline {section}{\numberline {A.1}$\mathbb {F}_p$ and $\mathbb {F}_{p^2}$ Functions}{58}{section.a.A.1}
 \contentsline {section}{\numberline {A.2}Isogeny and Point-wise Functions}{58}{section.a.A.2}

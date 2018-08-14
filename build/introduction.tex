@@ -32,52 +32,49 @@ More specifically, for this dissertation we are primarily focused on the perform
 
 \subsection{Post-Quantum and Classical Performance Comparisons}
 
-We will now provide a rough survey of the many post-quantum schemes and contrast their performance (both temporally in terms of exeuction time, and spatially in terms of key and signature sizes) with popular non-quantum-safe systems.\\
+We will now provide a rough survey of several post-quantum cryptosystems so as to compare their performance (both temporally in terms of exeuction time, and spatially in terms of key and signature sizes) with popular non-quantum-safe systems.\\
 
 All of the following measurements reflect implementations which offer 128 bit post-quantum security, with the exception of classical protocols ECDH, RSA, and ECDSA, where numbers are taken at the 128-bit classical security level.
 
 \begin{figure}[!h]
-\centering
-\begin{minipage}{.5\textwidth}
-	\centering
-	\begin{tabular}{l | b }
-	\hline
-	\mc{1}{} & \mc{1}{Cycles}\\
-	\hline
-	\rowcolor{Gray}
-	SIDH & c \\
-	NTRU (LWE) & c \\
-	NewHope (Ring-LWE) & c \\
-	McEliece (Code-based) & c \\
-	\rowcolor{light-red}
-	ECDH & c \\
-	\hline
-	\end{tabular}
-	\captionof{figure}{Benchmarks for popular key-exchange protocols}
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-	\centering
-	\begin{tabular}{l | b | b | b }
-	\hline
-	\mc{1}{}  & \mc{1}{Key Gen} & \mc{1}{Sign} & \mc{1}{Verify}\\
-	\hline
-	\rowcolor{Gray}
-	SIDH & a & b & c \\
-	Sphincs (Hash-based) & a & b & c \\
-	Rainbow (Multivariate-based) & a & b & c \\
-	qTESLA (Ring-LWE) & 1059388 & 460592 & 66491 \\
-	Picnic (Hash-based) & 13272 & 9560749 & 6701701 \\
-	\rowcolor{light-red}
-	RSA & a & b & c \\
-	\rowcolor{light-red}
-	ECDSA & a & b & c \\
-	\hline
-	\end{tabular}
-	\captionof{figure}{Benchmarks for popular signature schemes}
-\end{minipage}
+\begin{center}
+\begin{tabular}{l | b }
+\hline
+\mc{1}{} & \mc{1}{Cycles}\\
+\hline
+\rowcolor{Gray}
+SIDH & c \\
+NTRU (LWE) & c \\
+NewHope (Ring-LWE) & c \\
+McEliece (Code-based) & c \\
+\rowcolor{light-red}
+ECDH & c \\
+\hline
+\end{tabular}
+\caption{Comparison of pos-quantum and classical key-exchange protocols}
+\end{center}
 \end{figure}
 
-\begin{center}
+\begin{figure}[!h]
+\begin{tabular}{l | b | b | b }
+\hline
+\mc{1}{}  & \mc{1}{Key Gen} & \mc{1}{Sign} & \mc{1}{Verify}\\
+\hline
+\rowcolor{Gray}
+SIDH & a & b & c \\
+Sphincs (Hash-based) & a & b & c \\
+Rainbow (Multivariate-based) & a & b & c \\
+qTESLA (Ring-LWE) & 1059388 & 460592 & 66491 \\
+Picnic (Hash-based) & 13272 & 9560749 & 6701701 \\
+\rowcolor{light-red}
+RSA & a & b & c \\
+\rowcolor{light-red}
+ECDSA & a & b & c \\
+\hline
+\end{tabular}
+\end{figure}
+
+\begin{figure}[!h]
 \begin{tabular}{l | b | b | b }
 \hline
 \mc{1}{}  & \mc{1}{Public Key} & \mc{1}{Private Key} & \mc{1}{Signature}\\
@@ -94,7 +91,7 @@ RSA & 384 & b & 384 \\
 ECDSA & 32 & b & 32 \\
 \hline
 \end{tabular}
-\end{center}
+\end{figure}
 
 It's clear that isogeny based schemes have a long way to go in terms of temporal performance before they can hold their own against protocols such as \_\_\_ or even the post-quantum \_\_\_. The exceptionally small key sizes of SIDH and other isogeny-based schemes, however, are an advantage worth noting. 
 
