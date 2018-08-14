@@ -2,32 +2,33 @@
 
 The past 30 years have brought with them astonishing developments in the field of quantum computing. With these developments, quantum computers have been shown to possess computing power beyond that of our classical, binary architectures. Through the continually developing articulation of quantum algorithms, we have witnessed the discovery of algorithms capable of efficiently solving problems which had no prior known subexponential solution. 
 
-These problems with newly discovered subexponential solutions reside in the complexity class known as BQP, or ``bounded-error quantum polynomial-time". Included in this class of problems is what is known as the \textit{hidden subgroup problem}. It is also the case that the difficulty of this particular problem is crucial to the security of nearly all asymmetric cryptosystems in common use. Thus, the implementation of a sufficiently large quantum computer would be a catastrophic threat to the backbone of modern Internet security.  
+These problems with newly discovered subexponential solutions reside in the complexity class known as BQP, or ``bounded-error quantum polynomial-time". Included in this class of problems is the \textit{hidden subgroup problem}. It is also the case that the prior-assumed difficulty of this particular problem is crucial to the security of nearly all asymmetric cryptosystems in common use. Thus, the implementation of a sufficiently large quantum computer would be a catastrophic threat to the backbone of modern Internet security.  
 
-And so, as physicists and engineers race towards error-free and energy efficient implementations of quantum computers, we steadfastly approach a New Age for the art and science of Cryptography. The looming threat of large-scale quantum computing has driven the field of ``post-quantum" cryptography; the aspiration of which is to develop efficient and secure cryptographic algorithms that are resistant to quantum cryptanalysis. Post-quantum cryptosystems are those which avoid any assumptions of the difficulty of the hidden subgroup problem.\\
+And so, as physicists and engineers race towards error-free and energy efficient implementations of quantum computers, we steadfastly approach a New Age for the art and science of Cryptography. The looming threat of large-scale quantum computing has driven the field of ``post-quantum" cryptography; the aspiration of which is to develop efficient and secure cryptographic algorithms that are resistant to quantum cryptanalysis. Post-quantum cryptosystems are those which avoid any underlying assumptions on the difficulty of the hidden subgroup problem.\\
 
 \section{Motivation}
 \label{sec:motivation}
 
-The following Section will discuss or make reference to cryptographic concepts that may be foreign to the reader. Section  \ref{sec:crypto} provides detailed definitions of these concepts in a ground-up manner, and may prove helpful in illuminating some of the coming discussion.\\
+The following Section will discuss or make reference to cryptographic concepts that may be foreign to the reader. Section  \ref{sec:crypto} provides detailed definitions for some of these concepts, and may prove helpful in illuminating some of the coming discussion.\\
 
-There are several subfields that currently occupy the research space of post-quantum cryptography. These subfields are each predicated on their own underlying mathematical problems, and more importantly, assumptions on the difficulty of those problems.
-
-The most common subfields of post-quantum cryptography are the following:
+There are several subfields that currently occupy the research space of post-quantum cryptography. These subfields are each predicated on their own underlying mathematical problems, and more importantly, assumptions on the difficulty of those problems. The following make up some of the most popular subfields of post-quantum cryptography: 
 \begin{itemize}
-\item \textit{Lattice-based Cryptography}. Within lattice-based cryptography there are two different approaches; default lattice-based crypto and its ring variant.
-\item \textit{Hash-based Cryptography}. This particular branch is limited to the domain of digital signatures. Signature schemes designed in this paradigm employ cryptographic hash functions.
-\item \textit{Multivariate Cryptography}.
-\item \textit{Code-based Cryptography}.
+\item \textit{Lattice-based Cryptography}, based on problems such as LWE and Ring-LWE, 
+\item \textit{Hash-based Cryptography}, building signatures from cryptographic hash functions, 
+\item \textit{Multivariate Cryptography}, systems designed around multivariate polynomials, 
+\item \textit{Code-based Cryptography}, based on the difficulty of decoding linear codes.
 \end{itemize}
-For this dissertation, however, we will focus on a younger subfield of post-quantum cryptography, namely, isogeny-based cryptography. 
+
+For this dissertation, however, we will focus on a younger subfield of post-quantum cryptography, namely, isogeny-based cryptography.\\
 
 \noindent
-\textit{Isogeny Based Cryptography}. Over the course of the past decade, elliptic curve cryptography (ECC) has proven itself a mainstay in the wide world of applied cryptology. While isogeny based cryptography and ECC are constructed from the same underlying field of mathematics, they differ in their fundamental presuppositions.
+\textit{Isogeny-based Cryptography}. Over the course of the past decade, elliptic curve cryptography (ECC) has proven itself indisposable in the world of applied cryptology. While isogeny based cryptography and ECC are constructed from the same underlying branch of mathematics, they differ in their fundamental presuppositions.
 
-The aim of this dissertation is to improve the efficiency of a particular isogeny based scheme. We hope to showcase that, through intelligent implementation, isogeny based protocols still have a lot of improvement potential in terms of run-time and storage performance. 
+Isogeny-based systems have not yet stood the test of time in terms of cryptanalytic scrutiny. Because of this, some may be hesitant to concede the purported security of these systems. Additionally, they are often outperformed by other post-quantum alternatives (which we will investigate more closely in a moment). They do, however, appear to have some advantages. 
 
-Many post-quantum secure protocols suffer one dimension or another when compared to non-post-quantum protocols.
+And so, the aim of this dissertation is to improve the efficiency of a particular isogeny based scheme. We hope to showcase that, through intelligent implementation, isogeny based protocols still have a lot of improvement potential in terms of run-time and storage performance.
+
+More specifically, for this dissertation we are primarily focused on the performance of an isogeny-based ``proof of knowledge" style signature scheme, outlined in great detail by Youngo Yoo et al. in \cite{yoo}, which we will henceforth refer to as the ``Yoo et al. signature scheme".
 
 \subsection{Post-Quantum and Classical Performance Comparisons}
 
@@ -35,22 +36,20 @@ We will now provide a rough survey of the many post-quantum schemes and contrast
 
 All of the following measurements reflect implementations which offer 128 bit post-quantum security, with the exception of classical protocols ECDH, RSA, and ECDSA, where numbers are taken at the 128-bit classical security level.
 
-\noindent
-\textit{Run-time Performance of Post-Quantum and Classical Protocols}.
-
 \begin{figure}[!h]
 \centering
 \begin{minipage}{.5\textwidth}
 	\centering
-	\begin{tabular}{l | a }
+	\begin{tabular}{l | b }
 	\hline
-	\rowcolor{LightCyan}
 	\mc{1}{} & \mc{1}{Cycles}\\
 	\hline
+	\rowcolor{Gray}
 	SIDH & c \\
-	NTRU & c \\
-	NewHope & c \\
-	McEliece & c \\
+	NTRU (LWE) & c \\
+	NewHope (Ring-LWE) & c \\
+	McEliece (Code-based) & c \\
+	\rowcolor{light-red}
 	ECDH & c \\
 	\hline
 	\end{tabular}
@@ -58,17 +57,19 @@ All of the following measurements reflect implementations which offer 128 bit po
 \end{minipage}%
 \begin{minipage}{.5\textwidth}
 	\centering
-	\begin{tabular}{l | a | a | a }
+	\begin{tabular}{l | b | b | b }
 	\hline
-	\rowcolor{LightCyan}
 	\mc{1}{}  & \mc{1}{Key Gen} & \mc{1}{Sign} & \mc{1}{Verify}\\
 	\hline
+	\rowcolor{Gray}
 	SIDH & a & b & c \\
-	Sphincs & a & b & c \\
-	Rainbow & a & b & c \\
-	qTESLA & a & b & c \\
-	Picnic & a & b & c \\
+	Sphincs (Hash-based) & a & b & c \\
+	Rainbow (Multivariate-based) & a & b & c \\
+	qTESLA (Ring-LWE) & 1059388 & 460592 & 66491 \\
+	Picnic (Hash-based) & 13272 & 9560749 & 6701701 \\
+	\rowcolor{light-red}
 	RSA & a & b & c \\
+	\rowcolor{light-red}
 	ECDSA & a & b & c \\
 	\hline
 	\end{tabular}
@@ -76,21 +77,20 @@ All of the following measurements reflect implementations which offer 128 bit po
 \end{minipage}
 \end{figure}
 
-\noindent
-\textit{Key/Signature Sizes of Post-Quantum}.
-
 \begin{center}
-\begin{tabular}{l | a | a | a }
+\begin{tabular}{l | b | b | b }
 \hline
-\rowcolor{LightCyan}
 \mc{1}{}  & \mc{1}{Public Key} & \mc{1}{Private Key} & \mc{1}{Signature}\\
 \hline
+\rowcolor{Gray}
 SIDH & 768 & b & 141,312 \\
-Sphincs & 32 & 64 & 8,080 - 16,976 \\
-Rainbow & 152,097 - 192,241 & 100,209 - 114,308 & 64 - 104 \\
-qTESLA & 4,128 & 2,112 & 3,104 \\
-Picnic & 33 & 49 & 34,004 - 53,933 \\
+Sphincs (Hash-based) & 32 & 64 & 8,080 - 16,976 \\
+Rainbow (Multivariate-based) & 152,097 - 192,241 & 100,209 - 114,308 & 64 - 104 \\
+qTESLA (Ring-LWE) & 4,128 & 2,112 & 3,104 \\
+Picnic (Hash-based) & 33 & 49 & 34,004 - 53,933 \\
+\rowcolor{light-red}
 RSA & 384 & b & 384 \\
+\rowcolor{light-red}
 ECDSA & 32 & b & 32 \\
 \hline
 \end{tabular}
@@ -98,38 +98,31 @@ ECDSA & 32 & b & 32 \\
 
 It's clear that isogeny based schemes have a long way to go in terms of temporal performance before they can hold their own against protocols such as \_\_\_ or even the post-quantum \_\_\_. The exceptionally small key sizes of SIDH and other isogeny-based schemes, however, are an advantage worth noting. 
 
-\subsection{Performance History of Isogeny Based Cryptosystems}
-
-Post-quantum cryptography has been the subject of rigorous research for over a decade now. 
-
-Progress in the subfield of isogeny-based cryptography has been made slowly yet surely in this time, with the majority of its contributions arriving from one of two sources: the Institute for Quantum Computing (IQC) at Waterloo University, and the Microsoft Research team in \_\_\_. 
-
-Most notably, this research is built upon an isogeny-based signature scheme published by Yoo et al. 
-
 \section{Contributions}
 
-We offer two main contributions to the Yoo et al. signature scheme implementation. Both of these contributions are designed with the intent of improving the performance of the Yoo et al. signature scheme: the first offers an improvement in the run-time of the signature scheme and the second 
+We offer two main contributions to the Yoo et al. signature scheme implementation. Both of these contributions are designed with the intent of improving the performance of said protocol: the first offers an improvement in the run-time of the signature scheme and the second offers reduced signature sizes for the scheme.\\
 
+\noindent
 All of these contributions can be found and tested at https://github.com/GorrieXIV/SIDH2.0-SignatureExtension .
 
-\subsection{Protocol Performance}
+\subsection{Operation Batching}
 
-Our first contribution involves the implementation of a procedure which batches together many occurances of the same low level operation.
-
-We offer C code incorporating this batching procedure into the Yoo et al. signature scheme. Our implementation leverages the already parallel nature of the scheme to track the occurance of expensive operations that occur across multiple threads.
+Our first contribution involves the implementation of a procedure which batches together many occurances of the same low level operation. We provide a C implementation which incorporates this batching procedure into the Yoo et al. signature scheme.
 
 In the Section detailing this contribution, we offer extensive measurements of the performance increases offered by the inclusion of the batching procedure. We include also a discussion of other possible use-cases for operation batching in isogeny based schemes, not covered by out implementation.
 
+We conclude that the inclusion of our batching technique in the Yoo et al. signature scheme is both secure and offers noteworthy performance improvements in Signing and Verification routines.
 
-\subsection{Signature Size}
 
-The second contribution we offer comes in the form of an adoption of a particular compression algorithm into the Yoo et al. signature protocol. The compression algorithm in question, contrived by Costello et al. and outlined in \cite{pkcomp}, is intended for compression of SIDH public keys. We have adopted this method and applied it to specific portions of the Yoo et al. signatures, yielding significantly smaller signatures at the cost of extra computation.
+\subsection{Signature Compression}
 
-We detail our C implementation of this compression on signatures in Section \ref{sec:compress}, and analyse both the decrease in signature size and the computational cost.
+The second contribution we offer is another C addedum to the SIDH library, this time offering further compression of isogeny-based signatures.  We embed a particular compression algorithm into the Yoo et al. signature protocol -- the compression algorithm in question (contrived by Costello et al. and outlined in \cite{pkcomp}) is intended for compression of SIDH public keys. We have adopted this method and applied it to specific portions of the Yoo et al. signatures, yielding significantly smaller signatures at the cost of extra computation.
+
+This approach to signature compression is mentioned in \cite{yoo}, but not implemented. We detail our implementation in Section \ref{sec:compress}, and analyse both the decrease in signature size and the computational cost of performing comrpession. We conclude that, 
 
 \section{Structure}
 
-With the remaining Section of this introductory Chapter, we will disambiguate the forthcoming structure and syntax used in the dissertation.
+With the remaining Section of this introductory Chapter, we will disambiguate some of the structuring and notation used in the dissertation.
 
 \subsection{Layout}
 
@@ -140,6 +133,8 @@ Chapter 2 covers the relevant mathematics background and is far and away the lon
 If, however, the reader desires to pursue isogeny-based cryptosystems in a research setting, then Chapter 2 will (hopefully) prove to be an effective and digestible surface-level introduction to this subfield.  
 
 Chapters 3 \& 4 are rather similar in structure. Both begin with an introduction of their contribution's components - doing so in a general setting. Following this, the implementation specifics of the Chapters contribution are layed out. For these Sections, we attempt to convey the implementation details with a level of granularity we find easily accessible, while also providing enough information such that if the reader were to dive into the codebase they could do so comfortably. The final Sections of Chapters 4 \& 5 include the implementation results, benchmarks, and analysis. The main structural difference between these two Chapters is that Chapter 4 requires additional background. We found it more appropriate to include this material here, in the introduction to Chapter 4, rather than in Chapter 2.
+
+The 5th Chapter closes out the dissertation with a summary of our progress and measurements. We then spend some time discussion possible avenues for future work. Following this chapter is Appendix A, which details C code for some of the SIDH C library functions which are particularly relevant to our work. 
 
 \subsection{Notation \& Style}
 
@@ -181,7 +176,7 @@ void function_example (int* a, int b, int c) {
 \end{figure}
 
 \noindent
-\textit{Cryptography Conventions}. Cryptographic protocols, as per the usual convention, are written and defined in terms of tuples of algorithms. In denoting general protocols, we frequently use a capital Pi ($\Pi$) subscripted with some informative title.
+\textit{Cryptography Conventions}. Cryptographic protocols, as per the usual convention, are written and defined in terms of tuples of algorithms. In denoting general protocols, we frequently use a capital Pi ($\Pi$) subscripted with some informative title.\\
 
 \noindent
 \textit{Math Conventions}. In denoting isogonies (and other functions between elliptic curves) we will opt to use upper-case greek letters. Elliptic curves discussed in a general setting are refered to, when possible, as $E$; if a more unique identifier is necessary, $E$ with a unique subscript is used. For example, $E_{Alice}$ might refer to a curve created by Alice.  

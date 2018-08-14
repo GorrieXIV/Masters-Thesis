@@ -1,12 +1,46 @@
 \chapter{Discussion \& Conclusion}
 
-
-
 \section{Results \& Comparisons}
+
+\begin{center}
+\begin{tabular}{l | b | b | b }
+\hline
+\mc{1}{}  & \mc{1}{Key Gen} & \mc{1}{Sign} & \mc{1}{Verify}\\
+\hline
+\rowcolor{Gray}
+SIDH & a & b & c \\
+Sphincs & a & b & c \\
+Rainbow & a & b & c \\
+qTESLA & a & b & c \\
+Picnic & a & b & c \\
+\rowcolor{light-red}
+RSA & a & b & c \\
+\rowcolor{light-red}
+ECDSA & a & b & c \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{l | b | b | b }
+\hline
+\mc{1}{}  & \mc{1}{Public Key} & \mc{1}{Private Key} & \mc{1}{Signature}\\
+\hline
+\rowcolor{Gray}
+SIDH & 768 & b & 141,312 \\
+Sphincs & 32 & 64 & 8,080 - 16,976 \\
+Rainbow & 152,097 - 192,241 & 100,209 - 114,308 & 64 - 104 \\
+qTESLA & 4,128 & 2,112 & 3,104 \\
+Picnic & 33 & 49 & 34,004 - 53,933 \\
+\rowcolor{light-red}
+RSA & 384 & b & 384 \\
+\rowcolor{light-red}
+ECDSA & 32 & b & 32 \\
+\hline
+\end{tabular}
+\end{center}
 
 \section{Additional Opportunities for Batching}
 \label{sec:morebatch}
 
 \section{Future Work}
-
-<Conclusion here>
