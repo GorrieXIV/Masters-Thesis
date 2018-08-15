@@ -41,7 +41,7 @@
 \contentsline {subsection}{\numberline {3.3.1}Analysis}{53}{subsection.3.3.1}
 \contentsline {chapter}{\numberline {4}Compressing Signatures}{55}{chapter.4}
 \contentsline {section}{\numberline {4.1}SIDH Key Compression Background}{55}{section.4.1}
-\contentsline {subsection}{\numberline {4.1.1}Construction of Bases}{56}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.1}Construction of Basis}{56}{subsection.4.1.1}
 \contentsline {subsection}{\numberline {4.1.2}Pohlig-Hellman}{56}{subsection.4.1.2}
 \contentsline {subsection}{\numberline {4.1.3}Decompression}{56}{subsection.4.1.3}
 \contentsline {section}{\numberline {4.2}Implementation Details}{56}{section.4.2}

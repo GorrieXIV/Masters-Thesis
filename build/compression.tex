@@ -11,15 +11,16 @@ Finally, we round off the Chapter with an analysis of the memory improvement off
 
 \section{SIDH Key Compression Background}
 
-Recall from Section \ref{subsec:sidhkex} the structure of an SIDH public key, $pk$
+Recall from Section \ref{subsec:sidhkex} the structure of an SIDH public key, denoted $pk$,
 $$
 pk = (E, P, Q)
 $$
 Where $E$ is a supersingular elliptic curve and $P$ and $Q$ are elliptic curve points such that $P, Q \in E$. Recall that E can be represented logically by one $\mathbb{F}_{p}$ element which denotes the $A$ from our definition of $E$
 $$
-E : y^2 = x^3 + Ax + B
+E : y^2 = x^3 + Ax + B,
 $$
-$A$ sufficiently represents $E$ in this context because in \sidh we are concerned only with curves where $B$ = 0. $P$ and $Q$, on the other hand, can each be represented by their $x$-coordinate (two $\mathbb{F}_{p}$ elements) and a single bit determining the correct $y$-coordinate.
+$A$ sufficiently represents $E$ in this context because in \sidh we are concerned only with curves where $B$ = 0. $P$ and $Q$, on the other hand, can each be represented by their $x$-coordinate (two $\mathbb{F}_{p}$ elements) and a single bit determining the correct $y$-coordinate. This naive approach therefore uses $6\log p$ to represent SIDH public keys.
+
 
 
 Costello et al. showed in \cite{pkcomp} that $pk$ could be further compressed  
@@ -32,6 +33,8 @@ Costello et al. showed in \cite{pkcomp} that $pk$ could be further compressed
 
 \section{Implementation Details}
 \label{sec:compimplementation}
+
+Recall the structure of an SIDH Yoo et al. signature,
 
 \subsection{Implementation Details}
 
