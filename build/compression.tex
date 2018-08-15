@@ -11,10 +11,20 @@ Finally, we round off the Chapter with an analysis of the memory improvement off
 
 \section{SIDH Key Compression Background}
 
-Costello et al. showed in \cite{pkcomp} that  
-We discussed rejection sampling A values from signature public keys until we found an A that was also the x-coord of a point. After some simple analysis, however, we found that it was extremely unlikely for A to be a point on the curve.
+Recall from Section \ref{subsec:sidhkex} the structure of an SIDH public key, $pk$
+$$
+pk = (E, P, Q)
+$$
+Where $E$ is a supersingular elliptic curve and $P$ and $Q$ are elliptic curve points such that $P, Q \in E$. Recall that E can be represented logically by one $\mathbb{F}_{p}$ element which denotes the $A$ from our definition of $E$
+$$
+E : y^2 = x^3 + Ax + B
+$$
+$A$ sufficiently represents $E$ in this context because in \sidh we are concerned only with curves where $B$ = 0. $P$ and $Q$, on the other hand, can each be represented by their $x$-coordinate (two $\mathbb{F}_{p}$ elements) and a single bit determining the correct $y$-coordinate.
 
-\subsection{Construction of Bases}
+
+Costello et al. showed in \cite{pkcomp} that $pk$ could be further compressed  
+
+\subsection{Construction of Basis}
 
 \subsection{Pohlig-Hellman}
 
