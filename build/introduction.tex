@@ -22,7 +22,7 @@ There are several subfields that currently occupy the research space of post-qua
 For this dissertation, however, we will focus on a younger subfield of post-quantum cryptography, namely, isogeny-based cryptography.\\
 
 \noindent
-\textit{Isogeny-based Cryptography}. Over the course of the past decade, elliptic curve cryptography (ECC) has proven itself indisposable in the world of applied cryptology. While isogeny based cryptography and ECC are constructed from the same underlying branch of mathematics, they differ in their fundamental presuppositions.
+\textit{Isogeny-based Cryptography}. Over the course of the past decade, elliptic curve cryptography (ECC) has proven itself indisposable in the world of applied cryptology. While isogeny-based cryptography and ECC are built up from elliptic curve mathematics, they differ in their fundamental presuppositions.
 
 Isogeny-based systems have not yet stood the test of time in terms of cryptanalytic scrutiny. Because of this, some may be hesitant to concede the purported security of these systems. Additionally, they are often outperformed by other post-quantum alternatives (which we will investigate more closely in a moment). They do, however, appear to have some advantages. 
 
@@ -34,9 +34,10 @@ More specifically, for this dissertation we are primarily focused on the perform
 
 We will now provide a rough survey of several post-quantum cryptosystems so as to compare their performance (both temporally in terms of exeuction time, and spatially in terms of key and signature sizes) with popular non-quantum-safe systems.\\
 
-All of the following measurements reflect implementations which offer 128 bit post-quantum security, with the exception of classical protocols ECDH, RSA, and ECDSA, where numbers are taken at the 128-bit classical security level.
+We gathered runtime measurements of the Yoo et al. signature scheme from \cite{yoosigcode}, runtimes for other post-quantum schemes from \cite{libpqcrypto} and \cite{openqs}, and runtimes of classical protocols ECDH, RSA, and ECDSA from the standard OpenSSL distribution. We've compiled the results into Figures \ref{fig:kextimes}, \ref{fig:sigtimes}, and \ref{fig:sigtimes}. In Figures \ref{fig:sigtimes} and \ref{fig:sigsizes}, ``SIDH" is used to represent the Yoo et al. signature scheme, which (as we will see in the coming Chapter) is largely based on the SIDH system.
 
 \begin{figure}[!h]
+\label{fig:kextimes}
 \begin{center}
 \begin{tabular}{l | b }
 \hline
@@ -51,11 +52,13 @@ McEliece (Code-based) & c \\
 ECDH & c \\
 \hline
 \end{tabular}
-\caption{Comparison of pos-quantum and classical key-exchange protocols}
+\caption{Comparison of post-quantum and classical key-exchange runtimes}
 \end{center}
 \end{figure}
 
 \begin{figure}[!h]
+\label{fig:sigtimes}
+\begin{center}
 \begin{tabular}{l | b | b | b }
 \hline
 \mc{1}{}  & \mc{1}{Key Gen} & \mc{1}{Sign} & \mc{1}{Verify}\\
@@ -72,9 +75,13 @@ RSA & a & b & c \\
 ECDSA & a & b & c \\
 \hline
 \end{tabular}
+\caption{}
+\end{center}
 \end{figure}
 
 \begin{figure}[!h]
+\label{fig:sigsizes}
+\begin{center}
 \begin{tabular}{l | b | b | b }
 \hline
 \mc{1}{}  & \mc{1}{Public Key} & \mc{1}{Private Key} & \mc{1}{Signature}\\
@@ -91,61 +98,68 @@ RSA & 384 & b & 384 \\
 ECDSA & 32 & b & 32 \\
 \hline
 \end{tabular}
+\caption{Signature and key sizes for various post-quantum and classical protocols}
+\end{center}
 \end{figure}
 
-It's clear that isogeny based schemes have a long way to go in terms of temporal performance before they can hold their own against protocols such as \_\_\_ or even the post-quantum \_\_\_. The exceptionally small key sizes of SIDH and other isogeny-based schemes, however, are an advantage worth noting. 
+All of the measurements in these figures reflect implementations which offer 128 bit post-quantum security, with the exception of classical protocols ECDH, RSA, and ECDSA, where numbers are taken at the 128-bit \textit{classical} security level.
+
+The runtime benchmarks found in Figure \ref{fig:kextimes} and Figure \ref{fig:sigtimes} are all given in terms of CPU cycles, and as such are more architecture independent than timestamp-based measurements. The measurements for signature and key sizes in Figure \ref{fig:sigsizes} are given in terms of bytes. 
+
+Reflecting on Figures \ref{fig:kextimes} \ref{fig:sigtimes}, < talk about comparison results >.
+
+As for Figure \ref{fig:sigsizes}, < talk about size comparison results >.
 
 \section{Contributions}
 
-We offer two main contributions to the Yoo et al. signature scheme implementation. Both of these contributions are designed with the intent of improving the performance of said protocol: the first offers an improvement in the run-time of the signature scheme and the second offers reduced signature sizes for the scheme.\\
+We offer two main contributions to the Yoo et al. signature scheme implementation. Both of these contributions, as previously mentioned, are designed with the intent of improving the performance of said protocol: the first offers an improvement in the run-time of the signature scheme and the second offers reduced signature sizes for the scheme.\\
 
 \noindent
-All of these contributions can be found and tested at https://github.com/GorrieXIV/SIDH2.0-SignatureExtension .
+All of these contributions can be found and tested at \url{https://github.com/GorrieXIV/SIDH2.0-SignatureExtension}.
 
 \subsection{Operation Batching}
 
-Our first contribution involves the implementation of a procedure which batches together many occurances of the same low level operation. We provide a C implementation which incorporates this batching procedure into the Yoo et al. signature scheme.
+Our first contribution involves the implementation of a procedure that batches together many occurances of the same low level operation, drastically reducing the total count of a particularly expensive operation. We provide C code which incorporates this batching procedure into the Yoo et al. signature scheme code.
 
-In the Section detailing this contribution, we offer extensive measurements of the performance increases offered by the inclusion of the batching procedure. We include also a discussion of other possible use-cases for operation batching in isogeny based schemes, not covered by out implementation.
+In the Section detailing this contribution, we offer extensive measurements of the performance increases offered by the inclusion of the batching procedure. We include also a discussion of other possible use-cases for operation batching in isogeny based-schemes, not covered by our implementation.
 
-We conclude that the inclusion of our batching technique in the Yoo et al. signature scheme is both secure and offers noteworthy performance improvements in Signing and Verification routines.
-
+We conclude that the inclusion of our batching technique in the Yoo et al. signature scheme is both secure and offers noteworthy performance improvements in signature signing and verification routines.
 
 \subsection{Signature Compression}
 
-The second contribution we offer is another C addedum to the SIDH library, this time offering further compression of isogeny-based signatures.  We embed a particular compression algorithm into the Yoo et al. signature protocol -- the compression algorithm in question (contrived by Costello et al. and outlined in \cite{pkcomp}) is intended for compression of SIDH public keys. We have adopted this method and applied it to specific portions of the Yoo et al. signatures, yielding significantly smaller signatures at the cost of extra computation.
+The second contribution we offer is another C addedum to the SIDH/Yoo signature library, this time offering a mechanism to further compress isogeny-based signatures.  We embed a particular compression algorithm into the Yoo et al. signature protocol -- the compression algorithm in question (contrived by Costello et al. and outlined in \cite{pkcomp}) is intended for compression of SIDH public keys. We have adopted this method and applied it to specific portions of the Yoo et al. signatures, yielding significantly smaller signatures at the cost of extra computation.
 
-This approach to signature compression is mentioned in \cite{yoo}, but not implemented. We detail our implementation in Section \ref{sec:compress}, and analyse both the decrease in signature size and the computational cost of performing comrpession. We conclude that, 
+This approach to signature compression is mentioned in \cite{yoo}, but not implemented. We detail our implementation in Section \ref{sec:compress}, and analyse both the decrease in signature size and the computational cost of performing comrpession. 
 
 \section{Structure}
 
-With the remaining Section of this introductory Chapter, we will disambiguate some of the structuring and notation used in the dissertation.
+With the remaining Section of this introductory Chapter, we will disambiguate some of the structuring and notation used in this dissertation.
 
 \subsection{Layout}
 
-This dissertation is divided into 5 Chapters. This Chapter and the one that follows contain the relevent preliminary information for understanding the contributions of the thesis. The two following Chapters thereafter outline in detail the two contributions of this dissertation. The 5$^{\text{th}}$ and final Chapter concludes the dissertation while offering any final remarks and suggestions for continued research.
+This dissertation is divided into 5 Chapters. This Chapter and the one that follows contain the relevent preliminary information for understanding the contributions of the thesis. The two following Chapters thereafter outline in detail the two contributions of our work. The 5$^{\text{th}}$ and final Chapter concludes the dissertation while offering any final remarks and suggestions for continued research.
 
-Chapter 2 covers the relevant mathematics background and is far and away the longest Chapter. Within this Chapter we also cover the portions of the SIDH C library that are utilized and/or modified in our implementations. It is worth noting that thorough and complete coverage of this chapter is not necessary for a satisfactory understanding of our contributions, nor is it necessary for understanding the conclusions we come to make about the usefulness of our techniques, and of the studied isogeny-based signature scheme at large.
+Chapter 2, as mentioned, covers the relevant mathematical background and is far and away the longest Chapter. Within this Chapter we also cover the portions of the SIDH C library that are utilized and/or modified in our implementations. It is worth noting that thorough and complete coverage of this chapter is not necessary for a satisfactory understanding of our contributions, nor is it necessary for understanding the conclusions we come to make about the usefulness of our techniques, and of the studied isogeny-based signature scheme at large.
 
 If, however, the reader desires to pursue isogeny-based cryptosystems in a research setting, then Chapter 2 will (hopefully) prove to be an effective and digestible surface-level introduction to this subfield.  
 
 Chapters 3 \& 4 are rather similar in structure. Both begin with an introduction of their contribution's components - doing so in a general setting. Following this, the implementation specifics of the Chapters contribution are layed out. For these Sections, we attempt to convey the implementation details with a level of granularity we find easily accessible, while also providing enough information such that if the reader were to dive into the codebase they could do so comfortably. The final Sections of Chapters 4 \& 5 include the implementation results, benchmarks, and analysis. The main structural difference between these two Chapters is that Chapter 4 requires additional background. We found it more appropriate to include this material here, in the introduction to Chapter 4, rather than in Chapter 2.
 
-The 5th Chapter closes out the dissertation with a summary of our progress and measurements. We then spend some time discussion possible avenues for future work. Following this chapter is Appendix A, which details C code for some of the SIDH C library functions which are particularly relevant to our work. 
+The 5th Chapter closes out the dissertation with a summary of our progress and measurements. We then spend some time discussing possible avenues for future work. Following this chapter is Appendix A, which details C code for some of the SIDH C library functions which are particularly relevant to our work.
 
 \subsection{Notation \& Style}
 
-We will now take some time for formalizing the variety of notation and formatting  used in this dissertation.\\
+We will now take some time to formalize the variety of notation and formatting used in this dissertation.\\
 
 \noindent
-\textit{General Conventions.} Throughout the text, \textit{italics} are used as a means of applying emphasis. This is done frequently to draw attention to newly introduced terms or to suggest the cadence of a sentence. Additionally, italics are employed to add further structure to (sub)sections; a non-indented paragraph following a horizontal space will often begin with an italicized term or concept. These italicized sentences denote the beginning of a new discussion topic.\\
+\textit{Italics.} Throughout the text, \textit{italics} are used as a means of applying emphasis. This is done frequently to draw attention to newly introduced terms or to suggest the cadence of a sentence. Additionally, italics are employed to add further structure to (sub)sections; a non-indented paragraph following a horizontal space will often begin with an italicized term or concept. These italicized sentences denote the beginning of a new discussion topic.\\
 
 \noindent
-\textit{Functions \& Procedures}. Throughout the dissertation, general functions and procedures are denoted by the use of a \textbf{bold font face}. This is true for procedures introduced both formally and informally. Functions that are defined within the \sidh C codebase (either by us or others), however, are denoted by the use of a \code{monospace font}. This monospace notation is also sometimes used to denote routines or subroutines composed of by a sequence of functions or a portion of code. 
+\textit{Functions \& Procedures}. Throughout the dissertation, general functions and procedures are denoted by the use of a \textbf{bold font face}. This is true for procedures introduced both formally and informally. Functions that are defined within the SIDH C codebase (either by us or others), however, are denoted by the use of a \code{monospace font}. This monospace notation is also sometimes used to denote routines or subroutines composed of by a sequence of functions or a portion of code. 
 
 When referring to a function in any general sense, we will write only its name using the aforemention convention. By contrast, when we refer to the result of a function executed over input $x_{1}, ..., x_{n}$, we append on the function identifier the set of parameters enclosed in parathesis (e.g. \textbf{GenericFunction($x_{1}, ..., x_{n}$) or \code{GenericFunction($x_{1}, ..., x_{n}$)}}. 
 
-It is also worth noting that we frequently refer to these abstract, bold-identified functions as \textit{procedures}, whereas we try to reserve use of the term \textit{function} for C-defined \sidh functions. When giving precise definitions of procedures, we opt for a pseudocode/algorithmic approach. For functions, on the otherhand, we enclose our definitions in an environment with a light-gray background. Consider the following: \\
+It is also worth noting that we frequently refer to these abstract, bold-identified functions as \textit{procedures}, whereas we try to reserve use of the term \textit{function} for C-defined functions. When giving precise definitions of procedures, we opt for a pseudocode/algorithmic approach. For functions, on the otherhand, we enclose our definitions in an environment with a light-gray background. Below we illustrate these two different approaches:\\
 
 \begin{algorithm}
 \caption{-- \textbf{ProcedureExample($\{a_0, a_1, ... , a_b\}$, $c$)}}\label{alg:procedureexample}
@@ -158,7 +172,6 @@ It is also worth noting that we frequently refer to these abstract, bold-identif
 \end{algorithmic}
 \end{algorithm}
 
-\begin{figure}[!h]
 \label{code:pbinv}
 \begin{lstlisting}
 void function_example (int* a, int b, int c) {
@@ -169,11 +182,9 @@ void function_example (int* a, int b, int c) {
 	}
 }
 \end{lstlisting}
-\caption{Function example.}
-\end{figure}
 
 \noindent
-\textit{Cryptography Conventions}. Cryptographic protocols, as per the usual convention, are written and defined in terms of tuples of algorithms. In denoting general protocols, we frequently use a capital Pi ($\Pi$) subscripted with some informative title.\\
+\textit{Cryptography Conventions}. Cryptographic protocols, as per the usual convention, are written and defined in terms of tuples of algorithms. In denoting general protocols, we frequently use a capital Pi ($\Pi$) subscripted with some informative title. Following this format, $\Pi_{\text{sig}}$.\textbf{KeyGen} might represent the key generation algorithm found in some signature protocol. If the context is clear, we may refer to an algorith/procedure such as this simply by its name (e.g. \textbf{KeyGen}), dropping the leading protocol identifier.\\
 
 \noindent
 \textit{Math Conventions}. In denoting isogonies (and other functions between elliptic curves) we will opt to use upper-case greek letters. Elliptic curves discussed in a general setting are refered to, when possible, as $E$; if a more unique identifier is necessary, $E$ with a unique subscript is used. For example, $E_{Alice}$ might refer to a curve created by Alice.  
