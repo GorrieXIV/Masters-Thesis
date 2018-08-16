@@ -13,3 +13,40 @@ wikibooks latex
   - only select things from level one NIST security leve (or equivalently 128 bit security) to compare with SIDH numbers
 
 - api.h in dan's LibPQCrypto
+
+context, motivation, and contributions
+convice the reader you're doing something useful:
+- explain something they can relate to and understand
+- propose a problem in that setting
+- offer a solution
+
+- convince parents i didn't waste 2 years
+- explain to an expert what it is i did
+- convince the examiners i earned my masters
+
+lay out the expectations:
+- what areas are important to us?
+- were concerned with aspects of the signature implementation that do not rely on the underlying algebraic properties of the structures
+- can you prove this? well my focus was on this stuff, if you want to read more about that look over here
+- in questions, don't BS. here's what i know, here's what i don't know, here's where I would look if i needed to know more.
+
+in 1.0:
+- three sentence introduction to cryptography
+- where is it used?
+- public and private keys
+
+in 1.1:
+- there is a thing called a signature scheme
+- a signer needs a pair of keys
+- they use the private key to sign a message
+- verifiers can use the public key to verify
+- signatures are used for integrity and verification
+
+1.2:
+- include conclusive contributions in this section
+
+1.3:
+- merge the stuff that's worth keeping from layout into contributions
+- some of the stuff here is too meta
+- maybe mention 2-bar concat symbol
+- 
