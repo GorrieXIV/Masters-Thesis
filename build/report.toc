@@ -22,9 +22,9 @@
 \contentsline {subsection}{\numberline {2.3.2}Zero-Knowledge Proof of Identity}{22}{subsection.2.3.2}
 \contentsline {section}{\numberline {2.4}Fiat-Shamir Construction}{23}{section.2.4}
 \contentsline {subsection}{\numberline {2.4.1}Unruh's Post-Quantum Adaptation}{24}{subsection.2.4.1}
-\contentsline {section}{\numberline {2.5}Isogeny Based Signatures}{25}{section.2.5}
+\contentsline {section}{\numberline {2.5}Isogeny-based Signatures}{25}{section.2.5}
 \contentsline {subsection}{\numberline {2.5.1}Algorithmic Definitions}{26}{subsection.2.5.1}
-\contentsline {section}{\numberline {2.6}Implementations of Isogeny Based Cryptographic Protocols}{29}{section.2.6}
+\contentsline {section}{\numberline {2.6}Implementations of Isogeny-based Cryptographic Protocols}{29}{section.2.6}
 \contentsline {subsection}{\numberline {2.6.1}Parameters \& Data Representation}{29}{subsection.2.6.1}
 \contentsline {subsection}{\numberline {2.6.2}$\texttt {SIDH}_{\texttt {C}}$\xspace Design Decisions}{31}{subsection.2.6.2}
 \contentsline {subsection}{\numberline {2.6.3}Key Exchange \& Critical Functions}{32}{subsection.2.6.3}

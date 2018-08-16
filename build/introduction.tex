@@ -26,7 +26,7 @@ For this dissertation, however, we will focus on a younger subfield of post-quan
 
 Isogeny-based systems have not yet stood the test of time in terms of cryptanalytic scrutiny. Because of this, some may be hesitant to concede the purported security of these systems. Additionally, they are often outperformed by other post-quantum alternatives (which we will investigate more closely in a moment). They do, however, appear to have some advantages. 
 
-And so, the aim of this dissertation is to improve the efficiency of a particular isogeny based scheme. We hope to showcase that, through intelligent implementation, isogeny based protocols still have a lot of improvement potential in terms of run-time and storage performance.
+And so, the aim of this dissertation is to improve the efficiency of a particular isogeny-based scheme. We hope to showcase that, through intelligent implementation, isogeny-based protocols still have a lot of improvement potential in terms of run-time and storage performance.
 
 More specifically, for this dissertation we are primarily focused on the performance of an isogeny-based ``proof of knowledge" style signature scheme, outlined in great detail by Youngo Yoo et al. in \cite{yoo}, which we will henceforth refer to as the ``Yoo et al. signature scheme".
 
@@ -121,7 +121,7 @@ All of these contributions can be found and tested at \url{https://github.com/Go
 
 Our first contribution involves the implementation of a procedure that batches together many occurances of the same low level operation, drastically reducing the total count of a particularly expensive operation. We provide C code which incorporates this batching procedure into the Yoo et al. signature scheme code.
 
-In the Section detailing this contribution, we offer extensive measurements of the performance increases offered by the inclusion of the batching procedure. We include also a discussion of other possible use-cases for operation batching in isogeny based-schemes, not covered by our implementation.
+In the Section detailing this contribution, we offer extensive measurements of the performance increases offered by the inclusion of the batching procedure. We include also a discussion of other possible use-cases for operation batching in isogeny-based schemes, not covered by our implementation.
 
 We conclude that the inclusion of our batching technique in the Yoo et al. signature scheme is both secure and offers noteworthy performance improvements in signature signing and verification routines.
 

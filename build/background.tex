@@ -1,12 +1,12 @@
 \chapter{Technical Background}
 
-This chapter will cover the following preliminary topics: cryptographic primitives, isogenies and their relevant properties, supersingular isogeny Diffie-Hellman (SIDH), the Fiat-Shamir construction for digital signatures (and its quantum-safe adaptation), the current landscape of isogeny based signature schemes, and finally the C implementations of isogeny based protocols with which we are concerned.
+This chapter will cover the following preliminary topics: cryptographic primitives, isogenies and their relevant properties, supersingular isogeny Diffie-Hellman (SIDH), the Fiat-Shamir construction for digital signatures (and its quantum-safe adaptation), the current landscape of isogeny-based signature schemes, and finally the C implementations of isogeny-based protocols with which we are concerned.
 
 In the first section of this chapter we will take some time to introduce a few ideas from modern cryptography. We will cover key exchange, identification schemes, and signature schemes - all at as high of an abstraction level as possible. Readers familiar with these topics can skip this section without harm. 
 
 Our discussion of isogenies will begin with some basic coverage of the underlying algebra. We will provide the material necessary for the remaining sections as we build up in the level of abstraction; working our way through groups, finite fields, elliptic curves, and finally isogenies and their properties.
 
-Once we have presented the necessary algebra, we will illustrate the specifics of the supersingular isogeny Diffie-Hellman key-exchange protocol. We will spend most of this time dedicated to a modular deconstruction of the protocol, looking at the high-level procedures and algorithms which will be necessary for understanding in detail the signature protocol to come. This subsection will end with a briefing and analysis of the closely related zero-knowledge proof of identity (ZKPoI) isogeny protocol proposed in the original De Feo et al. paper \cite{djp}, as it is the foundation for the isogeny based signature scheme presented by Yoo et al \cite{yoo}.
+Once we have presented the necessary algebra, we will illustrate the specifics of the supersingular isogeny Diffie-Hellman key-exchange protocol. We will spend most of this time dedicated to a modular deconstruction of the protocol, looking at the high-level procedures and algorithms which will be necessary for understanding in detail the signature protocol to come. This subsection will end with a briefing and analysis of the closely related zero-knowledge proof of identity (ZKPoI) isogeny protocol proposed in the original De Feo et al. paper \cite{djp}, as it is the foundation for the isogeny-based signature scheme presented by Yoo et al \cite{yoo}.
 
 In section 2.3 we will discuss the Fiat-Shamir transformation \cite{sigs}; a technique which, given a secure interactive identification scheme, creates a secure digital signature scheme. We will also look at the quantum-secure adaptation published by Unruh \cite{unruh} for applying a non-quantum-resistant transform to a quantum-resistant primitive would be rather frivolous.
 
@@ -537,7 +537,7 @@ $\pkb = (E_{\rb}, \pb(\genpa),\pb(\genqa))$\\
 \item \bob sends \alice $(E_{\rb}, \{\pb(\genpa),\pb(\genqa)\})$
 \end{itemize}
 
-Again, we remind the reader that we will show how curves such as $E_{\ba}$ and $E_{\rb}$ can be represented efficient and compactly in a computing environment when we come to our section on implementations of isogeny based systems (\ref{sec:implementations}).\\
+Again, we remind the reader that we will show how curves such as $E_{\ba}$ and $E_{\rb}$ can be represented efficient and compactly in a computing environment when we come to our section on implementations of isogeny-based systems (\ref{sec:implementations}).\\
 
 \noindent
 \textbf{SecAgr($sk_{1}$,$pk_{2}$)}: After reception of \bob's tuple, \alice computes the isogeny $\phi'_A: E_{\rb} \rightarrow E_{\ba\rb}$ and \bob acts analogously. \alice and \bob then arrive at the equivalent image curve:
@@ -631,7 +631,7 @@ $$
 (\rb, \cyr) = ([\mb]\genpb + [\nb]\genqb, [\mr]\genpa + [\nr]\genqa)
 $$
 
-How $\Pi_{\text{ZKPoK}}$ handles this is by having \bob and \alice run \textbf{Prove()} and \textbf{Verify()} for $\lambda$ iterations, with a different $(com, ch, resp)$ transcript generated for every instance. This way, if \bob is able to provide a $resp$ that satisfies \alice's $ch$ for every iteration, she can be sufficiently confident that \bob has knowledge of $\rb$.\\
+How $\Pi_{\text{ZKPoK}}$ handles this is by having \bob and \alice run \textbf{Prove()} and \textbf{Verify()} for $\lambda$ iterations, with a different $(com, ch, resp)$ transcript generated for every instance. This way, if \bob is able to provide a $resp$ that satisfies \alice's $ch$ for every iteration, she can be sufficiently confident that \bob has knowledge of $\rb$. By taking this approach, \alice gains no knowledge of \bob's secret key (e.g. ``zero-knowledge").\footnote{This iterative approach to a zero-knowledge proof of knowledge is well illustrated by the "Ali Baba Cave" anecdote: \url{https://en.wikipedia.org/wiki/Zero-knowledge_proof\#Abstract_examples}.}\\
 
 \noindent
 \textbf{Verify($pk, com, ch$)}: Like the proving procedure, verification is a conditional function depending on the value of $b$:
@@ -703,12 +703,12 @@ Similar to above, we will write $\textbf{Un}(\Pi)$ to denote the result of apply
 \end{algorithmic}
 \end{algorithm}
 
-\section{Isogeny Based Signatures}
+\section{Isogeny-based Signatures}
 \label{sec:sigsbackground}
 
-Since publication of the SIDH suite, there have been several attempts at providing authentication schemes using the same primitives. The post-quantum community had demonstrated undeniable signatures \cite{jvsig}, designated verifier signatures \cite{sunsig}, and undeniable blind signatures \cite{seshsig} all within the framework of isogeny based systems. It was not until the work of Yoo et al. ((\cite{yoo})), however, that an isogeny based protocol for general authentication was shown as demonstrably secure. This protocol, particularly its C implementation, is where we have decided to focus our efforts.
+Since publication of the SIDH suite, there have been several attempts at providing authentication schemes using the same primitives. The post-quantum community had demonstrated undeniable signatures \cite{jvsig}, designated verifier signatures \cite{sunsig}, and undeniable blind signatures \cite{seshsig} all within the framework of isogeny-based systems. It was not until the work of Yoo et al. ((\cite{yoo})), however, that an isogeny-based protocol for general authentication was shown as demonstrably secure. This protocol, particularly its C implementation, is where we have decided to focus our efforts.
 
-Now that we've seen the zero-knowledge proof of identity (ZKPoI) from \cite{djp} as well as Unruh's quantum-safe Fiat-Shamir adaption, we have presented all of the material necessary for an indepth analysis of the isogeny based signature scheme presented by Yoo et al. The signature protocol, which we'll denote as $\Sigma'$, is an application of Unruh's construction to the SIDH ZKPoI. In this section we will refer to the SIDH ZKPoI as $\Sigma$.
+Now that we've seen the zero-knowledge proof of identity (ZKPoI) from \cite{djp} as well as Unruh's quantum-safe Fiat-Shamir adaption, we have presented all of the material necessary for an indepth analysis of the isogeny-based signature scheme presented by Yoo et al. The signature protocol, which we'll denote as $\Sigma'$, is an application of Unruh's construction to the SIDH ZKPoI. In this section we will refer to the SIDH ZKPoI as $\Sigma$.
 
 $\Sigma'$ is defined in the traditional manner, by a tuple of algorithms for key generation, signing, and verifying: $\Sigma' = (\textbf{KeyGen()}, \textbf{Sign()}, \textbf{Verify()})$. \textbf{KeyGen()} in $\Sigma'$ is defined identically to the key generation found in SIDH key exchange. \textbf{Sign()} and \textbf{Verify()} are defined by applying Unruh's transformation to \textbf{Prove()} and \textbf{Verify()}.
 
@@ -867,10 +867,10 @@ These observations are formalized in Algorithm 6, where we rewrite $\Sigma'$:\te
 \end{algorithmic}
 \end{algorithm}
 
-\section{Implementations of Isogeny Based Cryptographic Protocols}
+\section{Implementations of Isogeny-based Cryptographic Protocols}
 \label{sec:implementations}
 
-Having now introduced all of the background material necessary for understanding SIDH and the isogeny based signature scheme in detail, we will investigate the portions of the SIDH C library which are relevent to our contributions.
+Having now introduced all of the background material necessary for understanding SIDH and the isogeny-based signature scheme in detail, we will investigate the portions of the SIDH C library which are relevent to our contributions.
 
 The SIDH C library, written by a research team at Microsoft Research, was released in 2016 alongside an article titled \emph{Efficient Algorithms for Supersingular Isogeny Diffie-Hellman} (see \cite{effalg}). The article in question details several adjustments to the algorithms and data-representations outlined in \cite{djp}, leading to improved performance and key-sizes. Their library (which we will henceforth refer to as \sidh) consists of C and assembly implementations of the algorithms outlined in \cite{effalg}. Much of these functions are tailored to a specific set of parameters allowing for increased performance. The library presents 128-bit quantum security and 192-bit classical security key exchange up to 2.9 times faster than any previous isogeny-based key-exchange system. We will look at some of the details of \sidh below. 
 
@@ -943,7 +943,7 @@ In addition to traditional point-wise projective arithmetic, Costella et al. sho
 \subsection{Key Exchange \& Critical Functions}
 \label{subsec:functions}
 
-There are 3 central modules (C files) in \sidh, all dealing with different levels of abstraction in the $\Pi_{\text{SIDH}}$ protocol.  Figure \ref{fig:halfmap} illustrates the relationship between these modules and the abstraction levels of isogeny based key exchange. 
+There are 3 central modules (C files) in \sidh, all dealing with different levels of abstraction in the $\Pi_{\text{SIDH}}$ protocol.  Figure \ref{fig:halfmap} illustrates the relationship between these modules and the abstraction levels of isogeny-based key exchange. 
 
 Operating at the lowest abstraction level is the module \code{fpx.c}, wherein functions for manipulating $\mathbb{F}_{p}$ and $\mathbb{F}_{p^2}$ elements are defined. One level up from \code{fpx.c} we have \code{ec\_isogeny.c}, containing functions pertaining to elliptic curves and point arithmetic (such as \code{j\_inv(...)} for computing the j-invariant of a curve and \code{secret\_pt(...)} for computing a users secret point $S$ given their private key $m$). The final, highest abstraction-level module we will discuss is \code{kex.c}. \code{kex.c} contains the protocol-level functions for performing $\Pi_{\text{SIDH}}$, namely \code{KeyGeneration\_A(...)} and \code{KeyGeneration\_B(...)} for generating \alice and \bob's private and public keys, as well as \code{SecretAgreement\_A(...)} and \code{SecretAgreement\_B(...)} for completing the secret agreement from both sides of the key exchange.
 
