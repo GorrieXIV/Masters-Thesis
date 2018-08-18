@@ -19,15 +19,28 @@ Where $E$ is a supersingular elliptic curve and $P$ and $Q$ are elliptic curve p
 $$
 E : y^2 = x^3 + Ax + B,
 $$
-$A$ sufficiently represents $E$ in this context because in \sidh we are concerned only with curves where $B$ = 0. $P$ and $Q$, on the other hand, can each be represented by their $x$-coordinate (two $\mathbb{F}_{p}$ elements) and a single bit determining the correct $y$-coordinate. This naive approach therefore uses $6\log p$ to represent SIDH public keys.
+Montgomery Curve:
+$$
+E: By^2 = x^3 + Ax^2 + x
+$$
 
+$A$ sufficiently represents $E$ in this context because in \sidh we are concerned only with curves where $B$ = 0. $P$ and $Q$, on the other hand, can each be represented by their $x$-coordinate (two $\mathbb{F}_{p}$ elements) and a single bit determining the correct $y$-coordinate. This approach therefore represents SIDH public keys with $6\log p$ bits.
 
+\subsection{Compression}
 
-Costello et al. showed in \cite{pkcomp} that $pk$ could be further compressed  
+Azerderakhsh et al. showed in \cite{compwr} that $pk$ could be further compressed to $4\log p$ bits in the following way. In Section 3.2 of their paper they show how, given two points $P, Q \in E[\ell]$, $P$ and $Q$ can be represented by elements $\alpha_{P}, \beta{P}, \alpha{Q}, \beta{Q} \in \mathbb{Z}/\ell\mathbb{Z}$. These elements are computed as the coefficients of $P$ and $Q$ with respect to some fixes basis $\{R_1, R_2\}$ in the following manner: 
+$$
+P = \alpha_{P}R_1 + \beta_{P}R_2,
+$$
+$$
+Q = \alpha_{Q}R_1 + \beta_{Q}R_2.
+$$
 
-\subsection{Construction of Basis}
+\noindent
+\textit{Constructing the Basis}.\\
 
-\subsection{Pohlig-Hellman}
+\noindent
+\textit{Pohleg-Hellman}.
 
 \subsection{Decompression}
 
