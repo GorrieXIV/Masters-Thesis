@@ -52,16 +52,22 @@ Recall the structure of an SIDH Yoo et al. signature, $\sigma$;
 $$
 \sigma = (\code{comm}, \code{ch}, \code{h}, \code{resp})
 $$
-where
+where \code{comm}, \code{ch}, \code{h}, and \code{resp} are arrays containing $2\lambda$ elements each, with the exception of \code{comm}, which contains $4\lambda$ elements (2 for each iteration of the procedure).
+
+\code{comm} is composed of by $\mathbb{F}_{p^2}$ elements, each denoting a curve (which acts as a commitment), in the following way:
 $$
-\code{comm} = [E_{0, 1}, E_{0, 2}, E_{1, 1}, E_{1, 2}, ... , E_{2\lambda, 1}, E_{2\lambda, 2}],
+\code{comm} = [m_{0, 1}, m_{0, 2}, m_{1, 1}, m_{1, 2}, ... , m_{2\lambda, 1}, m_{2\lambda, 2}]
 $$
+\code{ch} is composed of by
 $$
-\code{ch} = [],
+\code{ch} = []
 $$
+\code{h} is an array of hex numbers, each one the result of concatinating the output of two Keccak function calls.\footnote{Keccak is a cryptographic hash function from which the newly standardized SHA-3 is based.} 
 $$
-\code{h} = [\code{keccak(resp[0])}|\code{keccak(resp[1])}, ... , \code{keccak(resp[4}\lambda\code{ - 2])}|\code{keccak(resp[4}\lambda\code{ - 1])}],
+\code{h} = [\code{keccak(resp[0])}|\code{keccak(resp[1])}, ... , \code{keccak(resp[4}\lambda\code{ - 2])}|\code{keccak(resp[4}\lambda\code{ - 1])}]
 $$
+
+And so, the total size of an uncompressed signature is $size = 1 + 2 + 3 + 4$.
 
 
 \subsection{Implementation Details}
