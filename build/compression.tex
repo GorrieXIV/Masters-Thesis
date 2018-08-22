@@ -11,7 +11,7 @@ Finally, we round off the Chapter with an analysis of the memory improvement off
 
 \section{SIDH Key Compression Background}
 
-Recall from Section \ref{subsec:sidhkex} the structure of an SIDH public key, denoted $pk$,
+Recall from Section \ref{subsec:sidhkex} the structure of an SIDH public key, denoted $pk$;
 $$
 pk = (E, P, Q)
 $$
@@ -47,7 +47,22 @@ $$
 \section{Implementation Details}
 \label{sec:compimplementation}
 
-Recall the structure of an SIDH Yoo et al. signature,
+Recall the structure of an SIDH Yoo et al. signature, $\sigma$;
+
+$$
+\sigma = (\code{comm}, \code{ch}, \code{h}, \code{resp})
+$$
+where
+$$
+\code{comm} = [E_{0, 1}, E_{0, 2}, E_{1, 1}, E_{1, 2}, ... , E_{2\lambda, 1}, E_{2\lambda, 2}],
+$$
+$$
+\code{ch} = [],
+$$
+$$
+\code{h} = [\code{keccak(resp[0])}|\code{keccak(resp[1])}, ... , \code{keccak(resp[4}\lambda\code{ - 2])}|\code{keccak(resp[4}\lambda\code{ - 1])}],
+$$
+
 
 \subsection{Implementation Details}
 
