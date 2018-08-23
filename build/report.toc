@@ -46,7 +46,7 @@
 \contentsline {section}{\numberline {4.2}Implementation Details}{56}{section.4.2}
 \contentsline {subsection}{\numberline {4.2.1}Implementation Details}{56}{subsection.4.2.1}
 \contentsline {subsection}{\numberline {4.2.2}$\psi (S)$ Compression}{56}{subsection.4.2.2}
-\contentsline {section}{\numberline {4.3}Results}{56}{section.4.3}
+\contentsline {section}{\numberline {4.3}Results}{57}{section.4.3}
 \contentsline {subsection}{\numberline {4.3.1}Analysis}{57}{subsection.4.3.1}
 \contentsline {subsection}{\numberline {4.3.2}Potential Performance Improvements}{57}{subsection.4.3.2}
 \contentsline {chapter}{\numberline {5}Discussion \& Conclusion}{58}{chapter.5}

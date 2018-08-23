@@ -28,13 +28,20 @@ $A$ sufficiently represents $E$ in this context because in \sidh we are concerne
 
 \subsection{Compression}
 
-Azerderakhsh et al. showed in \cite{compwr} that $pk$ could be further compressed to $4\log p$ bits in the following way. In Section 3.2 of their paper they show how, given two points $P, Q \in E[\ell]$, $P$ and $Q$ can be represented by elements $\alpha_{P}, \beta{P}, \alpha{Q}, \beta{Q} \in \mathbb{Z}/\ell\mathbb{Z}$. These elements are computed as the coefficients of $P$ and $Q$ with respect to some fixes basis $\{R_1, R_2\}$ in the following manner: 
+Azerderakhsh et al. showed in \cite{compwr} that $pk$ could be further compressed to $4\log p$. Consider the following.
+
+Given $P \in E[\ell]$, $P$ can be represented by elements $\alpha, \beta \in \mathbb{Z}/\ell\mathbb{Z}$. These elements are computed as the coefficients of $P$ with respect to some fixed basis $\{R_1, R_2\}$ in the following manner: 
 $$
-P = \alpha_{P}R_1 + \beta_{P}R_2,
+P = \alpha R_1 + \beta R_2,
 $$
+
+Assuming $\alpha$ is invertible, we then have
+
 $$
-Q = \alpha_{Q}R_1 + \beta_{Q}R_2.
+P = R_1 + \alpha^{-1}\beta R_2
 $$
+
+And so, as long as \alice and \bob can agree on a basis $\{R_1, R_2\}$ they can both sufficiently represent one anothers public keys with only 
 
 \noindent
 \textit{Constructing the Basis}.\\
