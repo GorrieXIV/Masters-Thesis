@@ -1,9 +1,9 @@
 \chapter{Compressing Signatures}
 \label{sec:compress}
 
-Our second contribution, also in the form of an addition to the \sidh signature extension, is a mechanism for compressing signatures. The following Chapter will cover the compression technique used. This Chapter, much like the last, will be split into three Sections: a brief coverage of the employed compression technique, the details of our implementation and integration of this technique into \sidh, and finally an analysis of the results of this contribution.
+Our second contribution, also in the form of an addition to the \sidh signature extension, is a mechanism for compressing signatures. The following chapter will cover the compression technique used. This chapter, much like the last, will be split into three sections: a brief coverage of the employed compression technique, the details of our implementation and integration of this technique into \sidh, and finally an analysis of the results of this contribution.
 
-In the first Section of this Chapter, we discuss the SIDH public key compression technique outlined in \cite{compwr}. We attempt to provide a sufficient overview of the technique while only covering in detail the components that are of significant relevance to our implementation. For those who seek to better understand the ins and outs of this technique should direct themselves to the original paper.  
+In the first section of this chapter, we discuss the SIDH public key compression technique outlined in \cite{compwr}. We attempt to provide a sufficient overview of the technique while only covering in detail the components that are of significant relevance to our implementation. For those who seek to better understand the ins and outs of this technique should direct themselves to the original paper.  
 
 The second Section covers in detail how we apply this public key compression to Yoo et al. signatures. We make use of the functions offered in \cite{pkcomp} which implement the methods of \cite{compwr} for public key compression. This code was first made available in the second installment of Microsoft's SIDH library.
 
@@ -15,20 +15,18 @@ Recall from Section \ref{subsec:sidhkex} the structure of an SIDH public key, de
 $$
 pk = (E, P, Q)
 $$
-Where $E$ is a supersingular elliptic curve and $P$ and $Q$ are elliptic curve points such that $P, Q \in E$. Recall that E can be represented logically by one $\mathbb{F}_{p}$ element which denotes the $A$ from our definition of $E$
+Where $E$ is a supersingular elliptic curve and $P$ and $Q$ are elliptic curve points such that $P, Q \in E$. Recall that E can be represented logically by one $\mathbb{F}_{p}$ element which denotes $A$ from the following definition of $E$:
 $$
 E : y^2 = x^3 + Ax + B,
 $$
-Montgomery Curve:
-$$
-E: By^2 = x^3 + Ax^2 + x
-$$
 
-$A$ sufficiently represents $E$ in this context because in \sidh we are concerned only with curves where $B$ = 0. $P$ and $Q$, on the other hand, can each be represented by their $x$-coordinate (two $\mathbb{F}_{p}$ elements) and a single bit determining the correct $y$-coordinate. This approach therefore represents SIDH public keys with $6\log p$ bits.
+$A$ sufficiently represents $E$ in this context because in \sidh we are concerned only with curves where $B$ = 0. 
+
+$P$ and $Q$, on the other hand, can each be represented by their $x$-coordinate (two $\mathbb{F}_{p}$ elements) and a single bit determining the correct $y$-coordinate. Therefore, this approach can represent SIDH public keys with $~6\log p$ bits.
 
 \subsection{Compression}
 
-Azerderakhsh et al. showed in \cite{compwr} that $pk$ could be further compressed to $4\log p$. Consider the following.
+Azerderakhsh et al. showed in \cite{compwr} that the size of $pk$ can be further compressed to $4\log p$ bits. Consider the following.
 
 Given $P \in E[\ell]$, $P$ can be represented by elements $\alpha, \beta \in \mathbb{Z}/\ell\mathbb{Z}$. These elements are computed as the coefficients of $P$ with respect to some fixed basis $\{R_1, R_2\}$ in the following manner: 
 $$

@@ -129,7 +129,7 @@ We conclude that the inclusion of our batching technique in the Yoo et al. signa
 
 \subsection{Signature Compression}
 
-The second contribution we offer is another C addedum to the SIDH/Yoo signature library, this time offering a mechanism to further compress isogeny-based signatures.  We embed a particular compression algorithm into the Yoo et al. signature protocol -- the compression algorithm in question (contrived by Costello et al. and outlined in \cite{pkcomp}) is intended for compression of SIDH public keys. We have adopted this method and applied it to specific portions of the Yoo et al. signatures, yielding significantly smaller signatures at the cost of extra computation.
+The second contribution we offer is another addendum to the SIDH/Yoo signature library, this time offering a mechanism to  compress signature sizes.  We embed a particular compression algorithm into the Yoo et al. signature protocol -- the compression algorithm in question (contrived by Costello et al. and outlined in \cite{pkcomp}) is intended for compression of SIDH public keys. We have adopted this method and applied it to specific portions of the Yoo et al. signatures, yielding significantly smaller signatures at the cost of extra computation.
 
 This approach to signature compression is mentioned in \cite{yoo}, but not implemented. We detail our implementation in Section \ref{sec:compress}, and analyse both the decrease in signature size and the computational cost of performing comrpession. 
 

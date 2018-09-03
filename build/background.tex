@@ -274,7 +274,7 @@ These algebraic structures are all important for building up to the concept of a
 \noindent
 \emph{Montgomery Arithmetic}\label{snip:montgomery}. We will now briefly discuss a technique for efficiently performing modular arithmetic. This method is widely deployed in cryptosystems centered around finite fields, and is abundantly used in the \sidh library that we will shortly be examining.
 
-In 1985, Peter Montgomery introduced a method for efficiently computing the modular multiplication of two elements $a$ and $b$. The technique begins with the construction of some constant $R$, whose value depends solely on the modulus $N$ and the underlying computer architecture.\footnote{The specifics of how $R$ is constructed are beyond the scope of this dissertation; if they feel so inclined, the reader should refer to \cite{mont}}
+In 1985, Peter Montgomery introduced a method for efficiently computing the modular multiplication of two elements $a$ and $b$. The technique begins with the construction of some constant $R$, whose value depends solely on the modulus $N$ and the underlying computer architecture.\footnote{The specifics of how $R$ is constructed are beyond the scope of this dissertation; if they feel so inclined, the reader should refer to \cite{mont}.}
 
 With the retrieval of $R$, $aR \mod{N}$ and $bR \mod{N}$ are constructed and referred to as the Montgomery \emph{representation} of $a$ and $b$ respectively. Montgomery multiplication outlines an algorithm for computing $abR \mod{N}$ (the Montgomery product of $a$ and $b$), from which $ab \mod{N}$ can be recovered through conversion back to standard representation. Once in Montgomery representation, other arithmetic can be performed (including field element inversions) in order to leverage the performance improvement offered by Montgomery modular multiplication -- converting back to regular representation when necessary.
 
@@ -286,7 +286,7 @@ An elliptic curve is an algebraic curve defined over some field $K$, the most ge
 $$
 y^2 + a_{1}xy + a_{3}y = x^3 + a_{2}x^2 + a_{4}x + a_6.
 $$
-This representation encapsulates elliptic curves defined over any field. If, however, we are dicussing curves defined specifically over a field $K$ such that $\text{char}(K) > 3$ (see \cite{silverman}), then the more compact form $y^2 = x^3 + ax + b$ can be applied (see Figure \ref{fig:groupop} for a geometric visualization). In this dissertation we will default to this second representation, as the schemes with which we are concerned will always be defined over $\mathbb{F}_p$ for some large prime $p$.
+This representation encapsulates elliptic curves defined over any field. If, however, we are dicussing curves defined specifically over a field $K$ such that $\text{char}(K) > 3$\footnote{See \cite{silverman}.}, then the more compact form $y^2 = x^3 + ax + b$ can be applied (see Figure \ref{fig:groupop} for a geometric visualization). In this dissertation we will default to this second representation, as the schemes with which we are concerned will always be defined over $\mathbb{F}_p$ for some large prime $p$.
 
 We can define a group structure over the points of a given elliptic curve (or any other smooth cubic curve). If we wish to define a group in accordance to a particular curve, we do so with the following notation:
 $$
