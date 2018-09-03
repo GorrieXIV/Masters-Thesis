@@ -9,10 +9,10 @@
 \usepackage[noend]{algpseudocode}
 
 
-\title[SIDH]{Efficiency of SIDH/Isogeny Signatures}
-\author{Robert Gorrie}
+\title[SIDH]{On the Efficiency of Isogeny-based Signatures Implementations}
+\author{Robert W. V. Gorrie}
 \institute[Comp Sci 2S03]{Department of Computing \& Software, McMaster University}
-\date{November 16th, 2017}
+\date{Fall 2018}
 
 \begin{document}
 
@@ -32,7 +32,7 @@
 \end{frame}
 }
 
-\section{Isogeny Based Signatures}
+\section{Critical Background}
 
 %high level signature description via fiat-shamir
 
@@ -183,7 +183,11 @@ $$
 Because public keys are distinctly seperate, we can use the same batched partial inversion procedure to cut down on time spent inverting $\mathbb{F}_{p^{2}}$ elements in compression and decompression.
 \end{frame}
 
-\section{Additional/Future Work}
+\section{Conclusive Remarks}
+
+\begin{frame}
+\frametitle{Performance Improvements Offered}
+\end{frame}
 
 \begin{frame}
 \frametitle{Other Possible Performance Increases}
@@ -202,6 +206,9 @@ Because public keys are distinctly seperate, we can use the same batched partial
 \item We hope to work the protocol into an environment where it's practicality can more easily and assuredly be tested
 \end{itemize}
 \end{frame}
+
+\begin{frame}
+
 
 \begin{frame}
 \begin{center}
