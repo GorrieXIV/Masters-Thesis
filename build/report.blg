@@ -1,13 +1,27 @@
-This is BibTeX, Version 0.99d (TeX Live 2015/Debian)
-Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+This is BibTeX, Version 0.99d (TeX Live 2017/Debian)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
 The top-level auxiliary file: report.aux
 The style file: alphaurl.bst
+White space in argument---line 242 of file report.aux
+ : \bibdata{refs.bib,
+ :                    abbrev3, crypto}
+I'm skipping whatever remains of this command
 Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
 Reallocated global_strs (elt_size=20001) to 20 items from 10.
 Reallocated glb_str_end (elt_size=4) to 20 items from 10.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: refs.bib.bib
+You're missing a field name---line 3 of file refs.bib.bib
+ : 
+ : % author =
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+I was expecting a `,' or a `}'---line 109 of file refs.bib.bib
+ :  author 
+ :         = {Brian LaMacchia and Craig Costello and Karen Easterbrook and Michael Naehrig and Patrick Longa},
+I'm skipping whatever remains of this entry
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Warning--empty journal in compwr
 Warning--empty journal in rewinding
 Warning--empty journal in pkcomp
 Warning--empty journal in effalg
@@ -24,45 +38,45 @@ Warning--empty year in silverman
 Warning--empty journal in sunsig
 Warning--empty journal in unruh
 Warning--empty journal in yoo
-You've used 16 entries,
+You've used 20 entries,
             3274 wiz_defined-function locations,
-            743 strings with 7198 characters,
-and the built_in function-call counts, 6814 in all, are:
-= -- 635
-> -- 330
-< -- 7
-+ -- 102
-- -- 100
-* -- 345
-:= -- 1065
-add.period$ -- 46
-call.type$ -- 16
-change.case$ -- 100
-chr.to.int$ -- 16
-cite$ -- 32
-duplicate$ -- 226
-empty$ -- 535
-format.name$ -- 120
-if$ -- 1634
+            758 strings with 7678 characters,
+and the built_in function-call counts, 8609 in all, are:
+= -- 803
+> -- 432
+< -- 8
++ -- 136
+- -- 134
+* -- 439
+:= -- 1340
+add.period$ -- 58
+call.type$ -- 20
+change.case$ -- 129
+chr.to.int$ -- 20
+cite$ -- 37
+duplicate$ -- 270
+empty$ -- 681
+format.name$ -- 156
+if$ -- 2067
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 17
-newline$ -- 82
-num.names$ -- 48
-pop$ -- 193
+missing$ -- 18
+newline$ -- 102
+num.names$ -- 60
+pop$ -- 251
 preamble$ -- 1
-purify$ -- 117
+purify$ -- 150
 quote$ -- 0
-skip$ -- 500
+skip$ -- 622
 stack$ -- 0
-substring$ -- 142
-swap$ -- 11
-text.length$ -- 7
+substring$ -- 170
+swap$ -- 14
+text.length$ -- 8
 text.prefix$ -- 6
 top$ -- 0
-type$ -- 124
-warning$ -- 16
-while$ -- 44
-width$ -- 17
-write$ -- 179
-(There were 16 warnings)
+type$ -- 156
+warning$ -- 17
+while$ -- 55
+width$ -- 22
+write$ -- 226
+(There were 3 error messages)

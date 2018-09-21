@@ -17,10 +17,10 @@
 \contentsline {subsection}{\numberline {2.2.1}Fields \& Field Extensions}{14}{subsection.2.2.1}
 \contentsline {subsection}{\numberline {2.2.2}Elliptic Curves}{16}{subsection.2.2.2}
 \contentsline {subsection}{\numberline {2.2.3}Isogenies \& Their Properties}{19}{subsection.2.2.3}
-\contentsline {section}{\numberline {2.3}Supersingular Isogeny Diffie-Hellman}{19}{section.2.3}
+\contentsline {section}{\numberline {2.3}Supersingular Isogeny Diffie-Hellman}{20}{section.2.3}
 \contentsline {subsection}{\numberline {2.3.1}SIDH Key Exchange}{20}{subsection.2.3.1}
 \contentsline {subsection}{\numberline {2.3.2}Zero-Knowledge Proof of Identity}{22}{subsection.2.3.2}
-\contentsline {section}{\numberline {2.4}Fiat-Shamir Construction}{23}{section.2.4}
+\contentsline {section}{\numberline {2.4}Fiat-Shamir Construction}{24}{section.2.4}
 \contentsline {subsection}{\numberline {2.4.1}Unruh's Post-Quantum Adaptation}{24}{subsection.2.4.1}
 \contentsline {section}{\numberline {2.5}Isogeny-based Signatures}{25}{section.2.5}
 \contentsline {subsection}{\numberline {2.5.1}Algorithmic Definitions}{26}{subsection.2.5.1}
@@ -41,11 +41,12 @@
 \contentsline {subsection}{\numberline {3.3.1}Analysis}{53}{subsection.3.3.1}
 \contentsline {chapter}{\numberline {4}Compressing Signatures}{55}{chapter.4}
 \contentsline {section}{\numberline {4.1}SIDH Key Compression Background}{55}{section.4.1}
-\contentsline {subsection}{\numberline {4.1.1}Compression}{56}{subsection.4.1.1}
-\contentsline {subsection}{\numberline {4.1.2}Decompression}{56}{subsection.4.1.2}
+\contentsline {subsection}{\numberline {4.1.1}Public Key Compression}{56}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}Decompressing Public Keys}{56}{subsection.4.1.2}
 \contentsline {section}{\numberline {4.2}Implementation Details}{56}{section.4.2}
 \contentsline {subsection}{\numberline {4.2.1}Implementation Details}{56}{subsection.4.2.1}
 \contentsline {subsection}{\numberline {4.2.2}$\psi (S)$ Compression}{56}{subsection.4.2.2}
+\contentsline {subsection}{\numberline {4.2.3}Retrieving Correct $\psi (S)$ Values}{57}{subsection.4.2.3}
 \contentsline {section}{\numberline {4.3}Results}{57}{section.4.3}
 \contentsline {subsection}{\numberline {4.3.1}Analysis}{57}{subsection.4.3.1}
 \contentsline {subsection}{\numberline {4.3.2}Potential Performance Improvements}{57}{subsection.4.3.2}

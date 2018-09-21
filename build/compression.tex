@@ -24,7 +24,7 @@ $A$ sufficiently represents $E$ in this context because in \sidh we are concerne
 
 $P$ and $Q$, on the other hand, can each be represented by their $x$-coordinate (two $\mathbb{F}_{p}$ elements) and a single bit determining the correct $y$-coordinate. Therefore, this approach can represent SIDH public keys with $~6\log p$ bits.
 
-\subsection{Compression}
+\subsection{Public Key Compression}
 
 Azerderakhsh et al. showed in \cite{compwr} that the size of $pk$ can be further compressed to $4\log p$ bits. Consider the following.
 
@@ -41,13 +41,17 @@ $$
 
 And so, as long as \alice and \bob can agree on a basis $\{R_1, R_2\}$ they can both sufficiently represent one anothers public keys with only 
 
+The work of \cite{pkcomp} further developed this approach to achieve public key sizes of $\frac{7}{2}\log p$. 
+
 \noindent
 \textit{Constructing the Basis}.\\
 
-\noindent
-\textit{Pohleg-Hellman}.
 
-\subsection{Decompression}
+\noindent
+\textit{Pohlig-Hellman}. 
+
+\subsection{Decompressing Public Keys}
+
 
 \section{Implementation Details}
 \label{sec:compimplementation}
@@ -74,10 +78,14 @@ $$
 
 And so, the total size of an uncompressed signature is $size = 1 + 2 + 3 + 4$.
 
-
 \subsection{Implementation Details}
 
 \subsection{$\psi(S)$ Compression}
+
+\noindent
+\textit{Constructing the Basis}
+
+\subsection{Retrieving Correct $\psi(S)$ Values}
 
 \noindent
 \textit{Potential Tradeoffs}.

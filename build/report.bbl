@@ -1,5 +1,11 @@
 \newcommand{\etalchar}[1]{$^{#1}$}
-\begin{thebibliography}{YAJ{\etalchar{+}}12}
+\begin{thebibliography}{AJK{\etalchar{+}}16}
+
+\bibitem[AJK{\etalchar{+}}16]{compwr}
+Reza Azerderakhsh, David Jao, Kassem Kalach, Brian Koziel, and Christopher
+  Leonardi.
+\newblock Key compression for isogeny-based cryptosystems.
+\newblock 2016.
 
 \bibitem[ARU14]{rewinding}
 Andris Ambainis, Ansis Rosmanis, and Dominique Unruh.
@@ -21,6 +27,11 @@ Craig Costello, Patrick Longa, and Michael Naehrig.
 \bibitem[Cos]{pairings}
 Craig Costello.
 \newblock Pairings for beginners.
+
+\bibitem[ea18]{libpqcrypto}
+Daniel J.~Bernstein et~al.
+\newblock libpqcrypto.org, 2018.
+\newblock Available online at \url{https://libpqcrypto.org}.
 
 \bibitem[Fia89]{RSAbatch}
 Amos Fiat.
@@ -67,6 +78,11 @@ M.~Seshadri Srinath and V.~Chandrasekaren.
 Joseph~H. Silverman.
 \newblock The arithmetic of elliptic curves.
 
+\bibitem[SM18]{openqs}
+Douglas Stebila and Michele Mosca.
+\newblock Open quantum safe, 2018.
+\newblock Available online at \url{https://openquantumsafe.org/}.
+
 \bibitem[STW12]{sunsig}
 Xi~Sun, Haibo Tian, and Yumin Wang.
 \newblock Toward quantum-resistant strong designated verifier signature from
@@ -84,5 +100,11 @@ Youngho Yoo, Reza Azarderakhsh, Amir Jalali, David Jao, and Vladimir Soukharev.
 \newblock A post-quantum digital signature scheme based on supersingular
   isogenies.
 \newblock 2012.
+
+\bibitem[YAJ{\etalchar{+}}17]{yoosigcode}
+Youngho Yoo, Reza Azarderakhsh, Amir Jalali, David Jao, and Vladimir Soukharev.
+\newblock Isogeny based signatures from sidh library, 2017.
+\newblock Available online at
+  \url{https://github.com/yhyoo93/isogenysignature}.
 
 \end{thebibliography}
