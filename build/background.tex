@@ -1,14 +1,14 @@
 \chapter{Technical Background}
 
-This chapter will cover the following preliminary topics: cryptographic primitives, isogenies and their relevant properties, supersingular isogeny Diffie-Hellman (SIDH), the Fiat-Shamir construction for digital signatures (and its quantum-safe adaptation), the current landscape of isogeny-based signature schemes, and finally the C implementations of isogeny-based protocols with which we are concerned.
+This chapter will cover the following preliminary topics: cryptographic primitives, isogenies and their relevant properties, supersingular isogeny Diffie-Hellman (SIDH), the Fiat-Shamir construction for digital signatures (and its quantum-safe adaptation), the current landscape of isogeny-based signature schemes, and finally select C implementations of the isogeny-based protocols with which we are concerned.
 
 In the first section of this chapter we will take some time to introduce a few ideas from modern cryptography. We will cover key exchange, identification schemes, and signature schemes - all at as high of an abstraction level as possible. Readers familiar with these topics can skip this section without harm. 
 
 Our discussion of isogenies will begin with some basic coverage of the underlying algebra. We will provide the material necessary for the remaining sections as we build up in the level of abstraction; working our way through groups, finite fields, elliptic curves, and finally isogenies and their properties.
 
-Once we have presented the necessary algebra, we will illustrate the specifics of the supersingular isogeny Diffie-Hellman key-exchange protocol. We will spend most of this time dedicated to a modular deconstruction of the protocol, looking at the high-level procedures and algorithms which will be necessary for understanding in detail the signature protocol to come. This subsection will end with a briefing and analysis of the closely related zero-knowledge proof of identity (ZKPoI) isogeny protocol proposed in the original De Feo et al. paper \cite{djp}, as it is the foundation for the isogeny-based signature scheme presented by Yoo et al \cite{yoo}.
+Once we have presented the necessary algebra, we will illustrate the specifics of the supersingular isogeny Diffie-Hellman key-exchange protocol. We will spend most of this time dedicated to a modular deconstruction of the protocol, looking at the high-level procedures and algorithms which will be necessary for understanding in detail the signature protocol to come. This subsection will end with a briefing and analysis of the closely related zero-knowledge proof of identity (ZKPoI) protocol proposed in the original De Feo et al. paper \cite{djp}, as it is the foundation for the isogeny-based signature scheme presented by Yoo et al \cite{yoo}.
 
-In section 2.3 we will discuss the Fiat-Shamir transformation \cite{sigs}; a technique which, given a secure interactive identification scheme, creates a secure digital signature scheme. We will also look at the quantum-secure adaptation published by Unruh \cite{unruh} for applying a non-quantum-resistant transform to a quantum-resistant primitive would be rather frivolous.
+In section 2.3 we will discuss the Fiat-Shamir transformation \cite{sigs}; a technique which, given a secure interactive identification scheme, creates a secure digital signature scheme. We will also look at the quantum-secure adaptation published by Unruh \cite{unruh}, as applying a non-quantum-resistant transform to a quantum-resistant primitive would be rather frivolous.
 
 Section 2.4 will be dedicated to covering current isogeny-based signature schemes - the topic about which this dissertation is mainly concerned. We will discuss the signature scheme of Yoo et al., which is a near direct application of Unruh's work to the SIDH zero-knowledge proof of identity.
 
@@ -18,7 +18,7 @@ Finally, the last section of this chapter will introduce the SIDH C library rele
 \section{Cryptographic Primitives}
 \label{sec:crypto}
 
-Cryptographic primitives can be thought of as the basic building blocks used in the design of cryptographically secure applications and protocols. The idea of which being that if individual primitives are provably (or believeably) secure, we can be more confident in the security of the application as a whole.\footnote{This is not to say that software which implements provably secure primitives is guaranteed to be secure. In security, it should be expected that the weakest link in the system is the first to be exploited, and these weak links often lie in careless implementation details.}
+Cryptographic primitives can be thought of as the basic building blocks of cryptographically secure applications and protocols. The idea of which being that if individual primitives are provably (or believeably) secure, we can be more confident in the security of the application as a whole.\footnote{This is not to say that software which implements provably secure primitives is guaranteed to be secure. In security, it should be expected that the weakest link in the system is the first to be exploited, and these weak links often lie in careless implementation details.}
 
 To quickly recap some basic information security, there are serveral different security properties a cryptographic primitive may aim to offer:
 \begin{itemize}
@@ -36,14 +36,14 @@ The notion that the source of the information in question \textbf{cannot} deny h
 
 The security of a particular cryptographic primitive is measured by two components. The first, referred to often as a ``security guarantee", measures what conditions constitute a successful attack on the primitive. The second, known as the ``threat model", makes assumptions about the computational powers that the adversary holds. The best practice in forming security proofs is to aim for security with respect to the most easily broken security guarantee and the most challenging possible threat model. The combination of a security guarantee and threat model is known as a \emph{security goal}.
 
-Each of the primitives to come are designed to offer some utility in the communication between a given pair of entities. We will refer to these entities as Alice and Bob. The schemes we are concerned with in this dissertation are strictly \emph{public key} (also known as \emph{asymmetric key}) schemes. In public key primitives, each user possesses a \emph{public} key (visible to every user in the network) as well as a \emph{private} key, which only they have access to. 
+Each of the primitives to come are designed to offer some security to the communication between a given pair of entities. We will refer to these entities as Alice and Bob. The schemes we are concerned with in this dissertation are strictly \emph{public key} (also known as \emph{asymmetric key}) schemes. In public key primitives, each user possesses a \emph{public} key (visible to every user in the network) as well as a \emph{private} key, which only they have access to. 
 
 The first class of primitives we will discuss, \emph{key exchange} protocols, provide a means by which Alice and Bob can come to the agreement of some secret value. The goal of a key exchange protocol is for Alice and Bob, communicating over some open, insecure channel, to reach mutual agreement of the secret value while also ensuring the \emph{confidentiality} of that value. The secret value is referred to as a \emph{secret} or \emph{shared} key and is intended for use in other cryptographic primitives. 
 
 Identification schemes are a class of primitives that aim to ensure \emph{authenticity} of a given entity. If Alice is communicating with Bob and she wants to verify that Bob is who he claims to be, the two can utilize a secure identification scheme. After identification protocols we will look at signature schemes, which are somewhat of an extension of the former. Signature schemes aim to provide \emph{authenticity} on every message sent from Bob to Alice, as well as \emph{non-repudiability} and \emph{integrity} of those messages.\\
 
 \noindent
-\emph{Random Oracle Model}. Before continuing with our discussion of primitives, it is worth discussion a framework in cryptography known as the random oracle model. A ``random oracle" is a theoretical black box which, for every unique input, responds with a truly random output. That is, if a query is made to a random oracle $h$ with input $x$ (written $h(x)$) multiple times, $h$ with respond with the same (random) output every time.
+\emph{Random Oracle Model}. Before continuing with our discussion of primitives, it is worth covering briefly a framework in cryptography known as the random oracle model. A ``random oracle" is a theoretical black box which, for every unique input, responds with a truly random output. That is, if a query is made to a random oracle $h$ with input $x$ (written $h(x)$) multiple times, $h$ with respond with the same (random) output every time.
 
 For certain constructions to be proven secure, it is sometimes necessary or helpful to assume the existence of random oracles. While this assumption may seem greviously optimistic, \emph{hash functions} are a widely diployed family of functions which are believed to approach the nature of random oracles to some degree. Much of the security of modern cryptography depends on the security of such hash functions.
 
@@ -93,7 +93,9 @@ Execution of $\Pi_{kex}$ between Alice and Bob involves the following:
 \end{figure}
 
 \noindent
-$\Pi_{kex}$ is said to uphold \emph{correctness} if $k_{Alice} = k_{Bob}$ for all honestly derived keypairs $(sk_{\text{Alice}},pk_{\text{Alice}})$ and $(sk_{\text{Bob}},pk_{\text{Bob}})$. Because we deal only with correct $\Pi_{kex}$, we refer to the output of $\Pi_{kex}$ as simply $k$. Figure \ref{fig:diffiehellman} illustrates an execution of the Diffie-Hellman key exchange protocol which relies on the difficulty of the \emph{discrete logarithm} problem for its one-way function $f$.\\
+$\Pi_{kex}$ is said to uphold \emph{correctness} if $k_{Alice} = k_{Bob}$ for all honestly derived keypairs $(sk_{\text{Alice}},pk_{\text{Alice}})$ and $(sk_{\text{Bob}},pk_{\text{Bob}})$. Because we deal only with correct $\Pi_{kex}$, we refer to the output of $\Pi_{kex}$ as simply $k$. 
+
+Figure \ref{fig:diffiehellman} illustrates an execution of the Diffie-Hellman key exchange protocol which relies on the difficulty of the \emph{discrete logarithm} problem for its one-way function $f$.\\
 
 The security goal typical of a key exchange protocol is that an adversary with access to the session transcript (threat) cannot discern the resulting shared secret key from a randomly generated value (security guarantee).
 
