@@ -2,7 +2,7 @@
 \contentsline {chapter}{\numberline {1}Introduction}{2}{chapter.1}
 \contentsline {section}{\numberline {1.1}Motivation}{2}{section.1.1}
 \contentsline {subsection}{\numberline {1.1.1}Post-Quantum and Classical Performance Comparisons}{3}{subsection.1.1.1}
-\contentsline {section}{\numberline {1.2}Contributions}{4}{section.1.2}
+\contentsline {section}{\numberline {1.2}Contributions}{5}{section.1.2}
 \contentsline {subsection}{\numberline {1.2.1}Operation Batching}{5}{subsection.1.2.1}
 \contentsline {subsection}{\numberline {1.2.2}Signature Compression}{5}{subsection.1.2.2}
 \contentsline {section}{\numberline {1.3}Organization}{5}{section.1.3}

@@ -1,6 +1,28 @@
 \vspace{2in}
 \begin{abstract}
 
-<Abstract here>
+% basic introduction to the field, comprehensible to any technical person
+
+Progress in the field of quantum computing has shown that, should construction of a sufficiently powerful quantum computer become feasible, much of the cryptography used on the Internet today will be rendered insecure. In lieu of this, several ``quantum-safe" cryptographic primitives have been proposed and, in the last 10 years, and been studied in detail in academia. 
+
+% more detailed background, comprehensible to any person in a related discipline
+
+Of these classes, isogeny based cryptography is the youngest. This category of primitives is based in the algebraic geometry of a certain variety of elliptic curves.
+
+% state general problem being addressed
+
+This class of cryptographic primitives unfortunately are hindered by poor performance metrics and (in the case of the Yoo et al. signature scheme,) large communication overhead. We explore two different modifications to the implementation of this signature scheme; one with the intent of improving temporal performance, and another with the intent of reducing signature sizes.
+
+% summarise the main result (use the words "here we show" or something equivalent)
+
+In this dissertation we show that our first modification, a mechanism for batching together expensive operations across threads, can offer roughly  $x$ times faster signature signing, and $y$ times faster signature verification. Our second modification, an adaptation of the recently published public key compression algorithm for SIDH public keys or isogeny based signatures, can reduce signature sizes from ~$x$ bytes to ~$y$ bytes at the $z$ bit security level. We also explore the combination of these technique, and the potential of employing these techniques in different application settings.
+
+% explain what the main result reveals in direct comparison to what was thought to be the case previously, or how the main result adds to previous knowledge
+
+Our improvements reveal that isogeny based cryptosystems still have much potential for improved performance metrics, particularly in the domain of intelligent implementation. While some practitioners may believe isogeny-based cryptosystems to be inefficient beyond practicality, we show that these systems still have room for improvement, and with continued research can be made more efficient - and eventually practical.
+
+% provide a broader perspective, readily comprehensible to any technical person
+
+Achieving more efficient implementations for cryptographic protocols will allow us to make them more accessible. With faster and lower-overhead implementations we can implement crypto primitives on low bandwidth, low spec devices; ensuring that more and more devices can be made resistant to attacks from quantum computers.
 
 \end{abstract} 
