@@ -39,9 +39,7 @@ $$
 P = R_1 + \alpha^{-1}\beta R_2
 $$
 
-And so, as long as \alice and \bob can agree on a basis $\{R_1, R_2\}$ they can both sufficiently represent one anothers public keys with only 
-
-The work of \cite{pkcomp} further developed this approach to achieve public key sizes of $\frac{7}{2}\log p$. 
+And so, as long as \alice and \bob can agree on a basis $\{R_1, R_2\}$ they can both sufficiently represent one anothers public keys with only\\
 
 \noindent
 \textit{Constructing the Basis}.\\
@@ -49,24 +47,59 @@ The work of \cite{pkcomp} further developed this approach to achieve public key 
 \noindent
 \textit{Pohlig-Hellman}.\\
 
+The work of \cite{pkcomp} further developed this approach to achieve public key sizes of $\frac{7}{2}\log p$. 
+
+
+
 \subsection{Decompressing Public Keys}
 
 
 \section{Implementation Details}
 \label{sec:compimplementation}
 
-Recall the structure of an SIDH Yoo et al. signature, $\sigma$;
+Recall from \ref{sec:sigsbackground} the structure of a Yoo et al. signature, $\sigma$:
+$$
+\sigma = (com, ch, h, resp)
+$$
+
+\noindent
+Where
+
+\begin{itemize}
+\item $com$ is a list of $2\lambda$ pairs of supersingular elliptic curves: $\{(E_{1,1}, E_{2,1}), (E_{1,2}, E_{2,2}), ..., (E_{1,2\lambda}, E_{2,2\lambda})\}$,
+\item $ch$ is a list of $2\lambda$ randomly chosen bits,
+\item $resp$ is a list where each element is either a single elliptic curve point or a pair of points, and
+\item $h$ is a list of $2\lambda$ queries to a random oracle \textbf{G}, such that $h_{i} = \textbf{G(}resp_{i}\textbf{)}$
+\end{itemize}
+
+The representation of $\sigma$ in the C implementation offered by \cite{yoo} has a few noteworthy differences. Signatures in this setting are defined in the following way:
+\begin{figure}[!h]
+\begin{lstlisting}
+struct Signature {
+	unsigned char *Commitments1[NUM_ROUNDS];
+	unsigned char *Commitments2[NUM_ROUNDS];
+	unsigned char *HashResp;
+	unsigned char *Randoms[NUM_ROUNDS];
+	point_proj *psiS[NUM_ROUNDS];
+
+	int compBit[NUM_ROUNDS];
+	int compressed;
+};
+\end{lstlisting}
+\caption{\pbinv}
+\label{code:sigstruct}
+\end{figure}
 
 $$
 \sigma = (\code{comm}, \code{ch}, \code{h}, \code{resp})
 $$
-where \code{comm}, \code{ch}, \code{h}, and \code{resp} are arrays containing $2\lambda$ elements each, with the exception of \code{comm}, which contains $4\lambda$ elements (2 for each iteration of the procedure).
+where \code{ch}, \code{h}, and \code{resp} are arrays containing $2\lambda$ elements, and \code{comm} is an array containing $4\lambda$ elements. 
 
-\code{comm} is composed of by $\mathbb{F}_{p^2}$ elements, each denoting a curve (which acts as a commitment), in the following way:
+\code{comm} is composed of $4\lambda$ $\mathbb{F}_{p^2}$ elements, each denoting a curve (which acts as a commitment), in the following way:
 $$
 \code{comm} = [m_{0, 1}, m_{0, 2}, m_{1, 1}, m_{1, 2}, ... , m_{2\lambda, 1}, m_{2\lambda, 2}]
 $$
-\code{ch} is composed of by
+\code{ch}, the array of challenge values, contains $2\lambda$ random integers, each of value $0$ or $1$. 
 $$
 \code{ch} = []
 $$
@@ -74,8 +107,12 @@ $$
 $$
 \code{h} = [\code{keccak(resp[0])}|\code{keccak(resp[1])}, ... , \code{keccak(resp[4}\lambda\code{ - 2])}|\code{keccak(resp[4}\lambda\code{ - 1])}]
 $$
+The last component of $\sigma$ is \code{resp}, an array containing the responses to each challenge on a given commitment. 
 
 And so, the total size of an uncompressed signature is $size = 1 + 2 + 3 + 4$.
+
+\textit{Representing the Signature.} For every entry of \code{resp} there are two possibilities: 
+
 
 \subsection{Implementation Details}
 
