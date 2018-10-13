@@ -15,39 +15,44 @@ Recall from Section \ref{subsec:sidhkex} the structure of an SIDH public key, de
 $$
 pk = (E, P, Q)
 $$
-Where $E$ is a supersingular elliptic curve and $P$ and $Q$ are elliptic curve points such that $P, Q \in E$. Recall that E can be represented logically by one $\mathbb{F}_{p}$ element which denotes $A$ from the following definition of $E$:
+Where $E$ is a supersingular elliptic curve and $P$ and $Q$ are elliptic curve points such that $P, Q \in E$. Recall that E can be sufficiently represented by one $\mathbb{F}_{p}$ element which denotes $A$ from the following definition of $E$:
 $$
 E : y^2 = x^3 + Ax + B,
 $$
 
 $A$ sufficiently represents $E$ in this context because in \sidh we are concerned only with curves where $B$ = 0. 
 
-$P$ and $Q$, on the other hand, can each be represented by their $x$-coordinate (two $\mathbb{F}_{p}$ elements) and a single bit determining the correct $y$-coordinate. Therefore, this approach can represent SIDH public keys with $~6\log p$ bits.
+$P$ and $Q$, on the other hand, can each be represented by their $x$-coordinate (two $\mathbb{F}_{p}$ elements) and a single bit determining the correct $y$-coordinate. Therefore, without more sophisticated compression, an SIDH public key can be represented with $~6\log p$ bits.
 
 \subsection{Public Key Compression}
 
-Azerderakhsh et al. showed in \cite{compwr} that the size of $pk$ can be further compressed to $4\log p$ bits. Consider the following.
+Recall the discrete logarithm problem in the context of elliptic curves: given an elliptic curve group $E(K)$ and points $P, Q \in E(K)$, find $n$ such that $P = nQ$. The two-dimensional discrete log problem is then the following: given an elliptic curve group $E(K)$, two points $\{R_1, R_2\}$ generating a subgroup $S$ of $E(K)$, and an element $g \in S$, compute $\alpha$ and $\beta$ such that:
+$$
+g = \alpha R_1 + \beta R_2
+$$
+The Pohlig-Hellman algorithm can be applied to solve the discrete logarithm problem in groups whose order is a smooth integer. There is a variation of the Pohlig-Hellman algorithm which solves this two-dimensional discrete log problem with time complexity $O(\sqrt[q]\log p)$, where $q$ is the largest prime dividing |$S$| \cite{compwr}.\\
 
-Given $P \in E[\ell]$, $P$ can be represented by elements $\alpha, \beta \in \mathbb{Z}/\ell\mathbb{Z}$. These elements are computed as the coefficients of $P$ with respect to some fixed basis $\{R_1, R_2\}$ in the following manner: 
+Azerderakhsh et al. showed that the size of $pk$ can be further compressed to $4\log p$ bits \cite{compwr}. Consider the following.
+
+Given $P \in E[\ell]$, $P$ can be represented by the elements $\alpha, \beta \in \mathbb{Z}/\ell\mathbb{Z}$. These elements are computed as the coefficients of $P$ with respect to some fixed basis $\{R_1, R_2\}$ in the following manner: 
 $$
 P = \alpha R_1 + \beta R_2,
 $$
 
-Assuming $\alpha$ is invertible, we then have
-
-$$
-P = R_1 + \alpha^{-1}\beta R_2
-$$
-
-And so, as long as \alice and \bob can agree on a basis $\{R_1, R_2\}$ they can both sufficiently represent one anothers public keys with only\\
+And so, as long as \alice and \bob can seperately agree on a basis $\{R_1, R_2\}$ they can both sufficiently represent one anothers public keys with only\\
 
 \noindent
 \textit{Constructing the Basis}.\\
 
-\noindent
-\textit{Pohlig-Hellman}.\\
+
 
 The work of \cite{pkcomp} further developed this approach to achieve public key sizes of $\frac{7}{2}\log p$. 
+
+Assuming $\alpha$ is invertible, we then have
+
+$$
+g = R_1 + \alpha^{-1}\beta R_2
+$$
 
 
 
@@ -86,7 +91,7 @@ struct Signature {
 	int compressed;
 };
 \end{lstlisting}
-\caption{\pbinv}
+\caption{C representation of a Yoo et al. signature}
 \label{code:sigstruct}
 \end{figure}
 
