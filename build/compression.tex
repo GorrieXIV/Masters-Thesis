@@ -22,24 +22,22 @@ $$
 
 $A$ sufficiently represents $E$ in this context because in \sidh we are concerned only with curves where $B$ = 0. 
 
-$P$ and $Q$, on the other hand, can each be represented by their $x$-coordinate (two $\mathbb{F}_{p}$ elements) and a single bit determining the correct $y$-coordinate. Therefore, without more sophisticated compression, an SIDH public key can be represented with $~6\log p$ bits.
+$P$ and $Q$, on the other hand, can each be represented by their $x$-coordinate (two $\mathbb{F}_{p}$ elements) and a single bit determining the correct $y$-coordinate. Therefore, without more sophisticated compression, an \sidh public key can be represented with $~6\log p$ bits.
 
 \subsection{Public Key Compression}
 
-Recall the discrete logarithm problem in the context of elliptic curves: given an elliptic curve group $E(K)$ and points $P, Q \in E(K)$, find $n$ such that $P = nQ$. The two-dimensional discrete log problem is then the following: given an elliptic curve group $E(K)$, two points $\{R_1, R_2\}$ generating a subgroup $S$ of $E(K)$, and an element $g \in S$, compute $\alpha$ and $\beta$ such that:
+Recall the discrete logarithm problem in the context of elliptic curves: given an elliptic curve group $E(K)$ and points $P, Q \in E(K)$, find $n$ such that $P = nQ$. The two-dimensional discrete log problem is then the following: given an elliptic curve group $E(K)$, two points $\{R_1, R_2\}$ generating a subgroup $S$ of $E(K)$, and an element $s \in S$, compute $\alpha$ and $\beta$ such that:
 $$
-g = \alpha R_1 + \beta R_2
+s = \alpha R_1 + \beta R_2
 $$
-The Pohlig-Hellman algorithm can be applied to solve the discrete logarithm problem in groups whose order is a smooth integer. There is a variation of the Pohlig-Hellman algorithm which solves this two-dimensional discrete log problem with time complexity $O(\sqrt[q]\log p)$, where $q$ is the largest prime dividing |$S$| \cite{compwr}.\\
+The Pohlig-Hellman algorithm can be applied to solve the discrete logarithm problem in groups whose order is a smooth integer, and there is a variation of this algorithm which solves this two-dimensional discrete log problem with time complexity $O(\sqrt[q]\log p)$, where $q$ is the largest prime dividing $\vert S\vert$ \cite{compwr}.\\
 
-Azerderakhsh et al. showed that the size of $pk$ can be further compressed to $4\log p$ bits \cite{compwr}. Consider the following.
+\noindent
+Azerderakhsh et al. demonstrate a technique for further compressing SIDH public keys. Consider the following:
 
-Given $P \in E[\ell]$, $P$ can be represented by the elements $\alpha, \beta \in \mathbb{Z}/\ell\mathbb{Z}$. These elements are computed as the coefficients of $P$ with respect to some fixed basis $\{R_1, R_2\}$ in the following manner: 
-$$
-P = \alpha R_1 + \beta R_2,
-$$
+Recall that in SIDH (see \ref{sec:sidh}) we have \alice's public key $\pka = (E_{\ba}, \pa(\genpb),\pa(\genqb))$ and her private key $\ska = \{\ma, \na\}$ such that $ker(\pa) = \langle [\ma]\genpa, [\na]\genqa\rangle$. , and as such the Pohlig-Hellman algorithm can be used to resolve $\pa(\genpb) = \alpha_P R_1 + \beta_P R_2$ and $\pa(\genqb) = \alpha_Q R_1 + \beta_Q R_2$.
 
-And so, as long as \alice and \bob can seperately agree on a basis $\{R_1, R_2\}$ they can both sufficiently represent one anothers public keys with only\\
+And so, as long as \alice and \bob can seperately agree on a basis $\{R_1, R_2\}$ they can both sufficiently represent one anothers public keys with only $4\log p$ bits.\\
 
 \noindent
 \textit{Constructing the Basis}.\\
