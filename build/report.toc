@@ -42,26 +42,25 @@
 \contentsline {chapter}{\numberline {4}Compressing Signatures}{55}{chapter.4}
 \contentsline {section}{\numberline {4.1}SIDH Key Compression Background}{55}{section.4.1}
 \contentsline {subsection}{\numberline {4.1.1}Public Key Compression}{56}{subsection.4.1.1}
-\contentsline {subsection}{\numberline {4.1.2}Decompressing Public Keys}{56}{subsection.4.1.2}
-\contentsline {section}{\numberline {4.2}Implementation Details}{56}{section.4.2}
-\contentsline {subsection}{\numberline {4.2.1}Implementation Details}{57}{subsection.4.2.1}
-\contentsline {subsection}{\numberline {4.2.2}$\psi (S)$ Compression}{57}{subsection.4.2.2}
-\contentsline {subsection}{\numberline {4.2.3}Retrieving Correct $\psi (S)$ Values}{57}{subsection.4.2.3}
-\contentsline {section}{\numberline {4.3}Results}{58}{section.4.3}
-\contentsline {subsection}{\numberline {4.3.1}Analysis}{58}{subsection.4.3.1}
-\contentsline {subsection}{\numberline {4.3.2}Potential Performance Improvements}{58}{subsection.4.3.2}
-\contentsline {chapter}{\numberline {5}Discussion \& Conclusion}{59}{chapter.5}
-\contentsline {section}{\numberline {5.1}Results \& Comparisons}{59}{section.5.1}
-\contentsline {subsection}{\numberline {5.1.1}Combining Batching \& Compression}{59}{subsection.5.1.1}
-\contentsline {section}{\numberline {5.2}Additional Opportunities for Batching}{59}{section.5.2}
-\contentsline {section}{\numberline {5.3}Future Work}{59}{section.5.3}
-\contentsline {chapter}{Appendices}{60}{section*.27}
-\contentsline {chapter}{\numberline {A}$\texttt {SIDH}_{\texttt {C}}$\xspace Functions}{61}{Appendix.a.A}
-\contentsline {section}{\numberline {A.1}$\mathbb {F}_p$ and $\mathbb {F}_{p^2}$ Functions}{61}{section.a.A.1}
-\contentsline {section}{\numberline {A.2}Isogeny and Point-wise Functions}{61}{section.a.A.2}
-\contentsline {subsection}{\numberline {A.2.1}\texttt {j\_inv}}{61}{subsection.a.A.2.1}
-\contentsline {subsection}{\numberline {A.2.2}\texttt {j\_inv\_batch}}{61}{subsection.a.A.2.2}
-\contentsline {subsection}{\numberline {A.2.3}\texttt {inv\_4\_way}}{62}{subsection.a.A.2.3}
-\contentsline {subsection}{\numberline {A.2.4}\texttt {inv\_4\_way\_batch}}{62}{subsection.a.A.2.4}
-\contentsline {section}{\numberline {A.3}Key Exchange Functions}{63}{section.a.A.3}
-\contentsline {section}{\numberline {A.4}Signature Layer Functions}{65}{section.a.A.4}
+\contentsline {section}{\numberline {4.2}Implementation Details}{57}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}Integrating with $\texttt {SIDH}_{\texttt {C}}$\xspace }{58}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}$\psi (S)$ Compression}{58}{subsection.4.2.2}
+\contentsline {subsection}{\numberline {4.2.3}Retrieving Correct $\psi (S)$ Values}{59}{subsection.4.2.3}
+\contentsline {section}{\numberline {4.3}Results}{59}{section.4.3}
+\contentsline {subsection}{\numberline {4.3.1}Analysis}{59}{subsection.4.3.1}
+\contentsline {subsection}{\numberline {4.3.2}Potential Performance Improvements}{59}{subsection.4.3.2}
+\contentsline {chapter}{\numberline {5}Discussion \& Conclusion}{60}{chapter.5}
+\contentsline {section}{\numberline {5.1}Results \& Comparisons}{60}{section.5.1}
+\contentsline {subsection}{\numberline {5.1.1}Combining Batching \& Compression}{60}{subsection.5.1.1}
+\contentsline {section}{\numberline {5.2}Additional Opportunities for Batching}{60}{section.5.2}
+\contentsline {section}{\numberline {5.3}Future Work}{60}{section.5.3}
+\contentsline {chapter}{Appendices}{61}{section*.30}
+\contentsline {chapter}{\numberline {A}$\texttt {SIDH}_{\texttt {C}}$\xspace Functions}{62}{Appendix.a.A}
+\contentsline {section}{\numberline {A.1}$\mathbb {F}_p$ and $\mathbb {F}_{p^2}$ Functions}{62}{section.a.A.1}
+\contentsline {section}{\numberline {A.2}Isogeny and Point-wise Functions}{62}{section.a.A.2}
+\contentsline {subsection}{\numberline {A.2.1}\texttt {j\_inv}}{62}{subsection.a.A.2.1}
+\contentsline {subsection}{\numberline {A.2.2}\texttt {j\_inv\_batch}}{62}{subsection.a.A.2.2}
+\contentsline {subsection}{\numberline {A.2.3}\texttt {inv\_4\_way}}{63}{subsection.a.A.2.3}
+\contentsline {subsection}{\numberline {A.2.4}\texttt {inv\_4\_way\_batch}}{63}{subsection.a.A.2.4}
+\contentsline {section}{\numberline {A.3}Key Exchange Functions}{64}{section.a.A.3}
+\contentsline {section}{\numberline {A.4}Signature Layer Functions}{66}{section.a.A.4}

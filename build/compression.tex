@@ -3,9 +3,9 @@
 
 Our second contribution, also in the form of an addition to the \sidh signature extension, is a mechanism for compressing signatures. The following chapter will cover the compression technique used. This chapter, much like the last, will be split into three sections: a brief coverage of the employed compression technique, the details of our implementation and integration of this technique into \sidh, and finally an analysis of the results of this contribution.
 
-In the first section of this chapter, we discuss the SIDH public key compression technique outlined in \cite{compwr}. We attempt to provide a sufficient overview of the technique while only covering in detail the components that are of significant relevance to our implementation. For those who seek to better understand the ins and outs of this technique should direct themselves to the original paper.  
+In the first section of this chapter, we discuss the SIDH public key compression technique resulting from combined efforts of Azerderakhsh et al. \cite{compwr} and Costello et al. \cite{pkcomp}. We attempt to provide a sufficient overview of the technique while only covering in detail the components that are of significant relevance to our implementation. Those who seek to better understand the ins and outs of this technique should direct themselves to the original papers.  
 
-The second Section covers in detail how we apply this public key compression to Yoo et al. signatures. We make use of the functions offered in \cite{pkcomp} which implement the methods of \cite{compwr} for public key compression. This code was first made available in the second installment of Microsoft's SIDH library.
+The second Section covers in detail how we apply this public key compression to Yoo et al. signatures. We make use of the functions offered by Costello et al. which implement the previously mentioned technique. This code was first made available in the second installment of Microsoft's SIDH library \cite{sidhcode}.
 
 Finally, we round off the Chapter with an analysis of the memory improvement offered by this technique. We contrast this spatial improvement with the computational cost of compressing points, and discuss the practicality of employing this technique. 
 
@@ -30,21 +30,28 @@ Recall the discrete logarithm problem in the context of elliptic curves: given a
 $$
 s = \alpha R_1 + \beta R_2
 $$
-The Pohlig-Hellman algorithm can be applied to solve the discrete logarithm problem in groups whose order is a smooth integer, and there is a variation of this algorithm which solves this two-dimensional discrete log problem with time complexity $O(\sqrt[q]\log p)$, where $q$ is the largest prime dividing $\vert S\vert$ \cite{compwr}.\\
+The Pohlig-Hellman algorithm can be applied to solve the discrete logarithm problem in groups whose order is a smooth integer \cite{ph}, and there is a variation of this algorithm which solves this two-dimensional discrete log problem with time complexity $O(\sqrt[q]\log p)$, where $q$ is the largest prime dividing $\vert S\vert$ \cite{genph}.\\
 
 \noindent
-Azerderakhsh et al. demonstrate a technique for further compressing SIDH public keys. Consider the following:
+Azerderakhsh et al. show that an SIDH public key can be further compressed in the following way. Taking \alice's SIDH key pair, for example, we have her public key $\pka = (E_{\ba}, \pa(\genpb),\pa(\genqb))$ and her private key $\ska = \{\ma, \na\}$ such that $ker(\pa) = \langle [\ma]\genpa, [\na]\genqa\rangle$. Because $\{\genpb, \genqb\}$ generates the torsion subgroup $E[\lbeb]$, we have that $\pa(\genpb) \in E[\lbeb]$ and $\pa(\genqb) \in E[\lbeb]$. Thus, the Pohlig-Hellman algorithm can be used to resolve $\pa(\genpb) = \alpha_P R_1 + \beta_P R_2$ and $\pa(\genqb) = \alpha_Q R_1 + \beta_Q R_2$ where $\{R_1, R_2\}$ is a basis for $E[\lbeb]$ \cite{compwr}.
 
-Recall that in SIDH (see \ref{sec:sidh}) we have \alice's public key $\pka = (E_{\ba}, \pa(\genpb),\pa(\genqb))$ and her private key $\ska = \{\ma, \na\}$ such that $ker(\pa) = \langle [\ma]\genpa, [\na]\genqa\rangle$. , and as such the Pohlig-Hellman algorithm can be used to resolve $\pa(\genpb) = \alpha_P R_1 + \beta_P R_2$ and $\pa(\genqb) = \alpha_Q R_1 + \beta_Q R_2$.
-
-And so, as long as \alice and \bob can seperately agree on a basis $\{R_1, R_2\}$ they can both sufficiently represent one anothers public keys with only $4\log p$ bits.\\
+\alice then, instead of sending \bob $(E_{\ba}, \pa(\genpb),\pa(\genqb))$, can send $(E_{\ba}, \alpha_P, \beta_P, \alpha_Q, \beta_Q)$.\footnote{The general approach outlined by Azerderakhsh et al. (outside of the \sidh context, e.g.\ where representing $E$ requires two $\mathbb{F}_{p^2}$ elements) is to send the $j$-invariant of $E$, which can be represented with the same amount of space as one $\mathbb{F}_{p^2}$ element.} And so, as long as \alice and \bob can seperately generate the same $\{R_1, R_2\}$, they can both sufficiently represent one anothers public keys with only $4\log p$ bits.\\
 
 \noindent
-\textit{Constructing the Basis}.\\
+\textit{Constructing the Basis}. Constructing $R_1$ and $R_2$ can be done with a relatively simple yet time consuming process. We will continue to use the compression of \alice's public key, $\pka$, as our example.
+\begin{enumerate}
+\item Choose a random point $P \leftarrow_{\$} E(\mathbb{F}_{p^2})$.
+\item Multiply $P$ by $\lbeb \dot f$ to obtain $P'$, the order of which will divide $\lbeb$.
+\item Check the order of $P'$ by multiplying it by powers of $\la$ until the identity is given.
+\item If the order is $\lbeb$, set $R_1 = P'$, otherwise return to step one.
+\item Repeat the same process for a new random point $Q$ until $Q'$ of order $\lbeb$ is found.
+\item Check that $Q'$ is independent of $R_1$ by computing their Weil pairing: $e(R_1, Q')$.
+\item If the pairing results in anything other than 1, set $R_2 = Q'$, otherwise return to step 5.
+\end{enumerate}
+The same $(R_1, R_2)$ pair will be derived by both \alice and \bob if and only if they use a psuedorandom number generator for generating $P$ and $Q$ AND they run their PRNGs with identical seeds \cite{pwcomp}.\\
 
-
-
-The work of \cite{pkcomp} further developed this approach to achieve public key sizes of $\frac{7}{2}\log p$. 
+\noindent
+\textit{Further Compression}. The work of Costello et al. further developed this approach to achieve public key sizes of $\frac{7}{2}\log p$ \cite{pkcomp}. 
 
 Assuming $\alpha$ is invertible, we then have
 
@@ -52,9 +59,12 @@ $$
 g = R_1 + \alpha^{-1}\beta R_2
 $$
 
+And, thus, \alice has reduced the information she needs to send over the wire from $(E_{\ba}, \pa(\genpb), \pa(\genqb))$ to $(E_{\ba}, \alpha'_{A}, \alpha'_{B})$. This reduces her public key from the original $6\log p$ bits, as in SIDH, to $\frac{7}{2}\log p$ bits.\\
 
+\noindent
+\textit{Decompressing Public Keys}. Decompression for this technique varies depending on the setting, but for our purpose we are concerned only with how decompression is done for SIDH key exchange. \bob computes the basis $\{R_1, R_2\}$ by seeding his PRNG with the same value as \alice. \bob then uses $\alpha_P, \beta_P, \alpha_Q$ and $\beta_Q$ to recompute $\psi_{\ba}(\pa(\genpb))$ and $\psi_{\ba}(\pa(\genqb))$. Then \bob computes the isogeny $\phi'_{\rb} : E*_{\ba} \rightarrow E_{\ba\rb}$ with $ker(\phi'_{B}) =$ \cite{compwr}. 
 
-\subsection{Decompressing Public Keys}
+\alice then acts identically on \bob's now compressed public key, $\pkb$, and the two arrive at the same shared secret, the $j$-invariant of $E_{\ba\rb}$, just as in the original SIDH key exchange. 
 
 
 \section{Implementation Details}
@@ -117,7 +127,44 @@ And so, the total size of an uncompressed signature is $size = 1 + 2 + 3 + 4$.
 \textit{Representing the Signature.} For every entry of \code{resp} there are two possibilities: 
 
 
-\subsection{Implementation Details}
+\subsection{Integrating with \sidh}
+
+\begin{figure}[!h]
+\begin{lstlisting}
+generate_3_torsion_basis(A_temp, P, Q, CurveIsogeny);
+\end{lstlisting}
+\caption{Generate a basis for $E[\lbeb]$}
+\label{code:sigstruct}
+\end{figure}
+
+\begin{figure}[!h]
+\begin{lstlisting}
+for (int i=0; i < 238; i++) {
+	xTPL(Pnot, Pnot, A_temp, CurveIsogeny->C);
+	xTPL(Qnot, Qnot, A_temp, CurveIsogeny->C);
+
+	if (is_felm_zero(((felm_t*)Pnot->Z)[0]) 
+	 && is_felm_zero(((felm_t*)Pnot->Z)[1])) {
+		return ERROR;
+	}
+	if (is_felm_zero(((felm_t*)Qnot->Z)[0]) 
+	 && is_felm_zero(((felm_t*)Qnot->Z)[1])) {
+		return ERROR;
+	}
+}
+\end{lstlisting}
+\caption{Checking the order of the newly constructed basis}
+\label{code:checkorder}
+\end{figure}
+
+\begin{figure}[!h]
+\begin{lstlisting}
+Mont_ladder(R1->x, a, aR1, Pnot, A24, CurveIsogeny->oBbits, CurveIsogeny->owordbits, CurveIsogeny);
+Mont_ladder(R2->x, b, bR2, Qnot, A24, CurveIsogeny->oBbits, CurveIsogeny->owordbits, CurveIsogeny);
+\end{lstlisting}
+\caption{Generate a basis for $E[\lbeb]$}
+\label{code:sigstruct}
+\end{figure}
 
 \subsection{$\psi(S)$ Compression}
 
