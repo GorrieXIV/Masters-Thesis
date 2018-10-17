@@ -41,11 +41,12 @@
 \contentsline {subsection}{\numberline {3.3.1}Analysis}{53}{subsection.3.3.1}
 \contentsline {chapter}{\numberline {4}Compressing Signatures}{55}{chapter.4}
 \contentsline {section}{\numberline {4.1}SIDH Key Compression Background}{55}{section.4.1}
-\contentsline {subsection}{\numberline {4.1.1}Public Key Compression}{56}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.1}Compressing SIDH Public Keys}{56}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}Improvements to SIDH Key Compression}{57}{subsection.4.1.2}
 \contentsline {section}{\numberline {4.2}Implementation Details}{57}{section.4.2}
 \contentsline {subsection}{\numberline {4.2.1}Integrating with $\texttt {SIDH}_{\texttt {C}}$\xspace }{58}{subsection.4.2.1}
-\contentsline {subsection}{\numberline {4.2.2}$\psi (S)$ Compression}{58}{subsection.4.2.2}
-\contentsline {subsection}{\numberline {4.2.3}Retrieving Correct $\psi (S)$ Values}{59}{subsection.4.2.3}
+\contentsline {subsection}{\numberline {4.2.2}$\psi (S)$ Compression}{59}{subsection.4.2.2}
+\contentsline {subsection}{\numberline {4.2.3}Verifying A Compressed Signature}{59}{subsection.4.2.3}
 \contentsline {section}{\numberline {4.3}Results}{59}{section.4.3}
 \contentsline {subsection}{\numberline {4.3.1}Analysis}{59}{subsection.4.3.1}
 \contentsline {subsection}{\numberline {4.3.2}Potential Performance Improvements}{59}{subsection.4.3.2}
