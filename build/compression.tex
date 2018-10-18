@@ -5,13 +5,15 @@ Our second contribution, also in the form of an addition to the \sidh signature 
 
 In the first section of this chapter, we discuss the SIDH public key compression technique resulting from combined efforts of Azerderakhsh et al. \cite{compwr} and Costello et al. \cite{pkcomp}. We attempt to provide a sufficient overview of the technique while only covering in detail the components that are of significant relevance to our implementation. Those who seek to better understand the ins and outs of this technique should direct themselves to the original papers.  
 
-The second Section covers in detail how we apply this public key compression to Yoo et al. signatures. We make use of the functions offered by Costello et al. which implement the previously mentioned technique. This code was first made available in the second installment of Microsoft's SIDH library \cite{sidhcode}.
+The second section covers in detail how we apply this public key compression to Yoo et al. signatures. We make use of the functions offered by Costello et al. which implement the previously mentioned technique. This code was first made available in the second installment of Microsoft's SIDH library \cite{sidhcode}.
 
 Finally, we round off the Chapter with an analysis of the memory improvement offered by this technique. We contrast this spatial improvement with the computational cost of compressing points, and discuss the practicality of employing this technique. 
 
 \section{SIDH Key Compression Background}
 
-Recall from Section \ref{subsec:sidhkex} the structure of an SIDH public key, denoted $pk$;
+In this section we will breifly cover the literature surrounding the compression technique that we employ. This technique was first outlined by Azerderakhsh et al. \cite{compwr} and later improved upon by Costello et al. \cite{pkcomp}. Here we investigate the details of these works that are relevant to our implementation.
+
+First, recall from Section \ref{subsec:sidhkex} the structure of an SIDH public key, denoted $pk$;
 $$
 pk = (E, P, Q)
 $$
@@ -59,7 +61,9 @@ The same $(R_1, R_2)$ pair will be derived by both \alice and \bob if and only i
 \subsection{Improvements to SIDH Key Compression}
 \label{subsec:costcompression}
 
-The work of Costello et al. further developed this approach to achieve public key sizes of $\frac{7}{2}\log p$ \cite{pkcomp}. In addition to this, Costello et al. also outline several algorithmic improvements which decrease the runtime of this compression mechanism.\\
+The work of Costello et al. further developed this approach to achieve public key sizes of $\frac{7}{2}\log p$ \cite{pkcomp}. In addition to this, Costello et al. also outline several algorithmic improvements which decrease the runtime of this compression mechanism.
+
+Many of the algorithms offered by Costello et al. can be treated as black-boxes in our setting, and so finer grain details of their work on efficient compression are ommitted.\\
 
 \noindent
 \textit{Improved Compression.} Take \alice's public key $\pka$, compressed via the Azerderakhsh et al. technique, to be $(E_{\ba}, \alpha_{P}, \beta_{P}, \alpha_{Q}, \beta_{Q})$. Therefore we have
@@ -71,25 +75,39 @@ Q = \alpha_{Q}R_1 + \beta_{Q}R_2;
 $$
 Where $\{R_1, R_2\}$ forms a basis of $E_{\ba}[\laea]$, and $P$ and $Q$ are exactly the elliptic curve point components of \alice's original, uncompressed public key.
 
-Given that $P$ has order $\laea$, we have that either $\alpha_{P} \in \mathbb{Z}^{*}_{n}$ or $\beta_{P} \in \mathbb{Z}^{*}_{n}$. Assuming $\alpha$ is invertible, we then have
-
+From here, Costello et al. note the following: The end goal of the key exchange (in our running example) is for \bob to compute $\langle P + \mb Q\rangle$, where $\mb$ is \bob's secretly generated value. Given that $P$ has order $n = \laea$, we have that either $\alpha_{P} \in \mathbb{Z}^{*}_{n}$ or $\beta_{P} \in \mathbb{Z}^{*}_{n}$. It then follows that
 $$
-g = R_1 + \alpha^{-1}\beta R_2
+\langle P + \mb Q \rangle =  \begin{cases}
+							\langle \alpha^{-1}_{P}P + \alpha^{-1}\mb Q \rangle & if \alpha_{P} \in \mathbb{Z}^{*}_{n}\\
+							\langle \beta^{-1}_{P}P + \beta^{-1}\mb Q \rangle & if \beta_{P} \in \mathbb{Z}^{*}_{n}
+							\end{cases}
+$$
+And so, computing $\langle P + \mb Q\rangle$ to arrive at the shared secret does not require recomputing $P$ and $Q$. Instead, the scalar factors of $P$ and $Q$ with respect to the generated basis can be normalized to yield
+$$
+(\alpha^{-1}_{P}P, \alpha^{-1}_{P}Q) = \begin{cases}
+							(R_{1} + \alpha^{-1}_{P}\beta_{P} R_{2}, \alpha^{-1}_{P}\alpha_{Q}R_{1} + \alpha^{-1}_{P}\beta_{Q}R_{2}  & if \alpha_{P} \in \mathbb{Z}^{*}_{n}\\
+							(R_{1} + \beta^{-1}_{P}\alpha_{P} R_{2}, \beta^{-1}_{P}\alpha_{Q}R_{1} + \beta^{-1}_{P}\beta_{Q}R_{2} & if \beta_{P} \in \mathbb{Z}^{*}_{n}
+						   	\end{cases}
 $$
 
-And, thus, \alice has reduced the information she needs to send over the wire from $(E_{\ba}, \pa(\genpb), \pa(\genqb))$ to $(E_{\ba}, \alpha'_{A}, \alpha'_{B})$. This reduces her public key from the original $6\log p$ bits, as in SIDH, to $\frac{7}{2}\log p$ bits.\\
+And, thus, \alice has reduced the information she needs to send over the wire from $(E_{\ba}, \pa(\genpb), \pa(\genqb))$ to the following:
+$$
+\pka = \begin{cases}
+	   (E_{\ba}, 0, \alpha^{-1}_{P}\beta_{P}, \alpha^{-1}_{P}\alpha_{Q}, \alpha^{-1}_{P}\beta_{Q}) & \text{if} \alpha_{P} \in \mathbb{Z}^{*}_{n}\\
+	   (E_{\ba}, 1, \beta^{-1}_{P}\alpha_{P}, \beta^{-1}_{P}\alpha_{Q}, \beta^{-1}_{P}\beta_{Q}) & \text{if} \beta_{P} \in \mathbb{Z}^{*}_{n}
+	   \end{cases}
+$$
+This reduction from 4 $\mathbb{Z}^{*}_{n}$ elements to 3 takes \alice's compressed public key from $4\log p$ bits to $\frac{7}{2}\log p$ bits.\\
 
 \noindent
-\textit{Faster Basis Generation.}\\
-
-\noindent
-\textit{Faster Decompression}\\
-
+\textit{Alternative Decompression.} Due to the loss of information in either $\alpha_{P}$ or $\beta_{P}$ in this modification to the compression technique, an alternative route to secret agreement is required. 
 
 In the following section, we outline in detail how we employ the algorithmic improvements of Costello et al, and C implementations thereof, to compress Yoo et al. isogeny-based signatures. 
 
 \section{Implementation Details}
 \label{sec:compimplementation}
+
+In this subsection we demonstrate how the previously detailed public key compression technique can be used to compress Yoo et al.'s isogeny-based signatures. Again, we will turn to the \sidh library and reference portions of C code (some contributed by Patrick Longa \cite{sidhcode}, some by Yoo and his associates \cite{yoosigcode}, and some by us,) to investigate details of the implementations performance.
 
 Recall from \ref{sec:sigsbackground} the structure of a Yoo et al. signature, $\sigma$:
 $$
@@ -187,6 +205,71 @@ Mont_ladder(R2->x, b, bR2, Qnot, A24, CurveIsogeny->oBbits, CurveIsogeny->owordb
 \label{code:sigstruct}
 \end{figure}
 
+\begin{center}
+\begin{tikzpicture}
+	[scale=1, auto,
+		block/.style={
+		  rectangle,
+		  draw=black,
+		  thick,
+		  fill=gray!20,
+		  text width=6em,
+		  align=center,
+		  rounded corners,
+		  minimum height=2em
+		},
+		blockgreen/.style={
+		  rectangle,
+		  draw=black,
+		  thick,
+		  fill=green!20,
+		  text width=7.3em,
+		  align=center,
+		  rounded corners,
+		  minimum height=2em
+		},
+		batchblock/.style={
+		  rectangle,
+		  draw=black,
+		  thick,
+		  fill=gray!20,
+		  text width=7em,
+		  align=center,
+		  rounded corners,
+		  minimum height=4em
+		}
+	]
+	\draw (2.5,4.5) node[block] {\code{sign\_thread}};
+	\draw[->, line width=1.0] (4,4.5) -- (4.8,4.5) node {};
+	%\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (4.7,3.2) -- (4.7,5.7) node [black,midway,xshift=-0.6cm,block] {\code{sign\_thread}};
+	\draw (6.5,3.5) node[blockgreen] (JINV1) {\code{j\_inv\_batch}};
+	\draw (6.5,4.5) node[blockgreen] (INV1) {\code{inv\_4\_way\_batch}};
+	\draw (0.7, 4.5) node {1};
+	
+	\draw[very thick, loosely dotted] (2,3.7) -- (2,2.2) node {};
+	
+	\draw (2.5,1.5) node[block] {\code{sign\_thread}};
+	\draw[->, line width=1.0] (4,1.5) -- (4.8,1.5) node {};
+	%\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (4.7,0.3) -- (4.7,2.8) node [black,midway,xshift=-0.6cm,block] {\code{sign\_thread}};
+	\draw (6.5,0.5) node[blockgreen] (JINV2) {\code{j\_inv\_batch}};
+	\draw (6.5,1.5) node[blockgreen] (INV2) {\code{inv\_4\_way\_batch}};
+	\draw (0.7, 1.5) node {248};
+	
+	\draw[->, line width=1.0] (4.4,4.5) to [out=-90] (JINV1.west);
+	\draw[->, line width=1.0] (4.4,1.5) to [out=-90] (JINV2.west);
+
+	\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (0.5,1) -- (0.5,5.0) node [black,midway,xshift=-0.6cm,block] {\code{isogeny\_sign}};
+	
+	\draw (12,3.5) node[batchblock] (BATCH1) {\code{pb\_inv}};
+	\draw (12,1.5) node[batchblock] (BATCH2) {\code{pb\_inv}};
+	
+	\draw[->, line width=1.0] (JINV1.east) to (BATCH1.west) node {};
+	\draw[->, line width=1.0] (JINV2.east) to (BATCH1.west) node {};
+	\draw[->, line width=1.0] (INV1.east) to (BATCH2.west) node {};
+	\draw[->, line width=1.0] (INV2.east) to (BATCH2.west) node {};
+\end{tikzpicture}
+\end{center}
+
 \subsection{$\psi(S)$ Compression}
 
 \noindent
@@ -194,7 +277,7 @@ Mont_ladder(R2->x, b, bR2, Qnot, A24, CurveIsogeny->oBbits, CurveIsogeny->owordb
 
 \subsection{Verifying A Compressed Signature}
 
-If we look back to the SIDH public key decompression mechanism described in Subsection \ref{subsec:costcompression}, we note that the aim is \textit{not} to reconstruct the originally compressed values ($\pa(\genpb)$ and $\pa(\genqb)$ in \alice's case.) Instead, an instance of compressed SIDH key exchange is able to arrive at the shared secret $j(E_{\ba\rb})$ between \alice and \bob without reconstructing the original points, by absorbing the constants into the shared secret value.
+If we look back to the SIDH public key decompression mechanism described in Subsection \ref{subsec:costcompression}, we note again that the aim is \textit{not} to reconstruct the originally compressed values ($\pa(\genpb)$ and $\pa(\genqb)$ in \alice's case.) Instead, an instance of compressed SIDH key exchange is able to arrive at the shared secret $j(E_{\ba\rb})$ between \alice and \bob without reconstructing the original points, by absorbing the constants into the shared secret value.
 
 And so, the C code for the decompression procedure offered by Costello et al. cannot be directly applied in our setting, as it will not reconstruct the original $\psi{S}$ value. Moreover,
 

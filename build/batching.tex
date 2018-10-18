@@ -440,7 +440,7 @@ $$
 
 We will now take the work of the previous subsection and explain in detail how it can be applied to the Yoo et al. signature layer of \sidh. We will begin with an examination of the lower-level details of our procedures implementation. In this first subsection, we transcribe \textbf{PartialBatchedInversion} to its C variant, \code{pb\_inv}, which is defined almost entirely by means of the \sidh API. We will discuss some design specifics of \code{pb\_inv}, and look breifly at the security of the function with respect to the signature scheme.
 
-After outline the specifics of our C implementation, we will move onto a high-level overview of the signature layer architecture. This mapping will allow efficient highlighting of execution paths in the codebase where batching inversions could offer a performance increase. Additionally, we will discuss properties of the signature scheme that can be leveraged to optimize the performance increases offered by \pbinv.
+After outlining the specifics of our C implementation, we will move onto a high-level overview of the signature layer architecture. This mapping will allow efficient highlighting of execution paths in the codebase where batching inversions could offer a performance increase. Additionally, we will discuss properties of the signature scheme that can be leveraged to optimize the performance increases offered by \pbinv.
 
 \subsection{Implementation \& Design Decisions}
 
