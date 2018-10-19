@@ -11,8 +11,9 @@ Finally, we round off the Chapter with an analysis of the memory improvement off
 
 \section{SIDH Key Compression Background}
 
-In this section we will breifly cover the literature surrounding the compression technique that we employ. This technique was first outlined by Azerderakhsh et al. \cite{compwr} and later improved upon by Costello et al. \cite{pkcomp}. Here we investigate the details of these works that are relevant to our implementation.
+In this section we will breifly cover the literature surrounding the compression technique that we employ. This technique was first outlined by Azerderakhsh et al. \cite{compwr} and later improved upon by Costello et al. \cite{pkcomp}. Here we investigate the details of these works that are relevant to our implementation.\\
 
+\noindent
 First, recall from Section \ref{subsec:sidhkex} the structure of an SIDH public key, denoted $pk$;
 $$
 pk = (E, P, Q)
@@ -107,8 +108,9 @@ In the following section, we outline in detail how we employ the algorithmic imp
 \section{Implementation Details}
 \label{sec:compimplementation}
 
-In this subsection we demonstrate how the previously detailed public key compression technique can be used to compress Yoo et al.'s isogeny-based signatures. Again, we will turn to the \sidh library and reference portions of C code (some contributed by Patrick Longa \cite{sidhcode}, some by Yoo and his associates \cite{yoosigcode}, and some by us,) to investigate details of the implementations performance.
+In this subsection we demonstrate how the previously detailed public key compression technique can be used to compress Yoo et al.'s isogeny-based signatures. Again, we will turn to the \sidh library and reference portions of C code (some contributed by Patrick Longa \cite{sidhcode}, some by Yoo and his associates \cite{yoosigcode}, and some by us,) to investigate details of our implementations performance.\\
 
+\noindent
 Recall from \ref{sec:sigsbackground} the structure of a Yoo et al. signature, $\sigma$:
 $$
 \sigma = (com, ch, h, resp)
@@ -120,53 +122,133 @@ Where
 \begin{itemize}
 \item $com$ is a list of $2\lambda$ pairs of supersingular elliptic curves: $\{(E_{1,1}, E_{2,1}), (E_{1,2}, E_{2,2}), ..., (E_{1,2\lambda}, E_{2,2\lambda})\}$,
 \item $ch$ is a list of $2\lambda$ randomly chosen bits,
-\item $resp$ is a list where each element is either a single elliptic curve point or a pair of points, and
+\item $resp$ is a list of size $2\lambda$ where each element is either a single elliptic curve point $\pr(S)$, where $\pr$ is \randall's isogeny and $S$ is the signers secretly generated point, or the pair of points ($\cyr, \phi(\cyr)$), where \cyr is \randall's secretly generated point, and $\phi$ is the signers isogeny.
 \item $h$ is a list of $2\lambda$ queries to a random oracle \textbf{G}, such that $h_{i} = \textbf{G(}resp_{i}\textbf{)}$
 \end{itemize}
 
-The representation of $\sigma$ in the C implementation offered by Yoo et al. has a few noteworthy differences. Signatures in this setting are defined via a C \code{struct} in the following way:
-\begin{figure}[!h]
+\noindent
+Recall also from Subsection \ref{subsec:datarep} the following definitions:
+\begin{itemize}
+\item an \code{felm\_t} denotes a $\mathbb{F}_{p}$ element, e.g. a 751-bit element in \sidh,
+\item an \code{f2elm\_t} denotes an $\mathbb{F}_{p^2}$ element, or two \code{felm\_t}s,
+\item a \code{point\_affine} denotes an elliptic curve point represented in affine space (two \code{f2elm\_t}s), and
+\item a \code{point\_proj} denotes an elliptic curve point represented in projective space (two \code{f2elm\_t}s).
+\end{itemize}
+
+The representation of $\sigma$ in \sidh (as implemented by Yoo et al.) has a few noteworthy differences. Signatures in this setting are defined via a C \code{struct} in the following way:\\
+
 \begin{lstlisting}
 struct Signature {
-	unsigned char *Commitments1[NUM_ROUNDS];
-	unsigned char *Commitments2[NUM_ROUNDS];
+	f2elm_t *Commitments1[NUM_ROUNDS];
+	f2elm_t *Commitments2[NUM_ROUNDS];
 	unsigned char *HashResp;
-	unsigned char *Randoms[NUM_ROUNDS];
-	point_proj *psiS[NUM_ROUNDS];
-
-	int compBit[NUM_ROUNDS];
-	int compressed;
+	felm_t *Randoms[NUM_ROUNDS/2];
+	point_proj *psiS[NUM_ROUNDS/2];
 };
 \end{lstlisting}
-\caption{C representation of a Yoo et al. signature \cite{yoo}}
-\label{code:sigstruct}
-\end{figure}
 
-$$
-\sigma = (\code{comm}, \code{ch}, \code{h}, \code{resp})
-$$
-where \code{ch}, \code{h}, and \code{resp} are arrays containing $2\lambda$ elements, and \code{comm} is an array containing $4\lambda$ elements. 
+With \code{NUM\_ROUNDS} equal to $2\lambda$. The bit-level security of a given signature, then, can be computed as $\code{NUM\_ROUNDS}/2$.\\
 
-\code{comm} is composed of $4\lambda$ $\mathbb{F}_{p^2}$ elements, each denoting a curve (which acts as a commitment), in the following way:
-$$
-\code{comm} = [m_{0, 1}, m_{0, 2}, m_{1, 1}, m_{1, 2}, ... , m_{2\lambda, 1}, m_{2\lambda, 2}]
-$$
-\code{ch}, the array of challenge values, contains $2\lambda$ random integers, each of value $0$ or $1$. 
-$$
-\code{ch} = []
-$$
-\code{h} is an array of hex numbers, each one the result of concatinating the output of two Keccak function calls.\footnote{Keccak is a cryptographic hash function from which the newly standardized SHA-3 is based.} 
-$$
-\code{h} = [\code{keccak(resp[0])}|\code{keccak(resp[1])}, ... , \code{keccak(resp[4}\lambda\code{ - 2])}|\code{keccak(resp[4}\lambda\code{ - 1])}]
-$$
-The last component of $\sigma$ is \code{resp}, an array containing the responses to each challenge on a given commitment. 
+\noindent
+The mapping between \code{Signature} and $\sigma$ is straight forward.
 
-And so, the total size of an uncompressed signature is $size = 1 + 2 + 3 + 4$.
+\code{Commitments1} is an array containing the first entry from every pair in $resp$, e.g.\ $\{E_{1,1}, E_{1,2}, ..., E_{1,2\lambda}\}$, and \code{Commitments2} holds the second entry from each pair. 
 
-\textit{Representing the Signature.} For every entry of \code{resp} there are two possibilities: 
+\code{HashResp} contains the elements of $h$. In practice the Keccak function\footnote{Keccak is a cryptographic hash function from which the newly standardized SHA-3 is based.} is used in place of the random oracle \textbf{G}. 32-byte hash digests are computed using Keccak such that \code{HashResp[i]} = \code{Randoms[i/2]} if the challenge bit $ch$ is 0, and \code{HashResp[i]} = \code{psiS[i/2]} if $ch$ is 1.
 
+\code{Randoms} is an array of $\lambda$ \code{felm\_t}'s. The element at index $i$ of \code{Randoms} holds $\mr_{i}$, and represents \randall's secretly generated $mathbb{F}_{p}$ value for iteration $i$ of the signing algorithm. These values sufficiently represent the elements of $resp$ which take the form ($\cyr, \phi(\cyr)$) for two reasons: 
+\begin{enumerate}
+\item $\cyr$ can be reconstructed using the torsion subgroup generating points that correspond to \randall ($\cyr = \genpa + \mr_{i}\genqa$ if \bob is signing, and $\cyr = \genpb + \mr_{i}\genqb$ if \alice is signing)
+\item $\phi(\cyr)$
+\end{enumerate}
+
+Lastly, \code{psiS} denotes the elements of $resp$ which take the form of $\pr(S)$. These points cannot be represented by a single \code{felm\_t} (as in \code{Randoms}) because doing so would leak the signers private information.\\
+
+\noindent
+And so, the total size of an uncompressed \sidh signature, in bytes, is
+$$
+(\code{sizeof(felm\_t)} + \code{sizeof(f2elm\_t)} + \code{sizeof(f2elm\_t)} + \code{sizeof(point\_proj)} + 32) \cdot 2\lambda + (\code{sizeof(felm\_t)} + \code{sizeof(point\_proj)}) \cdot \lambda  = 
+$$
 
 \subsection{Integrating with \sidh}
+
+We use the compression technique covered in the previous section to compress every element of \code{psiS} individually.
+
+Recall Figure \ref{fig:parallelcall} which outlines at a high level the execution flow of the \sidh signing and verification procedures. First, to sign we have have $2\lambda$ threads running \code{sign\_thread} in parallel.  
+
+\begin{figure}[!h]
+\begin{tikzpicture}
+    [auto,
+    block/.style={
+      rectangle,
+      draw=black,
+      thick,
+      fill=gray!20,
+      text width=7em,
+      align=center,
+      rounded corners,
+      minimum height=2em
+    },
+    block1/.style={
+      rectangle,
+      draw=black,
+      thick,
+      fill=gray!20,
+      text width=9em,
+      align=center,
+      rounded corners,
+      minimum height=2em
+    },
+	block2/.style={
+      rectangle,
+      draw=black,
+      thick,
+      fill=red!20,
+      text width=8.5em,
+      align=center,
+      rounded corners,
+      minimum height=2em
+    },
+    line/.style={
+      draw,thick,
+      -latex',
+      shorten >=2pt
+    },
+    cloud/.style={
+      draw=red,
+      thick,
+      ellipse,
+      fill=red!20,
+      minimum height=1em
+    }
+  ]
+    \draw (1,-2) node[block] (A) {\code{sign\_thread}};
+	\draw (9.5,-2) node[block] (B) {\code{verify\_thread}};
+    \path (1,-4) node[block1] (C) {\code{KeyGeneration\_A}}
+		  (1,-6) node[block1] (D) {\code{SecretAgreement\_B}}
+		  (11.6,-4) node[block1] (E) {\code{KeyGeneration\_A}}
+          (11.6,-6) node[block1] (F) {\code{SecretAgreement\_A}}
+		  (7.4,-4) node[block1] (G) {\code{SecretAgreement\_B}};
+	\draw (7.4,-6) node[block2] (J) {\code{j\_inv}};
+	\draw (13.6,-5) node[block2] (K) {\code{inv\_4\_way}};
+	\draw (13.6,-7) node[block2] (L) {\code{j\_inv}};
+	\draw[->, line width=2.0] (1,-2.4) -- (1,-3.6) node[right] {};
+		\draw (1, -3) node[left] (LABEL1) {$248x$};
+	\draw[->, line width=2.0] (9.5,-2.4) to (E) node[above] {};
+		\draw (8.6, -3) node[left] (LABEL4) {$\sim124x$};
+	\draw[->, line width=2.0] (9.5,-2.4) to (G) node[right] {};
+		\draw (10.4, -3) node[right] (LABEL5) {$\sim124x$};
+	\draw[->, line width=2.0] (-0.3,-4.4) -- (-0.3,-5.6) node {};
+		\draw (-0.3, -5) node[left] (LABEL6) {$248x$};
+	\draw[->, line width=2.0] (7.4,-4.4) -- (7.4,-5.6) node {};
+		\draw (7.4, -5) node[left] (LABEL7) {$\sim124x$};
+	\draw[->, line width=2.0] (11,-4.4) -- (11,-5.6) node {};
+		\draw (11, -5) node[left] (LABEL8) {$\sim124x$};
+
+\end{tikzpicture}
+\caption{The execution flow of \code{sign\_thread} and \code{verify\_thread} as originally implemented by Yoo et al.}
+\label{fig:threadcallgraph}
+\end{figure}
 
 \begin{figure}[!h]
 \begin{lstlisting}
@@ -205,71 +287,6 @@ Mont_ladder(R2->x, b, bR2, Qnot, A24, CurveIsogeny->oBbits, CurveIsogeny->owordb
 \label{code:sigstruct}
 \end{figure}
 
-\begin{center}
-\begin{tikzpicture}
-	[scale=1, auto,
-		block/.style={
-		  rectangle,
-		  draw=black,
-		  thick,
-		  fill=gray!20,
-		  text width=6em,
-		  align=center,
-		  rounded corners,
-		  minimum height=2em
-		},
-		blockgreen/.style={
-		  rectangle,
-		  draw=black,
-		  thick,
-		  fill=green!20,
-		  text width=7.3em,
-		  align=center,
-		  rounded corners,
-		  minimum height=2em
-		},
-		batchblock/.style={
-		  rectangle,
-		  draw=black,
-		  thick,
-		  fill=gray!20,
-		  text width=7em,
-		  align=center,
-		  rounded corners,
-		  minimum height=4em
-		}
-	]
-	\draw (2.5,4.5) node[block] {\code{sign\_thread}};
-	\draw[->, line width=1.0] (4,4.5) -- (4.8,4.5) node {};
-	%\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (4.7,3.2) -- (4.7,5.7) node [black,midway,xshift=-0.6cm,block] {\code{sign\_thread}};
-	\draw (6.5,3.5) node[blockgreen] (JINV1) {\code{j\_inv\_batch}};
-	\draw (6.5,4.5) node[blockgreen] (INV1) {\code{inv\_4\_way\_batch}};
-	\draw (0.7, 4.5) node {1};
-	
-	\draw[very thick, loosely dotted] (2,3.7) -- (2,2.2) node {};
-	
-	\draw (2.5,1.5) node[block] {\code{sign\_thread}};
-	\draw[->, line width=1.0] (4,1.5) -- (4.8,1.5) node {};
-	%\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (4.7,0.3) -- (4.7,2.8) node [black,midway,xshift=-0.6cm,block] {\code{sign\_thread}};
-	\draw (6.5,0.5) node[blockgreen] (JINV2) {\code{j\_inv\_batch}};
-	\draw (6.5,1.5) node[blockgreen] (INV2) {\code{inv\_4\_way\_batch}};
-	\draw (0.7, 1.5) node {248};
-	
-	\draw[->, line width=1.0] (4.4,4.5) to [out=-90] (JINV1.west);
-	\draw[->, line width=1.0] (4.4,1.5) to [out=-90] (JINV2.west);
-
-	\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (0.5,1) -- (0.5,5.0) node [black,midway,xshift=-0.6cm,block] {\code{isogeny\_sign}};
-	
-	\draw (12,3.5) node[batchblock] (BATCH1) {\code{pb\_inv}};
-	\draw (12,1.5) node[batchblock] (BATCH2) {\code{pb\_inv}};
-	
-	\draw[->, line width=1.0] (JINV1.east) to (BATCH1.west) node {};
-	\draw[->, line width=1.0] (JINV2.east) to (BATCH1.west) node {};
-	\draw[->, line width=1.0] (INV1.east) to (BATCH2.west) node {};
-	\draw[->, line width=1.0] (INV2.east) to (BATCH2.west) node {};
-\end{tikzpicture}
-\end{center}
-
 \subsection{$\psi(S)$ Compression}
 
 \noindent
@@ -283,9 +300,18 @@ And so, the C code for the decompression procedure offered by Costello et al. ca
 
 \section{Results}
 
-Our technique can reduce the size of \sidh signature compression from \_\_\_ bits to \_\_\_ bits.
+Looking at the storage requirements for the following. Figure \ref{table:spacereq} outlines the space requirements for different data structures in \sidh. From this information we can build up the data requirements based on  
+
+Our technique can reduce the size of \sidh signature compression from \_\_\_ bits to \_\_\_ bits.\\
+
+\noindent
+\textit{Performance Measurements for Compressed Signatures}.
+
+Because of how the signature extension of \sidh was originally written, our benchmarks reflect the time it takes for the signer to compress \code{psiS} for all $2\lambda$ iterations. In a finalized implementation of this system, significant time can be saved if the signer computes the challenge for an interation before compressing \code{psiS}, this will allow them to avoid running the compression procedure in cases where \code{psiS} is not part of the final signature, effectively reducing the time spent compressing points by a 50\%.
 
 \subsection{Analysis}
+
+
 
 \subsection{Potential Performance Improvements}
 

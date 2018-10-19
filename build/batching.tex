@@ -548,7 +548,6 @@ Recall Figure \ref{fig:halfmap} which details the abstraction levels of the SIDH
 This parallelization approach was exactly the one taken by Yoo et al. in their C implementation. Refer again to the \code{SIDH\_signature.c} functions outlined in Figure \ref{fig:sigfuncs}: \code{isogey\_sign} acts as the entry point for \textbf{Sign} and spawns a POSIX thread for every instance of the procedure's for-loop. So now, in parallel, every thread spawned by \code{isogeny\_sign} makes a call to \code{sign\_thread}, which in turn performs \bob's interaction with \randall. This is outlined below in Figure \ref{fig:parallelcall}. Verification proceeds analogously; \code{isogeny\_verify} is executed and spawns POSIX threads executing \code{verify\_thread} until all $2\lambda$ iterations are complete. $\lambda$ here denotes the security level in bits (128 by default in SIDH), and so 248 threads are spawned in both \code{sign\_thread} and \code{verify\_thread}. Refer to the Figure directly below, roughly illustrating a parallel call-graph for \code{isogeny\_sign} and \code{isogeny\_verify}.
 
 \begin{figure}
-\label{fig:parallelcall}
 \begin{tikzpicture}
 	[scale=1, auto,
 		block/.style={
@@ -596,6 +595,7 @@ This parallelization approach was exactly the one taken by Yoo et al. in their C
 	\end{scope}
 \end{tikzpicture}
 \caption{The implementations of \textbf{Sign} and \textbf{Verify}, divided into serial segments \code{isogeny\_sign} and \code{isogeny\_verify} and then parallel segments \code{sign\_thread} and \code{verify\_thread}.}
+\label{fig:parallelcall}
 \end{figure}
 
 And so, there are two settings in which the same sequence of operations will be carried out $248$ times in parallel. This means that we need only one occurance of an $\mathbb{F}_{p^2}$ inversion in either \code{sign\_thread} or \code{verify\_thread} to be able to fill a element batch of size $248$, suitable for partial batched inversion. 
@@ -614,7 +614,6 @@ Costella et al. have concisely outlined many of the \sidh isogeny and point-wise
 In Figure \ref{fig:threadcallgraph} we illustrate a heavily simplified call-graph for the \code{sign\_thread} and \code{verify\_thread}, demonstrating where in the execution pipeline \code{j\_inv} and \code{inv\_4\_way} occur. The reader may suspect that, in \code{sign\_thread} for example, the inversions in \code{SecretAgreement\_B} and \code{KeyGeneration\_A} could be batched together to form a batch of 512 elements and to reduce the total number of inversions in \code{isogeny\_sign} to one. This is not possible, however, because the valid execution of \code{SecretAgreement\_B} relies on information returned by \code{KeyGeneration\_A}, and so these inversions must occur sequentially. 
 
 \begin{figure}[!h]
-\label{fig:threadcallgraph}
 \begin{tikzpicture}
     [auto,
     block/.style={
@@ -691,6 +690,7 @@ In Figure \ref{fig:threadcallgraph} we illustrate a heavily simplified call-grap
 
 \end{tikzpicture}
 \caption{The execution flow of \code{sign\_thread} and \code{verify\_thread} as originally implemented by Yoo et al.}
+\label{fig:threadcallgraph}
 \end{figure}
 
 To enable batching across execution instances of \code{j\_inv} and \code{inv\_4\_way}, we've supplied new functions \code{j\_inv\_batch} and \code{inv\_4\_way\_batch}. These functions, upon reaching what were originally $\mathbb{F}_{p^2}$ inversions (calls to \code{fp2inv751\_mont}), add their elements that are awaiting inversion to a buffer. Once the buffer of elements has reached its predefined capacity, the final thread to add its element executes \code{pb\_inv} on the buffer. Each thread thereafter, having kept track of where in the buffer they entered their element, retrieves their now inverted element from the buffer returned by \code{pb\_inv}.
