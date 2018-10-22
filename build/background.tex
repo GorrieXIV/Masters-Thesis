@@ -814,7 +814,8 @@ If we write out \textbf{Sign} using the $\Pi_{\text{SIDH}}$ API, we see that the
 \textbf{Verify($pk$, $m$, $\sigma$)}: \alice begins her execution of \textbf{Verify()} where \bob ended his execution of \textbf{Sign()}, with the computation of $J$. \alice then knows at each iteration what check to perform on \bob's response, based on a conditional branch. You will notice that \bob's secret key $\rb$ occurs in the negative path of this branch; this is not a security concern because it is actually the point $\pr(\rb)$ that is communicated in $\sigma$, from which $\rb$ cannot be recovered.\\
 
 \begin{algorithm}[H]
-\caption{-- \textbf{Verify($pk = \pb$, $m$, $\sigma$)}}\label{euclid}
+\caption{-- \textbf{Verify($pk = \pb$, $m$, $\sigma$)}}
+\label{fig:verifyprocedure}
 \begin{algorithmic}[1]
 \State Parse $((com_i)_i, (ch_{i,j})_{i,j}, (h_{i,j})_{i,j}, (resp_{i})_{i}) \gets \sigma$
 \State $J_{1} \parallel ... \parallel J_{2\lambda} \gets$ \textbf{H($\pb$, $m$, $(com_{i})_{i}$,$(ch_{i,j})_{i,j}$,$(h_{i,j})_{i,j}$)}
@@ -846,7 +847,8 @@ What we are checking for in the verification process is whether or not \bob and 
 These observations are formalized in Algorithm 6, where we rewrite $\Sigma'$:\textbf{Verify()} in terms of $\Pi_{\text{SIDH}}$ procedure calls. Note, in line 10 of Algorithm 6, the call $\Pi_{\text{SIDH}}$:\textbf{SecAgr($\pr(\rb)$, $\pr$)}. It should be noted that $\pr(\rb)$ is not the proper secret key input used by \bob in \textbf{Sign()}, but we will see in the section to follow how we can use $\pr(\rb)$ in the C implementation of \textbf{SecAgr} to perform our verification (without compromising \bob's secret key $\rb$).
 
 \begin{algorithm}[H]
-\caption{-- \textbf{Verify($pk = \pb$, $m$, $\sigma$)} via $\Pi_{\text{SIDH}}$}\label{euclid}
+\caption{-- \textbf{Verify($pk = \pb$, $m$, $\sigma$)} via $\Pi_{\text{SIDH}}$}
+\label{alg:verifyviasidh}
 \begin{algorithmic}[1]
 \State Parse $((com_i)_i, (ch_{i,j})_{i,j}, (h_{i,j})_{i,j}, (resp_{i})_{i}) \gets \sigma$
 \State $J_{1} \parallel ... \parallel J_{2\lambda} \gets$ \textbf{H($\pb$, $m$, $(com_{i})_{i}$,$(ch_{i,j})_{i,j}$,$(h_{i,j})_{i,j}$)}

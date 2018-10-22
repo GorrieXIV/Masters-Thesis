@@ -30,14 +30,14 @@ $P$ and $Q$, on the other hand, can each be represented by their $x$-coordinate 
 \subsection{Compressing SIDH Public Keys}
 \label{subsec:azercompression}
 
-Recall the discrete logarithm problem in the context of elliptic curves: given an elliptic curve group $E(K)$ and points $P, Q \in E(K)$, find $n$ such that $P = nQ$. The two-dimensional discrete log problem is then the following: given an elliptic curve group $E(K)$, two points $\{R_1, R_2\}$ generating a subgroup $S$ of $E(K)$, and an element $s \in S$, compute $\alpha$ and $\beta$ such that:
+Recall the discrete logarithm problem in the context of elliptic curves: given an elliptic curve group $E(K)$ and points $P, Q \in E(K)$, find $n$ such that $P = nQ$. The two-dimensional discrete log problem is then the following: given an elliptic curve group $E(K)$, two points $\{R_1, R_2\}$ generating a subgroup $H$ of $E(K)$, and an element $h \in H$, compute $\alpha$ and $\beta$ such that:
 $$
 s = \alpha R_1 + \beta R_2
 $$
 The Pohlig-Hellman algorithm can be applied to solve the discrete logarithm problem in groups whose order is a smooth integer \cite{ph}, and there is a variation of this algorithm which solves this two-dimensional discrete log problem with time complexity $O(\sqrt[q]\log p)$, where $q$ is the largest prime dividing $\vert S\vert$ \cite{genph}.\\
 
 \noindent
-Azerderakhsh et al. show that an SIDH public key can be further compressed in the following way. Taking \alice's SIDH key pair, for example, we have her public key $\pka = (E_{\ba}, \pa(\genpb),\pa(\genqb))$ and her private key $\ska = \{\ma, \na\}$ such that $ker(\pa) = \langle [\ma]\genpa, [\na]\genqa\rangle$. Because $\{\genpb, \genqb\}$ generates the torsion subgroup $E_{\ba}[\lbeb]$, we have that $\pa(\genpb) \in E[\lbeb]$ and $\pa(\genqb) \in E[\lbeb]$. Thus, the Pohlig-Hellman algorithm can be used to resolve $\pa(\genpb) = \alpha_P R_1 + \beta_P R_2$ and $\pa(\genqb) = \alpha_Q R_1 + \beta_Q R_2$ where $\{R_1, R_2\}$ is a basis for $E_{\ba}[\lbeb]$ \cite{compwr}.
+Azerderakhsh et al. show that an SIDH public key can be compressed in the following way. Taking \alice's SIDH key pair, for example, we have her public key $\pka = (E_{\ba}, \pa(\genpb),\pa(\genqb))$ and her private key $\ska = \ma$ such that $ker(\pa) = \langle \genpa + [\ma]\genqa\rangle$. Because $\{\genpb, \genqb\}$ generates the torsion subgroup $E_{\ba}[\lbeb]$, we have that $\pa(\genpb) \in E[\lbeb]$ and $\pa(\genqb) \in E[\lbeb]$. Thus, the Pohlig-Hellman algorithm can be used to resolve $\pa(\genpb) = [\alpha_P] R_1 + [\beta_P] R_2$ and $\pa(\genqb) = \alpha_Q R_1 + \beta_Q R_2$ where $\{R_1, R_2\}$ is a basis for $E_{\ba}[\lbeb]$ \cite{compwr}.
 
 Then, instead of sending \bob $(E_{\ba}, \pa(\genpb),\pa(\genqb))$, \alice can send $(E_{\ba}, \alpha_P, \beta_P, \alpha_Q, \beta_Q)$.\footnote{The approach outlined by Azerderakhsh et al. involves sending the $j$-invariant of $E$, which can be represented with the same amount of space as one $\mathbb{F}_{p^2}$ element. Because we are working in \sidh where we can already represent curves with one $\mathbb{F}_{p^2}$ element, we ommit this detail.} And so, as long as \alice and \bob can seperately generate the same $\{R_1, R_2\}$, they can both sufficiently represent one anothers public keys with only $4\log p$ bits.\\
 
@@ -138,7 +138,7 @@ Reducing decompression to a single 1-dimensional scalar multiplication of a poin
 \section{Implementation Details}
 \label{sec:compimplementation}
 
-In this subsection we demonstrate how the previously detailed public key compression technique can be used to compress Yoo et al.'s isogeny-based signatures. Again, we will turn to the \sidh library and reference portions of C code (some contributed by Patrick Longa \cite{sidhcode}, some by Yoo and his associates \cite{yoosigcode}, and some by us,) to investigate details of our implementations performance.\\
+In this section we demonstrate how the previously detailed public key compression technique can be used to compress Yoo et al.'s isogeny-based signatures. Again, we will turn to the \sidh library and reference portions of C code (some contributed by Patrick Longa \cite{sidhcode}, some by Yoo and his associates \cite{yoosigcode}, and some by us,) to investigate details of our implementations performance.\\
 
 \noindent
 Recall from \ref{sec:sigsbackground} the structure of a Yoo et al. signature, $\sigma$:
@@ -174,8 +174,8 @@ struct Signature {
 	f2elm_t *Commitments1[NUM_ROUNDS];
 	f2elm_t *Commitments2[NUM_ROUNDS];
 	unsigned char *HashResp;
-	felm_t *Randoms[NUM_ROUNDS/2];
-	point_proj *psiS[NUM_ROUNDS/2];
+	felm_t *Randoms[NUM_ROUNDS];
+	point_proj *psiS[NUM_ROUNDS];
 };
 \end{lstlisting}
 \vspace{15px}
@@ -200,10 +200,12 @@ And so, the total size of an uncompressed \sidh signature, in bytes, is $
 
 \subsection{$\psi(S)$ Compression}
 
-For the following subsection we will assume the signer to be \bob (e.g. using \rb values) and the verifier to be \alice (e.g. using \ba vaues). This is done only for simplicities sake - to reverse the roles one need only swap all \textcolor{blue}{blue} variables with their \textcolor{red}{red} counterparts, and vice-versa. Similarly, function names ending in \code{\_B} can be replaced with their \code{\_A} alternatives, and vice-versa.\\
+For the following two subsections we will assume the signer to be \bob (e.g. using \rb values) and the verifier to be \alice (e.g. using \ba vaues). This is done only for simplicities sake - to reverse the roles one need only to swap all \textcolor{blue}{blue} variables with their \textcolor{red}{red} counterparts, and vice-versa. Additionally, function names ending in \code{\_B} would then need to be replaced with their \code{\_A} alternatives, and vice-versa.\\
 
 \noindent
-We employ the compression technique covered in the previous section to compress every element of \code{psiS} individually. This requires an additional bit value \code{compressed} in the \code{Signature} struct. It is important that this bit is packaged as part of the final signature so that the verifier knows whether or not they need to perform decompression. 
+Our contribution uses the compression technique covered in the previous section to compress every element of \code{psiS} individually. Consider the following.
+
+Each element of \code{psiS} has the form $\pr(S) = \pr(\genpb) + [\mb]\pr(\genqb)$. $(\genpb, \genqb)$ generates the torsion subgroup $E[\lbeb]$ so we know that $S$ has order $\lbeb$ (e.g. $[\lbeb]P = \mathcal{O}$) and, because isogenies preserve the identity we know $[\lbeb]\pr(S) = \mathcal{O}$ and $\pr(S) \in E_{\cyr}[\lbeb]$. Therefore, we can be certain that the compression technique of the previous subsection can be applied to all elements of \code{psiS} if we chose our basis $\{R_1, R_2\}$ such that it generates $E_{\cyr}[\lbeb]$. 
 
 Recall that \bob has private key $\skb = \mb$ from which we can generate $S = \genpb + [\mb]\genqb$ and $\pb: E \rightarrow E/\langle S \rangle$, and public key $\pkb = (E_{\rb}, \pb(\genpa), \pb(\genqa))$. Recall also from previous sections that the general procedure for signature signing begins with \bob calling the \code{isogeny\_sign} function, which in turn spawns $2\lambda$ threads, each executing \code{sign\_thread}. Each of these threads has an identifier \code{r}, and performs the following via \code{sign\_thread}:
 \begin{enumerate}
@@ -219,44 +221,7 @@ Recall that \bob has private key $\skb = \mb$ from which we can generate $S = \g
 \item Sets \code{psiS[r]} $\gets \pr(S)$
 \end{enumerate}
 
-And so, if we wish to apply point compression to \code{psiS}, we must invoke our compression function within every \code{sign\_thread} instance, after the execution of \code{SecretAgreement\_B}. 
-
-\begin{figure}[!h]
-\begin{lstlisting}
-generate_3_torsion_basis(A_temp, P, Q, CurveIsogeny);
-\end{lstlisting}
-\caption{Generate a basis for $E[\lbeb]$}
-\label{code:sigstruct}
-\end{figure}
-
-\begin{figure}[!h]
-\begin{lstlisting}
-for (int i=0; i < 238; i++) {
-	xTPL(Pnot, Pnot, A_temp, CurveIsogeny->C);
-	xTPL(Qnot, Qnot, A_temp, CurveIsogeny->C);
-
-	if (is_felm_zero(((felm_t*)Pnot->Z)[0]) 
-	 && is_felm_zero(((felm_t*)Pnot->Z)[1])) {
-		return ERROR;
-	}
-	if (is_felm_zero(((felm_t*)Qnot->Z)[0]) 
-	 && is_felm_zero(((felm_t*)Qnot->Z)[1])) {
-		return ERROR;
-	}
-}
-\end{lstlisting}
-\caption{Checking the order of the newly constructed basis}
-\label{code:checkorder}
-\end{figure}
-
-\begin{figure}[!h]
-\begin{lstlisting}
-Mont_ladder(R1->x, a, aR1, Pnot, A24, CurveIsogeny->oBbits, CurveIsogeny->owordbits, CurveIsogeny);
-Mont_ladder(R2->x, b, bR2, Qnot, A24, CurveIsogeny->oBbits, CurveIsogeny->owordbits, CurveIsogeny);
-\end{lstlisting}
-\caption{Generate a basis for $E[\lbeb]$}
-\label{code:sigstruct}
-\end{figure}
+And so, if we wish to apply point compression to the elements of \code{psiS}, we must invoke our compression function within every \code{sign\_thread} instance, after the execution of \code{SecretAgreement\_B}. We provide a function \code{CompressPsiS}, based on the original point compression function of Costello et al. \cite{pkcomp}. This modified program path for \code{sign\_thread} is outlined in Figure \ref{fig:signcallgraph}.
 
 \begin{figure}[!h]
 \begin{center}
@@ -310,12 +275,11 @@ Mont_ladder(R2->x, b, bR2, Qnot, A24, CurveIsogeny->oBbits, CurveIsogeny->owordb
 	\draw (1,-6) node[block1] (D) {\code{SecretAgreement\_B}};
 	\draw (1,-8) node[block2] (J) {\code{CompressPsiS}};
 	\draw[->, line width=2.0] (1,-2.4) -- (1,-3.6) node[right] {};
-		\draw (1, -3) node[left] (LABEL1) {$248x$};
+		\draw (1, -3) node[left] (LABEL1) {$2\lambda \text{ times}$};
 	\draw[->, line width=2.0] (1,-4.4) -- (1,-5.6) node {};
-		\draw (1, -5) node[left] (LABEL6) {$248x$};
+		\draw (1, -5) node[left] (LABEL6) {$2\lambda \text{ times}$};
 	\draw[->, line width=2.0] (1,-6.4) -- (1,-7.6) node {};
-		\draw (1, -7) node[left] (LABEL9) {$\sim124x$};
-		\draw (1, -7) node[right] (LABEL10) {iff $ch = 1$};
+		\draw (1, -7) node[left] (LABEL9) {$2\lambda \text{ times}$};
 
 \end{tikzpicture}
 \end{center}
@@ -323,11 +287,79 @@ Mont_ladder(R2->x, b, bR2, Qnot, A24, CurveIsogeny->oBbits, CurveIsogeny->owordb
 \label{fig:signcallgraph}
 \end{figure}
 
+\vspace{15px}
+\noindent
+\textit{The \code{CompressPsiS} Function}. On round \code{r} of signature signing, our compression function takes the following as parameters:
+\begin{itemize}
+\item the \code{point\_proj} \code{psiS[r]},
+\item an \code{f2elm\_t} \code{A}, denoting $E_{\cyr}$ (equivalently \code{Commitments1[r]}), and
+\item the set of curve parameters \code{CurveIsogeny}, which we set equal to \code{SIDHp751}.
+\end{itemize}
+\noindent
+And the output of \code{CompressPsiS} includes:
+\begin{itemize}
+\item A number \code{CompressedPsiS} $\in E_{\cyr}[\lbeb]$, and
+\item the bit \code{compBit}.
+\end{itemize}
+
+Our compression algorithm then follows closely the technique of Azerderakhsh et al., making use of the efficient algorithms provided by Costello and company. An abstracted and generalized version of this function can be seen in Figure \ref{alg:compresspsis} as \textbf{CompressPsiS}. For our concrete C definition see Appendix \ref{}.
+
+\begin{algorithm}
+\caption{-- \textbf{CompressPsiS($\pr(S)_{\code{r}}$, $E_{\cyr}$, $User$)}}
+\label{alg:compresspsis}
+\begin{algorithmic}[1]
+\If{$User$ = $\alice$}
+	\State $l^e \gets \laea$ 
+\EndIf
+\If{$User$ = $\bob$}
+	\State $l^e \gets \lbeb$
+\EndIf
+
+\State $\text{Check that } \pr(S_{\code{r}}) \text{ has order } l^e$
+
+\State $\text{Generate} (R_{1}, R_{2}) \text{ as the basis for } E_{\cyr}[l^e]$
+
+\State \text{Compute $\alpha$, $\beta$ such that $\pr(S)_{\code{r}} = \alpha R_{1} + \beta R_{2}$}
+
+\If{$\alpha \mod l \neq 0$}
+	\State $b \gets 0$
+	\State $\gamma \gets \alpha^{-1}\beta$
+\Else
+	\State $b \gets 1$
+	\State $\gamma \gets \beta^{-1}\alpha$
+\EndIf
+
+\State \Return $(\gamma, b)$
+\end{algorithmic}
+\end{algorithm}
+
+\code{CompressPsiS} returns an element of $E_{\cyr}[\lbeb]$ (denoted by $\gamma$ in Figure \ref{alg:compresspsis}) which becomes \code{compPsiS[r]}. This element can be represented with fewer bytes than an element of $\mathbb{F}_{p^2}$ because $\vert E_{\cyr}[\lbeb] \vert = \lbeb$. The \code{Signature} structure used to construct $\sigma$ is necessarily modified as follows:
+
+\begin{lstlisting}
+struct Signature {
+	f2elm_t *Commitments1[NUM_ROUNDS];
+	f2elm_t *Commitments2[NUM_ROUNDS];
+	unsigned char *HashResp;
+	felm_t *Randoms[NUM_ROUNDS];
+	point_proj *psiS[NUM_ROUNDS];
+	\end{lstlisting}
+\vspace{-0.75\baselineskip}
+\begin{lstlisting}[backgroundcolor=\color{light-green}, firstnumber=7]
+	digit_t compPsiS[NUM_ROUNDS][NWORDS_ORDER];
+	int compBit[NUM_ROUNDS];
+	int compressed;
+\end{lstlisting}
+\vspace{-0.75\baselineskip}
+\begin{lstlisting}[firstnumber=10]
+};
+\end{lstlisting}
+\vspace{15px}
+
+Note the additional bit value \code{compressed} in the \code{Signature} struct. It is important that this bit is packaged as part of the final signature so that the verifier knows whether or not they need to perform decompression. We have also included an array of bits, $2\lambda$ in size, such that \code{compPsiS[r] =}  $\alpha^{-1}\beta$ if \code{compBit[r] = 0} and \code{compPsiS[r] =} $\beta^{-1}\alpha$ otherwise ($b$ in Figure \ref{alg:compresspsis}).
+
 \subsection{Verifying A Compressed Signature}
 
-If we look back to the SIDH public key decompression mechanism described in Subsection \ref{subsec:costcompression}, we note again that the aim is \textit{not} to reconstruct the originally compressed values ($\pa(\genpb)$ and $\pa(\genqb)$ in \alice's case.) Instead, an instance of compressed SIDH key exchange is able to arrive at the shared secret $j(E_{\ba\rb})$ between \alice and \bob without reconstructing the original points, by absorbing the constants into the shared secret value.
-
-And so, the C code for the decompression procedure offered by Costello et al. cannot be directly applied in our setting, as it will not reconstruct the original $\psi{S}$ value. Moreover,
+Decompression can be embedded into \code{verify\_thread} rather simply. On the code path where $ch = 1$, the verifier (\alice in our case) simply needs to run decompression on \code{compPsiS[r]} and \code{compBit[r]} before she runs \code{SecretAgreement\_B}. Figure \ref{fig:verifycallgraph} reflects this modified code path at a high level.
 
 \begin{figure}[!h]
 \begin{center}
@@ -379,24 +411,83 @@ And so, the C code for the decompression procedure offered by Costello et al. ca
 	\draw (9.5,-2) node[block] (B) {\code{verify\_thread}};
     \path (11.6,-4) node[block1] (E) {\code{KeyGeneration\_A}}
           (11.6,-6) node[block1] (F) {\code{SecretAgreement\_A}}
-		  (7.4,-4) node[block2] (G) {\code{CompressPsiS}};
+		  (7.4,-4) node[block2] (G) {\code{DecompressPsiS}};
 	\draw (7.4,-6) node[block1] (J) {\code{SecretAgreement\_B}};
 	\draw[->, line width=2.0] (9.5,-2.4) to (E) node[above] {};
-		\draw (8.6, -3) node[left] (LABEL4) {$\sim124x$};
+		\draw (8.6, -3) node[left] (LABEL4) {$n \approx \lambda \text{ times}$};
 	\draw[->, line width=2.0] (9.5,-2.4) to (G) node[right] {};
-		\draw (10.4, -3) node[right] (LABEL5) {$\sim124x$};
+		\draw (10.4, -3) node[right] (LABEL5) {$2\lambda - n \text{ times}$};
 	\draw[->, line width=2.0] (11,-4.4) -- (11,-5.6) node {};
-		\draw (11, -5) node[left] (LABEL8) {$\sim124x$};
+		\draw (11, -5) node[right] (LABEL8) {$2\lambda - n \text{ times}$};
 	\draw[->, line width=2.0] (8,-4.4) -- (8,-5.6) node {};
-		\draw (8, -5) node[left] (LABEL9) {$\sim124x$};
+		\draw (8, -5) node[left] (LABEL9) {$n \text{ times}$};
 
 \end{tikzpicture}
 \end{center}
-\caption{The general execution flow of \code{verify\_thread} with the addition of $\psi(S)$ compression}
+\caption{The general execution flow of \code{verify\_thread} with the addition of $\psi(S)$ decompression}
 \label{fig:verifycallgraph}
 \end{figure}
 
+However, if we look back to the SIDH public key decompression mechanism described in Subsection \ref{subsec:costcompression}, we note again that the aim is \textit{not} to reconstruct the originally compressed values. Instead, an instance of compressed SIDH key exchange is able to arrive at the shared secret $j(E_{\ba\rb})$ between \alice and \bob without reconstructing the original points, by absorbing the constants into the shared secret value.
+
+This means that in transmitting \code{compPsiS[r]} in its normalized form we lose the ability to reconstruct $\pr(S)$ exactly. We are only able to construct the point $S^{0} = R_1 \code{compPsiS[r]}R_2$, or $S^{0} = \code{compPsiS[r]}R_1 + R_2$ depending on \code{compBit[r]}. Looking back to the definition of the \textbf{Verify} procedure (Figure \ref{alg:verifyprocedure}), we note that the verification path where $ch = 1$ requires that \alice checks 1. that $\pr(S)$ has order $\lbeb$, and 2. that $\pr(S)$ generates the kernel of the isogeny $\pr' : E_{\cyr} \rightarrow E_{\rb\cyr}$. Thus, we needn't return to the original $\pr(S)$ value to successfully verify because
+\begin{enumerate}
+\item if $R_1$ and $R_2$ have order $\lbeb$ (which by definition they do) and \code{compPsiS[r]} is a multiple of $\lb$, then $S^{0}$ is guaranteed to have order $\lbeb$, and
+\item because $S^{0}$ and $\pr(S)$ having equivalent order implies that they generate the same kernel.
+\end{enumerate}
+
+And so, \code{DecompressPsiS} can be defined to generate the same basis $\{R_1, R_2\}$ as in \code{CompressPsiS} and then compute $S^{0} = R_1 + [\code{compPsiS[r]}]R_2$ if \code{compBit} = 0 and $S^{0} = [\code{compPsiS[r]}]R_1 + R_2$ otherwise. The resulting $S^{0}$ can then be passes to  \code{SecretAgreement\_B} just as in uncompressed verification and the verification will run successfully. Figure \ref{alg:decompresspsis} outlines the general functioning of \code{DecompressPsiS} at a high level, for our specific C implementation see Appendix \ref{app:functions}.
+
+\begin{algorithm}
+\caption{-- \textbf{DecompressPsiS($\gamma$, $b$, $E_{\cyr}$, $User$)}}
+\label{alg:decompresspsis}
+\begin{algorithmic}[1]
+\If{$User$ = $\alice$}
+	\State $l^e \gets \lbeb$ 
+\EndIf
+\If{$User$ = $\bob$}
+	\State $l^e \gets \laea$
+\EndIf
+
+\State $\text{Check that } \pr(S_{\code{r}}) \text{ has order } l^e$
+
+\State $\text{Generate} (R_{1}, R_{2}) \text{ as the basis for } E_{\cyr}[l^e]$
+
+\If{$b = 0$}
+	\State $b \gets 0$
+	\State $S^{0} \gets R_1 + [\gamma]R_2$
+\Else
+	\State $b \gets 1$
+	\State $S^{0} \gets [\gamma]R_1 + R_2$
+\EndIf
+
+\State \Return $S^{0}$
+\end{algorithmic}
+\end{algorithm}
+
 \section{Results}
+
+Let $\sigma$ denote an umcompressed Yoo et al. isogeny-based signature. The size of $\sigma$ can be computed as the addition of the sizes of its constituent parts. To reiterate, $\sigma$ is composed of:
+\begin{itemize}
+\item $4\lambda$ $\mathbb{F}_{p^2}$ elements (the commitments), totaling $384\lambda$ bytes,
+\item $2\lambda$ Keccak hash-function digests, totaling $64\lambda$ bytes,
+\item $\sim\lambda$ elements of $\mathbb{Z}/\laea\mathbb{Z}$ (\randall's secret key value), totaling $\sim48\lambda$ bytes, and
+\item $\sim\lambda$ elliptic curve points ($\pr(S)$ points), totaling $\sim192\lambda$ bytes
+\end{itemize}
+Resulting in $\vert \sigma \vert = \sim688\lambda \text{bytes}$.  
+
+Let $\sigma_{\text{compressed}}$ denote a compressed Yoo et al. signature using the techniques outlined by Azerderakhs, Costello, and company. $\sigma_{\text{compressed}}$ swaps the buffer of $\sim\lambda$ elliptic curve points for one of $\sim\lambda$ $\mathbb{Z}/\lbeb\mathbb{Z}$ elements. This subtracts $\sim192\lambda$ bytes from the size of the signature and adds $\sim48\lambda$ bytes - reducing the signature size by $\sim144\lambda$ bytes for a final size of $544\lambda$ bytes.\\
+
+EVERYTHING BELOW IS UNDER CONSTRUCTION
+
+regular\\
+keygen:    40,702,754
+sign:   4,696,942,672
+verify: 3,302,858,925
+
+keygen:    40,831,316
+sign:  11,667,991,571
+verify: 5,245,975,977
 
 Looking at the storage requirements for the following. Figure \ref{table:spacereq} outlines the space requirements for different data structures in \sidh. From this information we can build up the data requirements based on  
 
@@ -405,13 +496,9 @@ Our technique can reduce the size of \sidh signature compression from \_\_\_ bit
 \noindent
 \textit{Performance Measurements for Compressed Signatures}.
 
-Because of how the signature extension of \sidh was originally written, our benchmarks reflect the time it takes for the signer to compress \code{psiS} for all $2\lambda$ iterations. In a finalized implementation of this system, significant time can be saved if the signer computes the challenge for an interation before compressing \code{psiS}, this will allow them to avoid running the compression procedure in cases where \code{psiS} is not part of the final signature, effectively reducing the time spent compressing points by a 50\%.
+\subsection{Performance of Signature Compression}
 
-\subsection{Analysis}
-
-
-
-\subsection{Potential Performance Improvements}
+Because of how the signature extension of \sidh was originally written, our benchmarks reflect the time it takes for the signer to compress \code{psiS[r]} for ALL \code{r} (all $2\lambda$ iterations). In a finalized implementation of this system, significant time can be saved if the signer computes the challenge for an interaction before compressing \code{psiS}; this will allow them to avoid running the compression procedure in cases where \code{psiS} is not part of the final signature, effectively reducing the time spent compressing points by $\sim50\%$.
 
 could use a non-constant implementation of double and add instead of montgomery's ladder? 
 
