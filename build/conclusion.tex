@@ -1,13 +1,22 @@
-\chapter{Discussion \& Conclusion}
+\chapter{Conclusion}
+\label{ch:conclusion}
 
-If one assumes security of the original SIDH key exchange protocol, then the Yoo et al. signature scheme is provably secure and requires no additional underlying assumptions. Given that \sidh there are non-ephemeral, and so could pose a promising candidate in the context of TLS certificate signing. Certificate authority signatures, not requiring constant transfer over the wire (as they are offen packaged with Internet browsers or sperating systems) are less desperate for small signature sizes. 
+In this chapter we provide our final set of metrics for the performance of the original isogeny-based signature scheme, our batched inversion implementation of the protocol, and our implementation feauturing $\psi(S)$ compression. We also offer measurements for how the compressed version of the protocol performs when combined with batched inversion. We outline also how the compressed protocol offers an additional route for batching inversions, yielding further performance improvements.
 
-\section{Results \& Comparisons}
+If one assumes security of the original SIDH key exchange protocol, then the Yoo et al. signature scheme is provably secure and requires no additional underlying assumptions. Given that \sidh keys are non-ephemeral, and so could pose a promising candidate in the context of TLS certificate signing. Certificate authority signatures, not requiring constant transfer over the wire (as they are offen packaged with Internet browsers or sperating systems) are less desperate for small signature sizes. 
+
+\section{Results}
 
 \subsection{Combining Batching \& Compression}
 
+\subsection{Performance Comparisons}
+
+
+We compare again the isogeny-based signature scheme with an assortment of other post-quantum signature schemes (and some classical schemes) just as in Section \ref{subsec:perfcomparisons}. This time, we use the metrics resulting from our efforts as the point of comparison. We also include the metrics for compressed signatures. These comparisons can be found in Figure \ref{fig:endperfcomparisons} (comparing subroutine performances) and Figure \ref{fig:endsizecomparisons} (compairing key and signature sizes). These metrics are all taken, yet again, at the 128-bit post quantum securty level (or classical security level, in the case of RSA and ECDSA).
+
+\begin{figure}
 \begin{center}
-\begin{tabular}{l | b | b | b }
+\begin{tabular}{ l | b | b | b }
 \hline
 \mc{1}{}  & \mc{1}{Key Gen} & \mc{1}{Sign} & \mc{1}{Verify}\\
 \hline
@@ -24,9 +33,13 @@ ECDSA & a & b & c \\
 \hline
 \end{tabular}
 \end{center}
+\caption{Performance in clock cycles for our improved isogeny-based signatures in comparison with other post-quantum and classical alternatives.}
+\label{fig:endperfcomparisons}
+\end{figure}
 
+\begin{figure}
 \begin{center}
-\begin{tabular}{l | b | b | b }
+\begin{tabular}{ l | b | b | b }
 \hline
 \mc{1}{}  & \mc{1}{Public Key} & \mc{1}{Private Key} & \mc{1}{Signature}\\
 \hline
@@ -42,9 +55,17 @@ RSA & 384 & b & 384 \\
 ECDSA & 32 & b & 32 \\
 \hline
 \end{tabular}
+\caption{Key and signature sizes for our compressed isogeny-based signatures in comparison with other post-quantum and classical alternatives.}
+\label{fig:endsizecomparisons}
 \end{center}
+\end{figure}
 
-\section{Additional Opportunities for Batching}
+
+\section{Discussion \& Concluding Remarks}
 \label{sec:morebatch}
 
-\section{Future Work}
+In this final section, we finish of the dissertation with some concluding remarks on the applicability of SIDH and isogeny-based cryptography, the importance of post-quantum cryptography, and the possible avenues for future work in this specific area. 
+
+\subsection{Future Work}
+
+One additional scenario in which inversion batching can be utilized lies in server-client applications. Servers that are managing 

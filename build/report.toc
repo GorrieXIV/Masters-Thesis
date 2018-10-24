@@ -2,7 +2,7 @@
 \contentsline {chapter}{\numberline {1}Introduction}{2}{chapter.1}
 \contentsline {section}{\numberline {1.1}Motivation}{2}{section.1.1}
 \contentsline {subsection}{\numberline {1.1.1}Post-Quantum and Classical Performance Comparisons}{3}{subsection.1.1.1}
-\contentsline {section}{\numberline {1.2}Contributions}{5}{section.1.2}
+\contentsline {section}{\numberline {1.2}Contributions}{4}{section.1.2}
 \contentsline {subsection}{\numberline {1.2.1}Operation Batching}{5}{subsection.1.2.1}
 \contentsline {subsection}{\numberline {1.2.2}Signature Compression}{5}{subsection.1.2.2}
 \contentsline {section}{\numberline {1.3}Organization}{5}{section.1.3}
@@ -48,18 +48,19 @@
 \contentsline {subsection}{\numberline {4.2.2}Verifying A Compressed Signature}{62}{subsection.4.2.2}
 \contentsline {section}{\numberline {4.3}Results}{63}{section.4.3}
 \contentsline {subsection}{\numberline {4.3.1}Performance of Signature Compression}{64}{subsection.4.3.1}
-\contentsline {chapter}{\numberline {5}Discussion \& Conclusion}{65}{chapter.5}
-\contentsline {section}{\numberline {5.1}Results \& Comparisons}{65}{section.5.1}
+\contentsline {chapter}{\numberline {5}Conclusion}{65}{chapter.5}
+\contentsline {section}{\numberline {5.1}Results}{65}{section.5.1}
 \contentsline {subsection}{\numberline {5.1.1}Combining Batching \& Compression}{65}{subsection.5.1.1}
-\contentsline {section}{\numberline {5.2}Additional Opportunities for Batching}{65}{section.5.2}
-\contentsline {section}{\numberline {5.3}Future Work}{65}{section.5.3}
-\contentsline {chapter}{Appendices}{66}{section*.28}
-\contentsline {chapter}{\numberline {A}$\texttt {SIDH}_{\texttt {C}}$\xspace Functions}{67}{Appendix.a.A}
-\contentsline {section}{\numberline {A.1}$\mathbb {F}_p$ and $\mathbb {F}_{p^2}$ Functions}{67}{section.a.A.1}
-\contentsline {section}{\numberline {A.2}Isogeny and Point-wise Functions}{67}{section.a.A.2}
-\contentsline {subsection}{\numberline {A.2.1}\texttt {j\_inv}}{67}{subsection.a.A.2.1}
-\contentsline {subsection}{\numberline {A.2.2}\texttt {j\_inv\_batch}}{67}{subsection.a.A.2.2}
-\contentsline {subsection}{\numberline {A.2.3}\texttt {inv\_4\_way}}{68}{subsection.a.A.2.3}
-\contentsline {subsection}{\numberline {A.2.4}\texttt {inv\_4\_way\_batch}}{68}{subsection.a.A.2.4}
-\contentsline {section}{\numberline {A.3}Key Exchange Functions}{69}{section.a.A.3}
-\contentsline {section}{\numberline {A.4}Signature Layer Functions}{71}{section.a.A.4}
+\contentsline {subsection}{\numberline {5.1.2}Performance Comparisons}{65}{subsection.5.1.2}
+\contentsline {section}{\numberline {5.2}Discussion \& Concluding Remarks}{65}{section.5.2}
+\contentsline {subsection}{\numberline {5.2.1}Future Work}{66}{subsection.5.2.1}
+\contentsline {chapter}{Appendices}{67}{section*.30}
+\contentsline {chapter}{\numberline {A}$\texttt {SIDH}_{\texttt {C}}$\xspace Functions}{68}{Appendix.a.A}
+\contentsline {section}{\numberline {A.1}$\mathbb {F}_p$ and $\mathbb {F}_{p^2}$ Functions}{68}{section.a.A.1}
+\contentsline {section}{\numberline {A.2}Isogeny and Point-wise Functions}{68}{section.a.A.2}
+\contentsline {subsection}{\numberline {A.2.1}\texttt {j\_inv}}{68}{subsection.a.A.2.1}
+\contentsline {subsection}{\numberline {A.2.2}\texttt {j\_inv\_batch}}{68}{subsection.a.A.2.2}
+\contentsline {subsection}{\numberline {A.2.3}\texttt {inv\_4\_way}}{69}{subsection.a.A.2.3}
+\contentsline {subsection}{\numberline {A.2.4}\texttt {inv\_4\_way\_batch}}{69}{subsection.a.A.2.4}
+\contentsline {section}{\numberline {A.3}Key Exchange Functions}{70}{section.a.A.3}
+\contentsline {section}{\numberline {A.4}Signature Layer Functions}{72}{section.a.A.4}

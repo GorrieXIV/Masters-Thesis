@@ -4,9 +4,9 @@ The past 30 years have brought with them astonishing developments in the field o
 
 Cryptography, a branch of mathematics separate from that of quantum computing, is the study of secure communication systems. Cryptographic systems operate under the presence of an external, unauthorized, and untrusted party (often referred to as the \textit{adversary},) against whom the communication must safeguarded. Also critical to the field of cryptography is the practice of proving (or disproving) that a given system is safe and secure.
 
-These distinct fields overlap in a variety of ways. For example, some of the previously mentioned problems, which now have newly discovered subexponential solutions, have historically been used as the backbone for many popular cryptosystems. It was the assumed difficulty of these problems that the security of certain cryptosystems depended on. \footnote{These problems reside in the complexity class known as BQP, or ``bounded-error quantum polynomial-time"; one particular problem in this class is the \textit{hidden subgroup problem}, a problem with much historical significance in the design of Cryptographic systems}. Thus, the implementation of a sufficiently large quantum computer would be a catastrophic threat to the majority of modern Internet security.  
+These distinct fields overlap in a variety of ways. For example, some of the previously mentioned problems, which now have newly discovered subexponential solutions, have historically been used as the backbone for many popular cryptosystems. It was the assumed difficulty of these problems that the security of certain cryptosystems depended on.\footnote{These problems reside in the complexity class known as BQP, or ``bounded-error quantum polynomial-time"; one particular problem in this class is the \textit{hidden subgroup problem}, a problem with much historical significance in the design of Cryptographic systems} Thus, the implementation of a sufficiently large quantum computer would be a catastrophic threat to the majority of modern Internet security.  
 
-And so, as physicists and engineers race towards error-free and energy efficient implementations of quantum computers, we steadfastly approach a new age for the art and science of Cryptography. The looming threat of large-scale quantum computing has driven the field of ``post-quantum" cryptography; the aspiration of which is to develop efficient and secure cryptographic algorithms that are resistant to quantum cryptanalysis. Post-quantum cryptosystems must, amongst other requirements, avoid any underlying assumptions on the difficulty of the hidden subgroup problem.\\
+And so, as physicists and engineers race towards error-free and energy efficient implementations of quantum computers, we steadfastly approach a new age for the art and science of Cryptography. The looming threat of large-scale quantum computing has driven the field of ``post-quantum" cryptography; the aspiration of which is to develop efficient and secure cryptographic algorithms that are resistant to quantum cryptanalysis.\\
 
 \section{Motivation}
 \label{sec:motivation}
@@ -33,6 +33,7 @@ The aim of this dissertation is to improve the efficiency of a particular isogen
 More specifically, for this dissertation we are primarily focused on the performance of an isogeny-based ``proof of knowledge" style signature scheme, outlined in great detail by Youngo Yoo et al. in \cite{yoo}, which we will henceforth refer to as the ``Yoo et al. signature scheme".
 
 \subsection{Post-Quantum and Classical Performance Comparisons}
+\label{subsec:perfcomparisons}
 
 We will now provide a rough survey of several post-quantum cryptosystems so as to compare their performance (both temporally in terms of exeuction time, and spatially in terms of key and signature sizes) with popular non-quantum-safe systems.
 
@@ -42,7 +43,7 @@ We gathered runtime measurements of the Yoo et al. signature scheme from \cite{y
 
 \begin{figure}[!h]
 \begin{center}
-\begin{tabular}{l | b }
+\begin{tabular}{ l | b }
 \hline
 \mc{1}{} & \mc{1}{Cycles}\\
 \hline
@@ -62,7 +63,7 @@ ECDH & c \\
 
 \begin{figure}[!h]
 \begin{center}
-\begin{tabular}{l | b | b | b }
+\begin{tabular}{ l | b | b | b }
 \hline
 \mc{1}{}  & \mc{1}{Key Gen} & \mc{1}{Sign} & \mc{1}{Verify}\\
 \hline
@@ -85,7 +86,7 @@ ECDSA & a & b & c \\
 
 \begin{figure}[!h]
 \begin{center}
-\begin{tabular}{l | b | b | b }
+\begin{tabular}{ l | b | b | b }
 \hline
 \mc{1}{}  & \mc{1}{Public Key} & \mc{1}{Private Key} & \mc{1}{Signature}\\
 \hline
@@ -133,7 +134,7 @@ We conclude that the inclusion of our batching technique in the Yoo et al. signa
 
 The second contribution we offer is another addendum to the SIDH/Yoo signature library, this time offering a mechanism to  compress signature sizes.  We embed a particular compression algorithm into the Yoo et al. signature protocol -- the compression algorithm in question (contrived by Costello et al. and outlined in \cite{pkcomp}) is intended for compression of SIDH public keys. We have adopted this method and applied it to specific portions of the Yoo et al. signatures, yielding significantly smaller signatures at the cost of extra computation.
 
-This approach to signature compression is mentioned in \cite{yoo}, but not implemented. We detail our implementation in Section \ref{sec:compress}, and analyse both the decrease in signature size and the computational cost of performing comrpession. 
+This approach to signature compression is mentioned in \cite{yoo}, but not implemented. We detail our implementation in Section \ref{ch:compress}, and analyse both the decrease in signature size and the computational cost of performing comrpession. 
 
 \section{Organization}
 
