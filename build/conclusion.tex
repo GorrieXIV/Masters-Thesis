@@ -3,7 +3,9 @@
 
 In this chapter we provide our final set of metrics for the performance of the original isogeny-based signature scheme, our batched inversion implementation of the protocol, and our implementation feauturing $\psi(S)$ compression. We also offer measurements for how the compressed version of the protocol performs when combined with batched inversion. We outline also how the compressed protocol offers an additional route for batching inversions, yielding further performance improvements.
 
-If one assumes security of the original SIDH key exchange protocol, then the Yoo et al. signature scheme is provably secure and requires no additional underlying assumptions. Given that \sidh keys are non-ephemeral, and so could pose a promising candidate in the context of TLS certificate signing. Certificate authority signatures, not requiring constant transfer over the wire (as they are offen packaged with Internet browsers or sperating systems) are less desperate for small signature sizes. 
+Following the debriefing of our results, we offer one final section wherein we discuss the ramifications of our work in a general context. In this section we also discuss some possible future work to further progress the practicality of isogeny-based cryptography.
+
+
 
 \section{Results}
 
@@ -11,6 +13,30 @@ If one assumes security of the original SIDH key exchange protocol, then the Yoo
 
 \subsection{Performance Comparisons}
 
+In this subsection we compile performance metrics for the original Yoo et al. signature scheme, our batched-inversion signature scheme, our compressed signature scheme, and our discussed-above compressed signature scheme with batching. For each of these implementations we show the average cycle time for \textbf{Sign} and \textbf{Verify} as well as the standard deviation.
+
+\begin{figure}
+\begin{center}
+\begin{tabular}{ | l | b | b | }
+\hline
+& Average Cycles & Standard Deviation \\
+\hline
+Original Sign & a & b \\
+Original Verify & a & b \\
+Batched Sign & a & b \\
+Batched Verify & a & b \\
+Compressed Sign & a & b \\
+Compressed Verify & a & b \\
+C+B Sign & a & b \\
+C+B Verify & a & b \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Average performance and standard deviation in clock cycles for all versions of the Yoo et al. signature scheme.}
+\label{fig:allmeasurements}
+\end{figure}
+
+The reader might note that the the performance metrics of this protocol all yield a considerably high standard deviation. This can be attributed to a few factors. The first and perhaps most influential factor is the size of the private key value $m$. The larger $m$ is, the longer basic $\mathbb{F}_{p^2}$ arithmetic can take. This can be attributed to
 
 We compare again the isogeny-based signature scheme with an assortment of other post-quantum signature schemes (and some classical schemes) just as in Section \ref{subsec:perfcomparisons}. This time, we use the metrics resulting from our efforts as the point of comparison. We also include the metrics for compressed signatures. These comparisons can be found in Figure \ref{fig:endperfcomparisons} (comparing subroutine performances) and Figure \ref{fig:endsizecomparisons} (compairing key and signature sizes). These metrics are all taken, yet again, at the 128-bit post quantum securty level (or classical security level, in the case of RSA and ECDSA).
 
@@ -62,10 +88,12 @@ ECDSA & 32 & b & 32 \\
 
 
 \section{Discussion \& Concluding Remarks}
-\label{sec:morebatch}
 
-In this final section, we finish of the dissertation with some concluding remarks on the applicability of SIDH and isogeny-based cryptography, the importance of post-quantum cryptography, and the possible avenues for future work in this specific area. 
+In this final section, we finish off the dissertation with some concluding remarks on the applicability of SIDH and isogeny-based cryptography, the importance of post-quantum cryptography, and the possible avenues for future work in this specific area. 
+
+If one assumes security of the original SIDH key exchange protocol, then the Yoo et al. signature scheme is provably secure and requires no additional underlying assumptions. Given that \sidh keys are non-ephemeral, and so could pose a promising candidate in the context of TLS certificate signing. Certificate authority signatures, not requiring constant transfer over the wire (as they are offen packaged with Internet browsers or sperating systems) are less desperate for small signature sizes. 
 
 \subsection{Future Work}
+\label{sec:morebatch}
 
 One additional scenario in which inversion batching can be utilized lies in server-client applications. Servers that are managing 
