@@ -9,7 +9,7 @@ Following the debriefing of our results, we offer one final section wherein we d
 
 \section{Performance Results}
 
-In this section we compile performance metrics for the original Yoo et al. signature scheme, our batched-inversion signature scheme, our compressed signature scheme, and also our combined compression with batched inversions implementation. For each of these implementations we show the average cycle time for \textbf{Sign} and \textbf{Verify} as well as the standard deviation. These measurements are outlined in \ref{fig:allmeasurements} (where ``C+B" denotes the combined compression with batching scheme).
+In this section we compile performance metrics for the original Yoo et al. signature scheme, our batched-inversion signature scheme, our compressed signature scheme, and also our combined compression with batched inversions implementation. For each of these implementations we show the average cycle time for \textbf{Sign} and \textbf{Verify} as well as the standard deviation. These measurements are outlined in \ref{fig:allmeasurements} (where ``C+B" denotes the combined compression with batching scheme). These averages are derived from 100 subsequent runs of each implementation.
 
 \begin{figure}
 \begin{center}
@@ -48,6 +48,8 @@ We include graphical representations of our collected data, these can be found i
 
 The reader might note that the the performance metrics of this protocol all yield a considerably high standard deviation. This can be attributed to a few factors. The first and perhaps most influential factor is the size of the private key value $m$. The larger $m$ is, the longer basic $\mathbb{F}_{p^2}$ arithmetic can take. This can be attributed to
 
+On that same point, the reader will also note increased variance in the compressed implemetations. Part of this variance can be attributed to the fact that basis generation is a probabilistic process running in non-constant time - if favourable starting points are chosen, this process is completed significantly faster.
+
 We return again to the comparison charts employed in Section \ref{subsec:perfcomparisons} to compare the tomporal and spatial performance of these isogeny-based signatures to other post-quantum and classical alternatives. This time, we use the metrics resulting from our modified implementations as the point of comparison. These comparisons can be found in Figure \ref{fig:endperfcomparisons} (comparing subroutine performances) and Figure \ref{fig:endsizecomparisons} (compairing key and signature sizes). These metrics are all taken, yet again, at the 128-bit post quantum securty level (or classical security level, in the case of RSA and ECDSA).
 
 \begin{figure}
@@ -64,7 +66,7 @@ SIDH Batched & a & b & c \\
 SIDH Compressed & a & b & c \\
 \rowcolor{light-green}
 SIDH C+B & a & b & c \\
-Sphincs & a & b & c \\
+Sphincs & 17,535,886.94 & 653,013,784.48 & 27,732,049.12 \\
 Rainbow & a & b & c \\
 qTESLA & a & b & c \\
 Picnic & a & b & c \\
@@ -78,6 +80,7 @@ ECDSA & a & b & c \\
 \caption{Performance in clock cycles for our improved isogeny-based signatures in comparison with other post-quantum and classical alternatives.}
 \label{fig:endperfcomparisons}
 \end{figure}
+
 
 \begin{figure}
 \begin{center}
@@ -105,17 +108,31 @@ ECDSA & 32 & b & 32 \\
 \end{figure}
 
 
+
+
 \section{Discussion \& Concluding Remarks}
 
 In this final section, we finish off the dissertation with some concluding remarks on the applicability of SIDH and isogeny-based cryptography, the importance of post-quantum cryptography, and the possible avenues for future work in this specific area. 
 
 If one assumes security of the original SIDH key exchange protocol, then the Yoo et al. signature scheme is provably secure and requires no additional underlying assumptions. Given that \sidh keys are non-ephemeral, and so could pose a promising candidate in the context of TLS certificate signing. Certificate authority signatures, not requiring constant transfer over the wire (as they are offen packaged with Internet browsers or sperating systems) are less desperate for small signature sizes.
 
+An unfortunate drawback to the ``proof of knowledge" method for constructing signatures (how the Yoo et. al signatures are derived) is that the execution time of these schemes scale poorly with an increase in security.
+
 \subsection{Future Work}
 \label{sec:morebatch}
 
-The most direct line of future work that can
+The next stage for this line of work is to finish applying inversion batching to the remaining cross-thread $\mathbb{F}_{p^2}$ inversions made throughout the signature scheme. There are $n$ inversion calls in \textbf{Sign} and $m$ in \textbf{Verify} that have yet to be , and from which further (comparable) performance improvements can be made.
+
+Following this, the code-base should be heavily tested in terms of correctness and application security, and after continued scrutiny (and improvements to code design,) a pull request can be made to the Microsoft SIDH repository \cite{sidhcode} to merge both the Yoo et al. signature scheme and our improved implementations into their code-base. 
+
+Parallel to this line of work would be the continued efforts in developing alternative designs for isogeny-based signature schemes. 
 
 The next step for these implementations would be to merge them into the Microsoft SIDH public repository.
 
 One additional scenario in which inversion batching can be utilized lies in server-client applications. Servers that are managing 
+
+\vspace{50px}
+
+Implementations of cryptographic primitives do have a lot to gain from intelligent design and implementation when it comes to performance metrics. Classical cryptographic algorithms have been . We believe that as the underlying foundations of post-quantum protocols gain traction and wide-spread confidence, more developers will begin to experiment with these protocols and the number of alternative implementation mechanisms and techniques will flourish, offering variety in terms of time-space tradeoffs and efficient, system-specific implementations. 
+
+With that said, however, some families of post-quantum protocols are still considerably young - their mathematical foundations and underlying primitives still have . As mathematical and developmental research both continue to provide more efficient and secure implementations of post-quantum protocols, we can continually approach a cryptographically secure and in the face of a rapidly developing landscape of threat to our privacy. 

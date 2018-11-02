@@ -43,46 +43,26 @@ We gathered runtime measurements of the Yoo et al. signature scheme from \cite{y
 
 \begin{figure}[!h]
 \begin{center}
-\begin{tabular}{ l | b }
-\hline
-\mc{1}{} & \mc{1}{Cycles}\\
-\hline
-\rowcolor{Gray}
-SIDH & c \\
-NTRU (LWE) & c \\
-NewHope (Ring-LWE) & c \\
-McEliece (Code-based) & c \\
-\rowcolor{light-red}
-ECDH & c \\
-\hline
-\end{tabular}
-\caption{Comparison of post-quantum and classical key-exchange runtimes}
-\label{fig:kextimes}
-\end{center}
-\end{figure}
-
-\begin{figure}[!h]
-\begin{center}
 \begin{tabular}{ l | b | b | b }
 \hline
 \mc{1}{}  & \mc{1}{Key Gen} & \mc{1}{Sign} & \mc{1}{Verify}\\
 \hline
 \rowcolor{Gray}
 SIDH & a & b & c \\
-Sphincs (Hash-based) & a & b & c \\
-Rainbow (Multivariate-based) & a & b & c \\
-qTESLA (Ring-LWE) & 1059388 & 460592 & 66491 \\
-Picnic (Hash-based) & 13272 & 9560749 & 6701701 \\
+Sphincs (Hash-based) & 17,535,886.94 & 653,013,784.48 & 27,732,049.12 \\
+qTESLA (Ring-LWE) & 1,059,388 & 460,592 & 66,491 \\
+Picnic (Hash-based) & 13,272 & 9,560,749 & 6,701,701 \\
 \rowcolor{light-red}
-RSA & a & b & c \\
+RSA & a & 1,113,600.0 & 32400.47 \\
 \rowcolor{light-red}
-ECDSA & a & b & c \\
+ECDSA & 1,470,000 & 128,928.28 & 140,869.87 \\
 \hline
 \end{tabular}
 \caption{}
 \label{fig:sigtimes}
 \end{center}
 \end{figure}
+
 
 \begin{figure}[!h]
 \begin{center}
@@ -107,7 +87,7 @@ ECDSA & 32 & b & 32 \\
 \end{center}
 \end{figure}
 
-All of the measurements in these figures reflect implementations which offer 128 bit post-quantum security, with the exception of classical protocols ECDH, RSA, and ECDSA, where numbers are taken at the 128-bit \textit{classical} security level.
+All of the measurements in these figures reflect implementations which offer 128 bit post-quantum security, with the exception of classical protocols RSA, and ECDSA, where numbers are taken at the 2048 and 256-bit (\textit{classical}) security level, respectively. The performance measurements of protocols found in \ref{fig:sigtimes} were either (in the case of Sphincs) measured ourselves, in the same setting as measurements for the isogeny-based scheme, or taken as reported in the relevant literature. 
 
 The runtime benchmarks found in Figure \ref{fig:kextimes} and Figure \ref{fig:sigtimes} are all given in terms of CPU cycles, and as such are more architecture independent than timestamp-based measurements. The measurements for signature and key sizes in Figure \ref{fig:sigsizes} are given in terms of bytes. 
 
