@@ -496,19 +496,25 @@ Including compression in the signature codebase introduces yet another cross-thr
 
 \section{Results}
 
-Let $\sigma$ denote an umcompressed Yoo et al. isogeny-based signature. The size of $\sigma$ can be computed as the addition of the sizes of its constituent parts. To reiterate, $\sigma$ is composed of:
+Let $\sigma$ denote an umcompressed Yoo et al. isogeny-based signature. The size of $\sigma$ can be computed as the sum of the sizes of its constituent parts. To reiterate, $\sigma$ is composed of:
 \begin{itemize}
 \item $4\lambda$ $\mathbb{F}_{p^2}$ elements (the commitments), totaling $384\lambda$ bytes,
 \item $2\lambda$ Keccak hash-function digests, totaling $64\lambda$ bytes,
-\item $\sim\lambda$ elements of $\mathbb{Z}/\laea\mathbb{Z}$ (\randall's secret key value), totaling $\sim48\lambda$ bytes, and
-\item $\sim\lambda$ elliptic curve points ($\pr(S)$ points), totaling $\sim192\lambda$ bytes
+\item ${\sim}\lambda$ elements of $\mathbb{Z}/\laea\mathbb{Z}$ (\randall's secret key value), totaling ${\sim}48\lambda$ bytes, and
+\item ${\sim}\lambda$ elliptic curve points ($\pr(S)$ points), totaling ${\sim}92\lambda$ bytes
 \end{itemize}
 
 Therefore, in the case where the challenge bits are equally divided between $1$ and $0$, $\vert \sigma \vert = 688\lambda \text{bytes}$.   
 
-Let $\sigma_{\text{compressed}}$ denote a compressed Yoo et al. signature using the techniques outlined by Azerderakhs, Costello, and company. $\sigma_{\text{compressed}}$ swaps the buffer of $\sim\lambda$ elliptic curve points for one of $\sim\lambda$ $\mathbb{Z}/\lbeb\mathbb{Z}$ elements. This subtracts $\sim192\lambda$ bytes from the size of the signature and adds $\sim48\lambda$ bytes - reducing the signature size by $\sim144\lambda$ bytes for a final size of $544\lambda$ bytes.\\
+Let $\sigma_{\text{compressed}}$ denote a compressed Yoo et al. signature using the techniques outlined by Azerderakhs, Costello, and company. $\sigma_{\text{compressed}}$ swaps the buffer of ${\sim}\lambda$ elliptic curve points for one of ${\sim}\lambda$ $\mathbb{Z}/\lbeb\mathbb{Z}$ elements. This subtracts ${\sim}192\lambda$ bytes from the size of the signature and adds ${\sim}48\lambda$ bytes - reducing the signature size by ${\sim}144\lambda$ bytes for a final size of $544\lambda$ bytes.\\
 
-EVERYTHING BELOW IS UNDER CONSTRUCTION
+
+Looking at the storage requirements for the following. Figure \ref{table:spacereq} outlines the space requirements for different data structures in \sidh. From this information we can build up the data requirements based on  
+
+Our technique can reduce the size of \sidh signature compression from \_\_\_ bits to \_\_\_ bits.\\
+
+\subsection{Performance of Signature Compression}
+\label{subsec:sigcompperf}
 
 regular\\
 keygen:    40,702,754
@@ -519,16 +525,4 @@ keygen:    40,831,316
 sign:  11,667,991,571
 verify: 5,245,975,977
 
-Looking at the storage requirements for the following. Figure \ref{table:spacereq} outlines the space requirements for different data structures in \sidh. From this information we can build up the data requirements based on  
-
-Our technique can reduce the size of \sidh signature compression from \_\_\_ bits to \_\_\_ bits.\\
-
-\noindent
-\textit{Performance Measurements for Compressed Signatures}.
-
-\subsection{Performance of Signature Compression}
-
-Because of how the signature extension of \sidh was originally written, our benchmarks reflect the time it takes for the signer to compress \code{psiS[r]} for ALL \code{r} (all $2\lambda$ iterations). In a finalized implementation of this system, significant time can be saved if the signer computes the challenge for an interaction before compressing \code{psiS}; this will allow them to avoid running the compression procedure in cases where \code{psiS} is not part of the final signature, effectively reducing the time spent compressing points by $\sim50\%$.
-
-could use a non-constant implementation of double and add instead of montgomery's ladder? 
-
+Because of how the signature extension of \sidh was originally written, our benchmarks reflect the time it takes for the signer to compress \code{psiS[r]} for ALL \code{r} (all $2\lambda$ iterations). In a finalized implementation of this system, significant time can be saved if the signer computes the challenge for an interaction before compressing \code{psiS}; this will allow them to avoid running the compression procedure in cases where \code{psiS} is not part of the final signature, effectively reducing the time spent compressing points by ${\sim}50\%$.

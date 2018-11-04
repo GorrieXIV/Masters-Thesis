@@ -21,10 +21,10 @@ Original Sign & 4,611,010,573.608 & 300,643,097.882 \\
 Original Verify & 3,221,544,625.173 & 263,674,018.528 \\
 Batched Sign & 4,552,062,482.520 & 18,113,276.904 \\
 Batched Verify & 3,173,340,239.461 & 68,672,478.339 \\
-Compressed Sign & a & b \\
-Compressed Verify & a & b \\
-C+B Sign & a & b \\
-C+B Verify & a & b \\
+Compressed Sign & 10224610996 & b \\
+Compressed Verify & 4472444449 & b \\
+C+B Sign & 10105688822 & b \\
+C+B Verify & 4327225903 & b \\
 \hline
 \end{tabular}
 \end{center}
@@ -66,14 +66,13 @@ SIDH Batched & a & b & c \\
 SIDH Compressed & a & b & c \\
 \rowcolor{light-green}
 SIDH C+B & a & b & c \\
-Sphincs & 17,535,886.94 & 653,013,784.48 & 27,732,049.12 \\
-Rainbow & a & b & c \\
-qTESLA & a & b & c \\
-Picnic & a & b & c \\
+Sphincs & 17,535,886.94 & 653,013,784 & 27,732,049 \\
+qTESLA & 1,059,388 & 460,592 & 66,491 \\
+Picnic & 13,272 & 9,560,749 & 6,701,701 \\
 \rowcolor{light-red}
-RSA & a & b & c \\
+RSA & a & 1,113,600 & 32400 \\
 \rowcolor{light-red}
-ECDSA & a & b & c \\
+ECDSA & 1,470,000 & 128,928 & 140,869 \\
 \hline
 \end{tabular}
 \end{center}
@@ -89,7 +88,7 @@ ECDSA & a & b & c \\
 \mc{1}{}  & \mc{1}{Public Key} & \mc{1}{Private Key} & \mc{1}{Signature}\\
 \hline
 \rowcolor{Gray}
-SIDH & 768 & b & 141,312 \\
+SIDH & 768 & 48 & 141,312 \\
 \rowcolor{light-green}
 SIDH Compressed & 768 & b & 141,312 \\
 Sphincs & 32 & 64 & 8,080 - 16,976 \\
@@ -123,13 +122,14 @@ An unfortunate drawback to the ``proof of knowledge" method for constructing sig
 
 The next stage for this line of work is to finish applying inversion batching to the remaining cross-thread $\mathbb{F}_{p^2}$ inversions made throughout the signature scheme. There are $n$ inversion calls in \textbf{Sign} and $m$ in \textbf{Verify} that have yet to be , and from which further (comparable) performance improvements can be made.
 
-Following this, the code-base should be heavily tested in terms of correctness and application security, and after continued scrutiny (and improvements to code design,) a pull request can be made to the Microsoft SIDH repository \cite{sidhcode} to merge both the Yoo et al. signature scheme and our improved implementations into their code-base. 
+There are several other areas of the code-base where relatively simple changes could be made to gain marginal performance improvements. Take for example functions which previously ran on private information but have now been adopted to run on public information, such as the key-exchange functions used in the verification process. These functions are designed to employ constant time algorithms for performing arithmetic (such as the Montgomery ladder) but could now be modified to support non-constant time implementations. Changes here could save time at several points of the verification process.
 
-Parallel to this line of work would be the continued efforts in developing alternative designs for isogeny-based signature schemes. 
+Following further efforts to improve performance, the code-base should be heavily tested in terms of correctness and application security, and after continued scrutiny (and improvements to code design,) a pull request can be made to the Microsoft SIDH repository \cite{sidhcode} to merge both the Yoo et al. signature scheme and our improved implementations into their code-base. 
 
-The next step for these implementations would be to merge them into the Microsoft SIDH public repository.
+Parallel to this line of work would be the continued efforts in developing alternative designs for isogeny-based signature schemes, and alternative isogeny-based schemes offering solutions to other information security goals.
 
-One additional scenario in which inversion batching can be utilized lies in server-client applications. Servers that are managing 
+
+There is another setting in which the inversion batching technique of Chapter \ref{sec:batching} could be used to assist the performance of isogeny-based schemes.
 
 \vspace{50px}
 
