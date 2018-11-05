@@ -1,10 +1,10 @@
 \chapter{Introduction}
 
-The past 30 years have brought with them astonishing developments in the field of quantum computing. With these developments, quantum computers have been shown to possess computing power beyond that of our classical, binary architectures. Through the continually developing articulation of quantum algorithms, we have witnessed the discovery of algorithms capable of efficiently solving problems which had no prior known subexponential solution \cite{shor}. 
+The past 30 years have brought with them astonishing developments in the field of quantum computing. With these developments, quantum computers have been shown to possess computing power beyond that of our classical, binary architectures. Through the continually developing articulation of quantum algorithms, we have witnessed the discovery of algorithms capable of efficiently solving problems which had no prior known subexponential solution \cite{introqc}. 
 
 Cryptography, a branch of mathematics separate from that of quantum computing, is the study of secure communication systems. Cryptographic systems operate under the presence of an external, unauthorized, and untrusted party (often referred to as the \textit{adversary},) against whom properties of the communication must be safeguarded. Also critical to the field of cryptography is the practice of proving (or disproving) that a given system is safe and secure.
 
-These distinct fields overlap in a variety of ways. For example, some of the previously mentioned problems, which now have newly discovered subexponential solutions, have historically been used as the backbone for many popular cryptosystems. It was the assumed difficulty of these problems that the security of certain cryptosystems depended on\footnote{These problems reside in the complexity class known as BQP, or ``bounded-error quantum polynomial-time"; one particular problem in this class is the \textit{hidden subgroup problem}, a problem with much historical significance in the design of Cryptographic systems}. Thus, the implementation of a sufficiently large quantum computer would be a catastrophic threat to the majority of modern Internet security.  
+These distinct fields overlap in a variety of ways. For example, some of the previously mentioned problems, which now have newly discovered subexponential solutions, have historically been used as the backbone for many popular cryptosystems. It was the assumed difficulty of these problems that the security of certain cryptosystems depended on\footnote{These problems reside in the complexity class known as BQP, or ``bounded-error quantum polynomial-time"; one particular problem in this class is the \textit{hidden subgroup problem}, a problem with much historical significance in the design of Cryptographic systems}. Thus, the implementation of a sufficiently large quantum computer would be a catastrophic threat to the majority of modern Internet security \cite{shor}.
 
 And so, as physicists and engineers race towards error-free and energy efficient implementations of quantum computers, we steadfastly approach a new age for the art and science of Cryptography. The looming threat of large-scale quantum computing has driven the field of ``post-quantum" cryptography; the aspiration of which is to develop efficient and secure cryptographic algorithms that are resistant to quantum cryptanalysis.\\
 
@@ -48,7 +48,7 @@ We gathered runtime measurements of the Yoo et al. signature scheme from \cite{y
 \mc{1}{}  & \mc{1}{Key Gen} & \mc{1}{Sign} & \mc{1}{Verify}\\
 \hline
 \rowcolor{Gray}
-SIDH & a & b & c \\
+SIDH & 84,499,270 & 4,950,023,141.65 & 3,466,703,991.09 \\
 Sphincs (Hash-based) & 17,535,886.94 & 653,013,784 & 27,732,049 \\
 qTESLA (Ring-LWE) & 1,059,388 & 460,592 & 66,491 \\
 Picnic (Hash-based) & 13,272 & 9,560,749 & 6,701,701 \\
@@ -71,7 +71,7 @@ ECDSA & 1,470,000 & 128,928 & 140,869 \\
 \mc{1}{}  & \mc{1}{Public Key} & \mc{1}{Private Key} & \mc{1}{Signature}\\
 \hline
 \rowcolor{Gray}
-SIDH & 768 & 48 & 141,312 \\
+SIDH & 768 & 48 & ${\sim}$88,064 \\
 Sphincs (Hash-based) & 32 & 64 & 8,080 - 16,976 \\
 Rainbow (Multivariate-based) & 152,097 - 192,241 & 100,209 - 114,308 & 64 - 104 \\
 qTESLA (Ring-LWE) & 4,128 & 2,112 & 3,104 \\
@@ -166,12 +166,31 @@ void function_example (int* a, int b, int c) {
 \vspace{15px}
 
 \noindent
-\textit{Cryptography Conventions}. Cryptographic protocols, as per the usual convention, are written and defined in terms of tuples of algorithms. In denoting general protocols, we frequently use a capital Pi ($\Pi$) subscripted with some informative title. Following this format, $\Pi_{\text{sig}}$.\textbf{KeyGen} might represent the key generation algorithm found in some signature protocol. If the context is clear, we may refer to an algorithm/procedure such as this simply by its name (e.g. \textbf{KeyGen}), dropping the leading protocol identifier.\\
+\textit{Mathematical Conventions}. Cryptographic protocols, as per the usual convention, are written and defined in terms of tuples of algorithms. In denoting general protocols, we frequently use a capital Pi ($\Pi$) subscripted with some informative title. Following this format, $\Pi_{\text{sig}}$.\textbf{KeyGen} might represent the key generation algorithm found in some signature protocol. If the context is clear, we may refer to an algorithm/procedure such as this simply by its name (e.g. \textbf{KeyGen}), dropping the leading protocol identifier.
 
-\noindent
-\textit{Math Conventions}. In denoting isogenies (and other functions between elliptic curves) we will opt to use upper-case greek letters. Elliptic curves discussed in a general setting are refered to, when possible, as $E$; if a more unique identifier is necessary, $E$ with a unique subscript is used. For example, $E_{Alice}$ might refer to a curve created by Alice.  
+In denoting isogenies (and other functions between elliptic curves) we will opt to use upper-case greek letters. Elliptic curves discussed in a general setting are refered to, when possible, as $E$; if a more unique identifier is necessary, $E$ with a unique subscript is used. For example, $E_{Alice}$ might refer to a curve created by Alice.  
 
-When writting $\log$ we assume base 2, unless noted otherwise.
+When writting $\log$ we assume base 2, unless noted otherwise. When working in a finite field, however, we may omit $\log$ from formulae if the context is obvious.
+
+\begin{figure}
+\begin{center}
+\begin{tabular}{ c | c }
+\hline
+Notation & Meaning\\
+\hline
+iff & if and only if\\
+$\#S$ & cardinality of the set $S$\\
+$\vert b \vert$ & bit-length of the number $b$\\
+$x \mid y$ & $y$ divides $x$\\
+$x \nmid y$ & $y$ does not divide $x$\\
+\hline
+\end{tabular}
+\end{center}
+\caption{List of shorthands and symbols.}
+\label{fig:symbols}
+\end{figure}
+
+
 
 
 

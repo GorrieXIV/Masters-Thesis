@@ -17,8 +17,8 @@ In this section we compile performance metrics for the original Yoo et al. signa
 \hline
 & Average Cycles & Standard Deviation \\
 \hline
-Original Sign & 4,611,010,573.608 & 300,643,097.882 \\
-Original Verify & 3,221,544,625.173 & 263,674,018.528 \\
+Original Sign & 4,950,023,141.65 & 300,643,097.882 \\
+Original Verify & 3,466,703,991.09 & 263,674,018.528 \\
 Batched Sign & 4,552,062,482.520 & 18,113,276.904 \\
 Batched Verify & 3,173,340,239.461 & 68,672,478.339 \\
 Compressed Sign & 10224610996 & b \\
@@ -59,9 +59,9 @@ We return again to the comparison charts employed in Section \ref{subsec:perfcom
 \mc{1}{}  & \mc{1}{Key Gen} & \mc{1}{Sign} & \mc{1}{Verify}\\
 \hline
 \rowcolor{Gray}
-SIDH & a & b & c \\
+SIDH & a & 4,950,023,141.65 & 3,466,703,991.09 \\
 \rowcolor{light-green}
-SIDH Batched & a & b & c \\
+SIDH Batched &  & b & c \\
 \rowcolor{light-green}
 SIDH Compressed & a & b & c \\
 \rowcolor{light-green}
@@ -70,7 +70,7 @@ Sphincs & 17,535,886.94 & 653,013,784 & 27,732,049 \\
 qTESLA & 1,059,388 & 460,592 & 66,491 \\
 Picnic & 13,272 & 9,560,749 & 6,701,701 \\
 \rowcolor{light-red}
-RSA & a & 1,113,600 & 32400 \\
+RSA & 12,800,000 & 1,113,600 & 32400 \\
 \rowcolor{light-red}
 ECDSA & 1,470,000 & 128,928 & 140,869 \\
 \hline
@@ -88,9 +88,9 @@ ECDSA & 1,470,000 & 128,928 & 140,869 \\
 \mc{1}{}  & \mc{1}{Public Key} & \mc{1}{Private Key} & \mc{1}{Signature}\\
 \hline
 \rowcolor{Gray}
-SIDH & 768 & 48 & 141,312 \\
+SIDH & 768 & 48 & ${\sim}$88,064 \\
 \rowcolor{light-green}
-SIDH Compressed & 768 & b & 141,312 \\
+SIDH Compressed & 768 & 48 & ${\sim}$69,632 \\
 Sphincs & 32 & 64 & 8,080 - 16,976 \\
 Rainbow & 152,097 - 192,241 & 100,209 - 114,308 & 64 - 104 \\
 qTESLA & 4,128 & 2,112 & 3,104 \\

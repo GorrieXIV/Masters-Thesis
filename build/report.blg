@@ -2,7 +2,7 @@ This is BibTeX, Version 0.99d (TeX Live 2017/Debian)
 Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
 The top-level auxiliary file: report.aux
 The style file: alphaurl.bst
-White space in argument---line 242 of file report.aux
+White space in argument---line 297 of file report.aux
  : \bibdata{refs.bib,
  :                    abbrev3, crypto}
 I'm skipping whatever remains of this command
@@ -16,10 +16,13 @@ You're missing a field name---line 3 of file refs.bib.bib
  : % author =
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 109 of file refs.bib.bib
+I was expecting a `,' or a `}'---line 169 of file refs.bib.bib
  :  author 
- :         = {Brian LaMacchia and Craig Costello and Karen Easterbrook and Michael Naehrig and Patrick Longa},
+ :         = {Jintai Ding and Ming-Shing Chen and Albrecht Petzoldt and Dieter Schmidt and Bo-Yin Yang},
 I'm skipping whatever remains of this entry
+Warning--I didn't find a database entry for "introqc"
+Warning--I didn't find a database entry for "sidh"
+Warning--I didn't find a database entry for "pwcomp"
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Warning--empty journal in compwr
 Warning--empty journal in rewinding
@@ -36,47 +39,48 @@ Warning--empty journal in seshsig
 Warning--empty journal in silverman
 Warning--empty year in silverman
 Warning--empty journal in sunsig
+Warning--empty journal in genph
 Warning--empty journal in unruh
 Warning--empty journal in yoo
-You've used 20 entries,
+You've used 25 entries,
             3274 wiz_defined-function locations,
-            758 strings with 7678 characters,
-and the built_in function-call counts, 8609 in all, are:
-= -- 803
-> -- 432
-< -- 8
-+ -- 136
-- -- 134
-* -- 439
-:= -- 1340
-add.period$ -- 58
-call.type$ -- 20
-change.case$ -- 129
-chr.to.int$ -- 20
-cite$ -- 37
-duplicate$ -- 270
-empty$ -- 681
-format.name$ -- 156
-if$ -- 2067
+            786 strings with 8406 characters,
+and the built_in function-call counts, 10910 in all, are:
+= -- 1027
+> -- 535
+< -- 12
++ -- 170
+- -- 166
+* -- 557
+:= -- 1680
+add.period$ -- 73
+call.type$ -- 25
+change.case$ -- 161
+chr.to.int$ -- 25
+cite$ -- 43
+duplicate$ -- 346
+empty$ -- 874
+format.name$ -- 194
+if$ -- 2634
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 18
-newline$ -- 102
-num.names$ -- 60
-pop$ -- 251
+missing$ -- 22
+newline$ -- 127
+num.names$ -- 75
+pop$ -- 309
 preamble$ -- 1
-purify$ -- 150
+purify$ -- 187
 quote$ -- 0
-skip$ -- 622
+skip$ -- 792
 stack$ -- 0
-substring$ -- 170
-swap$ -- 14
-text.length$ -- 8
-text.prefix$ -- 6
+substring$ -- 227
+swap$ -- 28
+text.length$ -- 12
+text.prefix$ -- 8
 top$ -- 0
-type$ -- 156
-warning$ -- 17
-while$ -- 55
-width$ -- 22
-write$ -- 226
+type$ -- 196
+warning$ -- 18
+while$ -- 70
+width$ -- 28
+write$ -- 287
 (There were 3 error messages)

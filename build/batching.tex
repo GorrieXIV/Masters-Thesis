@@ -3,7 +3,7 @@
 
 Our first contribution to the \sidh codebase is the implementation and integration of a procedure for batching together many $\mathbb{F}_{p^2}$ element inversions. This contribution is discussed in detail in the following Chapter. The chapter is split into three sections: a high-level discussion of the procedure itself, the low-level details of its integration into \sidh, and finally, the resulting affects of this procedure on the performance of \sidh. 
 
-In the first Section of this Chapter we will detail the specifics of the partial batched inversion procedure. We will show how the procedure can be constructed by combining two techniques: a well known method for reducing a $\mathbb{F}_{p^2}$ inversion to several $\mathbb{F}_{p}$ operations, and an inversion batching technique outlined in \cite{batching}. 
+In the first Section of this Chapter we will detail the specifics of the partial batched inversion procedure. We will show how the procedure can be constructed by combining two techniques: a well known method for reducing an $\mathbb{F}_{p^2}$ inversion to several $\mathbb{F}_{p}$ operations, and an inversion batching technique outlined in \cite{batching}. 
 
 As we then venture into the lower-level implementation details, we will explore how the procedure can be leveraged efficiently in the codebase. We will take a closer look at several of the aforementioned \sidh functions as we illustrate some of the performance bottlenecks in the system. At this time, we will also discuss the design decisions made while implementing the partial batched inversion procedure as well as some of the function's lower-level minutiae.
 
@@ -12,7 +12,7 @@ We will end this Chapter by taking a detailed look at the performance gains offe
 \section{Partial Batched Inversions}
 \label{sec:pbi}
 
-We will now outline the procedure that is central to our first contribution. The ``partial batched inversion" procedure reduces arbitrarily many \emph{unrelated}\footnote{To clarify; the elements subject to these inversion must all be over the same field, but can otherwise be unrelated.} $\mathbb{F}_{p^{2}}$ inversions to a sequence of $\mathbb{F}_{p}$ operations. The fact that the elements being inverted need not hold any relation will be significant to the applicability of this procedure. For brevity's sake, we will henceforth refer to this procedure as \code{pb\_inv} in the \sidh context, and \textbf{PartialBatchedInversion} in the more general mathematical context.
+We will now outline the procedure that is central to our first contribution. The ``partial batched inversion" procedure reduces arbitrarily many unrelated\footnote{To clarify; the elements subject to these inversion must all be over the same field, but can otherwise be unrelated.} $\mathbb{F}_{p^{2}}$ inversions to a sequence of $\mathbb{F}_{p}$ operations. The fact that the elements being inverted need not hold any relation will be significant to the applicability of this procedure. For brevity's sake, we will henceforth refer to this procedure as \code{pb\_inv} in the \sidh context, and \textbf{PartialBatchedInversion} in the more general mathematical context.
 
 As mentioned above, \code{pb\_inv} is constructed by combining two distinct techniques. Both of these techniques improve the efficiency of computing field element inversions: the first is specific to extension fields (in our case, $\mathbb{F}_{p^{2}}$ elements,) but the second is a technique applicable to field element inversions in a more general setting.
 
@@ -87,12 +87,10 @@ $$
 C_{\textbf{PartialInv}} = 2\textbf{s} + \textbf{a} + \textbf{i} + 3\textbf{m}
 $$
 
-In some contexts, computing squares can be done more efficiently than the multiplication of two arbitrary elements. A noteworthy example of this is would be binary fields ($\mathbb{F}_{2^k}$) where squaring a number is equivalent to simply performing a bit-shift. However, because we are working in the quadratic extension of some prime field $\mathbb{F}_p$ for a large prime $p$, we can assume that computing the square of some arbitrary element $x$ is no more or less efficient than simply computing $x \cdot x$. With this in mind, we can further simplify $A$.
+In some contexts, computing squares can be done more efficiently than the multiplication of two arbitrary elements. A noteworthy example of this can be found in binary fields ($\mathbb{F}_{2^k}$) where squaring a number is equivalent to simply performing a bit-shift. However, because we are working in the quadratic extension of some prime field $\mathbb{F}_p$ for a large prime $p$, we can assume that computing the square of some arbitrary element $x$ is no more or less efficient than simply computing $x \cdot x$. With this in mind, we can further simplify $C_{\textbf{PartialInv}}$.
 $$
 C_{\textbf{PartialInv}} = 5\textbf{m} + \textbf{a} + \textbf{i}
 $$
-
-We claim that this ``reduces" the computation time of field element inversion, but it may not be immediately clear that this technique is computationally favourable over any other approach to computing an $\mathbb{F}_{p^{2}}$ inversion. 
 
 \subsection{Batching Field Element Inversions}
 \label{subsec:batching}
@@ -116,7 +114,7 @@ $$
 
 Let us analyse these phases a little more closely while we generalize to $n$-many elements. In the upward-percolation phase, constructing $a$ requires $n-1$ multiplications; and so has a complexity of $\mathcal{O}(n)$. The inversion phase requires one field element inversion, and so has complexity of $\mathcal{O}(1)$. 
 
-If we implement the downward-percolation phase directly as outlined in the three-element example above, computing every output requires $n$ products each composed of $n-1$ multiplications. These $n$ products are each also multiplied by $a^{-1}$. This multiplication by $a^{-1}$ can be added to our $n-1$ inversion count resulting in $n$-many products composed of $n$ multiplications; bringing the complixity of the downward-percolation phase to $\mathcal{O}(n^2)$.
+If we implement the downward-percolation phase directly as outlined in the three-element example above, computing every output requires $n$ products each composed of $(n-1)$ multiplications. These $n$ products are each also multiplied by $a^{-1}$. This multiplication by $a^{-1}$ can be added to our $n-1$ inversion count resulting in $n$-many products composed of $n$ multiplications; bringing the complixity of the downward-percolation phase to $\mathcal{O}(n^2)$.
 
 We will refer to this roughly-sketched procedure as $\textbf{BatchedInv}_0$. Let $C_{\textbf{BatchedInv}_0}$ denote the performance of $\textbf{BatchedInv}_0$ in the format outlined above. We have, then, that 
 $$
@@ -197,7 +195,7 @@ $$
 2(n-1) < n^2
 $$
 
-And so, because $n^2$ is always larger than $2(n-1)$ for all $n \in \mathbb{R}$, \textbf{BatchedInv} outperforms $\textbf{BatchedInv}_0$ for every possible batch size. This can be checked, if one so wishes, by setting $n^2 = 2(n-1)$, simplifying to $n^2 - 2n + 2 = 0$, and noting that the discriminant ($2^2 - 4\cdot 2$) is negative. 
+And so, because $n^2$ is always larger than $2(n-1)$ for all $n \in \mathbb{R}$, \textbf{BatchedInv} outperforms $\textbf{BatchedInv}_0$ for every possible batch size. This can be checked by setting $n^2 = 2(n-1)$, simplifying to $n^2 - 2n + 2 = 0$, and noting that the discriminant ($2^2 - 4\cdot 2$) is negative. 
 
 \subsection{Partial Batched Inversions}
 \label{subsec:pbi}
@@ -320,10 +318,9 @@ It appears now that in order for \textbf{PartialBatchedInv}$_0$ to be computatio
 
 Though it seems trivially true, we can verify this by measuring and comparing the execution times of the \sidh addition and multiplcation functions we will be using for our implementation.
 
-When doing so (using the arithmetic test cases included in \code{arith\_tests.c} by Microsoft Research) we arrive at the measurements outlined in table \ref{tab:optimes1}.
+When doing so (using the arithmetic test cases included in \code{arith\_tests.c} by Microsoft Research) we arrive at the measurements outlined in the table below.
 
 \begin{table}[!h]
-\label{tab:optimes1}
 \begin{center}
 \begin{tabular}{@{}lllll@{}}
 	\toprule
@@ -386,6 +383,27 @@ $$
 C \approx 7,269n + 826,228
 $$
 
+\begin{figure}[!h]
+\begin{center}
+%\begin{table}{lllll}
+\begin{tabular}{lllll}
+	\toprule
+	Procedure & operation count & expected cost in clock cycles\\
+	\midrule
+	\textbf{PartialBatchedInv} & $7n\textbf{m} + n\textbf{a} + \textbf{i}$ & 2,628,940\\
+	\textbf{PartialBatchedInv}$_0$ & $(12n + 5)\textbf{m} + \textbf{a} + \textbf{i}$ & 3,834,263\\
+	248 unbatched $\mathbb{F}_{p^2}$ inversions & $248\bar{\textbf{i}}$ & 205,786,928\\
+	\bottomrule
+\end{tabular}
+%\end{table} 
+\end{center}
+\caption{Expected computational cost of performing 248 field element inversions using different approaches.}
+\label{tab:compareprocs}
+\end{figure}
+
+\noindent
+The following graphs also indicate quite clearly the relationships between these three approaches to performing multiple field element inversions. The steep orange line found in the left-hand plot indicates the cost of performing unbatched field element inversions, scaling as the number of elements increases. The other two lines (found again in the right-hand plot) indicate the scaling performance of \textbf{PartialBatchedInv} (blue) and \textbf{PartialBatchedInv}$_0$ (red).
+
 \begin{center}
 \begin{tikzpicture}
 	\begin{scope}[xshift=-3cm]
@@ -399,8 +417,8 @@ $$
 		]
 
 		\addplot+[mark=none] {12108*x + 831479};
-		\addplot+[mark=none] {829786*x};
 		\addplot+[mark=none] {7269*x + 826228};
+		\addplot+[mark=none] {829786*x};
 		\end{axis}
 	\end{scope}
 	\begin{scope}[xshift=5cm]
@@ -420,25 +438,10 @@ $$
 \end{tikzpicture}
 \end{center}
 
-\begin{table}[!h]
-\label{tab:compareprocs}
-\begin{center}
-\begin{tabular}{@{}lllll@{}}
-	\toprule
-	Procedure & operation count & expected performance in clock cycles\\
-	\midrule
-	\textbf{PartialBatchedInv} & \code{fpinv751\_mont} & 826,228\\
-	\textbf{PartialBatchedInv}$_0$ & \code{fp2add751} & 172\\
-	248 unbatched $\mathbb{F}_{p^2}$ inversions & \code{fp2inv751\_mont} & 829,786\\
-	\bottomrule
-\end{tabular}
-\end{center}
-\end{table} 
-
 \section{Implementation Details}
 \label{sec:pbinvimplementation}
 
-We will now take the work of the previous subsection and explain in detail how it can be applied to the Yoo et al. signature layer of \sidh. We will begin with an examination of the lower-level details of our procedures implementation. In this first subsection, we transcribe \textbf{PartialBatchedInversion} to its C variant, \code{pb\_inv}, which is defined almost entirely by means of the \sidh API. We will discuss some design specifics of \code{pb\_inv}, and look breifly at the security of the function with respect to the signature scheme.
+We will now take the work of the previous subsection and explain in detail how it can be applied to the Yoo et al. signature layer of \sidh. We will begin with an examination of the lower-level details of our procedures implementation. In this first subsection, we transcribe \textbf{PartialBatchedInversion} to its C variant, \code{pb\_inv}, which is defined almost entirely by means of \code{fpx.c} functions. We will discuss some design specifics of \code{pb\_inv}, and look breifly at the security of the function with respect to the signature scheme.
 
 After outlining the specifics of our C implementation, we will move onto a high-level overview of the signature layer architecture. This mapping will allow efficient highlighting of execution paths in the codebase where batching inversions could offer a performance increase. Additionally, we will discuss properties of the signature scheme that can be leveraged to optimize the performance increases offered by \pbinv.
 
@@ -447,6 +450,7 @@ After outlining the specifics of our C implementation, we will move onto a high-
 With Figure \ref{code:pbinv} we provide an explicit C definition for the function \code{pb\_inv}. For descriptions of the functions called in this procedure, the reader can refer to section \ref{subsec:functions}. For explicit definitions of some of these functions, the reader can refer to Appendix \ref{app:functions}.\\
 
 \begin{figure}[!h]
+\caption{C code for the partial-batched inversion function.}
 \label{code:pbinv}
 \begin{lstlisting}
 void pb_inv (const f2elm_t* vec, f2elm_t* dest, const int n) {
@@ -525,7 +529,7 @@ In the \sidh library, there are two distinct functions for computing field eleme
 
 Take for example some private data $c$ being manipulated or operated on by some algorithm $\textbf{A}$. In order to be entirely certain that $c$ in \textbf{A($c$)} is not vulnerable to \emph{any} imagineable side-channel attack it must be the case that the structure of \textbf{A} does not in anyway depend on the information stored in $c$.
 
-As will be illuminated in the following subsection, there are two settings in our implementation where \code{pb\_inv} us called. In the first case, the elements passed to \code{pb\_inv} are the constituents of \randall's public key as derived in \code{KeyGeneration\_A}. Because \randall's public key values appear as public information in the signature (as commitment $E_0$) they needn't consider for protection from side-channel analysis. 
+As will be illuminated in the following subsection, there are two settings in our implementation where \code{pb\_inv} is called. In the first case, the elements passed to \code{pb\_inv} are the constituents of \randall's public key as derived in \code{KeyGeneration\_A}. Because \randall's public key values appear as public information in the signature (as commitment $E_0$) they needn't consider for protection from side-channel analysis. 
 
 In the second case, the inputs to \code{pb\_inv} are the $j$-invariant representations of \bob and \randall's shared secret, as derived in \code{SecretAgreement\_A} and \code{SecretAgreement\_B}.  When one of these secret agreement functions are used in the context of SIDH key exchange, the same $j$-invariant is used as the shared secret between party members \ba and \rb, and so would need to be protected against side-channel attacks. This is not the case in the context of signatures, however, because every signature includes the commitments $E_1$ which are precisely the shared secrets between the signer and \randall. And so this second case is also free from concerns of side-channel analysis.
 
@@ -533,7 +537,7 @@ Because our deployments of \pbinv are only concerned with public data, we are ab
 
 \subsection{Embedding Partial Batched Inversions}
 
-Recall Figure \ref{fig:halfmap} which details the abstraction levels of the SIDH protocols as they relate to the modules of \sidh. We can further expand on this figure to illustrate how the Yoo et al. signature layer interoperates with the original \sidh codebase. See Figure \ref{fig:fullmap} - ``SIDH\_signature.c" signifies the C module added by Yoo et al., which implements $\Sigma':$\textbf{KeyGen}, $\Sigma':$\textbf{Sign}, and $\Sigma':$\textbf{Verify} as they are outlined in Section \ref{sec:sigsbackground}. For the remainder of this section we will refer to these higher-level procedures as simply \textbf{KeyGen}, \textbf{Sign}, and \textbf{Verify}.
+Recall Figure \ref{fig:halfmap} which details the abstraction levels of the SIDH protocols as they relate to the modules of \sidh. We can further expand on this figure to illustrate how the Yoo et al. signature layer interoperates with the original \sidh codebase. See Figure \ref{fig:fullmap} - ``SIDH\_signature.c" signifies the C module added by Yoo et al., which implements $\Sigma'$.\textbf{KeyGen}, $\Sigma'$.\textbf{Sign}, and $\Sigma'$.\textbf{Verify} as they are outlined in Section \ref{sec:sigsbackground}. For the remainder of this section we will refer to these higher-level procedures as simply \textbf{KeyGen}, \textbf{Sign}, and \textbf{Verify}.
 
 \begin{figure}[htp]
 \centering
@@ -545,7 +549,7 @@ Recall Figure \ref{fig:halfmap} which details the abstraction levels of the SIDH
 \noindent
 \emph{Parallelizing Signatures}. Recall now the construction of \textbf{Sign} and \textbf{Verify} from Section \ref{sec:sigsbackground}. The sign procedure requires running $2\lambda$ distinct instances of the underlying key exchange protocol, after which these instances are reproduced in \textbf{Verify} to check for their validity. It is clear that, because every $2\lambda$ iteration of \textbf{Sign} and \textbf{Verify} are entirely independent of each other, these procedures present themselves as embarrassingly parallel.\footnote{in the field of high performance computing, a problem that is trivially parallizable is often referred to as \emph{embarrassingly} parallizable.} 
 
-This parallelization approach was exactly the one taken by Yoo et al. in their C implementation. Refer again to the \code{SIDH\_signature.c} functions outlined in Figure \ref{fig:sigfuncs}: \code{isogey\_sign} acts as the entry point for \textbf{Sign} and spawns a POSIX thread for every instance of the procedure's for-loop. So now, in parallel, every thread spawned by \code{isogeny\_sign} makes a call to \code{sign\_thread}, which in turn performs \bob's interaction with \randall. This is outlined below in Figure \ref{fig:parallelcall}. Verification proceeds analogously; \code{isogeny\_verify} is executed and spawns POSIX threads executing \code{verify\_thread} until all $2\lambda$ iterations are complete. $\lambda$ here denotes the security level in bits (128 by default in SIDH), and so 248 threads are spawned in both \code{sign\_thread} and \code{verify\_thread}. Refer to the Figure directly below, roughly illustrating a parallel call-graph for \code{isogeny\_sign} and \code{isogeny\_verify}.
+This parallelization approach was exactly the one taken by Yoo et al. in their C implementation. Refer again to the \code{SIDH\_signature.c} functions outlined in Figure \ref{fig:sigfuncs}: \code{isogey\_sign} acts as the entry point for \textbf{Sign} and spawns a POSIX thread for every instance of the procedure's for-loop. So now, in parallel, every thread spawned by \code{isogeny\_sign} makes a call to \code{sign\_thread}, which in turn performs \bob's interaction with \randall. This is illustrated in Figure \ref{fig:parallelcall}. Verification proceeds analogously; \code{isogeny\_verify} is executed and spawns POSIX threads executing \code{verify\_thread} until all $2\lambda$ iterations are complete. $\lambda$ here denotes the security level in bits (128 by default in SIDH), and so 248 threads are spawned in both \code{sign\_thread} and \code{verify\_thread}.
 
 \begin{figure}
 \begin{tikzpicture}
@@ -603,13 +607,13 @@ And so, there are two settings in which the same sequence of operations will be 
 Costella et al. have concisely outlined many of the \sidh isogeny and point-wise functions in Table 1 of \cite{effalg}. Examinig this Figure, we note that there are only three candidate functions containing element inversion calls: \code{j\_inv}, \code{inv\_4\_way}, and \code{get\_A}. The fact that so few functions require inversions is, again, thanks to the design decisions outlined in Section \ref{subsec:design}.\\
 
 \noindent
-\code{j\_inv} is a function returning the $j$-invariant of a curve which, as the reader may recall, is used in the computation of the shared secret. If we refer back to our definitions of \code{Sign} and \code{Verify} (Algorithms 9 and 10, respectively) we note that \code{Sign} contains a call to \code{SecretAgreement\_B} in every iteration of its for-loop. Similarly, \code{Verify} contains a call to \code{SercretAgreement\_A} in roughly half of the iterations of its for-loop, and a call to \code{SecretAgreement\_B} in the remaining iterations. This totals to $248$ secret agreement computations in both signature signing and verifying procedures. This means that somewhere in the exeuction flow of \code{isogney\_sign} and \code{isogeny\_verify} there are calls to these secret agreement functions, illustrating the presence of 1 \code{j\_inv} function call (and by extension, 1 extension field inversion,) in every signing and verification thread.\\
+\code{j\_inv} is a function returning the $j$-invariant of a curve which is used in the derivation of the shared secret. If we refer back to our definitions of \code{Sign} and \code{Verify} (Algorithms 9 and 10, respectively) we note that \code{Sign} contains a call to \code{SecretAgreement\_B} in every iteration of its for-loop. Similarly, \code{Verify} contains a call to \code{SercretAgreement\_A} in roughly half of the iterations of its for-loop, and a call to \code{SecretAgreement\_B} in the remaining iterations. This totals to $248$ secret agreement computations in both signature signing and verifying procedures. This means that somewhere in the exeuction flow of \code{isogney\_sign} and \code{isogeny\_verify} there are calls to these secret agreement functions, illustrating the presence of 1 \code{j\_inv} function call (and by extension, 1 field inversion,) in every signing and verification thread.\\
 
 \noindent
 \code{inv\_4\_way} is a function which takes 4 $\mathbb{F}_{p^2}$ elements and returns each elements inversion by means of calculating only one inversion (via the same method outlined by \textbf{BatchedInversion}). This function is used in the key generation to process to invert the Z-values of the public key curve elements; $\phi(P)$, $\phi(Q)$, and $\phi(P-Q)$), so that they can be converted from projective to affine representation. Because every \code{sign\_thread} execution represents \bob's key exchange with a distinct and random \randall, \code{KeyGeneration\_A} must be called in each thread to generate \randall's public and private keys. This results in another candidate batch of size 248 for batched partial inversion.\\
 
 \noindent
-\code{get\_A}, while containing an extension field inversion, does not arise in the execution flow of the signature scheme. The potential candidacy of this function for partial batched inversion processing is discussed further in Section \ref{ch:compress}.\\
+\code{get\_A}, while containing an extension field inversion, does not arise in the execution flow of the signature scheme.\\
 
 In Figure \ref{fig:threadcallgraph} we illustrate a heavily simplified call-graph for the \code{sign\_thread} and \code{verify\_thread}, demonstrating where in the execution pipeline \code{j\_inv} and \code{inv\_4\_way} occur. The reader may suspect that, in \code{sign\_thread} for example, the inversions in \code{SecretAgreement\_B} and \code{KeyGeneration\_A} could be batched together to form a batch of 512 elements and to reduce the total number of inversions in \code{isogeny\_sign} to one. This is not possible, however, because the valid execution of \code{SecretAgreement\_B} relies on information returned by \code{KeyGeneration\_A}, and so these inversions must occur sequentially. 
 
@@ -860,123 +864,69 @@ C code for all of these functions (with comparable differences highlighted) can 
 
 \section{Results}
 
-Our results come in several forms. First, there are the execution-time results of \code{pb\_inv} measured in clock cycles. Measurements of this first type are gathered from two environments, a general $\mathbb{F}_{p^2}$ environment constructed using the NTL C library, and the \sidh exeuction environment using the API provided by Costello et al. The first environment allows us to meaure how the performance of \code{pb\_inv} compares with an unbatched approach for arbitrarily sized moduli. Measurements in \sidh are limited to the parameters of the library, but more closely reflect the performance gains in that particular system.
+Our results come in several forms. First, there are the execution-time results of \code{pb\_inv}, compared with plain batching and unbatched inversions. Measurements of this first type are gathered in a general $\mathbb{F}_{p^2}$ environment constructed using the NTL C++ library. This allows us to meaure how the performance of \code{pb\_inv} compares with other approaches for arbitrarily sized moduli. These numbers can be found in Figures \ref{fig:moduli100} and \ref{fig:moduli1000}, and are measured in seconds. The benchmarks were taken on a single-core 1.3GHz AMD processor. 
 
-Following that, we measure the improvement in the performance of signature signing and verifying procedures offered by the inclusion of the batched partial inversion mechanism. These results are gathered both in a multi-core setting and a single-core environment, also measured in clock-cycles.  
-
-
+\begin{figure}[!h]
 \begin{center}
 \begin{tabular}{@{}llll@{}}
 	\toprule
-	Modulus Size & Regular Batch & Partial Batched Inversion & Unbatched \\
+	Modulus Size & Regular Batch & \code{pb\_inv} & Unbatched \\
 	\midrule
-	32 Inversion & 0.033685 & 0.00080204\\
-	64 Inversion & 0.00033685 & 0.00080204\\
-	128 Inversion & 0.00033685 & 0.00080204\\
-	256 Inversion & 0.00033685 & 0.00080204\\
-	512 Inversion & 0.00033685 & 0.00080204\\
-	1024 Inversion & 0.00033685 & 0.00080204\\
-	2048 Inversion & 0.00033685 & 0.00080204\\
+	32 & 0.351996 & 0.13946 & 0.159744\\
+	64 & 0.335376 & 0.132932 & 0.167551\\
+	128 & 0.356995 & 0.150744 & 0.299575\\
+	256 & 0.748303 & 0.207973 & 0.486726\\
+	512 & 0.655977 & 0.34409 & 0.886866\\
+	1024 & 1.49688 & 0.762736 & 1.83442\\
+	2048 & 3.44086 & 2.07405 & 4.39554\\
 	\bottomrule
 \end{tabular}
 \end{center}
+\caption{Execution time in seconds for 100 field element inversions using various techniques and modulus sizes (measured in seconds)}
+\label{fig:moduli100}
+\end{figure}
 
+\begin{figure}[!h]
 \begin{center}
 \begin{tabular}{@{}llll@{}}
 	\toprule
-	Modulus Size & Regular Batch & Partial Batched Inversion & Unbatched \\
+	Modulus Size & Regular Batch & \code{pb\_inv} & Unbatched \\
 	\midrule
-	32 & 0.00033685 & 0.00080204\\
-	64 & 0.00033685 & 0.00080204\\
-	128 & 0.00033685 & 0.00080204\\
-	256 & 0.00033685 & 0.00080204\\
-	512 & 0.00033685 & 0.00080204\\
-	1024 & 0.00033685 & 0.00080204\\
-	2048 & 0.00033685 & 0.00080204\\
+	32 & 3.45507 & 1.35421 & 1.51127\\
+	64 & 3.4481 & 1.32611 & 1.61707\\
+	128 & 3.64458 & 1.54956 & 2.95078\\
+	256 & 7.00599 & 2.18369 & 4.80218\\
+	512 & 6.563 & 3.39861 & 8.87935\\
+	1024 & 14.8953 & 7.90045 & 18.3234\\
+	2048 & 36.216 & 22.2085 & 42.616\\
 	\bottomrule
 \end{tabular}
 \end{center}
+\caption{Execution time in seconds for 1000 field element inversions using various techniques and modulus sizes (measured in seconds)}
+\label{fig:moduli1000}
+\end{figure}
 
-\begin{center}
-\begin{tabular}{@{}llll@{}}
-	\toprule
-	Modulus Size & Regular Batch & Partial Batched Inversion & Unbatched \\
-	\midrule
-	32 & 0.00033685 & 0.00080204\\
-	64 & 0.00033685 & 0.00080204\\
-	128 & 0.00033685 & 0.00080204\\
-	256 & 0.00033685 & 0.00080204\\
-	512 & 0.00033685 & 0.00080204\\
-	1024 & 0.00033685 & 0.00080204\\
-	2048 & 0.00033685 & 0.00080204\\
-	\bottomrule
-\end{tabular}
-\end{center}
+The reader will note that the scale factor on performance as modulus size increases is significantly lower for \code{pb\_inv} than it is for other approaches. This is important because, as the computational power of adversaries increases, modulus sizes increase in order to ensure that compromising secret keys via a brute-force attack remains adequately difficult.
+
+Also worth noting is how the non-partial batching algorithm performs poorly when the modulus is small. This could be an indication that for small modulus N, multiplications quickly approach the computational cost of inversions for extension field elements.\\
 
 \noindent
-The two figures below provide benchmarks for KeyGen, Sign, and Verify procedures with both batched partial inversion implemented (in the previously mentioned locations) and not implemented. All benchmarks are averages computed from 100 randomized sample runs. All results are measured in clock cycles.
+We also measure the improvement in the performance of signature signing and verifying procedures offered by the inclusion of the batched partial inversion mechanism. Figure \ref{fig:batchgains} provides benchmarks for KeyGen, Sign, and Verify procedures with both batched partial inversion implemented (in the previously mentioned locations) and not implemented. All benchmarks are averages computed from 100 randomized sample runs. These results are measured in clock cycles and run on a quad-core Intel i5-8250U 1.6GHz processor.\\
 
-Two different machines were used for benchmarking. System A denotes a single-core, 1.70 GHz Intel Celeron CPU. System B denotes a quad-core, 3.1 GHz AMD A8-7600.\\
-
+\begin{figure}
 \begin{center}
 \begin{tabular}{@{}lllll@{}}
 	\toprule
-	Procedure & System A Without Batching & System A With Batching\\
-	\midrule
-	KeyGen & 68,881,331 & 68,881,331\\
-	Signature Signing & 15,744,477,032 & 15,565,738,003\\
-	Signature Verification & 11,183,112,648 & 10,800,158,871\\
-	\bottomrule
-\end{tabular}
-\end{center}
-
-\begin{center}
-\begin{tabular}{@{}lllll@{}}
-	\toprule
-	Procedure & System B Without Batching & System B With Batching\\
+	Procedure & Without Batching & With Batching\\
 	\midrule
 	KeyGen & 84,499,270 & 84,499,270\\
-	Signature Sign & 10,227,466,210 & 10,134,441,024\\
-	Signature Verify & 7,268,804,442 & 7,106,663,106\\
+	Signature Sign & 4,950,023,141.65 & 4,552,062,482.520\\
+	Signature Verify & 3,466,703,991.09 & 3,173,340,239.461\\
 	\bottomrule
 \end{tabular}
 \end{center}
+\caption{Performance comparisons of signature subroutines run with and without batching.}
+\label{fig:batchgains}
+\end{figure}
 
-\textbf{System A:} With inversion batching turned on we notice a ~1.1 \% performance increase for key signing and a ~3.5 \% performance increase for key verification.\\
-
-\textbf{System B:} With inversion batching turned on we a observe a ~0.9 \% performance increase for key signing and a ~2.3 \% performance increase for key verification.\\
-
-\subsection{Analysis}
-
-It should first be noted that, because our benchmarks are measured in terms of clock cycles, the difference between our two system clock speeds should be essentially ineffective. \\
-
-In the following table, ``Batched Inversion" signifies running \code{pb\_inv} on 248 $\mathbb{F}_{p^{2}}$ elements.
-
-\begin{center}
-\begin{tabular}{@{}ll@{}}
-	\toprule
-	Procedure & Performance \\
-	\midrule
-	Batched Inversion & 1721718\\
-	$\mathbb{F}_{p^{2}}$ Montgomery Inversion & 874178\\
-	\bottomrule
-\end{tabular}
-\end{center}
-
-The following are all measured in clock cycles, as the computed average of 1000 distinct executions:
-
-\begin{center}
-\begin{tabular}{@{}lll@{}}
-	\toprule
-	Modulus Size & Multiplication & Inversion Time \\
-	\midrule
-	32 & 0.00033685 & 0.00080204\\
-	64 & 0.00033685 & 0.00080204\\
-	128 & 0.00033685 & 0.00080204\\
-	256 & 0.00033685 & 0.00080204\\
-	512 & 0.00033685 & 0.00080204\\
-	1024 & 0.00033685 & 0.00080204\\
-	2048 & 0.00033685 & 0.00080204\\
-	\bottomrule
-\end{tabular}
-\end{center}
+With inversion batching turned on we notice a ${\sim}1.1$ \% performance increase for both signature signing and verification.\\
