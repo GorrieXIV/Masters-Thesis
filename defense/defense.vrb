@@ -1,18 +1,6 @@
-\frametitle{Performance Increase}
-The following are measured in billions of clock cycles
-\begin{center}
-\begin{tabular}{@{}lllll@{}}
-	\toprule
-	Procedure & Without Batching & With Batching\\
-	\midrule
-	Signature Sign & 15.74 & 15.56\\
-	Sign Parallel & 10.23 & 10.13\\
-	Signature Verify & 11.18 & 10.8\\
-	Verify Parallel & 7.27 & 7.11\\
-	\bottomrule
-\end{tabular}\\
-\end{center}
-\begin{itemize}
-\item In the serial setting we see a 1.1\% and a 3.5\% performance increase for Signing and Verifying, respectively.
-\item Comparatively, in the parallel setting we see a 0.9\% and a 2.3\% performance increase.
-\end{itemize}
+\frametitle{Citation}
+\topline
+\titleline
+An example of the \verb|\cite| command to cite within the presentation:\\~
+
+This statement requires citation \cite{p1}.

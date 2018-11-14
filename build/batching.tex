@@ -498,7 +498,7 @@ void pb_inv (const f2elm_t* vec, f2elm_t* dest, const int n) {
 	}
 }
 \end{lstlisting}
-\caption{\pbinv}
+\caption{\pbinv -- A C function for performing the partial batched inversion algorithm.}
 \end{figure}
 
 \noindent
@@ -929,4 +929,4 @@ We also measure the improvement in the performance of signature signing and veri
 \label{fig:batchgains}
 \end{figure}
 
-With inversion batching turned on we notice a ${\sim}1.1$ \% performance increase for both signature signing and verification.\\
+With inversion batching turned on we notice a ${\sim}8$\% performance increase for both signature signing and verification.\\
