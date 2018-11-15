@@ -1,89 +1,107 @@
 \headcommand {\slideentry {0}{0}{1}{1/1}{}{0}}
 \headcommand {\beamer@framepages {1}{1}}
-\headcommand {\slideentry {0}{0}{2}{2/2}{}{0}}
+\headcommand {\beamer@sectionpages {1}{1}}
+\headcommand {\beamer@subsectionpages {1}{1}}
+\headcommand {\sectionentry {1}{Introduction \& Background}{2}{Introduction \& Background}{0}}
+\headcommand {\beamer@subsectionpages {2}{1}}
+\headcommand {\beamer@subsectionentry {0}{1}{1}{2}{Post-quantum Cryptography \& Motivation}}
+\headcommand {\slideentry {1}{1}{1}{2/2}{Post-quantum Cryptography \& Motivation}{0}}
 \headcommand {\beamer@framepages {2}{2}}
-\headcommand {\beamer@sectionpages {1}{2}}
-\headcommand {\beamer@subsectionpages {1}{2}}
-\headcommand {\sectionentry {1}{Introduction \& Background}{3}{Introduction \& Background}{0}}
-\headcommand {\beamer@subsectionpages {3}{2}}
-\headcommand {\beamer@subsectionentry {0}{1}{1}{3}{Post-quantum Cryptography \& Motivation}}
-\headcommand {\slideentry {1}{1}{1}{3/3}{Post-quantum Cryptography \& Motivation}{0}}
+\headcommand {\slideentry {1}{1}{2}{3/3}{Post-quantum Cryptography \& Motivation}{0}}
 \headcommand {\beamer@framepages {3}{3}}
-\headcommand {\slideentry {1}{1}{2}{4/4}{Post-quantum Cryptography \& Motivation}{0}}
+\headcommand {\slideentry {1}{1}{3}{4/4}{Post-quantum Cryptography \& Motivation}{0}}
 \headcommand {\beamer@framepages {4}{4}}
-\headcommand {\slideentry {1}{1}{3}{5/5}{Post-quantum Cryptography \& Motivation}{0}}
+\headcommand {\slideentry {1}{1}{4}{5/5}{Post-quantum Cryptography \& Motivation}{0}}
 \headcommand {\beamer@framepages {5}{5}}
-\headcommand {\slideentry {1}{1}{4}{6/6}{Post-quantum Cryptography \& Motivation}{0}}
+\headcommand {\slideentry {1}{1}{5}{6/6}{Post-quantum Cryptography \& Motivation}{0}}
 \headcommand {\beamer@framepages {6}{6}}
-\headcommand {\slideentry {1}{1}{5}{7/7}{Post-quantum Cryptography \& Motivation}{0}}
+\headcommand {\slideentry {1}{1}{6}{7/7}{Post-quantum Cryptography \& Motivation}{0}}
 \headcommand {\beamer@framepages {7}{7}}
-\headcommand {\beamer@subsectionpages {3}{7}}
-\headcommand {\beamer@subsectionentry {0}{1}{2}{8}{Elliptic Curves \& Isogenies}}
-\headcommand {\slideentry {1}{2}{1}{8/8}{Elliptic Curves \& Isogenies}{0}}
+\headcommand {\slideentry {1}{1}{7}{8/8}{Post-quantum Cryptography \& Motivation}{0}}
 \headcommand {\beamer@framepages {8}{8}}
-\headcommand {\slideentry {1}{2}{2}{9/9}{Elliptic Curves \& Isogenies}{0}}
+\headcommand {\beamer@subsectionpages {2}{8}}
+\headcommand {\beamer@subsectionentry {0}{1}{2}{9}{Elliptic Curves \& Isogenies}}
+\headcommand {\slideentry {1}{2}{1}{9/9}{Elliptic Curves \& Isogenies}{0}}
 \headcommand {\beamer@framepages {9}{9}}
-\headcommand {\slideentry {1}{2}{3}{10/10}{Elliptic Curves \& Isogenies}{0}}
+\headcommand {\slideentry {1}{2}{2}{10/10}{Elliptic Curves \& Isogenies}{0}}
 \headcommand {\beamer@framepages {10}{10}}
-\headcommand {\beamer@subsectionpages {8}{10}}
-\headcommand {\beamer@subsectionentry {0}{1}{3}{11}{Supersingular Isogeny Diffie-Hellman}}
-\headcommand {\slideentry {1}{3}{1}{11/11}{Supersingular Isogeny Diffie-Hellman}{0}}
+\headcommand {\slideentry {1}{2}{3}{11/11}{Elliptic Curves \& Isogenies}{0}}
 \headcommand {\beamer@framepages {11}{11}}
-\headcommand {\slideentry {1}{3}{2}{12/12}{Supersingular Isogeny Diffie-Hellman}{0}}
+\headcommand {\slideentry {1}{2}{4}{12/12}{Elliptic Curves \& Isogenies}{0}}
 \headcommand {\beamer@framepages {12}{12}}
-\headcommand {\slideentry {1}{3}{3}{13/13}{Supersingular Isogeny Diffie-Hellman}{0}}
+\headcommand {\slideentry {1}{2}{5}{13/13}{Elliptic Curves \& Isogenies}{0}}
 \headcommand {\beamer@framepages {13}{13}}
-\headcommand {\beamer@subsectionpages {11}{13}}
-\headcommand {\beamer@subsectionentry {0}{1}{4}{14}{Isogeny-based Signatures}}
-\headcommand {\slideentry {1}{4}{1}{14/14}{Isogeny-based Signatures}{0}}
+\headcommand {\beamer@subsectionpages {9}{13}}
+\headcommand {\beamer@subsectionentry {0}{1}{3}{14}{Supersingular Isogeny Diffie-Hellman}}
+\headcommand {\slideentry {1}{3}{1}{14/14}{Supersingular Isogeny Diffie-Hellman}{0}}
 \headcommand {\beamer@framepages {14}{14}}
-\headcommand {\slideentry {1}{4}{2}{15/15}{Isogeny-based Signatures}{0}}
+\headcommand {\slideentry {1}{3}{2}{15/15}{Supersingular Isogeny Diffie-Hellman}{0}}
 \headcommand {\beamer@framepages {15}{15}}
-\headcommand {\slideentry {1}{4}{3}{16/16}{Isogeny-based Signatures}{0}}
+\headcommand {\slideentry {1}{3}{3}{16/16}{Supersingular Isogeny Diffie-Hellman}{0}}
 \headcommand {\beamer@framepages {16}{16}}
-\headcommand {\slideentry {1}{4}{4}{17/17}{Isogeny-based Signatures}{0}}
+\headcommand {\slideentry {1}{3}{4}{17/17}{Supersingular Isogeny Diffie-Hellman}{0}}
 \headcommand {\beamer@framepages {17}{17}}
-\headcommand {\beamer@sectionpages {3}{17}}
 \headcommand {\beamer@subsectionpages {14}{17}}
-\headcommand {\sectionentry {2}{Batching Field Element Inversions}{18}{Batching Field Element Inversions}{0}}
-\headcommand {\beamer@subsectionpages {18}{17}}
-\headcommand {\beamer@subsectionentry {0}{2}{1}{18}{Batching Partial Inversions}}
-\headcommand {\slideentry {2}{1}{1}{18/18}{Batching Partial Inversions}{0}}
+\headcommand {\beamer@subsectionentry {0}{1}{4}{18}{Isogeny-based Signatures}}
+\headcommand {\slideentry {1}{4}{1}{18/18}{Isogeny-based Signatures}{0}}
 \headcommand {\beamer@framepages {18}{18}}
-\headcommand {\beamer@subsectionpages {18}{18}}
-\headcommand {\beamer@subsectionentry {0}{2}{2}{19}{Implementing Batching in SIDH 2.0}}
-\headcommand {\slideentry {2}{2}{1}{19/19}{Implementing Batching in SIDH 2.0}{0}}
+\headcommand {\slideentry {1}{4}{2}{19/19}{Isogeny-based Signatures}{0}}
 \headcommand {\beamer@framepages {19}{19}}
-\headcommand {\beamer@subsectionpages {19}{19}}
-\headcommand {\beamer@subsectionentry {0}{2}{3}{20}{Performance of Inversion Batching}}
-\headcommand {\slideentry {2}{3}{1}{20/20}{Performance of Inversion Batching}{0}}
+\headcommand {\slideentry {1}{4}{3}{20/20}{Isogeny-based Signatures}{0}}
 \headcommand {\beamer@framepages {20}{20}}
-\headcommand {\beamer@sectionpages {18}{20}}
-\headcommand {\beamer@subsectionpages {20}{20}}
-\headcommand {\sectionentry {3}{Compressing Isogeny-based Signatures}{21}{Compressing Isogeny-based Signatures}{0}}
-\headcommand {\beamer@subsectionpages {21}{20}}
-\headcommand {\beamer@subsectionentry {0}{3}{1}{21}{SIDH Public Key Compression}}
-\headcommand {\slideentry {3}{1}{1}{21/21}{SIDH Public Key Compression}{0}}
+\headcommand {\slideentry {1}{4}{4}{21/21}{Isogeny-based Signatures}{0}}
 \headcommand {\beamer@framepages {21}{21}}
-\headcommand {\beamer@subsectionpages {21}{21}}
-\headcommand {\beamer@subsectionentry {0}{3}{2}{22}{Implementing in SIDH 2.0}}
-\headcommand {\slideentry {3}{2}{1}{22/22}{Implementing in SIDH 2.0}{0}}
+\headcommand {\slideentry {1}{4}{5}{22/22}{Isogeny-based Signatures}{0}}
 \headcommand {\beamer@framepages {22}{22}}
-\headcommand {\beamer@subsectionpages {22}{22}}
-\headcommand {\beamer@subsectionentry {0}{3}{3}{23}{Advantage and Cost of Compressions}}
-\headcommand {\slideentry {3}{3}{1}{23/23}{Advantage and Cost of Compressions}{0}}
+\headcommand {\slideentry {1}{4}{6}{23/23}{Isogeny-based Signatures}{0}}
 \headcommand {\beamer@framepages {23}{23}}
-\headcommand {\beamer@sectionpages {21}{23}}
-\headcommand {\beamer@subsectionpages {23}{23}}
-\headcommand {\sectionentry {4}{Results}{24}{Results}{0}}
+\headcommand {\beamer@sectionpages {2}{23}}
+\headcommand {\beamer@subsectionpages {18}{23}}
+\headcommand {\sectionentry {2}{Batching Field Element Inversions}{24}{Batching Field Element Inversions}{0}}
 \headcommand {\beamer@subsectionpages {24}{23}}
-\headcommand {\beamer@subsectionentry {0}{4}{1}{24}{Performance Measurements}}
-\headcommand {\slideentry {4}{1}{1}{24/24}{Performance Measurements}{0}}
+\headcommand {\beamer@subsectionentry {0}{2}{1}{24}{Batching Partial Inversions}}
+\headcommand {\slideentry {2}{1}{1}{24/24}{Batching Partial Inversions}{0}}
 \headcommand {\beamer@framepages {24}{24}}
-\headcommand {\slideentry {4}{1}{2}{25/25}{Performance Measurements}{0}}
+\headcommand {\slideentry {2}{1}{2}{25/25}{Batching Partial Inversions}{0}}
 \headcommand {\beamer@framepages {25}{25}}
-\headcommand {\beamer@partpages {1}{25}}
-\headcommand {\beamer@subsectionpages {24}{25}}
-\headcommand {\beamer@sectionpages {24}{25}}
-\headcommand {\beamer@documentpages {25}}
-\headcommand {\gdef \inserttotalframenumber {25}}
+\headcommand {\slideentry {2}{1}{3}{26/26}{Batching Partial Inversions}{0}}
+\headcommand {\beamer@framepages {26}{26}}
+\headcommand {\beamer@subsectionpages {24}{26}}
+\headcommand {\beamer@subsectionentry {0}{2}{2}{27}{Implementing Batching in SIDH 2.0}}
+\headcommand {\slideentry {2}{2}{1}{27/27}{Implementing Batching in SIDH 2.0}{0}}
+\headcommand {\beamer@framepages {27}{27}}
+\headcommand {\slideentry {2}{2}{2}{28/28}{Implementing Batching in SIDH 2.0}{0}}
+\headcommand {\beamer@framepages {28}{28}}
+\headcommand {\beamer@subsectionpages {27}{28}}
+\headcommand {\beamer@subsectionentry {0}{2}{3}{29}{Performance of Inversion Batching}}
+\headcommand {\slideentry {2}{3}{1}{29/29}{Performance of Inversion Batching}{0}}
+\headcommand {\beamer@framepages {29}{29}}
+\headcommand {\beamer@sectionpages {24}{29}}
+\headcommand {\beamer@subsectionpages {29}{29}}
+\headcommand {\sectionentry {3}{Compressing Isogeny-based Signatures}{30}{Compressing Isogeny-based Signatures}{0}}
+\headcommand {\beamer@subsectionpages {30}{29}}
+\headcommand {\beamer@subsectionentry {0}{3}{1}{30}{SIDH Public Key Compression}}
+\headcommand {\slideentry {3}{1}{1}{30/30}{SIDH Public Key Compression}{0}}
+\headcommand {\beamer@framepages {30}{30}}
+\headcommand {\beamer@subsectionpages {30}{30}}
+\headcommand {\beamer@subsectionentry {0}{3}{2}{31}{Implementing in SIDH 2.0}}
+\headcommand {\slideentry {3}{2}{1}{31/31}{Implementing in SIDH 2.0}{0}}
+\headcommand {\beamer@framepages {31}{31}}
+\headcommand {\beamer@subsectionpages {31}{31}}
+\headcommand {\beamer@subsectionentry {0}{3}{3}{32}{Advantage and Cost of Compressions}}
+\headcommand {\slideentry {3}{3}{1}{32/32}{Advantage and Cost of Compressions}{0}}
+\headcommand {\beamer@framepages {32}{32}}
+\headcommand {\beamer@sectionpages {30}{32}}
+\headcommand {\beamer@subsectionpages {32}{32}}
+\headcommand {\sectionentry {4}{Results}{33}{Results}{0}}
+\headcommand {\beamer@subsectionpages {33}{32}}
+\headcommand {\beamer@subsectionentry {0}{4}{1}{33}{Performance Measurements}}
+\headcommand {\slideentry {4}{1}{1}{33/33}{Performance Measurements}{0}}
+\headcommand {\beamer@framepages {33}{33}}
+\headcommand {\slideentry {4}{1}{2}{34/34}{Performance Measurements}{0}}
+\headcommand {\beamer@framepages {34}{34}}
+\headcommand {\beamer@partpages {1}{34}}
+\headcommand {\beamer@subsectionpages {33}{34}}
+\headcommand {\beamer@sectionpages {33}{34}}
+\headcommand {\beamer@documentpages {34}}
+\headcommand {\gdef \inserttotalframenumber {34}}

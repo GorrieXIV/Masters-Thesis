@@ -32,15 +32,64 @@
 \usepackage{url}                      %for proper url entries
 \usepackage{listings}                 %for writing c code
 \usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
 \usepackage{geometry}
 \usepackage{tcolorbox}
 \usepackage{xspace}
+\usepackage{enumitem}
 
 \usetikzlibrary{intersections,decorations.markings,matrix,calc,positioning,decorations.pathreplacing}
 
 %----------------------------------------------------------------------------------------
 %	STYLIZATIONS & OTHER COMMANDS
 %----------------------------------------------------------------------------------------
+
+%shortcuts for colour-coded curve parameters for alice
+\newcommand{\alice}[0]{\textcolor{red}{Alice}\xspace}
+\newcommand{\ba}[0]{\textcolor{red}{A}\xspace}
+\newcommand{\laea}[0]{\textcolor{red}{\ell_{A}^{e_A}}}
+\newcommand{\la}[0]{\textcolor{red}{\ell_{A}}}
+\newcommand{\ea}[0]{\textcolor{red}{e_A}}
+\newcommand{\pa}[0]{\textcolor{red}{\phi_A}}
+\newcommand{\pap}[0]{\textcolor{red}{\phi'_A}}
+\newcommand{\agens}[0]{\{\textcolor{red}{P_A},\textcolor{red}{Q_A}\}}
+\newcommand{\genpa}[0]{\textcolor{red}{P_A}}
+\newcommand{\genqa}[0]{\textcolor{red}{Q_A}}
+\newcommand{\ma}[0]{\textcolor{red}{m_A}}
+\newcommand{\na}[0]{\textcolor{red}{n_A}}
+\newcommand{\ska}[0]{\textcolor{red}{sk_A}}
+\newcommand{\pka}[0]{\textcolor{red}{pk_A}}
+%shortcuts for colour-coded curve parameters for bob
+\newcommand{\bob}[0]{\textcolor{blue}{Bob}\xspace}
+\newcommand{\rb}[0]{\textcolor{blue}{B}\xspace}
+\newcommand{\lbeb}[0]{\textcolor{blue}{\ell_{B}^{e_B}}}
+\newcommand{\lb}[0]{\textcolor{blue}{\ell_{B}}}
+\newcommand{\eb}[0]{\textcolor{blue}{e_B}}
+\newcommand{\pb}[0]{\textcolor{blue}{\phi_B}}
+\newcommand{\pbp}[0]{\textcolor{blue}{\phi'_B}}
+\newcommand{\bgens}[0]{\{\textcolor{blue}{P_B},\textcolor{blue}{Q_B}\}}
+\newcommand{\genpb}[0]{\textcolor{blue}{P_B}}
+\newcommand{\genqb}[0]{\textcolor{blue}{Q_B}}
+\newcommand{\mb}[0]{\textcolor{blue}{m_B}}
+\newcommand{\nb}[0]{\textcolor{blue}{n_B}}
+\newcommand{\skb}[0]{\textcolor{blue}{sk_B}}
+\newcommand{\pkb}[0]{\textcolor{blue}{pk_B}}
+%shortcuts for colour-coded curve parameters for arbitrary entity R
+\newcommand{\randall}[0]{\textcolor{cyan}{Randall}\xspace}
+\newcommand{\cyr}[0]{\textcolor{cyan}{R}\xspace}
+\newcommand{\pr}[0]{\textcolor{cyan}{\psi_R}}
+\newcommand{\prp}[0]{\textcolor{cyan}{\psi'_R}}
+\newcommand{\mr}[0]{\textcolor{cyan}{m_R}}
+\newcommand{\nr}[0]{\textcolor{cyan}{n_R}}
+\newcommand{\skr}[0]{\textcolor{cyan}{sk_R}}
+\newcommand{\pkr}[0]{\textcolor{cyan}{pk_R}}
+
+\newcommand{\keygen}[0]{\textbf{KeyGen}}
+\newcommand{\secagr}[0]{\textbf{SecAgr}}
+\newcommand{\commit}[0]{\textbf{Commit}}
+\newcommand{\prove}[0]{\textbf{Prove}}
+\newcommand{\sign}[0]{\textbf{Sign}}
+\newcommand{\verify}[0]{\textbf{Verify}}
 
 \newcommand{\titlepageline}{%
 	\tikz[remember picture,overlay] {%
@@ -95,6 +144,10 @@
 \newcolumntype{a}{>{\columncolor{Gray}}c}
 \newcolumntype{b}{>{\columncolor{white}}c}
 
+\tcbset{colback=white!5!white,colframe=black!75!black} %style for theorem and definition boxes
+
+\def\code#1{\texttt{#1}}
+
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
@@ -118,14 +171,6 @@ McMaster University --  Department of Computing \& Software \\ % Your institutio
 \titlepageline
 \end{frame}
 
-\begin{frame}
-\frametitle{Overview} % Table of contents slide, comment this block out to remove it
-\mediumfont
-\topline
-\titleline
-\tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
-\end{frame}
-
 %----------------------------------------------------------------------------------------
 %	PRESENTATION SLIDES
 %----------------------------------------------------------------------------------------
@@ -137,7 +182,7 @@ McMaster University --  Department of Computing \& Software \\ % Your institutio
 \subsection{Post-quantum Cryptography \& Motivation}
 
 \begin{frame}
-\frametitle{Public-key Cryptography}
+\frametitle{Concerns of Cryptography}
 \topline
 \titleline
 There are five rudimentary concerns of information security:
@@ -223,6 +268,25 @@ Common approaches to post-quantum cryptography include
 
 %------------------------------------------------
 
+\begin{frame}
+\frametitle{My Contributions}
+\topline
+\titleline
+
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Overview} % Table of contents slide, comment this block out to remove it
+\mediumfont
+\topline
+\titleline
+\tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
+\end{frame}
+
+%------------------------------------------------
+
 \subsection{Elliptic Curves \& Isogenies}
 
 \begin{frame}
@@ -271,6 +335,15 @@ Elliptic curves are a class of algebraic curves satisfying
 %------------------------------------------------
 
 \begin{frame}
+\frametitle{Torsion Subgroups}
+\topline
+\titleline
+
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
 \frametitle{Isogenies}
 \topline
 \titleline
@@ -284,6 +357,22 @@ These maps have the following two properties
   \item $\phi(\mathcal{O}) = \mathcal{O}$
   \item $\phi(P^{-1}) = (\phi(P)^{-1})$
 \end{itemize}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Isogenies}
+\topline
+\titleline
+
+\begin{tcolorbox}
+\begin{lemma}[Uniquely identifying isogenies]
+\label{lem:isogkern}
+Let $E$ be an elliptic curve and let $\Phi$ be a finite subgroup of $E$. There is a unique elliptic curve $E'$ and a seperable isogeny $\phi: E \rightarrow E'$ satisfying $\text{ker}(\phi) = \Phi$.
+\end{lemma}
+\end{tcolorbox}
+
 \end{frame}
 
 %------------------------------------------------
@@ -343,6 +432,32 @@ These can be defined by a tuple of algorithms $\Pi_{kex} = (\textbf{KeyGen}, \te
 \frametitle{Supersingular Isogeny Diffie-Hellman}
 \topline
 \titleline
+SIDH is a key-exchange protocol where \alice and \bob use Isogenies as their public keys and points on a curve as their private keys.\\
+
+\vspace{20px}
+Here's how it works...
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Supersingular Isogeny Diffie-Hellman}
+\topline
+\titleline
+We are concerned with curves over the field $\mathbb{F}_{p^2}$ where
+$$
+p = \laea \lbeb \cdot f \pm 1
+$$
+with $f$ chosen such that $p$ is prime.
+
+\vspace{15px}
+We then choose a curve $E$, and bases $\{\genpa,\genqa\}$ and $\{\genpb,\genqb\}$ generating $E[\laea]$ and $E[\lbeb]$.\\
+
+\vspace{15px}
+And so, our set of public parameters is
+$$
+\{p,E,\la,\lb,\ea,\eb,\genpa,\genqa,\genpb,\genqb\}.
+$$
 
 \end{frame}
 
@@ -354,9 +469,30 @@ These can be defined by a tuple of algorithms $\Pi_{kex} = (\textbf{KeyGen}, \te
 \frametitle{Interactive Identification Schemes}
 \topline
 \titleline
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
+
+Identification schemes are used to confirm the identity of a user on a network. These protocols are typically composed by the tuple of algorithms (\keygen, \commit, \prove, \verify).
+
+
+For \bob to prove his identity to \alice, a protocol of this type would run as follows:
+\begin{enumerate}[label=(\roman*)]
+\item \bob runs \keygen($1^\lambda)$ to generate his keypair $(sk,pk)$.
+\item \bob runs \commit() to generate $com$ and sends it to \alice.
+\item \alice sends a randomly generated ``challenge" value $ch \in \omega$ and sends it to \bob.
+\item \bob runs \prove($sk$, $com$, $ch$) with output $resp$, the response to \alice's challenge.
+\item \alice runs \verify($pk$, $com$, $ch$, $resp$) with output $b \in {0,1}$. \bob has successfully proven his identity to \alice if $b = 1$.
+\end{enumerate}
+
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Isogeny-based Proof of Identity}
+\topline
+\titleline
+Signature schemes are used to prove that a particular party supplied a given message. These schemes consist of the algorithms \sign, \verify, and \prove.
+
+
 \end{frame}
 
 %------------------------------------------------
@@ -365,9 +501,9 @@ $E = mc^2$
 \frametitle{Signature Schemes}
 \topline
 \titleline
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
+Signature schemes are used to prove that a particular party supplied a given message. These schemes consist of the algorithms \sign, \verify, and \prove.
+
+
 \end{frame}
 
 %------------------------------------------------
@@ -376,9 +512,7 @@ $E = mc^2$
 \frametitle{Fiat-Shamir Transform}
 \topline
 \titleline
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
+The Fiat-Shamir transform is a process by which an interactive identification scheme can be turned into a signature scheme.
 \end{frame}
 
 %------------------------------------------------
@@ -387,9 +521,27 @@ $E = mc^2$
 \frametitle{Yoo Signatures}
 \topline
 \titleline
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
+The signature scheme derived by Yoo et al. applies the Fiat-Shamir transform to the isogeny-based identification scheme to construct the first ever isogeny-based signature scheme.
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Recap}
+\topline
+\titleline
+
+\begin{center}
+\begin{tikzpicture}
+
+\end{tikzpicture}
+\end{center}
+$$
+\text{SIDH Key Exchange} \rightarrow
+\text{Isogeny-based Proof of Identity} \rightarrow
+\text{Yoo Signatures}
+$$
+
 \end{frame}
 
 
@@ -400,21 +552,62 @@ $E = mc^2$
 \subsection{Batching Partial Inversions}
 
 \begin{frame}
-\frametitle{Table}
+\frametitle{Partial $\mathbb{F}_{p^2}$ Inversions}
 \topline
 \titleline
-\begin{table}
-\begin{tabular}{l l l}
-\toprule
-\textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2}\\
-\midrule
-Treatment 1 & 0.0003262 & 0.562 \\
-Treatment 2 & 0.0015681 & 0.910 \\
-Treatment 3 & 0.0009271 & 0.296 \\
-\bottomrule
-\end{tabular}
-\caption{Table caption}
-\end{table}
+
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Batching Inversions}
+\topline
+\titleline
+
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Partial Batched Inversions}
+\topline
+\titleline
+\smallfont
+
+%\begin{algorithm}
+%\caption{-- \textbf{PartialBatchedInversion($x_0, x_1, ..., x_n-1$)}}
+\begin{center}
+  \begin{algorithmic}[1]
+    \For{\code{i = 0..(n-1)}}
+    	\State $den_{i} \gets (x_i)_{a}^{2} + (x_i)_{b}^{2} \pmod{p}$
+    \EndFor
+
+    \State $a_0 \gets den_0$
+
+    \For{\code{i = 1..(n-1)}}
+    	\State $a_i \gets a_{i-1} \cdot den_i \pmod{p}$
+    \EndFor
+
+    \State $inv \gets a_{n-1}^{-1} \pmod{p}$
+
+    \For{\code{i = n-1..1}}
+    	\State $a_i \gets inv \cdot dest_{i-1} \pmod{p}$
+    	\State $inv \gets inv \cdot den_i \pmod{p}$
+    \EndFor
+
+    \State $a_0 \gets a_{inv}$
+
+    \For{\code{i = 0..(n-1)}}
+    	\State $(xinv_i)_a \gets a_i \cdot (x_i)_a \pmod{p}$
+    	\State $(xinv_i)_b \gets a_i \cdot -(x_i)_b \pmod{p}$
+    	\State $x_i^{-1} \gets \{(xinv_i)_a, (xinv_i)_b\}$
+    \EndFor
+    \State \Return $\{x_0^{-1}, x_1^{-1}, ..., x_{n-1}^{-1}\}$
+  \end{algorithmic}
+\end{center}
+%\end{algorithm}
+
 \end{frame}
 
 %------------------------------------------------
@@ -422,12 +615,137 @@ Treatment 3 & 0.0009271 & 0.296 \\
 \subsection{Implementing Batching in SIDH 2.0}
 
 \begin{frame}
+\frametitle{Structure of the Yoo Signature Implementation}
+\topline
+\titleline
+\smallfont
+
+\begin{tikzpicture}
+	[scale=0.75, auto,
+		block/.style={
+		  rectangle,
+		  draw=black,
+		  thick,
+		  fill=gray!20,
+		  text width=6em,
+		  align=center,
+		  rounded corners,
+		  minimum height=2em
+		},
+		block1/.style={
+		  rectangle,
+		  draw=black,
+		  thick,
+		  fill=gray!20,
+		  text width=7em,
+		  align=center,
+		  rounded corners,
+		  minimum height=2em
+		}
+	]
+	\draw (2.5,4.5) node[block] {$\code{sign\_thread}$};
+	\draw (0.7, 4.5) node {1};
+	\draw (2.5,3.5) node[block] {$\code{sign\_thread}$};
+	\draw (0.7, 3.5) node {2};
+	\draw[very thick, loosely dotted] (2,2.8) -- (2,2.1) node {};
+	\draw (2.5,1.5) node[block] {$\code{sign\_thread}$};
+	\draw (0.7, 1.5) node {248};
+
+	\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (0.5,1) -- (0.5,5.0) node [black,midway,xshift=-0.6cm,block] {\code{isogeny\_sign}};
+
+	\draw (2.7,4.5) node[block1] {$\code{verify\_thread}$};
+	\draw (0.7,4.5) node {1};
+	\draw (2.7,3.5) node[block1] {$\code{verify\_thread}$};
+	\draw (0.7,3.5) node {2};
+	\draw[very thick, loosely dotted] (2,2.8) -- (2,2.1) node {};
+	\draw (2.7,1.5) node[block1] {$\code{verify\_thread}$};
+	\draw (0.7,1.5) node {248};
+
+	\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (0.5,1) -- (0.5,5.0) node [black,midway,xshift=-0.6cm,block1] {\code{isogeny\_verify}};
+\end{tikzpicture}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
 \frametitle{Signature Schemes}
 \topline
 \titleline
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
+
+\begin{tikzpicture}
+    [scale=0.75,auto,
+    block/.style={
+      rectangle,
+      draw=black,
+      thick,
+      fill=gray!20,
+      text width=7em,
+      align=center,
+      rounded corners,
+      minimum height=2em
+    },
+    block1/.style={
+      rectangle,
+      draw=black,
+      thick,
+      fill=gray!20,
+      text width=9em,
+      align=center,
+      rounded corners,
+      minimum height=2em
+    },
+	  block2/.style={
+      rectangle,
+      draw=black,
+      thick,
+      fill=red!20,
+      text width=8.5em,
+      align=center,
+      rounded corners,
+      minimum height=2em
+    },
+    line/.style={
+      draw,thick,
+      -latex',
+      shorten >=2pt
+    },
+    cloud/.style={
+      draw=red,
+      thick,
+      ellipse,
+      fill=red!20,
+      minimum height=1em
+    }
+  ]
+    \draw (1,-2) node[block] (A) {\code{sign\_thread}};
+	\draw (9.5,-2) node[block] (B) {\code{verify\_thread}};
+    \path (1,-4) node[block1] (C) {\code{KeyGeneration\_A}}
+		  (1,-6) node[block1] (D) {\code{SecretAgreement\_B}}
+		  (11.6,-4) node[block1] (E) {\code{KeyGeneration\_A}}
+          (11.6,-6) node[block1] (F) {\code{SecretAgreement\_A}}
+		  (7.4,-4) node[block1] (G) {\code{SecretAgreement\_B}};
+	\draw (3,-7) node[block2] (H) {\code{j\_inv}};
+	\draw (3,-5) node[block2] (I) {\code{inv\_4\_way}};
+	\draw (7.4,-6) node[block2] (J) {\code{j\_inv}};
+	\draw (13.6,-5) node[block2] (K) {\code{inv\_4\_way}};
+	\draw (13.6,-7) node[block2] (L) {\code{j\_inv}};
+	\draw[->, line width=2.0] (1,-2.4) -- (1,-3.6) node[right] {};
+		\draw (1, -3) node[left] (LABEL1) {$248x$};
+	\draw[->, line width=2.0] (9.5,-2.4) to (E) node[above] {};
+		\draw (8.6, -3) node[left] (LABEL4) {$\sim124x$};
+	\draw[->, line width=2.0] (9.5,-2.4) to (G) node[right] {};
+		\draw (10.4, -3) node[right] (LABEL5) {$\sim124x$};
+	\draw[->, line width=2.0] (-0.3,-4.4) -- (-0.3,-5.6) node {};
+		\draw (-0.3, -5) node[left] (LABEL6) {$248x$};
+	\draw[->, line width=2.0] (7.4,-4.4) -- (7.4,-5.6) node {};
+		\draw (7.4, -5) node[left] (LABEL7) {$\sim124x$};
+	\draw[->, line width=2.0] (11,-4.4) -- (11,-5.6) node {};
+		\draw (11, -5) node[left] (LABEL8) {$\sim124x$};
+	\draw[->, line width=2.0] (C.east) to [in=90] (4,-4.6);
+	\draw[->, line width=2.0] (D.east) to [in=90] (4,-6.6);
+	\draw[->, line width=2.0] (E.east) to [in=90] (14.6,-4.6);
+	\draw[->, line width=2.0] (F.east) to [in=90] (14.6,-6.6);
+\end{tikzpicture}
 \end{frame}
 
 %------------------------------------------------
