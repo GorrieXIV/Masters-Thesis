@@ -9,7 +9,7 @@
 \beamer@subsectionintoc {2}{3}{Performance of Inversion Batching}{29}{0}{2}
 \beamer@sectionintoc {3}{Compressing Isogeny-based Signatures}{30}{0}{3}
 \beamer@subsectionintoc {3}{1}{SIDH Public Key Compression}{30}{0}{3}
-\beamer@subsectionintoc {3}{2}{Implementing in SIDH 2.0}{31}{0}{3}
-\beamer@subsectionintoc {3}{3}{Advantage and Cost of Compressions}{32}{0}{3}
-\beamer@sectionintoc {4}{Results}{33}{0}{4}
-\beamer@subsectionintoc {4}{1}{Performance Measurements}{33}{0}{4}
+\beamer@subsectionintoc {3}{2}{Implementing in SIDH 2.0}{32}{0}{3}
+\beamer@subsectionintoc {3}{3}{Advantage and Cost of Compressions}{33}{0}{3}
+\beamer@sectionintoc {4}{Results}{34}{0}{4}
+\beamer@subsectionintoc {4}{1}{Performance Measurements}{34}{0}{4}

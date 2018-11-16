@@ -84,12 +84,12 @@
 \newcommand{\skr}[0]{\textcolor{cyan}{sk_R}}
 \newcommand{\pkr}[0]{\textcolor{cyan}{pk_R}}
 
-\newcommand{\keygen}[0]{\textbf{KeyGen}}
-\newcommand{\secagr}[0]{\textbf{SecAgr}}
-\newcommand{\commit}[0]{\textbf{Commit}}
-\newcommand{\prove}[0]{\textbf{Prove}}
-\newcommand{\sign}[0]{\textbf{Sign}}
-\newcommand{\verify}[0]{\textbf{Verify}}
+\newcommand{\keygen}[0]{\textbf{KeyGen}\xspace}
+\newcommand{\secagr}[0]{\textbf{SecAgr}\xspace}
+\newcommand{\commit}[0]{\textbf{Commit}\xspace}
+\newcommand{\prove}[0]{\textbf{Prove}\xspace}
+\newcommand{\sign}[0]{\textbf{Sign}\xspace}
+\newcommand{\verify}[0]{\textbf{Verify}\xspace}
 
 \newcommand{\titlepageline}{%
 	\tikz[remember picture,overlay] {%
@@ -619,56 +619,65 @@ $$
 \topline
 \titleline
 \smallfont
+\begin{columns}[c]
+  \column{.45\textwidth}
+  1. The signer executes \sign by spawning a thread running \code{sign\_thread} for every iteration of the signing procedure\\
 
-\begin{tikzpicture}
-	[scale=0.75, auto,
-		block/.style={
-		  rectangle,
-		  draw=black,
-		  thick,
-		  fill=gray!20,
-		  text width=6em,
-		  align=center,
-		  rounded corners,
-		  minimum height=2em
-		},
-		block1/.style={
-		  rectangle,
-		  draw=black,
-		  thick,
-		  fill=gray!20,
-		  text width=7em,
-		  align=center,
-		  rounded corners,
-		  minimum height=2em
-		}
-	]
-	\draw (2.5,4.5) node[block] {$\code{sign\_thread}$};
-	\draw (0.7, 4.5) node {1};
-	\draw (2.5,3.5) node[block] {$\code{sign\_thread}$};
-	\draw (0.7, 3.5) node {2};
-	\draw[very thick, loosely dotted] (2,2.8) -- (2,2.1) node {};
-	\draw (2.5,1.5) node[block] {$\code{sign\_thread}$};
-	\draw (0.7, 1.5) node {248};
+  \vspace{40px}
+  2. The verifier then executes \verify in a similar fashion.\\
 
-	\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (0.5,1) -- (0.5,5.0) node [black,midway,xshift=-0.6cm,block] {\code{isogeny\_sign}};
+  \column{.45\textwidth}
+    \begin{tikzpicture}
+    	[scale=0.6, auto,
+    		block/.style={
+    		  rectangle,
+    		  draw=black,
+    		  thick,
+    		  fill=gray!20,
+    		  text width=6em,
+    		  align=center,
+    		  rounded corners,
+    		  minimum height=2em
+    		},
+    		block1/.style={
+    		  rectangle,
+    		  draw=black,
+    		  thick,
+    		  fill=gray!20,
+    		  text width=7em,
+    		  align=center,
+    		  rounded corners,
+    		  minimum height=2em
+    		}
+    	]
+    	\draw (1.5, 4.5) node[block] {$\code{sign\_thread}$};
+    	\draw (0.7, 4.5) node {1};
+    	\draw (1.5, 3.5) node[block] {$\code{sign\_thread}$};
+    	\draw (0.7, 3.5) node {2};
+    	\draw[very thick, loosely dotted] (1, 2.8) -- (1, 2.1) node {};
+    	\draw (1.5, 1.5) node[block] {$\code{sign\_thread}$};
+    	\draw (0.7, 1.5) node {248};
 
-	\draw (2.7,4.5) node[block1] {$\code{verify\_thread}$};
-	\draw (0.7,4.5) node {1};
-	\draw (2.7,3.5) node[block1] {$\code{verify\_thread}$};
-	\draw (0.7,3.5) node {2};
-	\draw[very thick, loosely dotted] (2,2.8) -- (2,2.1) node {};
-	\draw (2.7,1.5) node[block1] {$\code{verify\_thread}$};
-	\draw (0.7,1.5) node {248};
+    	\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (-1,1) -- (-1,5.0) node [black,midway,xshift=-0.6cm,block] {\code{isogeny\_sign}};
 
-	\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (0.5,1) -- (0.5,5.0) node [black,midway,xshift=-0.6cm,block1] {\code{isogeny\_verify}};
-\end{tikzpicture}
+    	\draw (1.5, -1) node[block1] {$\code{verify\_thread}$};
+    	\draw (0.7, -1) node {1};
+    	\draw (1.5, -2) node[block1] {$\code{verify\_thread}$};
+    	\draw (0.7, -2) node {2};
+    	\draw[very thick, loosely dotted] (1, -2.7) -- (1, -3.4) node {};
+    	\draw (1.5, -4) node[block1] {$\code{verify\_thread}$};
+    	\draw (0.7, -4) node {248};
+
+    	\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt]
+      (-1, -4.5) -- (-1,-0.5) node [black,midway,xshift=-0.6cm,block1] {\code{isogeny\_verify}};
+    \end{tikzpicture}
+\end{columns}
 \end{frame}
 
 %------------------------------------------------
 
 \begin{frame}
-\frametitle{Signature Schemes}
+\frametitle{Batching Across Threads}
 \topline
 \titleline
 
@@ -753,18 +762,11 @@ $$
 \subsection{Performance of Inversion Batching}
 
 \begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Verbatim}
+\frametitle{Performance Measurements for Partial Batched Inversions}
 \topline
 \titleline
-\begin{example}[Theorem Slide Code]
-\begin{verbatim}
-\begin{frame}
-\frametitle{Theorem}
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
-\end{frame}\end{verbatim}
-\end{example}
+
+
 \end{frame}
 
 %------------------------------------------------
@@ -774,13 +776,34 @@ $E = mc^2$
 \subsection{SIDH Public Key Compression}
 
 \begin{frame}
-\frametitle{Figure}
+\frametitle{SIDH Public Key Compression}
 \topline
 \titleline
-Uncomment the code on this slide to include your own image from the same directory as the template .TeX file.
-%\begin{figure}
-%\includegraphics[width=0.8\linewidth]{test}
-%\end{figure}
+Azerderakhsh et al. showed that SIDH public keys can be compressed in the following way.\\
+
+\vspace{10px}
+Take \alice's public key $pk = (E_{\ba}, \pa(\genpb), \pa(\genqb))$.
+
+By generating a basis $\{R_1, R_2\}$ for $E_{\ba}[\lbeb]$ we can represent the point components of $pk$ as
+$$
+\genpa = \alpha_P R_1 + \beta_P R_2
+$$
+$$
+\genqa = \alpha_Q R_1 + \beta_Q R_2
+$$
+
+Giving $pk = (E_{\ba}, \alpha_P, \beta_P, \alpha_Q, \beta_Q)$. Public keys in this form are $4\log p$ bits compared to the usual $6'log p$ bits.
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{SIDH Public Key Compression}
+\topline
+\titleline
+Costello et al. then showed that $(E_{\ba}, \alpha_P, \beta_P, \alpha_Q, \beta_Q)$ could be further compressed to $(E_{\ba}, b, \zeta, \alpha, \beta)$, where $b \in \{1,0\}$.
+
+
 \end{frame}
 
 %------------------------------------------------
@@ -791,7 +814,7 @@ Uncomment the code on this slide to include your own image from the same directo
 \frametitle{Citation}
 \topline
 \titleline
-An example of the \verb|\cite| command to cite within the presentation:\\~
+We use the SIDH public key compression technique developed by Azerderakhsh, Costello, and others to compress every $\psi(S)$ component of a Yoo signature.
 
 This statement requires citation \cite{p1}.
 \end{frame}

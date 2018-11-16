@@ -2,7 +2,7 @@
 
 This chapter will cover the following preliminary topics: cryptographic primitives, isogenies and their relevant properties, supersingular isogeny Diffie-Hellman (SIDH), the Fiat-Shamir construction for digital signatures (and its quantum-safe adaptation), the current landscape of isogeny-based signature schemes, and finally select C implementations of the isogeny-based protocols with which we are concerned.
 
-In the first section of this chapter we will take some time to introduce a few ideas from modern cryptography. We will cover key exchange, identification schemes, and signature schemes - all at as high of an abstraction level as possible. Readers familiar with these topics can skip this section without harm. 
+In the first section of this chapter we will take some time to introduce a few ideas from modern cryptography. We will cover key exchange, identification schemes, and signature schemes - all at as high of an abstraction level as possible. Readers familiar with these topics can skip this section without harm.
 
 Our discussion of isogenies will begin with some basic coverage of the underlying algebra. We will provide the material necessary for the remaining sections as we build up in the level of abstraction; working our way through groups, finite fields, elliptic curves, and finally isogenies and their properties.
 
@@ -36,9 +36,9 @@ The notion that the source of the information in question \textbf{cannot} deny h
 
 The security of a particular cryptographic primitive is measured by two components. The first, referred to often as a ``security guarantee", measures what conditions constitute a successful attack on the primitive. The second, known as the ``threat model", makes assumptions about the computational powers that the adversary holds. The best practice in forming security proofs is to aim for security with respect to the most easily broken security guarantee and the most challenging possible threat model. The combination of a security guarantee and threat model is known as a \emph{security goal}.
 
-Each of the primitives to come are designed to offer some security to the communication between a given pair of entities. We will refer to these entities as Alice and Bob. The schemes we are concerned with in this dissertation are strictly \emph{public key} (also known as \emph{asymmetric key}) schemes. In public key primitives, each user possesses a \emph{public} key (visible to every user in the network) as well as a \emph{private} key, which only they have access to. 
+Each of the primitives to come are designed to offer some security to the communication between a given pair of entities. We will refer to these entities as Alice and Bob. The schemes we are concerned with in this dissertation are strictly \emph{public key} (also known as \emph{asymmetric key}) schemes. In public key primitives, each user possesses a \emph{public} key (visible to every user in the network) as well as a \emph{private} key, which only they have access to.
 
-The first class of primitives we will discuss, \emph{key exchange} protocols, provide a means by which Alice and Bob can come to the agreement of some secret value. The goal of a key exchange protocol is for Alice and Bob, communicating over some open, insecure channel, to reach mutual agreement of the secret value while also ensuring the \emph{confidentiality} of that value. The secret value is referred to as a \emph{secret} or \emph{shared} key and is intended for use in other cryptographic primitives. 
+The first class of primitives we will discuss, \emph{key exchange} protocols, provide a means by which Alice and Bob can come to the agreement of some secret value. The goal of a key exchange protocol is for Alice and Bob, communicating over some open, insecure channel, to reach mutual agreement of the secret value while also ensuring the \emph{confidentiality} of that value. The secret value is referred to as a \emph{secret} or \emph{shared} key and is intended for use in other cryptographic primitives.
 
 Identification schemes are a class of primitives that aim to ensure \emph{authenticity} of a given entity. If Alice is communicating with Bob and she wants to verify that Bob is who he claims to be, the two can utilize a secure identification scheme. After identification protocols we will look at signature schemes, which are somewhat of an extension of the former. Signature schemes aim to provide \emph{authenticity} on every message sent from Bob to Alice, as well as \emph{non-repudiability} and \emph{integrity} of those messages.\\
 
@@ -63,29 +63,29 @@ Execution of $\Pi_{kex}$ between Alice and Bob involves the following:
 \begin{tikzpicture}
   % Public parameter:
   \node[draw=none,fill=none,align=center] (public) at (0,1) {Public parameter:\\$g, p$};
-  
+
   % Alice
-  \node[draw] (Alice) at (-2,0) {Alice}; 
+  \node[draw] (Alice) at (-2,0) {Alice};
   \draw[thick] (Alice) -- ++(0, -4);
-    
+
   % Calculations of Alice
   \node[draw=none,fill=none,anchor=east] (asecret) at ($(Alice) + (0,-1)$) {$a \in_{R} \{2,\dots,p-2\}$};
   \node[draw=none,fill=none,anchor=east] (Apublic) at ($(Alice) + (0,-2)$) {$A = g^{a} \bmod{p}$};
   \node[draw=none,fill=none,anchor=east] (akey) at ($(Alice) + (0,-4)$) {$k = (B)^{a} = g^{ba}$};
-    
+
   % Bob
-  \node[draw] (Bob) at (2,0) {Bob}; 
+  \node[draw] (Bob) at (2,0) {Bob};
   \draw[thick] (Bob) -- ++(0, -4);
-   
+
   % Calculations of Bob
   \node[draw=none,fill=none,anchor=west] (bsecret) at ($(Bob) + (0,-1)$) {$b \in_{R} \{2,\dots,p-2\}$};
   \node[draw=none,fill=none,anchor=west] (Bpublic) at ($(Bob) + (0,-2)$) {$B = g^{b} \bmod{p}$};
   \node[draw=none,fill=none,anchor=west] (bkey) at ($(Bob) + (0,-4)$) {$k = (A)^{b} = g^{ab}$};
-   
+
   % Messages
   \draw[->,thick] ($(Alice)+(0,-2)$) -- ($(Bob)+(0,-2.5)$) node [pos=0.5,above,font=\footnotesize] {A};
   \draw[->,thick] ($(Bob)+(0,-3)$) -- ($(Alice)+(0,-3.5)$) node [pos=0.5,above,font=\footnotesize] {B};
-    
+
 \end{tikzpicture}
 \end{center}
 \caption{Alice and Bob's execution of Diffie-Hellman key exchange.}
@@ -93,7 +93,7 @@ Execution of $\Pi_{kex}$ between Alice and Bob involves the following:
 \end{figure}
 
 \noindent
-$\Pi_{kex}$ is said to uphold \emph{correctness} if $k_{Alice} = k_{Bob}$ for all honestly derived keypairs $(sk_{\text{Alice}},pk_{\text{Alice}})$ and $(sk_{\text{Bob}},pk_{\text{Bob}})$. Because we deal only with correct $\Pi_{kex}$, we refer to the output of $\Pi_{kex}$ as simply $k$. 
+$\Pi_{kex}$ is said to uphold \emph{correctness} if $k_{Alice} = k_{Bob}$ for all honestly derived keypairs $(sk_{\text{Alice}},pk_{\text{Alice}})$ and $(sk_{\text{Bob}},pk_{\text{Bob}})$. Because we deal only with correct $\Pi_{kex}$, we refer to the output of $\Pi_{kex}$ as simply $k$.
 
 Figure \ref{fig:diffiehellman} illustrates an execution of the Diffie-Hellman key exchange protocol which relies on the difficulty of the \emph{discrete logarithm} problem for its one-way function $f$.\\
 
@@ -101,15 +101,15 @@ The security goal typical of a key exchange protocol is that an adversary with a
 
 \subsection{Interactive Identification Schemes}
 
-Imagine Alice wishes to confirm the identity of Bob. The motivation for interactive identification schemes is to provide Bob with some mechanism for proving to Alice (or any other party) that he has knowledge of some secret which \textbf{only} Bob could possess. The goal, of course, being to accomplish this without openly revealing the secret, so that it can continue to be used as an identifier for Bob. 
+Imagine Alice wishes to confirm the identity of Bob. The motivation for interactive identification schemes is to provide Bob with some mechanism for proving to Alice (or any other party) that he has knowledge of some secret which \textbf{only} Bob could possess. The goal, of course, being to accomplish this without openly revealing the secret, so that it can continue to be used as an identifier for Bob.
 
-An identification scheme (or otherwise ``proof of identity" protocol) $\Pi_{id}$ is composed of by the tuple of polynomial-time algorithms (\textbf{KeyGen}, \textbf{Commit}, \textbf{Prove}, \textbf{Verify}) and some set $\omega$. $\Pi_{id}$ is an interactive protocol requiring two parties. The \emph{prover} (Bob, for example) executes \textbf{KeyGen}, \textbf{Commit}, and \textbf{Prove}. The \emph{verifier} (Alice, in our example) executes \textbf{Verify} following Bob's actions. 
+An identification scheme (or otherwise ``proof of identity" protocol) $\Pi_{id}$ is composed of by the tuple of polynomial-time algorithms (\textbf{KeyGen}, \textbf{Commit}, \textbf{Prove}, \textbf{Verify}) and some set $\omega$. $\Pi_{id}$ is an interactive protocol requiring two parties. The \emph{prover} (Bob, for example) executes \textbf{KeyGen}, \textbf{Commit}, and \textbf{Prove}. The \emph{verifier} (Alice, in our example) executes \textbf{Verify} following Bob's actions.
 
 Execution of $\Pi_{id}$ between Alice and Bob proceeds as follows:
 \begin{enumerate}[label=(\roman*)]
 \item Bob runs \textbf{KeyGen($1^\lambda)$}: A probabilistic algorithm with input $1^\lambda$ and outputs Bob's keypair $(sk,pk)$. Bob sends his public key $pk$ to Alice.
 \item Bob runs \textbf{Commit()}: a probabilistic algorithm with output $com$. $com$ is referred to as a ``commitment". Bob sends $com$ to Alice.
-\item Alice sends a randomly generated ``challenge" value $ch \in \omega$. Alice sends $ch$ to Bob. 
+\item Alice sends a randomly generated ``challenge" value $ch \in \omega$. Alice sends $ch$ to Bob.
 \item Bob runs \textbf{Prove($sk$, $com$, $ch$)}: A deterministic algorithm with input $sk$ and $ch$, and output $resp$. $resp$ is the ``response" to Alice's challenge.
 \item Alice runs \textbf{Verify($pk$, $com$, $ch$, $resp$)}: A deterministic algorithm with input $pk$, $com$, $ch$, and $resp$, and output $b \in {0,1}$. Bob has successfully proven his identity to Alice if $b = 1$.
 \end{enumerate}
@@ -118,27 +118,27 @@ Execution of $\Pi_{id}$ between Alice and Bob proceeds as follows:
 \begin{center}
 \begin{tikzpicture}
   % prover
-  \node[draw] (prover) at (-2,0) {$\mathcal{P}$}; 
+  \node[draw] (prover) at (-2,0) {$\mathcal{P}$};
   \draw[thick] (prover) -- ++(0, -5);
-    
+
   % Calculations for the prover
   \node[draw=none,fill=none,anchor=east] (asecret) at ($(prover) + (0,-1)$) {$(sk, pk) =$ \textbf{KeyGen($1^\lambda)$}};
   \node[draw=none,fill=none,anchor=east] (Apublic) at ($(prover) + (0,-2)$) {$com =$ \textbf{Commit()}};
   \node[draw=none,fill=none,anchor=east] (akey) at ($(prover) + (0,-4)$) {$resp =$ \textbf{Prove($sk$, $com$, $ch$)}};
-    
+
   % verifier
-  \node[draw] (verifier) at (2,0) {$\mathcal{V}$}; 
+  \node[draw] (verifier) at (2,0) {$\mathcal{V}$};
   \draw[thick] (verifier) -- ++(0, -5);
-   
+
   % Calculations for the verifier
   \node[draw=none,fill=none,anchor=west] (Bpublic) at ($(verifier) + (0,-2.5)$) {$ch \gets_{R} \omega$};
   \node[draw=none,fill=none,anchor=west] (bkey) at ($(verifier) + (0,-4.5)$) {$b =$ \textbf{Verify($pk$, $com$, $ch$, $resp$)}};
-   
+
   % Messages
   \draw[->,thick] ($(prover)+(0,-2)$) -- ($(verifier)+(0,-2.5)$) node [pos=0.5,above,font=\footnotesize] {$pk, com$};
   \draw[->,thick] ($(verifier)+(0,-3)$) -- ($(prover)+(0,-3.5)$) node [pos=0.5,above,font=\footnotesize] {$ch$};
   \draw[->,thick] ($(prover)+(0,-4)$) -- ($(verifier)+(0,-4.5)$) node [pos=0.5,above,font=\footnotesize] {$resp$};
-    
+
 \end{tikzpicture}
 \end{center}
 \caption{A general interactive identification scheme with prover $\mathcal{P}$ and verifier $\mathcal{V}$.}
@@ -154,12 +154,12 @@ We may at times speak of \emph{canonical} identification schemes. An identificat
 \begin{itemize}
 \item $\Pi$ consists of an initial message (or ``commitment") $com$ sent by $\mathcal{P}$, a challenge $ch$ sent by $\mathcal{V}$, and a final response $resp$ sent by $\mathcal{P}$.
 \item $ch$ is chosen uniformly at random from some set $\omega$.
-\item $com$ is generated by some probabilistic function \textbf{R} taking $\mathcal{P}$'s secret key as input. For any secret key $sk$ and fixed string $\bar{com}$, the probability that \textbf{R($sk$)} $= \bar{com}$ is negligible. 
+\item $com$ is generated by some probabilistic function \textbf{R} taking $\mathcal{P}$'s secret key as input. For any secret key $sk$ and fixed string $\bar{com}$, the probability that \textbf{R($sk$)} $= \bar{com}$ is negligible.
 \end{itemize}
 
-These constraints gurantee that $\Pi$ will have two important features. First, that any third party given the transcript and prover's public key can efficiently determine whether the verifier will accept. Second, that the probability that $com$ repeats in polynomially many executions of $\Pi$ is negligible.  
+These constraints gurantee that $\Pi$ will have two important features. First, that any third party given the transcript and prover's public key can efficiently determine whether the verifier will accept. Second, that the probability that $com$ repeats in polynomially many executions of $\Pi$ is negligible.
 
-Lastly, it should be mentioned that there exist variations upon this type of primitive wherein Alice is not required to send Bob a specific challenge value. These are known as \emph{non-interactive} identification schemes, or non-interactive proofs of identity (NIPoI). These non-interactive approaches to solving the problem of identity and \emph{authentication} further bridge the gap between identification protocols and signature schemes. 
+Lastly, it should be mentioned that there exist variations upon this type of primitive wherein Alice is not required to send Bob a specific challenge value. These are known as \emph{non-interactive} identification schemes, or non-interactive proofs of identity (NIPoI). These non-interactive approaches to solving the problem of identity and \emph{authentication} further bridge the gap between identification protocols and signature schemes.
 
 \subsection{Signature Schemes}
 
@@ -170,7 +170,7 @@ First, before any message is to be signed, the Bob must run the following:
 \begin{itemize}
 \item Bob runs $\textbf{KeyGen}(1^\lambda)$: A probabilistic algorithm with input $1^\lambda$ and output $(sk,pk)$.
 \end{itemize}
-Then, for every message $m$ Bob wishes to authenticate and send to Alice: 
+Then, for every message $m$ Bob wishes to authenticate and send to Alice:
 \begin{enumerate}[label=(\roman*)]
 \item Bob sends his public key $pk$ to Alice over an authenticated channel if he has not yet done so.
 \item Bob runs $\textbf{Sign}(sk, m)$: A probabilistic algorithm with input $sk$ (Bob's secret key) and $m$ (the message Bob wishes to authorize) and output $\sigma$, known as a \emph{signature}.
@@ -190,7 +190,7 @@ $G$ is said to be an \emph{abelian} group if, in addition to the four traditiona
 \begin{tcolorbox}
 \begin{definition}[Abelian Variety]
 \label{defn:abelianvariety}
-for some algebraic group $G$ with operation $\cdot$, we say $G$ is an \underline{abelian variety} iff $x \cdot y = y \cdot x$ $\forall x, y \in G$. 
+for some algebraic group $G$ with operation $\cdot$, we say $G$ is an \underline{abelian variety} iff $x \cdot y = y \cdot x$ $\forall x, y \in G$.
 \end{definition}
 \end{tcolorbox}
 
@@ -271,7 +271,7 @@ $\forall x,y \in \mathbb{F}_p$, $x \cdot y = (x \cdot b) \mod{p}$\\
 
 For any given field $K$ there exists a number $q$ such that, for every $x \in K$, adding $x$ to itself $q$ times results in the additive identity 0. This number is referred to as the \emph{characteristic} of $K$, for which we write char($K$). Finite fields are the only type of field for which $\text{char}(K) > 0$. Furthermore, if the field in question is finite and has prime order, then the order and the characteristic are equivalent.
 
-A particular field $K'$ is called an \emph{extension field} of some other field $K$ if $K \subseteq K'$. The complex numbers $\mathbb{C}$, for example, are an extension field of $\mathbb{R}$. A given field $K$ is \emph{algebraically closed} if there exists a root for every non-constant polynomial defined over $K$. If $K$ itself is not algebraically closed, we denote the extension of $K$ that is by $\overline{K}$. 
+A particular field $K'$ is called an \emph{extension field} of some other field $K$ if $K \subseteq K'$. The complex numbers $\mathbb{C}$, for example, are an extension field of $\mathbb{R}$. A given field $K$ is \emph{algebraically closed} if there exists a root for every non-constant polynomial defined over $K$. If $K$ itself is not algebraically closed, we denote the extension of $K$ that is by $\overline{K}$.
 
 An algebraic group $G_a$ is defined over a field $K$ if each element $e \in G_a$ is also an element of the field $K$, and the corresponding $f_{G_a}$ is defined over $K$. To show that a particular algebraic group $G_a$ is defined over some field $K$ we will henceforth denote the group/field pairing as $G_a(K)$. Naturally, in the case where our field is a finite field of order $p$, we write $G_a(\mathbb{F}_p)$.
 
@@ -311,23 +311,23 @@ Given two elements $P$ and $Q$ of some arbitrary elliptic curve group $E$, we de
 		%\draw[very thin,color=gray] (-3.9,-3.9) grid (3.9,3.9);  %background grid
 		\draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};         %x-axis
 		\draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};         %y-axis
-		
+
 		\plotcurve{-2}{2}
-		
+
 		\draw[fill] (-1.73,0.531) circle (0.1) node[right] {$P$};
 		\draw[fill] (0.28,1.209) circle (0.1) node[right] {$Q$};
 	\end{scope}
-	
+
 	\begin{scope}[xshift=17cm]
 		%\draw[very thin,color=gray] (-3.9,-3.9) grid (3.9,3.9);  %background grid
 		\draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};         %x-axis
 		\draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};         %y-axis
-		
+
 		\plotcurve{-2}{2}
-		
+
 		\draw [] (-1.73,0.531) -- (1.564,1.642);
 		\draw [dashed] (1.564,1.642) -- (1.564,-1.642);
-		
+
 		\draw[fill] (-1.73,0.531) circle (0.1) node[right] {$P$};
 		\draw[fill] (0.28,1.209) circle (0.1) node[right] {$Q$};
 		\draw[fill] (1.564,1.642) circle (0.1) node[right] {$R$};
@@ -340,7 +340,7 @@ Given two elements $P$ and $Q$ of some arbitrary elliptic curve group $E$, we de
 
 The group operation $+$ is referred to as \emph{pointwise addition}. In order for $(E,+)$ to properly form a group under pointwise addition, it must satisfy the four group axioms:
 \begin{itemize}
-\item \emph{Closure}: Because elliptic curves are polynomials of degree of 3, we know any given line passing through two points $P$ and $Q$ of $E$ will pass through a third point $R$. The exceptions here are twofold. First, when $P = Q$ and thus our line is tangent to $E$, and second, when $Q = -P$ and our line is parallel with the y-axis. We resolve the first case nicely by defining $P + P$ by means of taking $L$ to be the line tangent to $E$ at point $P$. In the second case, $P + (-P)$, by group axiom, should yield the identity element of the group. We will define this element and resolve this issue below.  
+\item \emph{Closure}: Because elliptic curves are polynomials of degree of 3, we know any given line passing through two points $P$ and $Q$ of $E$ will pass through a third point $R$. The exceptions here are twofold. First, when $P = Q$ and thus our line is tangent to $E$, and second, when $Q = -P$ and our line is parallel with the y-axis. We resolve the first case nicely by defining $P + P$ by means of taking $L$ to be the line tangent to $E$ at point $P$. In the second case, $P + (-P)$, by group axiom, should yield the identity element of the group. We will define this element and resolve this issue below.
 \item \emph{Identity}: The identity element of elliptic curve groups, denoted as $\mathcal{O}$, is a specially defined point satisfying $P + \mathcal{O} = \mathcal{O} + P = P$, $\forall P \in E$. Because of the inclusion of this special element, we have that $\#(E(K))$ is equal to $1$ $+$ the number geometric points on $E$ defined over $K$. This of course is only a noteworthy claim when $K$ is a finite field (otherwise there are already infinitely many elements in $E$).
 \item \emph{Associativity}: For all points $P$, $Q$, and $R$ in $E$, it must be the case ($(P + Q) + R = P + (Q + R)$) holds. It is rather easy to see visually why this is true for geometrically defined points in $E$ (see Figure \ref{fig:axioms}). Additionally, we can trivially show that this holds when any combination of $P$, $Q$, and $R$ are $\mathcal{O}$ by applying the axiom of the identity.
 \item \emph{Inverse}: Due to the x-symmetry of elliptic curves, every point $P = (x_P, y_P)$ of $E$ has an associated point $-P = (x_P, -y_P)$. If we apply $+$ to $P$ and $-P$, $L$ assumes the line parrallel to the y-axis at $x = x_P$. As discussed above, in this case there is no third intersection of $L$ on $E$. In light of this, $\mathcal{O}$ can be thought of as a point residing infinitely far in both the positive and negative directions of the y-axis. $\mathcal{O}$ is equivalently referred to as the \emph{point at infinity} (see Figure \ref{fig:axioms}).\footnote{One might suspect that the inclusion of this (apparently) non-algebraic element $\mathcal{O}$ suggests that $+$ is not a rational-map. The operator $+$ \emph{can} be shown to be a rational-mapping if we define our elliptic curve groups in three-dimensional projective space.}
@@ -352,14 +352,14 @@ The group operation $+$ is referred to as \emph{pointwise addition}. In order fo
 		%\draw[very thin,color=gray] (-3.9,-3.9) grid (3.9,3.9);  %background grid
 		\draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};         %x-axis
 		\draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};         %y-axis
-		
-		\draw[] (-1.65,0.677) -- (2.00,1.414); 
+
+		\draw[] (-1.65,0.677) -- (2.00,1.414);
 		\draw[dashed] (-0.309,0.948) -- (-0.309,-0.948);
-		\draw[] (-1.400,-1.207) -- (1.765,-0.454); 
+		\draw[] (-1.400,-1.207) -- (1.765,-0.454);
 		\draw[dashed] (1.765,-0.454) -- (1.765,0.454);
-		
+
 		\plotcurve{-3}{0}
-		
+
 		\draw[fill] (-1.65,0.677) circle (0.1) node[left] {$P$};
 		\draw[fill] (2.00,1.414) circle (0.1) node[right] {$Q$};
 		\draw[fill] (-0.309,0.948) circle (0.1) node[right] {};
@@ -372,14 +372,14 @@ The group operation $+$ is referred to as \emph{pointwise addition}. In order fo
 		%\draw[very thin,color=gray] (-3.9,-3.9) grid (3.9,3.9);  %background grid
 		\draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};         %x-axis
 		\draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};         %y-axis
-		
+
 		\draw[] (2.00,1.414) -- (-1.400,-1.207);
 		\draw[dashed] (-0.006,-0.132) -- (-0.006,0.132);
 		\draw[] (-1.65,0.677) -- (1.765,-0.454);
 		\draw[dashed] (1.765,-0.454) -- (1.765,0.454);
-		
+
 		\plotcurve{-3}{0}
-		
+
 		\draw[fill] (-1.65,0.677) circle (0.1) node[left] {$P$};
 		\draw[fill] (2.00,1.414) circle (0.1) node[right] {$Q$};
 		\draw[fill] (-1.400,-1.207) circle (0.1) node[below] {$R$};
@@ -392,11 +392,11 @@ The group operation $+$ is referred to as \emph{pointwise addition}. In order fo
 		%\draw[very thin,color=gray] (-3.9,-3.9) grid (3.9,3.9);  %background grid
 		\draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};         %x-axis
 		\draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};         %y-axis
-		
+
 		\plotcurve{1}{1}
-		
+
 		\draw[dashed] (0.73,-4.492) -- (0.73,4.492);
-		
+
 		\draw[fill] (0.73,1.492) circle (0.1) node[right] {$P$};
 		\draw[fill] (0.73,-1.492) circle (0.1) node[right] {$-P$};
   \end{scope}
@@ -424,10 +424,10 @@ Let $E$ be an elliptic curve defined over the finite field $\mathbb{F}_{p}$. $E$
 \end{definition}
 \end{tcolorbox}
 
-For the remainder of this paper, unless otherwise noted, all elliptic curves in discussion will be of the supersingular variety.\\ 
+For the remainder of this paper, unless otherwise noted, all elliptic curves in discussion will be of the supersingular variety.\\
 
 \noindent
-\emph{Projective Space}\label{snip:projspace}. While elliptic curves are naturally defined in two-dimensional affine space, there are many benefits to expressing them through three-dimensional projective coordinates. First and foremost, expressing curves in projective space allows us to reason geometrically about $\mathcal{O}$. This is done by defining a curve $E$ such that it resides in some two-dimension subspace of 3-space, the point $\mathcal{O}$ then resides at some point in 3-space outside of the residing plane of $E$. 
+\emph{Projective Space}\label{snip:projspace}. While elliptic curves are naturally defined in two-dimensional affine space, there are many benefits to expressing them through three-dimensional projective coordinates. First and foremost, expressing curves in projective space allows us to reason geometrically about $\mathcal{O}$. This is done by defining a curve $E$ such that it resides in some two-dimension subspace of 3-space, the point $\mathcal{O}$ then resides at some point in 3-space outside of the residing plane of $E$.
 
 Representing a curve in 3-space requires some substitution of $x$ and $y$ coordinates, a typical forma for achieving this is the following:
 
@@ -455,11 +455,11 @@ For an isogeny $h: E_{1} \rightarrow E_{2}$ defined over elliptic curves $E_1$ a
 \item $h(u^{-1}) = h(u)^{-1}, \forall u \in G$
 \end{itemize}
 
-If there exists some isogeny $\phi$ between curves $E_1$ and $E_2$ then $E_1$ and $E_2$ are said to be \emph{isogenous}. All supersingular curves are isogenous only to other supersingular curves. The equivalent statement holds for ordinary curves. With this in mind, we can concieve a sort of graph structure connecting all isogenous curves, these graphs pertaining to either the supersingular or ordinary variety of curves \cite{pairings}. 
+If there exists some isogeny $\phi$ between curves $E_1$ and $E_2$ then $E_1$ and $E_2$ are said to be \emph{isogenous}. All supersingular curves are isogenous only to other supersingular curves. The equivalent statement holds for ordinary curves. With this in mind, we can concieve a sort of graph structure connecting all isogenous curves, these graphs pertaining to either the supersingular or ordinary variety of curves \cite{pairings}.
 
 We write $\text{End}(E)$ to denote the ring formed by all the isogenies acting over $E$ which are also endomorphisms. Note that $m$-repeated pointwise addition of a point with itself can equivalently be modelled by an endomorphism, we denote the application of such an endomorphism to a point $P$ as $[m]P$, such that $[m]: E \rightarrow E$ and $[m]P = mP$ \cite{silverman}.
 
-An important facet of isogenies is that they can be uniquely identified by their kernel. If $S$ is the group of points denoting the kernel of some isogeny $\phi$ with domain $E$, we write $\phi: E \rightarrow E/S$. Because the subgroup $S$ sufficiently identifies $\phi$, any given generator of $S$ equivalently identifies $\phi$. Therefore, if $R$ generates the subgroup $S$ we can write $\phi: E \rightarrow E/\langle R \rangle$ \cite{silverman}. Moreover, we will have a specific interest in isogenies with kernels defined by some \emph{torsion subgroup}. 
+An important facet of isogenies is that they can be uniquely identified by their kernel. If $S$ is the group of points denoting the kernel of some isogeny $\phi$ with domain $E$, we write $\phi: E \rightarrow E/S$. Because the subgroup $S$ sufficiently identifies $\phi$, any given generator of $S$ equivalently identifies $\phi$. Therefore, if $R$ generates the subgroup $S$ we can write $\phi: E \rightarrow E/\langle R \rangle$ \cite{silverman}. Moreover, we will have a specific interest in isogenies with kernels defined by some \emph{torsion subgroup}.
 
 \begin{tcolorbox}
 \begin{lemma}[Uniquely identifying isogenies]
@@ -471,7 +471,7 @@ Let $E$ be an elliptic curve and let $\Phi$ be a finite subgroup of $E$. There i
 \section{Supersingular Isogeny Diffie-Hellman}
 \label{sec:sidh}
 
-In this section we briefly explain the isogeny-level \& key-exchange-level procedures of the SIDH protocol - the protocol on top of which the Yoo et al. signature scheme is developed. Later in this chapter we cover the Microsoft Research SIDH C library, and offer a guidepost for navigating between the high-level definitions and C implementation. 
+In this section we briefly explain the isogeny-level \& key-exchange-level procedures of the SIDH protocol - the protocol on top of which the Yoo et al. signature scheme is developed. Later in this chapter we cover the Microsoft Research SIDH C library, and offer a guidepost for navigating between the high-level definitions and C implementation.
 
 The original work of De Feo, Jao, and Plut \cite{djp} outlines three different isogeny-based cryptographic primitives: Diffie-Hellman-esque key exchange, public key encryption, and the aforementioned zero-knowledge proof of identity (ZKPoI). Because all three of these protocols require the same initialization and public parameters, we will begin by covering these parameters in detail. Immediately after, we will analyze the key exchange at a relatively high level. Our goal of this section is to explain in detail the algorithmic and cryptographic aspects of the ZKPoI scheme, as this forms the conceptual basis for the signature scheme we will be investigating. We begin with the key exchange protocol because its sub-routines are integral to the Yoo et al. signature implementation.
 
@@ -482,7 +482,7 @@ For the discussion that follows, we will assume every instance of an SIDH protoc
 $$
 p = \laea \lbeb \cdot f \pm 1
 $$
-Wherein $\la$ and $\lb$ are small primes (typically \textcolor{red}{2} \& \textcolor{blue}{3}, respectively) and $f$ is a cofactor ensuring the primality of $p$. We then define globally a supersingular curve $E_0$ defined over $\mathbb{F}_q$ with cardinality $(\laea \lbeb f)^2$. Consequently, the torsion group $E_0[\laea]$ is $\mathbb{F}_q$-rational and has $\la^{\ea - 1} (\la + 1)$ cyclic subgroups of order $\laea$, with the analogous statement being true for $E_0[\lbeb]$. Additionally, we include in the public parameters the bases $\agens$ and $\bgens$, generating $E[\laea]$ and $E[\lbeb]$ respectively. 
+Wherein $\la$ and $\lb$ are small primes (typically \textcolor{red}{2} \& \textcolor{blue}{3}, respectively) and $f$ is a cofactor ensuring the primality of $p$. We then define globally a supersingular curve $E_0$ defined over $\mathbb{F}_q$ with cardinality $(\laea \lbeb f)^2$. Consequently, the torsion group $E_0[\laea]$ is $\mathbb{F}_q$-rational and has $\la^{\ea - 1} (\la + 1)$ cyclic subgroups of order $\laea$, with the analogous statement being true for $E_0[\lbeb]$. Additionally, we include in the public parameters the bases $\agens$ and $\bgens$, generating $E[\laea]$ and $E[\lbeb]$ respectively.
 
 This brings our set of global parameters, G, to the following:\\
 $$
@@ -651,7 +651,7 @@ By taking this approach, \alice gains no information about \bob's secret key. Th
 
 \section{Fiat-Shamir Construction}
 
-For the following section, we use the following conventional notation when discussing identification protocols: $\mathcal{P}$ represents the prover of the scheme, and $\mathcal{V}$ represents the verifier. 
+For the following section, we use the following conventional notation when discussing identification protocols: $\mathcal{P}$ represents the prover of the scheme, and $\mathcal{V}$ represents the verifier.
 
 The Fiat-Shamir construction (also frequently referred to as the Fiat-Shamir transform, or Fiat-Shamir hueristic,) is a high-level technique for transforming a canonical identification scheme into a secure  signature scheme.
 
@@ -763,7 +763,7 @@ We can transcribe this algorithm so that it is defined in terms of $\Pi_{\text{S
 \end{algorithmic}
 \end{algorithm}
 
-For \textbf{Sign($sk$, $m$)} and \textbf{Verify($pk$, $m$, $\sigma$)} we assume \bob to be the signer and \alice to be the verifier, for the sake of simplifying the coming algorithmic definitions. Consequently, we will write the signer's key pair ($sk$, $pk$) as ($\rb$, $\pb$). Algorithms for which the roles are reversed can be constructed simply by replacing \textcolor{red}{red} constants with their \textcolor{blue}{blue} correspondants, and vice-versa.\\  
+For \textbf{Sign($sk$, $m$)} and \textbf{Verify($pk$, $m$, $\sigma$)} we assume \bob to be the signer and \alice to be the verifier, for the sake of simplifying the coming algorithmic definitions. Consequently, we will write the signer's key pair ($sk$, $pk$) as ($\rb$, $\pb$). Algorithms for which the roles are reversed can be constructed simply by replacing \textcolor{red}{red} constants with their \textcolor{blue}{blue} correspondants, and vice-versa.\\
 
 \noindent
 \textbf{Sign($sk$, $m$)}: The sign procedure, as a consequence of the Unruh construction, makes use of two random oracle functions \textbf{H} and \textbf{G}. In the sign algorithm below, make note of how \bob computes both commitments and their corresponding responses for every iteration $i$ before he computes the challenge values (the bits of $J$). He then uses the $2\lambda$ bits of $J$ to decide which responses to include in $\sigma$.\\
@@ -887,7 +887,7 @@ These observations are formalized in Algorithm \ref{alg:verifyviasidh}, where we
 
 Having now introduced all of the background material necessary for understanding SIDH and the isogeny-based signature scheme in detail, we will investigate the portions of the SIDH C library which are relevent to our contributions.
 
-The SIDH C library, written by the NExT Security \& Cryptogrphy group at Microsoft Research, was released in 2016 alongside an article titled \emph{Efficient Algorithms for Supersingular Isogeny Diffie-Hellman} (see \cite{effalg}). The article in question details several adjustments to the algorithms and data-representations outlined in \cite{djp}, leading to improved performance and key-sizes. Their library (which we will henceforth refer to as \sidh) consists of C and assembly implementations of the algorithms outlined in \cite{effalg}. Much of these functions are tailored to a specific set of parameters allowing for increased performance. The library presents 128-bit quantum security and 192-bit classical security key exchange up to 2.9 times faster than any previous isogeny-based key-exchange system. We will look at some of the details of \sidh below. 
+The SIDH C library, written by the NExT Security \& Cryptogrphy group at Microsoft Research, was released in 2016 alongside an article titled \emph{Efficient Algorithms for Supersingular Isogeny Diffie-Hellman} (see \cite{effalg}). The article in question details several adjustments to the algorithms and data-representations outlined in \cite{djp}, leading to improved performance and key-sizes. Their library (which we will henceforth refer to as \sidh) consists of C and assembly implementations of the algorithms outlined in \cite{effalg}. Much of these functions are tailored to a specific set of parameters allowing for increased performance. The library presents 128-bit quantum security and 192-bit classical security key exchange up to 2.9 times faster than any previous isogeny-based key-exchange system. We will look at some of the details of \sidh below.
 
 \subsection{Parameters \& Data Representation}
 \label{subsec:datarep}
@@ -938,19 +938,19 @@ One priority of the parameter choices found in \code{SIDHp751} was to approach $
 	\item \code{CurveIsogenyStaticData} -- The same as \code{CurveIsogenyStruct}, but with buffer sizes fixed for \code{SIDHp751}.
 \end{itemize}
 
-The reader may note that \code{publickey\_t} does not contain any information defining the user's codomain curve $E/\langle S \rangle$ (with $S$ as the users secret key). It just so happens that in $\Pi_{\text{SIDH}}$ key exchange, the curves $E/\langle \ba \rangle$ and $E/\langle \rb \rangle$ are simply intermediary steps (useful for conceptualizing the protocol) and not necessary for computing the shared secret $j(E_{\ba\rb})$ (as we will see, however, this is not the case for isogeny-based signatures, where $S$ must be tracked as part of the public key). 
+The reader may note that \code{publickey\_t} does not contain any information defining the user's codomain curve $E/\langle S \rangle$ (with $S$ as the users secret key). It just so happens that in $\Pi_{\text{SIDH}}$ key exchange, the curves $E/\langle \ba \rangle$ and $E/\langle \rb \rangle$ are simply intermediary steps (useful for conceptualizing the protocol) and not necessary for computing the shared secret $j(E_{\ba\rb})$ (as we will see, however, this is not the case for isogeny-based signatures, where $S$ must be tracked as part of the public key).
 
-Also worth noting is the lack of a specific data structure for representing curves. As it turns out, curves within $\Pi_{\text{SIDH}}$ can be distinctly represented by their $A$ value alone. As we are working with curves defined over $\mathbb{F}_{p^2}$, we have $A \in \mathbb{F}_{p^2}$ and thus we can succinctly represent any curve with a single \code{f2elm\_t} \cite{sidhcode}. 
+Also worth noting is the lack of a specific data structure for representing curves. As it turns out, curves within $\Pi_{\text{SIDH}}$ can be distinctly represented by their $A$ value alone. As we are working with curves defined over $\mathbb{F}_{p^2}$, we have $A \in \mathbb{F}_{p^2}$ and thus we can succinctly represent any curve with a single \code{f2elm\_t} \cite{sidhcode}.
 
 \subsection{\sidh Design Decisions}
 \label{subsec:design}
 
-The following are, at a high-level, the algorithmic improvements upon $\Pi_{\text{SIDH}}$ as outlined in \cite{effalg}. Costella et al. do make additional contributions in their paper, however we will discuss only those contributions which pertain to the performance of SIDH.\\
+The following are, at a high-level, the algorithmic improvements upon $\Pi_{\text{SIDH}}$ as outlined in \cite{effalg}. Costello et al. do make additional contributions in their paper, however we will discuss only those contributions which pertain to the performance of SIDH.\\
 
 \noindent
 \emph{Projective Space Arithmetic}. As is common in ECC, a vast majority of the procedures of \sidh operate over elliptic curve points which are defined over \emph{projective space} (recall Section \ref{snip:projspace}). This widely-deployed technique is used to avoid the substantial cost of field element inversions (computing $x^{-1}$ for some element $x \in \mathbb{F}_{p^2}$). This means the majority of our calculations are performed over \code{point\_proj} structures using \emph{Montgomery arithmetic} (Section \ref{snip:montgomery}) and converted to \code{point\_affine} when necessary. This general design strategy is highly related to our first contribution, which will be elaborated upon in Section \ref{sec:batching}.
 
-In addition to traditional point-wise projective arithmetic, Costella et al. showed that isogeny arithmetic can also be carried out in this space. By performing isogeny arithmetic in the projective space, the number of $\mathbb{F}_{p^2}$ inversions in $\Pi_{\text{SIDH}}$:\textbf{KeyGen} and $\Pi_{\text{SIDH}}$:\textbf{SecAgr} can be reduced to 1 and 2, respectively.\\
+In addition to traditional point-wise projective arithmetic, Costello et al. showed that isogeny arithmetic can also be carried out in this space. By performing isogeny arithmetic in the projective space, the number of $\mathbb{F}_{p^2}$ inversions in $\Pi_{\text{SIDH}}$:\textbf{KeyGen} and $\Pi_{\text{SIDH}}$:\textbf{SecAgr} can be reduced to 1 and 2, respectively.\\
 
 \noindent
 \emph{Key Representation}. Recall the origin of an $\Pi_{\text{SIDH}}$ private key $(m, n)$: the goal is to randomly select a generator of the torsion group $E[\laea]$ (or $E[\lbeb]$ for \bob). It is noted in \cite{djp} that any generator of the required torsion group is sufficient. It is also noted that $m$, unless equal to the order of the torsion group, is invertible. Because of this, \alice, for example, can simple compute $R = \genpa + [m^{-1}n]\genqa$, thus enabling secret keys to be stored as a single $\mathbb{F}_{p^2}$ element (which is referred to as $m$). This technicality has been implemented in \sidh, which both saves on storage as well as offers a means for generating secret keys that is more efficient than the trivial scalar multiplication and point-wise addition approach to computing $[m]P + [n]Q$ \cite{effalg}.
@@ -958,12 +958,12 @@ In addition to traditional point-wise projective arithmetic, Costella et al. sho
 For the remainder of this dissertation we assume this form for private keys.\\
 
 \noindent
-\emph{Tailor-made Montgomery Multiplication}. The parameters of a default \sidh execution, stored in \code{SIDHp752}, support efficient arithmetic and grant access to a variety of modular arithmetic optimizations. Moreover, Costella et al. supply a modified version of the Montgomery multiplication algorithm which, when performing over the class of curves outlined by their set of parameters, yields faster modular arithmetic.  
+\emph{Tailor-made Montgomery Multiplication}. The parameters of a default \sidh execution, stored in \code{SIDHp752}, support efficient arithmetic and grant access to a variety of modular arithmetic optimizations. Moreover, Costello et al. supply a modified version of the Montgomery multiplication algorithm which, when performing over the class of curves outlined by their set of parameters, yields faster modular arithmetic.  
 
 \subsection{Key Exchange \& Critical Functions}
 \label{subsec:functions}
 
-There are 3 central modules (C files) in \sidh, all dealing with different levels of abstraction in the $\Pi_{\text{SIDH}}$ protocol.  Figure \ref{fig:halfmap} illustrates the relationship between these modules and the abstraction levels of isogeny-based key exchange. 
+There are 3 central modules (C files) in \sidh, all dealing with different levels of abstraction in the $\Pi_{\text{SIDH}}$ protocol.  Figure \ref{fig:halfmap} illustrates the relationship between these modules and the abstraction levels of isogeny-based key exchange.
 
 Operating at the lowest abstraction level is the module \code{fpx.c}, wherein functions for manipulating $\mathbb{F}_{p}$ and $\mathbb{F}_{p^2}$ elements are defined. One level up from \code{fpx.c} we have \code{ec\_isogeny.c}, containing functions pertaining to elliptic curves and point arithmetic (such as \code{j\_inv(...)} for computing the j-invariant of a curve and \code{secret\_pt(...)} for computing a users secret point $S$ given their private key $m$). The final, highest abstraction-level module we will discuss is \code{kex.c}. \code{kex.c} contains the protocol-level functions for performing $\Pi_{\text{SIDH}}$, namely \code{KeyGeneration\_A(...)} and \code{KeyGeneration\_B(...)} for generating \alice and \bob's private and public keys, as well as \code{SecretAgreement\_A(...)} and \code{SecretAgreement\_B(...)} for completing the secret agreement from both sides of the key exchange.
 
@@ -976,7 +976,7 @@ Operating at the lowest abstraction level is the module \code{fpx.c}, wherein fu
 
 For functions defined in \code{fpx.c} the notational practice is to prepend function names with either \code{fp} or \code{fp2}, signifying whether the function is defined for elements of $\mathbb{F}_{p}$ or $\mathbb{F}_{p^2}$. Additionally, it is common to append \code{\_mont} to the name of functions which utilize Montgomery arithmetic, and thus expect elements in Montgomery representation. Functions in \code{fpx.c} are largely defined by byte and memory arithmetic, with the exception of slightly higher-level functions (such as field element inversion, \code{fpinv751\_mont(...)}) which are defined in terms of other \code{fpx.c} functions. Furthermore, for efficiency, functions of \code{fpx.c} are defined as \code{\_\_inline} when applicable.
 
-In addition to the \code{fpx.c} functions we've outlined in Figure \ref{fig:fpfuncs} there are of course definitions for addition, copying elements, retrieving the zero element, Montgomery multiplication, squaring, and so on and so forth. 
+In addition to the \code{fpx.c} functions we've outlined in Figure \ref{fig:fpfuncs} there are of course definitions for addition, copying elements, retrieving the zero element, Montgomery multiplication, squaring, and so on and so forth.
 
 \begin{figure}
 \begin{center}
@@ -1125,7 +1125,7 @@ There are five functions of interest contributed by Yoo et al.: \code{isogeny\_k
 
 As for the signing procedure, \code{isogeny\_sign} is invoked, initializes the necessary structures, and then spawns $2\lambda$ threads running \code{sign\_thread}. Each instance of \code{sign\_thread} then performs the work of one iteration of the main loop in Algorithm \ref{alg:signviasidh}. The verification procedure works analogously to this, running functions \code{isogeny\_verify} and \code{verify\_thread}.
 
-In their original fork of \sidh, Yoo et al. included these functions in the file \code{kex\_tests.c}. This file was originally intended for testing the functions of \code{kex.c}, and so our fork of the library has placed the signature functions in a new file \code{SIDH\_signature.c}. We have also included a file \code{sig\_tests.c} for testing the contents and performance of \code{SIDH\_signature.c} functions \cite{yoosigcode}. 
+In their original fork of \sidh, Yoo et al. included these functions in the file \code{kex\_tests.c}. This file was originally intended for testing the functions of \code{kex.c}, and so our fork of the library has placed the signature functions in a new file \code{SIDH\_signature.c}. We have also included a file \code{sig\_tests.c} for testing the contents and performance of \code{SIDH\_signature.c} functions \cite{yoosigcode}.
 
 If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Verify} (as described in Section \ref{subsec:sigalgodefs}) to the language of the \sidh API, we have in essence the procedures \textbf{Sign}$_{\code{C}}$ and \textbf{Verify}$_{\code{C}}$ given by Algorithms \ref{alg:signcode} and \ref{alg:verifcode} respectively.\\
 
@@ -1175,6 +1175,4 @@ If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Ve
 \end{algorithmic}
 \end{algorithm}
 
-Outside of simply replacing $\Pi_{\text{SIDH}}'$ procedure calls with \sidh functions, the reader may notice additional differences between \code{Sign} and \code{Verify} and their $\Sigma'$ counterparts. Namely, Yoo et al. have chosen to exclude the challenge bit $ch$ in the \sidh implementations of these functions, consequently excluding the conditional and \textbf{Swap} statement of lines 8 and 9 in Algorithm 4. 
-
-
+Outside of simply replacing $\Pi_{\text{SIDH}}'$ procedure calls with \sidh functions, the reader may notice additional differences between \code{Sign} and \code{Verify} and their $\Sigma'$ counterparts. Namely, Yoo et al. have chosen to exclude the challenge bit $ch$ in the \sidh implementations of these functions, consequently excluding the conditional and \textbf{Swap} statement of lines 8 and 9 in Algorithm 4.

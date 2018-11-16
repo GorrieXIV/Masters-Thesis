@@ -83,25 +83,27 @@
 \headcommand {\beamer@subsectionentry {0}{3}{1}{30}{SIDH Public Key Compression}}
 \headcommand {\slideentry {3}{1}{1}{30/30}{SIDH Public Key Compression}{0}}
 \headcommand {\beamer@framepages {30}{30}}
-\headcommand {\beamer@subsectionpages {30}{30}}
-\headcommand {\beamer@subsectionentry {0}{3}{2}{31}{Implementing in SIDH 2.0}}
-\headcommand {\slideentry {3}{2}{1}{31/31}{Implementing in SIDH 2.0}{0}}
+\headcommand {\slideentry {3}{1}{2}{31/31}{SIDH Public Key Compression}{0}}
 \headcommand {\beamer@framepages {31}{31}}
-\headcommand {\beamer@subsectionpages {31}{31}}
-\headcommand {\beamer@subsectionentry {0}{3}{3}{32}{Advantage and Cost of Compressions}}
-\headcommand {\slideentry {3}{3}{1}{32/32}{Advantage and Cost of Compressions}{0}}
+\headcommand {\beamer@subsectionpages {30}{31}}
+\headcommand {\beamer@subsectionentry {0}{3}{2}{32}{Implementing in SIDH 2.0}}
+\headcommand {\slideentry {3}{2}{1}{32/32}{Implementing in SIDH 2.0}{0}}
 \headcommand {\beamer@framepages {32}{32}}
-\headcommand {\beamer@sectionpages {30}{32}}
 \headcommand {\beamer@subsectionpages {32}{32}}
-\headcommand {\sectionentry {4}{Results}{33}{Results}{0}}
-\headcommand {\beamer@subsectionpages {33}{32}}
-\headcommand {\beamer@subsectionentry {0}{4}{1}{33}{Performance Measurements}}
-\headcommand {\slideentry {4}{1}{1}{33/33}{Performance Measurements}{0}}
+\headcommand {\beamer@subsectionentry {0}{3}{3}{33}{Advantage and Cost of Compressions}}
+\headcommand {\slideentry {3}{3}{1}{33/33}{Advantage and Cost of Compressions}{0}}
 \headcommand {\beamer@framepages {33}{33}}
-\headcommand {\slideentry {4}{1}{2}{34/34}{Performance Measurements}{0}}
+\headcommand {\beamer@sectionpages {30}{33}}
+\headcommand {\beamer@subsectionpages {33}{33}}
+\headcommand {\sectionentry {4}{Results}{34}{Results}{0}}
+\headcommand {\beamer@subsectionpages {34}{33}}
+\headcommand {\beamer@subsectionentry {0}{4}{1}{34}{Performance Measurements}}
+\headcommand {\slideentry {4}{1}{1}{34/34}{Performance Measurements}{0}}
 \headcommand {\beamer@framepages {34}{34}}
-\headcommand {\beamer@partpages {1}{34}}
-\headcommand {\beamer@subsectionpages {33}{34}}
-\headcommand {\beamer@sectionpages {33}{34}}
-\headcommand {\beamer@documentpages {34}}
-\headcommand {\gdef \inserttotalframenumber {34}}
+\headcommand {\slideentry {4}{1}{2}{35/35}{Performance Measurements}{0}}
+\headcommand {\beamer@framepages {35}{35}}
+\headcommand {\beamer@partpages {1}{35}}
+\headcommand {\beamer@subsectionpages {34}{35}}
+\headcommand {\beamer@sectionpages {34}{35}}
+\headcommand {\beamer@documentpages {35}}
+\headcommand {\gdef \inserttotalframenumber {35}}
