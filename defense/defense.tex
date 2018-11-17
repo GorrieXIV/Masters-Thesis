@@ -623,10 +623,10 @@ $$
   \column{.45\textwidth}
   1. The signer executes \sign by spawning a thread running \code{sign\_thread} for every iteration of the signing procedure\\
 
-  \vspace{40px}
+  \vspace{50px}
   2. The verifier then executes \verify in a similar fashion.\\
 
-  \column{.45\textwidth}
+  \column{.60\textwidth}
     \begin{tikzpicture}
     	[scale=0.6, auto,
     		block/.style={
@@ -637,7 +637,7 @@ $$
     		  text width=6em,
     		  align=center,
     		  rounded corners,
-    		  minimum height=2em
+    		  minimum height=1em
     		},
     		block1/.style={
     		  rectangle,
@@ -647,29 +647,29 @@ $$
     		  text width=7em,
     		  align=center,
     		  rounded corners,
-    		  minimum height=2em
+    		  minimum height=1em
     		}
     	]
     	\draw (1.5, 4.5) node[block] {$\code{sign\_thread}$};
-    	\draw (0.7, 4.5) node {1};
+    	\draw (-1.1, 4.5) node {1};
     	\draw (1.5, 3.5) node[block] {$\code{sign\_thread}$};
-    	\draw (0.7, 3.5) node {2};
+    	\draw (-1.1, 3.5) node {2};
     	\draw[very thick, loosely dotted] (1, 2.8) -- (1, 2.1) node {};
     	\draw (1.5, 1.5) node[block] {$\code{sign\_thread}$};
-    	\draw (0.7, 1.5) node {248};
+    	\draw (-1.1, 1.5) node {248};
 
-    	\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (-1,1) -- (-1,5.0) node [black,midway,xshift=-0.6cm,block] {\code{isogeny\_sign}};
+    	\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt] (-1.5,1) -- (-1.5,5.0) node [black,midway,xshift=-0.6cm,block] {\code{isogeny\_sign}};
 
     	\draw (1.5, -1) node[block1] {$\code{verify\_thread}$};
-    	\draw (0.7, -1) node {1};
+    	\draw (-1.1, -1) node {1};
     	\draw (1.5, -2) node[block1] {$\code{verify\_thread}$};
-    	\draw (0.7, -2) node {2};
+    	\draw (-1.1, -2) node {2};
     	\draw[very thick, loosely dotted] (1, -2.7) -- (1, -3.4) node {};
     	\draw (1.5, -4) node[block1] {$\code{verify\_thread}$};
-    	\draw (0.7, -4) node {248};
+    	\draw (-1.1, -4) node {248};
 
     	\draw [decorate,decoration={brace,amplitude=9pt},xshift=-4pt,yshift=0pt]
-      (-1, -4.5) -- (-1,-0.5) node [black,midway,xshift=-0.6cm,block1] {\code{isogeny\_verify}};
+      (-1.5, -4.5) -- (-1.5,-0.5) node [black,midway,xshift=-0.6cm,block1] {\code{isogeny\_verify}};
     \end{tikzpicture}
 \end{columns}
 \end{frame}
@@ -680,80 +680,75 @@ $$
 \frametitle{Batching Across Threads}
 \topline
 \titleline
+\smallfont
 
 \begin{tikzpicture}
-    [scale=0.75,auto,
+    [scale=0.50,auto,
     block/.style={
       rectangle,
       draw=black,
-      thick,
       fill=gray!20,
       text width=7em,
       align=center,
       rounded corners,
-      minimum height=2em
+      minimum height=0.8em
     },
     block1/.style={
       rectangle,
       draw=black,
-      thick,
       fill=gray!20,
-      text width=9em,
+      text width=8.3em,
       align=center,
       rounded corners,
-      minimum height=2em
+      minimum height=0.8em
     },
 	  block2/.style={
       rectangle,
       draw=black,
-      thick,
       fill=red!20,
-      text width=8.5em,
+      text width=5.5em,
       align=center,
       rounded corners,
-      minimum height=2em
+      minimum height=0.8em
     },
     line/.style={
-      draw,thick,
+      draw,
       -latex',
       shorten >=2pt
-    },
-    cloud/.style={
-      draw=red,
-      thick,
-      ellipse,
-      fill=red!20,
-      minimum height=1em
     }
   ]
-    \draw (1,-2) node[block] (A) {\code{sign\_thread}};
-	\draw (9.5,-2) node[block] (B) {\code{verify\_thread}};
-    \path (1,-4) node[block1] (C) {\code{KeyGeneration\_A}}
-		  (1,-6) node[block1] (D) {\code{SecretAgreement\_B}}
-		  (11.6,-4) node[block1] (E) {\code{KeyGeneration\_A}}
-          (11.6,-6) node[block1] (F) {\code{SecretAgreement\_A}}
-		  (7.4,-4) node[block1] (G) {\code{SecretAgreement\_B}};
-	\draw (3,-7) node[block2] (H) {\code{j\_inv}};
-	\draw (3,-5) node[block2] (I) {\code{inv\_4\_way}};
-	\draw (7.4,-6) node[block2] (J) {\code{j\_inv}};
-	\draw (13.6,-5) node[block2] (K) {\code{inv\_4\_way}};
-	\draw (13.6,-7) node[block2] (L) {\code{j\_inv}};
-	\draw[->, line width=2.0] (1,-2.4) -- (1,-3.6) node[right] {};
-		\draw (1, -3) node[left] (LABEL1) {$248x$};
-	\draw[->, line width=2.0] (9.5,-2.4) to (E) node[above] {};
-		\draw (8.6, -3) node[left] (LABEL4) {$\sim124x$};
-	\draw[->, line width=2.0] (9.5,-2.4) to (G) node[right] {};
-		\draw (10.4, -3) node[right] (LABEL5) {$\sim124x$};
-	\draw[->, line width=2.0] (-0.3,-4.4) -- (-0.3,-5.6) node {};
-		\draw (-0.3, -5) node[left] (LABEL6) {$248x$};
-	\draw[->, line width=2.0] (7.4,-4.4) -- (7.4,-5.6) node {};
-		\draw (7.4, -5) node[left] (LABEL7) {$\sim124x$};
-	\draw[->, line width=2.0] (11,-4.4) -- (11,-5.6) node {};
-		\draw (11, -5) node[left] (LABEL8) {$\sim124x$};
-	\draw[->, line width=2.0] (C.east) to [in=90] (4,-4.6);
-	\draw[->, line width=2.0] (D.east) to [in=90] (4,-6.6);
-	\draw[->, line width=2.0] (E.east) to [in=90] (14.6,-4.6);
-	\draw[->, line width=2.0] (F.east) to [in=90] (14.6,-6.6);
+  \draw (1,-2) node[block] (A) {\code{sign\_thread}};
+  \draw (1,-4) node[block1] (C) {\code{KeyGeneration\_A}};
+  \draw (1,-6) node[block1] (D) {\code{SecretAgreement\_B}};
+  \draw (4,-7) node[block2] (H) {\code{j\_inv}};
+  \draw (4,-5) node[block2] (I) {\code{inv\_4\_way}};
+
+  \draw (12.5,-2) node[block] (B) {\code{verify\_thread}};
+  \draw (15.6,-4) node[block1] (E) {\code{KeyGeneration\_A}};
+  \draw (15.6,-6) node[block1] (F) {\code{SecretAgreement\_A}};
+  \draw (9.4,-4) node[block1] (G) {\code{SecretAgreement\_B}};
+	\draw (10,-6) node[block2] (J) {\code{j\_inv}};
+	\draw (18,-5) node[block2] (K) {\code{inv\_4\_way}};
+	\draw (18,-7) node[block2] (L) {\code{j\_inv}};
+
+	\draw[->, line width=1.0] (1,-2.5) -- (1,-3.55) node[right] {};
+	\draw (1, -3) node[left] (LABEL1) {$248x$};
+  \draw[->, line width=1.0] (-0.3,-4.5) -- (-0.3,-5.55) node {};
+  \draw (-0.3, -5) node[left] (LABEL6) {$248x$};
+
+	\draw[->, line width=1.0] (12.5,-2.5) to (E) node[above] {};
+	\draw (10.6, -3) node[left] (LABEL4) {$\sim124x$};
+	\draw[->, line width=1.0] (12.5,-2.5) to (G) node[right] {};
+	\draw (13.8, -3) node[right] (LABEL5) {$\sim124x$};
+	\draw[->, line width=1.0] (10.4,-4.5) -- (10.4,-5.55) node {};
+	\draw (10.4, -5) node[left] (LABEL7) {$\sim124x$};
+	\draw[->, line width=1.0] (15.7,-4.5) -- (15.7,-5.55) node {};
+	\draw (15.7, -5) node[left] (LABEL8) {$\sim124x$};
+
+	\draw[->, line width=1.0] (C.east) to [in=90] (5.3,-4.5);
+	\draw[->, line width=1.0] (D.east) to [in=90] (5.3,-6.5);
+	\draw[->, line width=1.0] (E.east) to [in=90] (19.5,-4.5);
+	\draw[->, line width=1.0] (F.east) to [in=90] (19.5,-6.5);
 \end{tikzpicture}
 \end{frame}
 
