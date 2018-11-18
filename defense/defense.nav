@@ -65,57 +65,69 @@
 \headcommand {\beamer@framepages {27}{27}}
 \headcommand {\slideentry {1}{4}{8}{28/28}{Isogeny-based Signatures}{0}}
 \headcommand {\beamer@framepages {28}{28}}
-\headcommand {\beamer@sectionpages {2}{28}}
-\headcommand {\beamer@subsectionpages {21}{28}}
-\headcommand {\sectionentry {2}{Batching Field Element Inversions}{29}{Batching Field Element Inversions}{0}}
-\headcommand {\beamer@subsectionpages {29}{28}}
-\headcommand {\beamer@subsectionentry {0}{2}{1}{29}{Batching Partial Inversions}}
-\headcommand {\slideentry {2}{1}{1}{29/29}{Batching Partial Inversions}{0}}
+\headcommand {\slideentry {1}{4}{9}{29/29}{Isogeny-based Signatures}{0}}
 \headcommand {\beamer@framepages {29}{29}}
-\headcommand {\slideentry {2}{1}{2}{30/30}{Batching Partial Inversions}{0}}
+\headcommand {\slideentry {1}{4}{10}{30/30}{Isogeny-based Signatures}{0}}
 \headcommand {\beamer@framepages {30}{30}}
-\headcommand {\slideentry {2}{1}{3}{31/31}{Batching Partial Inversions}{0}}
+\headcommand {\beamer@sectionpages {2}{30}}
+\headcommand {\beamer@subsectionpages {21}{30}}
+\headcommand {\sectionentry {2}{Batching Field Element Inversions}{31}{Batching Field Element Inversions}{0}}
+\headcommand {\beamer@subsectionpages {31}{30}}
+\headcommand {\beamer@subsectionentry {0}{2}{1}{31}{Batching Partial Inversions}}
+\headcommand {\slideentry {2}{1}{1}{31/31}{Batching Partial Inversions}{0}}
 \headcommand {\beamer@framepages {31}{31}}
-\headcommand {\beamer@subsectionpages {29}{31}}
-\headcommand {\beamer@subsectionentry {0}{2}{2}{32}{Implementing Batching in SIDH 2.0}}
-\headcommand {\slideentry {2}{2}{1}{32/32}{Implementing Batching in SIDH 2.0}{0}}
+\headcommand {\slideentry {2}{1}{2}{32/32}{Batching Partial Inversions}{0}}
 \headcommand {\beamer@framepages {32}{32}}
-\headcommand {\slideentry {2}{2}{2}{33/33}{Implementing Batching in SIDH 2.0}{0}}
+\headcommand {\slideentry {2}{1}{3}{33/33}{Batching Partial Inversions}{0}}
 \headcommand {\beamer@framepages {33}{33}}
-\headcommand {\slideentry {2}{2}{3}{34/34}{Implementing Batching in SIDH 2.0}{0}}
+\headcommand {\beamer@subsectionpages {31}{33}}
+\headcommand {\beamer@subsectionentry {0}{2}{2}{34}{Implementing Batching in SIDH 2.0}}
+\headcommand {\slideentry {2}{2}{1}{34/34}{Implementing Batching in SIDH 2.0}{0}}
 \headcommand {\beamer@framepages {34}{34}}
-\headcommand {\beamer@subsectionpages {32}{34}}
-\headcommand {\beamer@subsectionentry {0}{2}{3}{35}{Performance of Inversion Batching}}
-\headcommand {\slideentry {2}{3}{1}{35/35}{Performance of Inversion Batching}{0}}
+\headcommand {\slideentry {2}{2}{2}{35/35}{Implementing Batching in SIDH 2.0}{0}}
 \headcommand {\beamer@framepages {35}{35}}
-\headcommand {\beamer@sectionpages {29}{35}}
-\headcommand {\beamer@subsectionpages {35}{35}}
-\headcommand {\sectionentry {3}{Compressing Isogeny-based Signatures}{36}{Compressing Isogeny-based Signatures}{0}}
-\headcommand {\beamer@subsectionpages {36}{35}}
-\headcommand {\beamer@subsectionentry {0}{3}{1}{36}{SIDH Public Key Compression}}
-\headcommand {\slideentry {3}{1}{1}{36/36}{SIDH Public Key Compression}{0}}
+\headcommand {\slideentry {2}{2}{3}{36/36}{Implementing Batching in SIDH 2.0}{0}}
 \headcommand {\beamer@framepages {36}{36}}
-\headcommand {\slideentry {3}{1}{2}{37/37}{SIDH Public Key Compression}{0}}
+\headcommand {\beamer@subsectionpages {34}{36}}
+\headcommand {\beamer@subsectionentry {0}{2}{3}{37}{Performance of Inversion Batching}}
+\headcommand {\slideentry {2}{3}{1}{37/37}{Performance of Inversion Batching}{0}}
 \headcommand {\beamer@framepages {37}{37}}
-\headcommand {\beamer@subsectionpages {36}{37}}
-\headcommand {\beamer@subsectionentry {0}{3}{2}{38}{Implementing in SIDH 2.0}}
-\headcommand {\slideentry {3}{2}{1}{38/38}{Implementing in SIDH 2.0}{0}}
+\headcommand {\beamer@sectionpages {31}{37}}
+\headcommand {\beamer@subsectionpages {37}{37}}
+\headcommand {\sectionentry {3}{Compressing Isogeny-based Signatures}{38}{Compressing Isogeny-based Signatures}{0}}
+\headcommand {\beamer@subsectionpages {38}{37}}
+\headcommand {\beamer@subsectionentry {0}{3}{1}{38}{SIDH Public Key Compression}}
+\headcommand {\slideentry {3}{1}{1}{38/38}{SIDH Public Key Compression}{0}}
 \headcommand {\beamer@framepages {38}{38}}
-\headcommand {\beamer@subsectionpages {38}{38}}
-\headcommand {\beamer@subsectionentry {0}{3}{3}{39}{Advantage and Cost of Compressions}}
-\headcommand {\slideentry {3}{3}{1}{39/39}{Advantage and Cost of Compressions}{0}}
+\headcommand {\slideentry {3}{1}{2}{39/39}{SIDH Public Key Compression}{0}}
 \headcommand {\beamer@framepages {39}{39}}
-\headcommand {\beamer@sectionpages {36}{39}}
-\headcommand {\beamer@subsectionpages {39}{39}}
-\headcommand {\sectionentry {4}{Results}{40}{Results}{0}}
-\headcommand {\beamer@subsectionpages {40}{39}}
-\headcommand {\beamer@subsectionentry {0}{4}{1}{40}{Performance Measurements}}
-\headcommand {\slideentry {4}{1}{1}{40/40}{Performance Measurements}{0}}
+\headcommand {\beamer@subsectionpages {38}{39}}
+\headcommand {\beamer@subsectionentry {0}{3}{2}{40}{Implementing in SIDH 2.0}}
+\headcommand {\slideentry {3}{2}{1}{40/40}{Implementing in SIDH 2.0}{0}}
 \headcommand {\beamer@framepages {40}{40}}
-\headcommand {\slideentry {4}{1}{2}{41/41}{Performance Measurements}{0}}
+\headcommand {\beamer@subsectionpages {40}{40}}
+\headcommand {\beamer@subsectionentry {0}{3}{3}{41}{Advantage and Cost of Compressions}}
+\headcommand {\slideentry {3}{3}{1}{41/41}{Advantage and Cost of Compressions}{0}}
 \headcommand {\beamer@framepages {41}{41}}
-\headcommand {\beamer@partpages {1}{41}}
-\headcommand {\beamer@subsectionpages {40}{41}}
-\headcommand {\beamer@sectionpages {40}{41}}
-\headcommand {\beamer@documentpages {41}}
-\headcommand {\gdef \inserttotalframenumber {41}}
+\headcommand {\slideentry {3}{3}{2}{42/42}{Advantage and Cost of Compressions}{0}}
+\headcommand {\beamer@framepages {42}{42}}
+\headcommand {\beamer@sectionpages {38}{42}}
+\headcommand {\beamer@subsectionpages {41}{42}}
+\headcommand {\sectionentry {4}{Results}{43}{Results}{0}}
+\headcommand {\beamer@subsectionpages {43}{42}}
+\headcommand {\beamer@subsectionentry {0}{4}{1}{43}{Performance Measurements}}
+\headcommand {\slideentry {4}{1}{1}{43/43}{Performance Measurements}{0}}
+\headcommand {\beamer@framepages {43}{43}}
+\headcommand {\beamer@subsectionpages {43}{43}}
+\headcommand {\beamer@subsectionentry {0}{4}{2}{44}{Future Work}}
+\headcommand {\slideentry {4}{2}{1}{44/44}{Future Work}{0}}
+\headcommand {\beamer@framepages {44}{44}}
+\headcommand {\slideentry {4}{2}{2}{45/45}{Future Work}{0}}
+\headcommand {\beamer@framepages {45}{45}}
+\headcommand {\slideentry {4}{2}{3}{46/46}{Future Work}{0}}
+\headcommand {\beamer@framepages {46}{46}}
+\headcommand {\beamer@partpages {1}{46}}
+\headcommand {\beamer@subsectionpages {44}{46}}
+\headcommand {\beamer@sectionpages {43}{46}}
+\headcommand {\beamer@documentpages {46}}
+\headcommand {\gdef \inserttotalframenumber {46}}

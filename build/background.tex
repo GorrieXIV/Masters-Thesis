@@ -595,7 +595,7 @@ To achieve this, \bob internally mimicks an execution of the key exchange protoc
 \end{center}
 
 \noindent
-\emph{Response}: \alice chooses a bit $b$ at random and sends her challenge $ch = b$ to \bob.\\
+\emph{Challenge}: \alice chooses a bit $b$ at random and sends her challenge $ch = b$ to \bob.\\
 
 \noindent
 \textbf{Prove($sk$, $ch$)}: If \alice's challenge bit $ch = 0$ then \bob reveals the isogenies $\pr$ and $\prp$ (to do this, he can simply reveal the generators of the kernels of $\pr$ and $\prp$; $\cyr$ and $\pb(\cyr)$ respectively). This proves he knows the information necessary to form a shared secret with \randall iff he happens to know the private key $\rb = \{[\mb]\genpb + [\nb]\genqb\}$. If $ch = 1$, \bob reveals the isogeny $\pbp$. This proves that \bob knows the information necessary to form a shared secret with \randall iff he knows \randall's secret key $\cyr$.
@@ -638,7 +638,7 @@ $$
 (\rb, \cyr) = ([\mb]\genpb + [\nb]\genqb, [\mr]\genpa + [\nr]\genqa)
 $$
 
-How $\Pi_{\text{ZKPoK}}$ handles this is by having \bob and \alice run \textbf{Prove()} and \textbf{Verify()} for $\lambda$ iterations, with a different $(com, ch, resp)$ transcript generated for every instance. This way, if \bob is able to provide a $resp$ that satisfies \alice's $ch$ for every iteration, she can be sufficiently confident that \bob has knowledge of $\rb$.
+How $\Pi_{\text{ZKPoK}}$ handles this is by having \bob and \alice run \textbf{Prove()} and \textbf{Verify()} for $\lambda$ iterations, with a different $(com, ch, resp)$ transcript generated for every instance. This way, if \bob is able to provide a $resp$ that satisfies \alice's $ch$ for every iteration, she can be sufficiently confident that \bob has knowledge of $\rb$.\\
 
 \noindent
 \textbf{Verify($pk, com, ch$)}: Like the proving procedure, verification is a conditional function depending on the value of $b$:
@@ -657,7 +657,7 @@ The Fiat-Shamir construction (also frequently referred to as the Fiat-Shamir tra
 
 The construction is rather simple. The idea is to first transform a given interactive identification protocol $\Pi_{\text{ID}}$ into a \emph{non-interactive} identification protocol. To achieve this, instead of allowing input from the verifier $\mathcal{V}$, we have our prover $\mathcal{P}$ generate the challenge $ch$ by itself. In order for the verifier to be able to check that $ch$ was generated honestly, we define $ch = H(com)$, where $H$ is some secure hash function. If we model $H$ as a random oracle, $H(com)$ is assumed truly random; from this it can be shown that it is just as difficult for an impersonator of $\mathcal{P}$ to find an accepting transcript $(com, H(com), resp)$ as it would be for them to successfully impersonate $\mathcal{P}$ in $\Pi_{\text{ID}}$.
 
-Now that we've paired $\Pi_{\text{ID}}$ with $H$ to achieve a non-interactive identification scheme $\Pi_{\text{NID}}$, we need only to factor in some message $m$ from $\mathcal{P}$ to have constructed a signature scheme $\Pi_{\text{ID}}'$. This can be achieved by including $m$ in our calculation of the challenge: $ch = H(com, m)$. Therefore, given theorem \ref{thm:fiatshamir}, if $(com, H(com), resp)$ is an accepting transcript of $\Pi_{\text{NID}}$, then $(com, H(com, m), resp)$ is a secure signature for the message $m$. Of course, because $H(com, m)$ can be constructed by any passively observing party, it is redundant to include; and so $(com,resp)$ constitutes a valid signature for $m$. A proof of theorem \ref{thm:fiatshamir} can be found in \cite{sigs}. The security of the Fiat-Shamir construction was first proven by Pointcheval \& Stern \cite{fsproof}.
+Now that we've paired $\Pi_{\text{ID}}$ with $H$ to achieve a non-interactive identification scheme $\Pi_{\text{NID}}$, we need only to factor in some message $m$ from $\mathcal{P}$ to have constructed a signature scheme $\Pi_{\text{ID}}'$. This can be achieved by including $m$ in our calculation of the challenge: $ch = H(com, m)$. Therefore, given Theorem \ref{thm:fiatshamir}, if $(com, H(com), resp)$ is an accepting transcript of $\Pi_{\text{NID}}$, then $(com, H(com, m), resp)$ is a secure signature for the message $m$. Of course, because $H(com, m)$ can be constructed by any passively observing party, it is redundant to include; and so $(com,resp)$ constitutes a valid signature for $m$. A proof of theorem \ref{thm:fiatshamir} can be found in \cite{sigs}. The security of the Fiat-Shamir construction was first proven by Pointcheval \& Stern \cite{fsproof}.
 
 \begin{tcolorbox}
 \begin{theorem}[Fiat-Shamir Security]
@@ -958,7 +958,7 @@ In addition to traditional point-wise projective arithmetic, Costello et al. sho
 For the remainder of this dissertation we assume this form for private keys.\\
 
 \noindent
-\emph{Tailor-made Montgomery Multiplication}. The parameters of a default \sidh execution, stored in \code{SIDHp752}, support efficient arithmetic and grant access to a variety of modular arithmetic optimizations. Moreover, Costello et al. supply a modified version of the Montgomery multiplication algorithm which, when performing over the class of curves outlined by their set of parameters, yields faster modular arithmetic.  
+\emph{Tailor-made Montgomery Multiplication}. The parameters of a default \sidh execution, stored in \code{SIDHp752}, support efficient arithmetic and grant access to a variety of modular arithmetic optimizations. Moreover, Costello et al. supply a modified version of the Montgomery multiplication algorithm which, when performing over the class of curves outlined by their set of parameters, yields faster modular arithmetic.
 
 \subsection{Key Exchange \& Critical Functions}
 \label{subsec:functions}

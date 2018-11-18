@@ -38,6 +38,7 @@
 \usepackage{xspace}
 \usepackage{enumerate}
 \usepackage{soul}
+\usepackage[normalem]{ulem}
 
 \usetikzlibrary{intersections,decorations.markings,matrix,calc,positioning,decorations.pathreplacing}
 
@@ -588,11 +589,11 @@ For \bob to prove his identity to \alice, a protocol of this type would run as f
 \titleline
 There are five rudimentary concerns in information security:
 \begin{itemize}
-\item \textit{Confidentiality}: information must be kept private from unauthorized individuals.
-\item \textit{Integrity}: information must not be altered by unauthorized individuals.
-\item \textit{Availability}: information must be available for authorized individuals.
-\item \hl{\textit{Authenticity}: information must have a verifiable source.}
-\item \textit{Non-repudiation}: the source of information must be publicly verifiable.
+  \item \textit{Confidentiality}: information must be kept private from unauthorized individuals.
+  \item \textit{Integrity}: information must not be altered by unauthorized individuals.
+  \item \textit{Availability}: information must be available for authorized individuals.
+  \item \hl{\textit{Authenticity}: information must have a verifiable source.}
+  \item \textit{Non-repudiation}: the source of information must be publicly verifiable.
 \end{itemize}
 \end{frame}
 
@@ -602,8 +603,28 @@ There are five rudimentary concerns in information security:
 \frametitle{Isogeny-based Proof of Identity}
 \topline
 \titleline
-Signature schemes are used to prove that a particular party supplied a given message. These schemes consist of the algorithms \keygen, \commit, \prove, and \verify.
+The isogeny-based proof of identity protocol outlined by De Feo et al. consists of the algorithms \keygen, \commit, \prove, and \verify.\\
 
+\vspace{25px}
+In the scheme, \bob can prove to \alice (or vice-versa) that he is the owner of the keypair $(pk, sk)$ by forming many SIDH secret agreements with an arbitrary, random entity \randall, and showing that he can always come to a valid shared secret with \randall.
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Isogeny-based Proof of Identity}
+\topline
+\titleline
+\commit: \bob generates \randall's random point $\cyr \in E[\laea]$ and the corresponding isogeny $\pr$. \bob then performs \secagr with \randall and sets $com = (E/\langle \cyr \rangle, E/\langle \rb, \cyr \rangle)$.\\
+
+\vspace{15px}
+\textit{Challenge:} \alice responds with a random challenge bit $ch \in \{0,1\}$.\\
+
+\vspace{15px}
+\prove: If $ch = 0$ then \bob reveals isogenies $\pr$ and $\prp: E/\langle \rb \rangle \rightarrow E/\langle \rb,\cyr \rangle$. If $ch = 1$ then \bob reveals $\pbp: E/\langle \cyr \rangle \rightarrow E/\langle \rb,\cyr \rangle$.\\
+
+\vspace{15px}
+\verify: If $ch = 0$ return 1 iff $\cyr$ and $\pb(\cyr)$ have order $\laea$ and generate the kernels of isogenies from $E \rightarrow E/\langle \cyr \rangle$ and $E \rightarrow E/\rangle \rb,\cyr \rangle$ respectively. If $ch = 0$ return 1 iff $\pr(\rb)$ has order $\lbeb$ and generates the kernel of an isogeny over $E/\langle \cyr \rangle \rightarrow E/\langle \rb,\cyr \rangle $.\\
 
 \end{frame}
 
@@ -647,7 +668,34 @@ There are five rudimentary concerns in information security:
 \frametitle{Fiat-Shamir Transform}
 \topline
 \titleline
-The Fiat-Shamir transform is a process by which an interactive identification scheme can be turned into a signature scheme.
+The Fiat-Shamir transform is a process by which an interactive identification scheme can be turned into a signature scheme.\\
+
+\vspace{20px}
+The transform works by first circumventing the need for challenge input from the verifier, turning it into a non-interactive identification scheme.\\
+
+\vspace{20px}
+Then, the message $m$ is factored into the identification protocol, allowing the prover to verify not just their own identity, but the authenticity of a message as well.\\
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Applying Fiat-Shamir To an IPoI}
+\topline
+\titleline
+
+Returning to our outline for a generic, interactive identification protocol, we would make the following changes:\\
+
+\vspace{10px}
+\begin{enumerate}
+  \item \bob runs \keygen($1^\lambda)$ to generate his keypair $(sk,pk)$.
+  \item \bob runs \commit() to generate $com$ and sends it to \alice.
+  \item \sout{\alice sends a randomly generated ``challenge" value $ch \in \omega$ and sends it to \bob.}
+  \setcounter{enumi}{2}
+  \item \bob computes the challenge value as $ch = H(com, m)$ for some cryptographically secure hash function $H$ and for message $m$.
+  \item \bob runs \prove($sk$, $com$, $ch$) with output $resp$, the response to \alice's challenge.
+  \item \alice runs \verify($pk$, $com$, $ch$, $resp$) with output $b \in {0,1}$. \bob has successfully proven his identity to \alice if $b = 1$.
+\end{enumerate}
 \end{frame}
 
 %------------------------------------------------
@@ -1029,12 +1077,10 @@ Costello et al. then showed that $(E_{\ba}, \alpha_P, \beta_P, \alpha_Q, \beta_Q
 \subsection{Implementing in SIDH 2.0}
 
 \begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Citation}
+\frametitle{Compressing $\psi(S)$}
 \topline
 \titleline
 We use the SIDH public key compression technique developed by Azerderakhsh, Costello, and others to compress every $\psi(S)$ component of a Yoo signature.
-
-This statement requires citation \cite{p1}.
 \end{frame}
 
 %------------------------------------------------
@@ -1042,12 +1088,19 @@ This statement requires citation \cite{p1}.
 \subsection{Advantage and Cost of Compressions}
 
 \begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Citation}
+\frametitle{Revised Signature Sizes}
 \topline
 \titleline
 An example of the \verb|\cite| command to cite within the presentation:\\~
+\end{frame}
 
-This statement requires citation \cite{p1}.
+%------------------------------------------------
+
+\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
+\frametitle{Cost of Compressing Signatures}
+\topline
+\titleline
+An example of the \verb|\cite| command to cite within the presentation:\\~
 \end{frame}
 
 %------------------------------------------------
@@ -1055,6 +1108,28 @@ This statement requires citation \cite{p1}.
 %------------------------------------------------
 
 \subsection{Performance Measurements}
+
+\begin{frame}
+\frametitle{Conclusion of Results}
+\topline
+\titleline
+
+Ay yo.
+\end{frame}
+
+%------------------------------------------------
+
+\subsection{Future Work}
+
+\begin{frame}
+\frametitle{Next Steps for Implementation}
+\topline
+\titleline
+
+Gotta do sum shiddd
+\end{frame}
+
+%------------------------------------------------
 
 \begin{frame}
 \Huge{\centerline{Questions?}}
@@ -1068,9 +1143,12 @@ This statement requires citation \cite{p1}.
 \titleline
 \footnotesize{
 \begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
-\bibitem[Smith, 2012]{p1} John Smith (2012)
-\newblock Title of the publication
-\newblock \emph{Journal Name} 12(3), 45 -- 678
+\bibitem[AJK$^{+}$, 2016]{compression} Reza Azerderalhsh, David Jao, Kassem Kalach, Brian Koziel, and Christopher Leonardi (2016)
+\newblock Key Compression for Isogeny-Based Cryptosystems
+%\newblock \emph{Journal Name} 12(3), 45 -- 678$
+\bibitem[CJL$^{+}$, 2016]{efficient-compression} Craig Costello, David Jao, Patrick Longa, Michael Naehrig, Joost Rene, and David Urbanik (2016)
+\newblock Efficient Compression of SIDH Public Keys
+\newblock \emph{IACR-CRYPTO-2016}
 \end{thebibliography}
 }
 \end{frame}
