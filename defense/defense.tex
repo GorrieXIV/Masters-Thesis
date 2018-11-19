@@ -585,7 +585,7 @@ $$
 \titleline
 %\smallfont
 
-\keygen: \alice chooses a random number $\ma \in \mathbb{Z}/\laea\mathbb{Z}$ and computes the isogeny $\pa: E \rightarrow E_{\ba}$ where $E_{\ba} = E/\langle \genpa, [\ma]\genqa \rangle$. \bob does the same for his parameters. The resulting private and secret keys are:
+\keygen: \alice chooses a random number $\ma \in \mathbb{Z}/\laea\mathbb{Z}$ and computes the isogeny $\pa: E \rightarrow E_{\ba}$ where $\text{ker}(\pa) = \langle \genpa + [\ma]\genqa \rangle$. \bob does the same for his parameters. The resulting private and secret keys are:
 \begin{center}
 $\ska = (\ma,\na)$\\
 $\pka = (E_{\ba}, \pa(\genpb),\pa(\genqb))$\\
@@ -594,10 +594,7 @@ $\pkb = (E_{\rb}, \pb(\genpa),\pb(\genqa))$\\
 \end{center}
 
 \vspace{10px}
-\secagr: \alice computes the isogeny $\pap: E_{\rb} \rightarrow E_{\ba\rb}$ and \bob computes $\pbp$ analogously. The resulting shared secret value is some representation of
-$$
-E_{\ba\rb} = E/ \langle \genpa + [\ma]\genqa, \genpb + [\mb]\genqb \rangle
-$$
+\secagr: \alice computes the isogeny $\pap: E_{\rb} \rightarrow E_{\ba\rb}$ and \bob computes $\pbp$ analogously. The resulting shared secret value is some representation of $E_{\ba\rb}$.
 \end{frame}
 
 %------------------------------------------------
@@ -1198,6 +1195,7 @@ A Yoo signature $\sigma$ has the following components:
 \titleline
 This allows us to transmit every $\psi(S)$ as two elements of $\mathbb{Z}/n\mathbb{Z}$ (with $n = \lbeb$ when \bob is signing and $\laea$ when \alice is signing): $\psi(S) = \alpha R_1 + \beta R_2$.\\
 
+\vspace{20px}
 We then normalize to $\psi(S) = R_1 + \alpha^{-1}\beta R_2$ and are able to send $\alpha^{-1}\beta$ in the place of $\psi(S)$. For each of these we also send a bit $b$ denoting whether $\alpha$ or $\beta$ was inverted.
 \end{frame}
 
