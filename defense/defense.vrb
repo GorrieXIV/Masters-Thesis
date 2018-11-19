@@ -1,4 +1,6 @@
-\frametitle{Cost of Compressing Signatures}
+\frametitle{Compressing $\psi(S)$}
 \topline
 \titleline
-An example of the \verb|\cite| command to cite within the presentation:\\~
+This allows us to transmit every $\psi(S)$ as two elements of $\mathbb{Z}/n\mathbb{Z}$ (with $n = \lbeb$ when \bob is signing and $\laea$ when \alice is signing): $\psi(S) = \alpha R_1 + \beta R_2$.\\
+
+We then normalize to $\psi(S) = R_1 + \alpha^{-1}\beta R_2$ and are able to send $\alpha^{-1}\beta$ in the place of $\psi(S)$. For each of these we also send a bit $b$ denoting whether $\alpha$ or $\beta$ was inverted.

@@ -89,7 +89,7 @@ $$
 $$
 And so, computing $\langle P + \mb Q\rangle$ to arrive at the shared secret does not require recomputing $P$ and $Q$. Instead, the scalar factors of $P$ and $Q$ with respect to the generated basis can be normalized to yield
 $$
-(\alpha^{-1}_{P}P, \alpha^{-1}_{P}Q) = (R_{1} + \alpha^{-1}_{P}\beta_{P} R_{2}, \alpha^{-1}_{P}\alpha_{Q}R_{1} + \alpha^{-1}_{P}\beta_{Q}R_{2}
+(\alpha^{-1}_{P}P, \alpha^{-1}_{P}Q) = (R_{1} + \alpha^{-1}_{P}\beta_{P} R_{2}, \alpha^{-1}_{P}\alpha_{Q}R_{1} + \alpha^{-1}_{P}\beta_{Q}R_{2})
 $$
 when $\alpha_{P} \in \mathbb{Z}^{*}_{n}$, or
 $$
@@ -208,7 +208,7 @@ For the following two subsections we will assume the signer to be \bob (e.g. usi
 \noindent
 Our contribution offers an implementation to carry out the idea of compressing every element of \code{psiS} (as proposed by Yoo et al.) by using the compression technique covered in the previous section. Consider the following.
 
-Each element of \code{psiS} has the form $\pr(S) = \pr(\genpb) + [\mb]\pr(\genqb)$. $(\genpb, \genqb)$ generates the torsion subgroup $E[\lbeb]$ so we know that $S$ has order $\lbeb$ (e.g. $[\lbeb]P = \mathcal{O}$) and, because isogenies preserve the identity we know $[\lbeb]\pr(S) = \mathcal{O}$ and $\pr(S) \in E_{\cyr}[\lbeb]$. Therefore, we can be certain that the compression technique of the previous subsection can be applied to all elements of \code{psiS} if we chose our basis $\{R_1, R_2\}$ such that it generates $E_{\cyr}[\lbeb]$.
+Each element of \code{psiS} has the form $\pr(S) = \pr(\genpb) + [\mb]\pr(\genqb)$. $(\genpb, \genqb)$ generates the torsion subgroup $E[\lbeb]$ so we know that $S$ has order $\lbeb$ (e.g. $[\lbeb]S = \mathcal{O}$) and, because isogenies preserve the identity we know $[\lbeb]\pr(S) = \mathcal{O}$ and $\pr(S) \in E_{\cyr}[\lbeb]$. Therefore, we can be certain that the compression technique of the previous subsection can be applied to all elements of \code{psiS} if we chose our basis $\{R_1, R_2\}$ such that it generates $E_{\cyr}[\lbeb]$.
 
 Recall that \bob has private key $\skb = \mb$ from which we can generate $S = \genpb + [\mb]\genqb$ and $\pb: E \rightarrow E/\langle S \rangle$, and public key $\pkb = (E_{\rb}, \pb(\genpa), \pb(\genqa))$. Recall also from previous sections that the general procedure for signature signing begins with \bob calling the \code{isogeny\_sign} function, which in turn spawns $2\lambda$ threads, each executing \code{sign\_thread}. Each of these threads has an identifier \code{r}, and performs the following via \code{sign\_thread}:
 \begin{enumerate}
@@ -305,7 +305,7 @@ And the output of \code{CompressPsiS} includes:
 \item the bit \code{compBit}.
 \end{itemize}
 
-Our compression algorithm then follows closely the technique of Azerderakhsh et al., making use of the efficient algorithms provided by Costello et al. An abstracted and generalized version of this function can be seen in Figure \ref{alg:compresspsis} as \textbf{CompressPsiS}. For our concrete C definition see Appendix \ref{}.
+Our compression algorithm then follows closely the technique of Azerderakhsh et al., making use of the efficient algorithms provided by Costello et al. An abstracted and generalized version of this function can be seen in Figure \ref{alg:compresspsis} as \textbf{CompressPsiS}. For our concrete C definition see Appendix \ref{app:functions}.
 
 \begin{algorithm}
 \caption{-- \textbf{CompressPsiS($\pr(S)_{\code{r}}$, $E_{\cyr}$, $User$)}}
@@ -439,7 +439,7 @@ This means that in transmitting \code{compPsiS[r]} in its normalized form we los
 \item $S^{0}$ and $\pr(S)$ having equivalent order implies that they generate the same kernel.
 \end{enumerate}
 
-And so, \code{DecompressPsiS} can be defined to generate the same basis $\{R_1, R_2\}$ as in \code{CompressPsiS} and then compute $S^{0} = R_1 + [\code{compPsiS[r]}]R_2$ if \code{compBit} = 0 and $S^{0} = [\code{compPsiS[r]}]R_1 + R_2$ otherwise. The resulting $S^{0}$ can then be passes to  \code{SecretAgreement\_B} just as in uncompressed verification and the verification will run successfully. Algorithm \ref{alg:decompresspsis} outlines the general functioning of \code{DecompressPsiS} at a high level, for our specific C implementation see Appendix \ref{app:functions}.
+And so, \code{DecompressPsiS} can be defined to generate the same basis $\{R_1, R_2\}$ as in \code{CompressPsiS} and then compute $S^{0} = R_1 + [\code{compPsiS[r]}]R_2$ if \code{compBit} = 0 and $S^{0} = [\code{compPsiS[r]}]R_1 + R_2$ otherwise. The resulting $S^{0}$ can then be passed to  \code{SecretAgreement\_B} just as in uncompressed verification and the verification will run successfully. Algorithm \ref{alg:decompresspsis} outlines the general functioning of \code{DecompressPsiS} at a high level, for our specific C implementation see Appendix \ref{app:functions}.
 
 \begin{algorithm}
 \caption{-- \textbf{DecompressPsiS($\gamma$, $b$, $E_{\cyr}$, $User$)}}

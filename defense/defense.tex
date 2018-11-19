@@ -265,7 +265,7 @@ Common approaches to post-quantum cryptography include
       \mc{1}{}  & \mc{1}{Key Gen} & \mc{1}{Sign} & \mc{1}{Verify}\\
       \hline
       \rowcolor{Gray}
-      SIDH & 84,499,270 & 4,950,023,141.65 & 3,466,703,991.09 \\
+      Yoo & 84,499,270 & 4,950,023,141.65 & 3,466,703,991.09 \\
       Sphincs & 17,535,886.94 & 653,013,784 & 27,732,049 \\
       qTESLA & 1,059,388 & 460,592 & 66,491 \\
       Picnic & 13,272 & 9,560,749 & 6,701,701 \\
@@ -273,6 +273,36 @@ Common approaches to post-quantum cryptography include
       RSA & 12,800,000 & 1,113,600 & 32400 \\
       \rowcolor{light-red}
       ECDSA & 1,470,000 & 128,928 & 140,869 \\
+      \hline
+    \end{tabular}
+  \end{center}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Post-quantum Cryptography}
+\topline
+\titleline
+\smallfont
+
+\begin{figure}[!h]
+  \begin{center}
+    \begin{tabular}{ l | r | r | r }
+      \hline
+      \mc{1}{}  & \mc{1}{Public Key} & \mc{1}{Private Key} & \mc{1}{Signature}\\
+      \hline
+      \rowcolor{Gray}
+      SIDH & 768 & 48 & 88,064 \\
+      Sphincs & 32 & 64 & 8,080 - 16,976 \\
+      Rainbow & 152,097 - 192,241 & 100,209 - 114,308 & 64 - 104 \\
+      qTESLA & 4,128 & 2,112 & 3,104 \\
+      Picnic & 33 & 49 & 34,004 - 53,933 \\
+      \rowcolor{light-red}
+      RSA & 384 & 256 & 384 \\
+      \rowcolor{light-red}
+      ECDSA & 32 & 32 & 32 \\
       \hline
     \end{tabular}
   \end{center}
@@ -311,8 +341,8 @@ I outline two ways in which performance improvements can be made to a state-of-t
 \topline
 \titleline
 \tikz[remember picture,overlay] {
-  \draw[black] ([yshift=-3.05cm,xshift=1.5cm]current page.north west)
-            -- ([yshift=-3.05cm,xshift=\paperwidth/2+1.4cm]current page.north west);
+  \draw[black] ([yshift=-3.1cm,xshift=1.5cm]current page.north west)
+            -- ([yshift=-3.1cm,xshift=\paperwidth/2+1.4cm]current page.north west);
 }
 \tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
 \end{frame}
@@ -384,7 +414,7 @@ $$
 
 \begin{columns}[c]
   \column{.45\textwidth}
-    We Write $\mathcal{O}$ to denote the identity of this group, which is conceptualized as a point residing at positive and negative inifity.\\
+    We write $\mathcal{O}$ to denote the identity of this group, which is conceptualized as a point residing at positive and negative inifity.\\
 
     \vspace{20px}
     Note to the right how $R + -(R) = \mathcal{O}$ on this elliptic curve.
@@ -394,12 +424,12 @@ $$
 
   \column{.45\textwidth}
     \begin{figure}[!h]
-    \begin{tikzpicture}[scale=0.5]
-      \plotcurve{1}{1}
-      \draw[] (0.73,-4.492) -- (0.73,4.492);
-      \draw[fill] (0.73,1.492) circle (0.1) node[right] {$P$};
-      \draw[fill] (0.73,-1.492) circle (0.1) node[right] {$-P$};
-    \end{tikzpicture}
+      \begin{tikzpicture}[scale=0.5]
+        \plotcurve{1}{1}
+        \draw[] (0.73,-4.492) -- (0.73,4.492);
+        \draw[fill] (0.73,1.492) circle (0.1) node[right] {$P$};
+        \draw[fill] (0.73,-1.492) circle (0.1) node[right] {$-P$};
+      \end{tikzpicture}
     \end{figure}
 \end{columns}
 \end{frame}
@@ -413,7 +443,7 @@ $$
 
 We write $E[r]$ to denote the set of all points on a curve $E$ with order $r$, e.g;
 $$
-E[r] = \{P \in E: [m]P = \mathcal{O} \}
+E[r] = \{P \in E: [r]P = \mathcal{O} \}
 $$
 \end{frame}
 
@@ -428,11 +458,28 @@ For an isogeny $\phi$ mapping from $E_1$ to $E_2$, we can write
 $$
 \phi: E_1 \rightarrow E_2
 $$
-These maps have the following two properties
-\begin{itemize}
-  \item $\phi(\mathcal{O}) = \mathcal{O}$
-  \item $\phi(P^{-1}) = (\phi(P)^{-1})$
-\end{itemize}
+
+\tikz[remember picture,overlay] {
+  \draw[->,black,thick] ([yshift=3.05cm,xshift=\paperwidth/2-1cm]current page.south west)
+            -- ([yshift=3.05cm,xshift=\paperwidth/2+0.5cm]current page.south west);
+  \draw[] ([yshift=3.4cm,xshift=\paperwidth/2-0.5cm]current page.south west) node[right] {$\phi$};
+}
+
+\begin{columns}[c]
+  \column{.45\textwidth}
+  \begin{tikzpicture}[scale=0.5]
+    \plotcurve{-2}{2}
+    \draw[fill] (-1.73,0.531) circle (0.1) node[right] {$P$};
+    \draw[] (-4,3) node[right] {$E_1$:};
+  \end{tikzpicture}
+
+  \column{.45\textwidth}
+  \begin{tikzpicture}[scale=0.5]
+    \plotcurve{1}{1}
+    \draw[fill] (0.73,1.492) circle (0.1) node[right] {$\phi(P)$};
+    \draw[] (-4,3) node[right] {$E_2$:};
+  \end{tikzpicture}
+\end{columns}
 \end{frame}
 
 %------------------------------------------------
@@ -441,12 +488,19 @@ These maps have the following two properties
 \frametitle{Isogenies}
 \topline
 \titleline
+Isogenies have the following two properties
+\begin{itemize}
+  \item $\phi(\mathcal{O}) = \mathcal{O}$
+  \item $\phi(-P) = -(\phi(P))$
+\end{itemize}
 
+\vspace{20px}
+They can also be uniquely identified by finite subgroups of $E$.
 \begin{tcolorbox}
-\begin{lemma}[Uniquely identifying isogenies]
-\label{lem:isogkern}
-Let $E$ be an elliptic curve and let $\Phi$ be a finite subgroup of $E$. There is a unique elliptic curve $E'$ and a seperable isogeny $\phi: E \rightarrow E'$ satisfying $\text{ker}(\phi) = \Phi$.
-\end{lemma}
+  \begin{lemma}[Uniquely identifying isogenies]
+  \label{lem:isogkern}
+    Let $E$ be an elliptic curve and let $S$ be a finite subgroup of $E$. There is a unique elliptic curve $E'$ and a seperable isogeny $\phi: E \rightarrow E'$ satisfying $\text{ker}(\phi) = S$.
+  \end{lemma}
 \end{tcolorbox}
 
 \end{frame}
@@ -461,11 +515,14 @@ Let $E$ be an elliptic curve and let $\Phi$ be a finite subgroup of $E$. There i
 \titleline
 Key exchange protocols are cryptographic schemes used to establish a shared secret between two party members\\
 
-\vspace{20px}
-These protocols can be defined by a tuple of algorithms $(\keygen, \secagr)$, and then each run \secagr with their own private key and the others public key to generate an equivalent, shared secret key.\\
+\vspace{15px}
+These protocols can be defined by a tuple of algorithms $(\keygen, \secagr)$.\\
 
-\vspace{20px}
-Generally, \alice and \bob will both run \keygen to generate their keypairs $(pk_{\ba}, sk_{\ba})$ and $(pk_{\rb}, sk_{\rb})$, respectively.\\
+\vspace{15px}
+Generally, \alice and \bob will both run \keygen to generate their keypairs $(\pka, \ska)$ and $(\pkb, \skb)$, respectively.\\
+
+\vspace{15px}
+Then each will run \secagr with their own private key and the others public key to generate an equivalent, shared secret key.\\
 
 \end{frame}
 
@@ -488,49 +545,10 @@ There are five rudimentary concerns in information security:
 %------------------------------------------------
 
 \begin{frame}
-\frametitle{Key Exchange Protocols}
-\topline
-\titleline
-The following is an execution of the Diffie-Hellman key exchange protocol between party members Alice and Bob.
-
-\begin{center}
-  \begin{tikzpicture}
-    % Public parameter:
-    \node[draw=none,fill=none,align=center] (public) at (0,1) {Public parameter:\\$g, p$};
-
-    % Alice
-    \node[draw] (Alice) at (-2,0) {Alice};
-    \draw[thick] (Alice) -- ++(0, -4);
-
-    % Calculations of Alice
-    \node[draw=none,fill=none,anchor=east] (asecret) at ($(Alice) + (0,-1)$) {$a \in_{R} \{2,\dots,p-2\}$};
-    \node[draw=none,fill=none,anchor=east] (Apublic) at ($(Alice) + (0,-2)$) {$A = g^{a} \bmod{p}$};
-    \node[draw=none,fill=none,anchor=east] (akey) at ($(Alice) + (0,-4)$) {$k = (B)^{a} = g^{ba}$};
-
-    % Bob
-    \node[draw] (Bob) at (2,0) {Bob};
-    \draw[thick] (Bob) -- ++(0, -4);
-
-    % Calculations of Bob
-    \node[draw=none,fill=none,anchor=west] (bsecret) at ($(Bob) + (0,-1)$) {$b \in_{R} \{2,\dots,p-2\}$};
-    \node[draw=none,fill=none,anchor=west] (Bpublic) at ($(Bob) + (0,-2)$) {$B = g^{b} \bmod{p}$};
-    \node[draw=none,fill=none,anchor=west] (bkey) at ($(Bob) + (0,-4)$) {$k = (A)^{b} = g^{ab}$};
-
-    % Messages
-    \draw[->,thick] ($(Alice)+(0,-2)$) -- ($(Bob)+(0,-2.5)$) node [pos=0.5,above,font=\footnotesize] {A};
-    \draw[->,thick] ($(Bob)+(0,-3)$) -- ($(Alice)+(0,-3.5)$) node [pos=0.5,above,font=\footnotesize] {B};
-  \end{tikzpicture}
-\end{center}
-\end{frame}
-
-%------------------------------------------------
-
-
-\begin{frame}
 \frametitle{Supersingular Isogeny Diffie-Hellman}
 \topline
 \titleline
-SIDH is a key-exchange protocol where \alice and \bob use Isogenies as their public keys and points on a curve as their private keys.\\
+SIDH is a \textit{role-based} key-exchange protocol where \alice and \bob use elliptic curves as their public keys and isogenies as their private keys.\\
 
 \vspace{20px}
 Here's how it works...
@@ -561,6 +579,29 @@ $$
 
 %------------------------------------------------
 
+\begin{frame}
+\frametitle{Supersingular Isogeny Diffie-Hellman}
+\topline
+\titleline
+%\smallfont
+
+\keygen: \alice chooses a random number $\ma \in \mathbb{Z}/\laea\mathbb{Z}$ and computes the isogeny $\pa: E \rightarrow E_{\ba}$ where $E_{\ba} = E/\langle \genpa, [\ma]\genqa \rangle$. \bob does the same for his parameters. The resulting private and secret keys are:
+\begin{center}
+$\ska = (\ma,\na)$\\
+$\pka = (E_{\ba}, \pa(\genpb),\pa(\genqb))$\\
+$\skb = (\mb,\nb)$\\
+$\pkb = (E_{\rb}, \pb(\genpa),\pb(\genqa))$\\
+\end{center}
+
+\vspace{10px}
+\secagr: \alice computes the isogeny $\pap: E_{\rb} \rightarrow E_{\ba\rb}$ and \bob computes $\pbp$ analogously. The resulting shared secret value is some representation of
+$$
+E_{\ba\rb} = E/ \langle \genpa + [\ma]\genqa, \genpb + [\mb]\genqb \rangle
+$$
+\end{frame}
+
+%------------------------------------------------
+
 \subsection{Isogeny-based Signatures}
 
 \begin{frame}
@@ -572,7 +613,7 @@ Identification schemes are used to confirm the identity of a user on a network. 
 
 For \bob to prove his identity to \alice, a protocol of this type would run as follows:
 \begin{enumerate}
-\item \bob runs \keygen($1^\lambda)$ to generate his keypair $(sk,pk)$.
+\item \bob runs \keygen($1^\lambda)$ to generate his keypair $(\pkb,\skb)$.
 \item \bob runs \commit() to generate $com$ and sends it to \alice.
 \item \alice sends a randomly generated ``challenge" value $ch \in \omega$ and sends it to \bob.
 \item \bob runs \prove($sk$, $com$, $ch$) with output $resp$, the response to \alice's challenge.
@@ -603,10 +644,10 @@ There are five rudimentary concerns in information security:
 \frametitle{Isogeny-based Proof of Identity}
 \topline
 \titleline
-The isogeny-based proof of identity protocol outlined by De Feo et al. consists of the algorithms \keygen, \commit, \prove, and \verify.\\
+The isogeny-based proof of identity protocol outlined by De Feo et al. also consists of algorithms \keygen, \commit, \prove, and \verify.\\
 
 \vspace{25px}
-In the scheme, \bob can prove to \alice (or vice-versa) that he is the owner of the keypair $(pk, sk)$ by forming many SIDH secret agreements with an arbitrary, random entity \randall, and showing that he can always come to a valid shared secret with \randall.
+In the scheme, \bob can prove to \alice (or vice-versa) that he is the owner of the keypair $(\pkb, \skb)$ by forming many SIDH secret agreements with an arbitrary, random entity \randall, and showing that he can always come to a valid shared secret with \randall.
 \end{frame}
 
 %------------------------------------------------
@@ -639,9 +680,9 @@ Signature schemes are used to prove that a particular party supplied and authent
 \vspace{15px}
 If \bob wishes to authenticate a message $m$ and send it to \alice, the following will take place:
 \begin{enumerate}
-  \item \bob runs \keygen to produce his keypair $(pk_{\rb}, sk_{\rb})$.
-  \item \bob runs \sign($m$, $sk_{\rb}$) to produce a signature $\sigma$, and sends ($m$, $\sigma$) to \alice.
-  \item \alice runs \verify($m$, $\sigma$, $pk_{\rb}$) returning 1 if \bob's message was successfully verified and 0 otherwise.
+  \item \bob runs \keygen to produce his keypair $(\pkb, \skb)$.
+  \item \bob runs \sign($m$, $\skb$) to produce a signature $\sigma$, and sends ($m$, $\sigma$) to \alice.
+  \item \alice runs \verify($m$, $\sigma$, $\pkb$) returning 1 if \bob's message was successfully verified and 0 otherwise.
 \end{enumerate}
 
 \end{frame}
@@ -704,7 +745,24 @@ Returning to our outline for a generic, interactive identification protocol, we 
 \frametitle{Yoo Signatures}
 \topline
 \titleline
-The signature scheme derived by Yoo et al. applies the Fiat-Shamir transform to the isogeny-based identification scheme to construct the first ever isogeny-based signature scheme.
+The work of Yoo et al. applies the Fiat-Shamir transform to the isogeny-based identification scheme turning it into a general purpose isogeny-based signature scheme.\\
+
+\vspace{20px}
+To generate a signature $\sigma$ with $\lambda$-bit security requires running $2\lambda$ SIDH key-exchanges.
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Yoo Signatures}
+\topline
+\titleline
+A Yoo signature $\sigma$ has the following components:
+\begin{itemize}
+  \item \textit{com} -- A list of $2\lambda$ pairs of curves,
+  \item \textit{ch} -- $2\lambda$ random bits derived from $H$, and
+  \item \textit{resp} -- A list of size $2\lambda$ where the entry is either $\pr(\rb)$ or $(\cyr, \pb(\cyr))$.
+\end{itemize}
 \end{frame}
 
 %------------------------------------------------
@@ -714,17 +772,12 @@ The signature scheme derived by Yoo et al. applies the Fiat-Shamir transform to 
 \topline
 \titleline
 
-\begin{center}
-\begin{tikzpicture}
-
-\end{tikzpicture}
-\end{center}
-$$
-\text{SIDH Key Exchange} \rightarrow
-\text{Isogeny-based Proof of Identity} \rightarrow
-\text{Yoo Signatures}
-$$
-
+\begin{itemize}
+  \item Isogenies are maps between elliptic curves, and can be uniquely identified by a subgroup of the domain curve.
+  \item A key-exchange protocol can be derived with isogenies as private keys and the corresponding codomain curves as public keys.
+  \item An isogeny-based identity proving scheme with $n$-bit security can be constructed by performing $2n$ SIDH key-exchanges with a random entity.
+  \item Yoo signatures are derived by applying the fiat-shamir transform to this proof of identity protocol.
+\end{itemize}
 \end{frame}
 
 
@@ -738,7 +791,11 @@ $$
 \frametitle{Partial $\mathbb{F}_{p^2}$ Inversions}
 \topline
 \titleline
+A $\mathbb{F}_{p^2}$ element $q = (q_a, q_b)$ can be inverted using only $\mathbb{F}_{p}$ operations like so:
 
+$$
+q^{-1} = (\frac {q_{a}}{q_{a}^2 + q_{b}^2}, \frac {-q_{b}}{q_{a}^2 + q_{b}^2})
+$$
 \end{frame}
 
 %------------------------------------------------
@@ -748,7 +805,40 @@ $$
 \topline
 \titleline
 
+Also, $n$ many $\mathbb{F}_{p^2}$ inversions can be reduced to one $\mathbb{F}_{p^2}$ inversion and $3(n-1)$ $\mathbb{F}_{p^2}$ multiplications.\\
+
+\vspace{15px}
+Input: $\{x_0, x_1, ..., x_{n-1}\}$
+\begin{algorithmic}[1]
+  \State $a_0 \gets x_0$
+
+  \For{\texttt{i = 1..(n-1)}}
+  	\State $a_i \gets a_{i-1} \cdot x_i$
+  \EndFor
+
+  \State $inv \gets a_{n-1}^{-1}$
+
+  \For{\texttt{i = (n-1)..1}}
+  	\State $x_i^{-1} \gets a_{i-1} \cdot inv$
+  	\State $inv \gets inv \cdot x_{i}$
+  \EndFor
+
+  \State $x_0^{-1} = inv$
+
+  \State \Return $\{x_0^{-1}, x_1^{-1}, ..., x_{n-1}^{-1}\}$
+\end{algorithmic}
+
+\tikz[remember picture,overlay] {
+  \draw [decorate,decoration={brace,amplitude=6pt},yshift=0pt] (5.3,4.7) -- (5.3,3.5) node [black,midway,right,xshift=0.5cm] {upward-percolation};
+
+  \draw[->,black,thick] (4.6,3.1) -- (5.7,3.1);
+  \draw[] (5.8,3.1) node[right] {inversion phase};
+
+  \draw [decorate,decoration={brace,amplitude=6pt},yshift=0pt] (5.3,2.7) -- (5.3,1.5) node [black,midway,right,xshift=0.5cm] {downward-percolation};
+}
 \end{frame}
+
+
 
 %------------------------------------------------
 
@@ -757,9 +847,8 @@ $$
 \topline
 \titleline
 \smallfont
+These two techniques can be combined in the following way, yielding the fastest method of inverting $n$-many arbitrary $\mathbb{F}_{p^2}$ elements.
 
-%\begin{algorithm}
-%\caption{-- \textbf{PartialBatchedInversion($x_0, x_1, ..., x_n-1$)}}
 \begin{center}
   \begin{algorithmic}[1]
     \For{\code{i = 0..(n-1)}}
@@ -789,8 +878,15 @@ $$
     \State \Return $\{x_0^{-1}, x_1^{-1}, ..., x_{n-1}^{-1}\}$
   \end{algorithmic}
 \end{center}
-%\end{algorithm}
 
+\tikz[remember picture,overlay] {
+  \draw [decorate,decoration={brace,amplitude=6pt},yshift=0pt] (5.6,4.7) -- (5.6,3.95) node [black,midway,right,xshift=0.5cm] {upward-percolation};
+
+  \draw[->,black,thick] (4.9,3.8) -- (6,3.8);
+  \draw[] (6.1,3.8) node[right] {inversion phase};
+
+  \draw [decorate,decoration={brace,amplitude=6pt},yshift=0pt] (5.6,3.6) -- (5.6,2.7) node [black,midway,right,xshift=0.5cm] {downward-percolation};
+}
 \end{frame}
 
 %------------------------------------------------
@@ -1052,10 +1148,10 @@ Take \alice's public key $pk = (E_{\ba}, \pa(\genpb), \pa(\genqb))$.
 
 By generating a basis $\{R_1, R_2\}$ for $E_{\ba}[\lbeb]$ we can represent the point components of $pk$ as
 $$
-\genpa = \alpha_P R_1 + \beta_P R_2
+\pa(\genpb) = \alpha_P R_1 + \beta_P R_2
 $$
 $$
-\genqa = \alpha_Q R_1 + \beta_Q R_2
+\pa(\genqb) = \alpha_Q R_1 + \beta_Q R_2
 $$
 
 Giving $pk = (E_{\ba}, \alpha_P, \beta_P, \alpha_Q, \beta_Q)$. Public keys in this form are $4\log p$ bits compared to the usual $6'log p$ bits.
@@ -1067,7 +1163,10 @@ Giving $pk = (E_{\ba}, \alpha_P, \beta_P, \alpha_Q, \beta_Q)$. Public keys in th
 \frametitle{SIDH Public Key Compression}
 \topline
 \titleline
-Costello et al. then showed that $(E_{\ba}, \alpha_P, \beta_P, \alpha_Q, \beta_Q)$ could be further compressed to $(E_{\ba}, b, \zeta, \alpha, \beta)$, where $b \in \{1,0\}$.
+Costello et al. note that in public key compression, because one of $\alpha_P$ and $\beta_P$ will be non-zero, one will be able to be normalized out.\\
+
+\vspace{25px}
+This notion of normalizing $P = \alpha R_1 + \beta R_2$ to $P = R_1 + \alpha^{-1}\beta R_2$ is also utilized in our implementation.
 
 
 \end{frame}
@@ -1080,41 +1179,97 @@ Costello et al. then showed that $(E_{\ba}, \alpha_P, \beta_P, \alpha_Q, \beta_Q
 \frametitle{Compressing $\psi(S)$}
 \topline
 \titleline
-We use the SIDH public key compression technique developed by Azerderakhsh, Costello, and others to compress every $\psi(S)$ component of a Yoo signature.
-\end{frame}
+We use these SIDH public key compression techniques to compress every EC point component of a Yoo signature which is the result of applying \randall's isogeny to the signers private key.\\
 
-%------------------------------------------------
-
-\subsection{Advantage and Cost of Compressions}
-
-\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Revised Signature Sizes}
-\topline
-\titleline
-An example of the \verb|\cite| command to cite within the presentation:\\~
+\vspace{25px}
+A Yoo signature $\sigma$ has the following components:
+\begin{itemize}
+  \item \textit{com} -- A list of $2\lambda$ pairs of curves,
+  \item \textit{ch} -- $2\lambda$ random bits derived from $H$, and
+  \item \textit{resp} -- A list of size $2\lambda$ where the entry is either \hl{$\psi_{R}(B)$} or $(\cyr, \pb(\cyr))$.
+\end{itemize}
 \end{frame}
 
 %------------------------------------------------
 
 \begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Cost of Compressing Signatures}
+\frametitle{Compressing $\psi(S)$}
 \topline
 \titleline
-An example of the \verb|\cite| command to cite within the presentation:\\~
+This allows us to transmit every $\psi(S)$ as two elements of $\mathbb{Z}/n\mathbb{Z}$ (with $n = \lbeb$ when \bob is signing and $\laea$ when \alice is signing): $\psi(S) = \alpha R_1 + \beta R_2$.\\
+
+We then normalize to $\psi(S) = R_1 + \alpha^{-1}\beta R_2$ and are able to send $\alpha^{-1}\beta$ in the place of $\psi(S)$. For each of these we also send a bit $b$ denoting whether $\alpha$ or $\beta$ was inverted.
 \end{frame}
 
-%------------------------------------------------
+%----------------------------------------\alpha^{-1}--------
 \section{Results}
 %------------------------------------------------
 
 \subsection{Performance Measurements}
 
 \begin{frame}
-\frametitle{Conclusion of Results}
+\frametitle{Final Results}
 \topline
 \titleline
+\smallfont
 
-Ay yo.
+\begin{figure}[!h]
+  \begin{center}
+    \begin{tabular}{ l | r | r | r }
+      \hline
+      \mc{1}{}  & \mc{1}{Key Gen} & \mc{1}{Sign} & \mc{1}{Verify}\\
+      \hline
+      \rowcolor{Gray}
+      SIDH & 84,499,270 & 4,950,023,142 & 3,466,703,991 \\
+      \rowcolor{light-green}
+      SIDH Batched & 84,499,270 & 4,552,062,483 & 3,173,340,239 \\
+      \rowcolor{light-green}
+      SIDH Compressed & 84,499,270 & 10,224,610,997 & 4,472,444,450 \\
+      \rowcolor{light-green}
+      SIDH C+B & 84,499,270 & 10,016,427,840 & 4,326,294,568 \\
+      Sphincs & 17,535,886.94 & 653,013,784 & 27,732,049 \\
+      qTESLA & 1,059,388 & 460,592 & 66,491 \\
+      Picnic & 13,272 & 9,560,749 & 6,701,701 \\
+      \rowcolor{light-red}
+      RSA & 12,800,000 & 1,113,600 & 32400 \\
+      \rowcolor{light-red}
+      ECDSA & 1,470,000 & 128,928 & 140,869 \\
+      \hline
+    \end{tabular}
+  \end{center}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Final Results}
+\topline
+\titleline
+\smallfont
+
+\begin{figure}[!h]
+  \begin{center}
+    \begin{tabular}{ l | r | r | r }
+      \hline
+      \mc{1}{}  & \mc{1}{Public Key} & \mc{1}{Private Key} & \mc{1}{Signature}\\
+      \hline
+      \rowcolor{Gray}
+      SIDH & 768 & 48 & 88,064 \\
+      \rowcolor{light-green}
+      SIDH Compressed & 768 & 48 & 69,632 \\
+      Sphincs & 32 & 64 & 8,080 - 16,976 \\
+      Rainbow & 152,097 - 192,241 & 100,209 - 114,308 & 64 - 104 \\
+      qTESLA & 4,128 & 2,112 & 3,104 \\
+      Picnic & 33 & 49 & 34,004 - 53,933 \\
+      \rowcolor{light-red}
+      RSA & 384 & 256 & 384 \\
+      \rowcolor{light-red}
+      ECDSA & 32 & 32 & 32 \\
+      \hline
+    \end{tabular}
+  \end{center}
+\end{figure}
 \end{frame}
 
 %------------------------------------------------
@@ -1126,7 +1281,11 @@ Ay yo.
 \topline
 \titleline
 
-Gotta do sum shiddd
+\begin{itemize}
+  \item Continue improving code performance: 1 inversion call in signing and verifying paths that has yet to be processed for batched inversions.
+  \item Continue efforts to test modifications for correctness and application security.
+  \item Work to introduce Yoo signatures and our improved implementations into the world of open source isogeny-based cryptosystems.
+\end{itemize}
 \end{frame}
 
 %------------------------------------------------
@@ -1146,6 +1305,9 @@ Gotta do sum shiddd
 \bibitem[AJK$^{+}$, 2016]{compression} Reza Azerderalhsh, David Jao, Kassem Kalach, Brian Koziel, and Christopher Leonardi (2016)
 \newblock Key Compression for Isogeny-Based Cryptosystems
 %\newblock \emph{Journal Name} 12(3), 45 -- 678$
+\bibitem[CJL$^{+}$, 2016]{efficient-compression} Craig Costello, David Jao, Patrick Longa, Michael Naehrig, Joost Rene, and David Urbanik (2016)
+\newblock Efficient Compression of SIDH Public Keys
+\newblock \emph{IACR-CRYPTO-2016}
 \bibitem[CJL$^{+}$, 2016]{efficient-compression} Craig Costello, David Jao, Patrick Longa, Michael Naehrig, Joost Rene, and David Urbanik (2016)
 \newblock Efficient Compression of SIDH Public Keys
 \newblock \emph{IACR-CRYPTO-2016}

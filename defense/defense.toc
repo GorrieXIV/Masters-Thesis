@@ -1,16 +1,15 @@
 \beamer@sectionintoc {1}{Introduction \& Background}{2}{0}{1}
 \beamer@subsectionintoc {1}{1}{Post-quantum Cryptography \& Motivation}{2}{0}{1}
-\beamer@subsectionintoc {1}{2}{Elliptic Curves \& Isogenies}{10}{0}{1}
-\beamer@subsectionintoc {1}{3}{Supersingular Isogeny Diffie-Hellman}{16}{0}{1}
-\beamer@subsectionintoc {1}{4}{Isogeny-based Signatures}{21}{0}{1}
-\beamer@sectionintoc {2}{Batching Field Element Inversions}{31}{0}{2}
-\beamer@subsectionintoc {2}{1}{Batching Partial Inversions}{31}{0}{2}
-\beamer@subsectionintoc {2}{2}{Implementing Batching in SIDH 2.0}{34}{0}{2}
-\beamer@subsectionintoc {2}{3}{Performance of Inversion Batching}{37}{0}{2}
-\beamer@sectionintoc {3}{Compressing Isogeny-based Signatures}{38}{0}{3}
-\beamer@subsectionintoc {3}{1}{SIDH Public Key Compression}{38}{0}{3}
-\beamer@subsectionintoc {3}{2}{Implementing in SIDH 2.0}{40}{0}{3}
-\beamer@subsectionintoc {3}{3}{Advantage and Cost of Compressions}{41}{0}{3}
-\beamer@sectionintoc {4}{Results}{43}{0}{4}
-\beamer@subsectionintoc {4}{1}{Performance Measurements}{43}{0}{4}
-\beamer@subsectionintoc {4}{2}{Future Work}{44}{0}{4}
+\beamer@subsectionintoc {1}{2}{Elliptic Curves \& Isogenies}{11}{0}{1}
+\beamer@subsectionintoc {1}{3}{Supersingular Isogeny Diffie-Hellman}{17}{0}{1}
+\beamer@subsectionintoc {1}{4}{Isogeny-based Signatures}{22}{0}{1}
+\beamer@sectionintoc {2}{Batching Field Element Inversions}{33}{0}{2}
+\beamer@subsectionintoc {2}{1}{Batching Partial Inversions}{33}{0}{2}
+\beamer@subsectionintoc {2}{2}{Implementing Batching in SIDH 2.0}{36}{0}{2}
+\beamer@subsectionintoc {2}{3}{Performance of Inversion Batching}{39}{0}{2}
+\beamer@sectionintoc {3}{Compressing Isogeny-based Signatures}{40}{0}{3}
+\beamer@subsectionintoc {3}{1}{SIDH Public Key Compression}{40}{0}{3}
+\beamer@subsectionintoc {3}{2}{Implementing in SIDH 2.0}{42}{0}{3}
+\beamer@sectionintoc {4}{Results}{44}{0}{4}
+\beamer@subsectionintoc {4}{1}{Performance Measurements}{44}{0}{4}
+\beamer@subsectionintoc {4}{2}{Future Work}{46}{0}{4}
