@@ -270,13 +270,14 @@ Common approaches to post-quantum cryptography include
       qTESLA & 1,059,388 & 460,592 & 66,491 \\
       Picnic & 13,272 & 9,560,749 & 6,701,701 \\
       \rowcolor{light-red}
-      RSA & 12,800,000 & 1,113,600 & 32400 \\
+      RSA & 12,800,000 & 1,113,600 & 32,400 \\
       \rowcolor{light-red}
       ECDSA & 1,470,000 & 128,928 & 140,869 \\
       \hline
     \end{tabular}
   \end{center}
 \end{figure}
+\cite{oqs}, \cite{pqc}.
 \end{frame}
 
 %------------------------------------------------
@@ -307,6 +308,7 @@ Common approaches to post-quantum cryptography include
     \end{tabular}
   \end{center}
 \end{figure}
+\cite{oqs}, \cite{pqc}.
 \end{frame}
 
 %------------------------------------------------
@@ -594,7 +596,7 @@ $\pkb = (E_{\rb}, \pb(\genpa),\pb(\genqa))$\\
 \end{center}
 
 \vspace{10px}
-\secagr: \alice computes the isogeny $\pap: E_{\rb} \rightarrow E_{\ba\rb}$ and \bob computes $\pbp$ analogously. The resulting shared secret value is some representation of $E_{\ba\rb}$.
+\secagr: \alice computes the isogeny $\pap: E_{\rb} \rightarrow E_{\ba\rb}$ and \bob computes $\pbp$ analogously. The resulting shared secret value is some representation of $E_{\ba\rb}$ \cite{sidh}.
 \end{frame}
 
 %------------------------------------------------
@@ -638,7 +640,7 @@ There are five rudimentary concerns in information security:
 %------------------------------------------------
 
 \begin{frame}
-\frametitle{Isogeny-based Proof of Identity}
+\frametitle{Isogeny-based Interactive Proof of Identity}
 \topline
 \titleline
 The isogeny-based proof of identity protocol outlined by De Feo et al. also consists of algorithms \keygen, \commit, \prove, and \verify.\\
@@ -650,7 +652,7 @@ In the scheme, \bob can prove to \alice (or vice-versa) that he is the owner of 
 %------------------------------------------------
 
 \begin{frame}
-\frametitle{Isogeny-based Proof of Identity}
+\frametitle{Isogeny-based Interactive Proof of Identity}
 \topline
 \titleline
 \commit: \bob generates \randall's random point $\cyr \in E[\laea]$ and the corresponding isogeny $\pr$. \bob then performs \secagr with \randall and sets $com = (E/\langle \cyr \rangle, E/\langle \rb, \cyr \rangle)$.\\
@@ -802,7 +804,7 @@ $$
 \topline
 \titleline
 
-Also, $n$ many $\mathbb{F}_{p^2}$ inversions can be reduced to one $\mathbb{F}_{p^2}$ inversion and $3(n-1)$ $\mathbb{F}_{p^2}$ multiplications.\\
+Also, $n$ many $\mathbb{F}_{p^2}$ inversions can be reduced to one $\mathbb{F}_{p^2}$ inversion and $3(n-1)$ $\mathbb{F}_{p^2}$ multiplications \cite{batchingssl}.\\
 
 \vspace{15px}
 Input: $\{x_0, x_1, ..., x_{n-1}\}$
@@ -1229,7 +1231,7 @@ We then normalize to $\psi(S) = R_1 + \alpha^{-1}\beta R_2$ and are able to send
       qTESLA & 1,059,388 & 460,592 & 66,491 \\
       Picnic & 13,272 & 9,560,749 & 6,701,701 \\
       \rowcolor{light-red}
-      RSA & 12,800,000 & 1,113,600 & 32400 \\
+      RSA & 12,800,000 & 1,113,600 & 32,400 \\
       \rowcolor{light-red}
       ECDSA & 1,470,000 & 128,928 & 140,869 \\
       \hline
@@ -1298,17 +1300,42 @@ We then normalize to $\psi(S) = R_1 + \alpha^{-1}\beta R_2$ and are able to send
 \frametitle{References}
 \topline
 \titleline
+\smallfont
+
 \footnotesize{
 \begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
-\bibitem[AJK$^{+}$, 2016]{compression} Reza Azerderalhsh, David Jao, Kassem Kalach, Brian Koziel, and Christopher Leonardi (2016)
-\newblock Key Compression for Isogeny-Based Cryptosystems
-%\newblock \emph{Journal Name} 12(3), 45 -- 678$
-\bibitem[CJL$^{+}$, 2016]{efficient-compression} Craig Costello, David Jao, Patrick Longa, Michael Naehrig, Joost Rene, and David Urbanik (2016)
-\newblock Efficient Compression of SIDH Public Keys
-\newblock \emph{IACR-CRYPTO-2016}
-\bibitem[CJL$^{+}$, 2016]{efficient-compression} Craig Costello, David Jao, Patrick Longa, Michael Naehrig, Joost Rene, and David Urbanik (2016)
-\newblock Efficient Compression of SIDH Public Keys
-\newblock \emph{IACR-CRYPTO-2016}
+  \bibitem[AJK$^{+}$, 2016]{compression} Reza Azerderalhsh, David Jao, Kassem Kalach, Brian Koziel, and Christopher Leonardi (2016)
+  \newblock Key Compression for Isogeny-Based Cryptosystems
+  %\newblock \emph{Journal Name} 12(3), 45 -- 678$
+  \bibitem[CJL$^{+}$, 2016]{efficient-compression} Craig Costello, David Jao, Patrick Longa, Michael Naehrig, Joost Rene, and David Urbanik (2016)
+  \newblock Efficient Compression of SIDH Public Keys
+  \newblock \emph{IACR-CRYPTO-2016}
+  \bibitem[OQS, 2018]{oqs} Douglas Stebila and Michele Mosca (2018)
+  \newblock Open Quantum Safe
+  \newblock available at \url{https://openquantumsafe.org}
+  \bibitem[PQC, 2018]{pqc} Daniel J. Bernstein (2018)
+  \newblock libPQCrypto
+  \newblock available at \url{libpqcrypto.org}
+\end{thebibliography}
+}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{References}
+\topline
+\titleline
+\smallfont
+
+\footnotesize{
+\begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
+  \bibitem[SB, 2001]{batchingssl} Hovav Shacham and Dan Boneh (2001)
+  \newblock Improving SSL Handshake Performance via Batching
+  %\newblock \emph{Journal Name} 12(3), 45 -- 678$
+  \bibitem[FJP, 2012]{sidh} Luca De Feo, David Jao, Jerome Plut (2012)
+  \newblock Towards Quantum-resistant Cryptosystems from Supersingular Elliptic Curve Isogenies
+  %\newblock \emph{Journal Name} 12(3), 45 -- 678$
 \end{thebibliography}
 }
 \end{frame}
