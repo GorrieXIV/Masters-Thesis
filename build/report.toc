@@ -1,9 +1,9 @@
-\contentsline {chapter}{Acknowledgements}{1}{section*.3}
+\contentsline {chapter}{Acknowledgements}{1}{section*.4}
 \contentsline {chapter}{\numberline {1}Introduction}{2}{chapter.1}
 \contentsline {section}{\numberline {1.1}Motivation}{2}{section.1.1}
 \contentsline {subsection}{\numberline {1.1.1}Post-Quantum and Classical Performance Comparisons}{3}{subsection.1.1.1}
 \contentsline {section}{\numberline {1.2}Contributions}{4}{section.1.2}
-\contentsline {subsection}{\numberline {1.2.1}Operation Batching}{4}{subsection.1.2.1}
+\contentsline {subsection}{\numberline {1.2.1}Operation Batching}{5}{subsection.1.2.1}
 \contentsline {subsection}{\numberline {1.2.2}Signature Compression}{5}{subsection.1.2.2}
 \contentsline {section}{\numberline {1.3}Organization}{5}{section.1.3}
 \contentsline {subsection}{\numberline {1.3.1}Layout}{5}{subsection.1.3.1}
@@ -50,7 +50,7 @@
 \contentsline {section}{\numberline {5.1}Performance Results}{64}{section.5.1}
 \contentsline {section}{\numberline {5.2}Discussion \& Concluding Remarks}{66}{section.5.2}
 \contentsline {subsection}{\numberline {5.2.1}Future Work}{66}{subsection.5.2.1}
-\contentsline {chapter}{Appendices}{68}{section*.35}
+\contentsline {chapter}{Appendices}{68}{section*.36}
 \contentsline {chapter}{\numberline {A}$\texttt {SIDH}_{\texttt {C}}$\xspace Functions}{69}{Appendix.a.A}
 \contentsline {section}{\numberline {A.1}$\mathbb {F}_p$ and $\mathbb {F}_{p^2}$ Functions}{69}{section.a.A.1}
 \contentsline {section}{\numberline {A.2}Isogeny and Point-wise Functions}{69}{section.a.A.2}

@@ -5,13 +5,11 @@ In this chapter we provide our final set of metrics for the performance of the o
 
 Following the debriefing of our results, we offer one final section wherein we discuss the implications of our work in a general context. In this section we also discuss some possible future work to further progress the practicality of isogeny-based cryptography.
 
-
-
 \section{Performance Results}
 
 In this section we compile performance metrics for the original Yoo et al. signature scheme, our batched-inversion signature scheme, our compressed signature scheme, and also our combined compression with batched inversions implementation. For each of these implementations we show the average cycle time for \textbf{Sign} and \textbf{Verify} as well as the standard deviation. These measurements are outlined in \ref{fig:allmeasurements} (where ``C+B" denotes the combined compression with batching scheme). These averages are derived from 100 subsequent runs of each implementation.
 
-\begin{figure}
+\begin{table}
 \begin{center}
 \begin{tabular}{ | l | r | r | }
 \hline
@@ -30,7 +28,7 @@ C+B Verify & 4,326,294,567.596 & 175,349,338.690 \\
 \end{center}
 \caption{Average performance and standard deviation in clock cycles for all versions of the Yoo et al. signature scheme.}
 \label{fig:allmeasurements}
-\end{figure}
+\end{table}
 
 We include graphical representations of our captured data, these can be found in \ref{fig:vanillacyclesgraph}, \ref{fig:batchedcyclesgraph}, \ref{fig:compressedcyclesgraph}, and \ref{fig:CBcyclesgraph} of Appendix \ref{app:perfdata}.
 
@@ -38,9 +36,9 @@ The reader might note that the the performance metrics of this protocol all yiel
 
 On that same point, the reader will also note increased variance in the compressed implemetations. Part of this variance can be attributed to the fact that basis generation is a probabilistic process running in non-constant time - if favourable starting points are chosen, this process is completed significantly faster.
 
-We also return again to the comparison charts first employed in Section \ref{subsec:perfcomparisons} to compare the temporal and spatial performance of these isogeny-based signatures to other post-quantum and classical alternatives. This time, we use the metrics resulting from our modified implementations as the point of comparison. These comparisons can be found in Figure \ref{fig:endperfcomparisons} (comparing subroutine performances) and Figure \ref{fig:endsizecomparisons} (compairing key and signature sizes). These metrics are all taken, yet again, at the 128-bit post quantum securty level (or 2048-bit and 256-bit classical security level, in the case of RSA and ECDSA).
+We also return again to the comparison charts first employed in Section \ref{subsec:perfcomparisons} to compare the temporal and spatial performance of these isogeny-based signatures to other post-quantum and classical alternatives. This time, we use the metrics resulting from our modified implementations as the point of comparison. These comparisons can be found in Table \ref{fig:endperfcomparisons} (comparing subroutine performances) and Table \ref{fig:endsizecomparisons} (compairing key and signature sizes). These metrics are all taken, yet again, at the 128-bit post quantum securty level (or 2048-bit and 256-bit classical security level, in the case of RSA and ECDSA).
 
-\begin{figure}[!h]
+\begin{table}[!h]
 \begin{center}
 \begin{tabular}{ l | r | r | r }
 \hline
@@ -66,10 +64,10 @@ ECDSA & 1,470,000 & 128,928 & 140,869 \\
 \end{center}
 \caption{Performance in clock cycles for our improved isogeny-based signatures in comparison with other post-quantum and classical alternatives.}
 \label{fig:endperfcomparisons}
-\end{figure}
+\end{table}
 
 
-\begin{figure}[!h]
+\begin{table}[!h]
 \begin{center}
 \begin{tabular}{ l | r | r | r }
 \hline
@@ -92,7 +90,7 @@ ECDSA & 32 & 32 & 32 \\
 \caption{Key and signature sizes for our compressed isogeny-based signatures in comparison with other post-quantum and classical alternatives.}
 \label{fig:endsizecomparisons}
 \end{center}
-\end{figure}
+\end{table}
 
 We report, as previously mentioned, roughly 8\% faster Yoo et al. signature signing and verifying when batching is implemented (and of course, this number can be increased if batching is implemented for the remaining inversion operations). We also note roughly 2\% faster signing for compressed signatures when batching is implemented, and 3\% faster verification.
 

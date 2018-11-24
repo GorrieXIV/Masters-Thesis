@@ -145,7 +145,7 @@ reducing decompression to a single 1-dimensional scalar multiplication of a poin
 \section{Implementation Details}
 \label{sec:compimplementation}
 
-In this section we demonstrate how the previously detailed public key compression technique can be used to compress Yoo et al.'s isogeny-based signatures. Again, we will turn to the \sidh library and reference portions of C code (some contributed by Patrick Longa \cite{sidhcode}, some by Yoo and his associates \cite{yoosigcode}, and some by us) to investigate details of our implementations performance.\\
+In this section we demonstrate how the previously detailed public key compression technique can be used to compress a Yoo signature. Again, we will turn to the \sidh library and reference portions of C code (some contributed by Patrick Longa \cite{sidhcode}, some by Yoo and his associates \cite{yoosigcode}, and some by us) to investigate details of our implementations performance.\\
 
 \noindent
 Recall from Section \ref{sec:sigsbackground} the structure of a Yoo et al. signature, $\sigma$:
@@ -480,9 +480,9 @@ Let $\sigma$ denote an umcompressed Yoo et al. isogeny-based signature. The size
 
 Therefore, in the case where the challenge bits are equally divided between $1$ and $0$, $\vert \sigma \vert = 688\lambda$ bytes.
 
-Let $\sigma_{\text{compressed}}$ denote a compressed Yoo et al. signature using the techniques outlined by Azerderakhs et al. and Costello et al. $\sigma_{\text{compressed}}$ swaps the buffer of ${\sim}\lambda$ elliptic curve points for one of ${\sim}\lambda$ $\mathbb{Z}/\lbeb\mathbb{Z}$ elements. This subtracts ${\sim}192\lambda$ bytes from the size of the signature and adds ${\sim}48\lambda$ bytes - reducing the signature size by ${\sim}144\lambda$ bytes for a final size of $544\lambda$ bytes. In the case of \sidh, this takes us from 88,064 byte signatures to 68,632 byte signatures. These improvements are presented again in Figure \ref{fig:sigsizeresults}.\\
+Let $\sigma_{\text{compressed}}$ denote a compressed Yoo et al. signature using the techniques outlined by Azerderakhs et al. and Costello et al. $\sigma_{\text{compressed}}$ swaps the buffer of ${\sim}\lambda$ elliptic curve points for one of ${\sim}\lambda$ $\mathbb{Z}/\lbeb\mathbb{Z}$ elements. This subtracts ${\sim}192\lambda$ bytes from the size of the signature and adds ${\sim}48\lambda$ bytes - reducing the signature size by ${\sim}144\lambda$ bytes for a final size of $544\lambda$ bytes. In the case of \sidh, this takes us from 88,064 byte signatures to 68,632 byte signatures. These improvements are presented again in Table \ref{fig:sigsizeresults}.\\
 
-\begin{figure}[!h]
+\begin{table}[!h]
 \begin{center}
 \begin{tabular}{ | l | b | b | }
 \hline
@@ -496,7 +496,7 @@ Security Level & Original Signature Size & Compressed Signature \\
 \end{center}
 \caption{Compressed and uncompressed signature sizes (in bytes) at varying levels of post-quantum security.}
 \label{fig:sigsizeresults}
-\end{figure}
+\end{table}
 
 \noindent
 We provide performance measurements for our compressed implementation of the Yoo et al. signature scheme in the following and final chapter.

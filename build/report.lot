@@ -1,0 +1,21 @@
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {1.1}{\ignorespaces Performance of various post-quantum signature schemes (measured in clock cycles) compared to non-post-quantum schemes.\relax }}{4}{table.caption.6}
+\contentsline {table}{\numberline {1.2}{\ignorespaces Signature and key sizes for various post-quantum and classical protocols.\relax }}{4}{table.caption.7}
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {2.1}{\ignorespaces Example \texttt {fpx.c} functions.\relax }}{33}{table.caption.15}
+\contentsline {table}{\numberline {2.2}{\ignorespaces Example \texttt {ec\_isogeny.c} functions.\relax }}{34}{table.caption.16}
+\contentsline {table}{\numberline {2.3}{\ignorespaces Example \texttt {kex.c} functions\relax }}{34}{table.caption.17}
+\contentsline {table}{\numberline {2.4}{\ignorespaces Signature functions added to $\texttt {SIDH}_{\texttt {C}}$\xspace \relax }}{35}{table.caption.18}
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {3.1}{\ignorespaces Expected computational cost of performing 248 field element inversions using different approaches.\relax }}{45}{table.caption.21}
+\contentsline {table}{\numberline {3.2}{\ignorespaces Execution time in seconds for 100 field element inversions using various techniques and modulus sizes (measured in seconds)\relax }}{52}{table.caption.27}
+\contentsline {table}{\numberline {3.3}{\ignorespaces Execution time in seconds for 1000 field element inversions using various techniques and modulus sizes (measured in seconds)\relax }}{53}{table.caption.28}
+\contentsline {table}{\numberline {3.4}{\ignorespaces Performance comparisons of signature subroutines run with and without batching.\relax }}{53}{table.caption.29}
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {4.1}{\ignorespaces Compressed and uncompressed signature sizes (in bytes) at varying levels of post-quantum security.\relax }}{63}{table.caption.32}
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {5.1}{\ignorespaces Average performance and standard deviation in clock cycles for all versions of the Yoo et al. signature scheme.\relax }}{64}{table.caption.33}
+\contentsline {table}{\numberline {5.2}{\ignorespaces Performance in clock cycles for our improved isogeny-based signatures in comparison with other post-quantum and classical alternatives.\relax }}{65}{table.caption.34}
+\contentsline {table}{\numberline {5.3}{\ignorespaces Key and signature sizes for our compressed isogeny-based signatures in comparison with other post-quantum and classical alternatives.\relax }}{65}{table.caption.35}
+\addvspace {10\p@ }
+\addvspace {10\p@ }

@@ -201,7 +201,7 @@ $$
 $$
 
 \noindent
-\emph{Morphisms}. Let us again take for example some group $(G,\cdot)$. Let's also define some set $S_{(G,\cdot)}$ which contains every tuple $(x,y,z)$ for group elements $x,y,z$ which satisfy $x\cdot y = z$.
+\emph{Morphisms}. Let us again take for example some group $(G,\cdot)$. Let us also define some set $S_{(G,\cdot)}$ which contains every tuple $(x,y,z)$ for group elements $x,y,z$ which satisfy $x\cdot y = z$.
 $$
 S_{(G,\cdot)} = \{x,y,z \in G | x\cdot y = z\}
 $$
@@ -523,7 +523,7 @@ $\pb(E_0/\langle \ba \rangle)$.
 From these isogenies, \alice and \bob arrive at their shared secret agreement: the mutual codomain curve of $\pa(E_0/\langle \rb \rangle)$ (equivalently $\pb(E_0/\langle \ba \rangle)$), denoted $E_{\ba\rb}$.\\
 
 \noindent
-Below we've outlined the SIDH key exchange protocol $\Pi_{\text{SIDH}}$ = (\textbf{KeyGen}, \textbf{SecAgr}) in a descriptive manner. We do not provide algorithmic definitions for all of these procedures, but algorithmic details for some of these are covered partly in Sections \ref{sec:implementations} and \ref{sec:pbinvimplementation}. C code for functions that are not covered in these sections but are noneless relevant can be found in Appendix \ref{app:functions}.\\
+Below we have outlined the SIDH key exchange protocol $\Pi_{\text{SIDH}}$ = (\textbf{KeyGen}, \textbf{SecAgr}) in a descriptive manner. We do not provide algorithmic definitions for all of these procedures, but algorithmic details for some of these are covered partly in Sections \ref{sec:implementations} and \ref{sec:pbinvimplementation}. C code for functions that are not covered in these sections but are noneless relevant can be found in Appendix \ref{app:functions}.\\
 
 \noindent
 \textbf{KeyGen($\lambda$)}: \alice chooses two random numbers $\ma, \na \in \mathbb{Z}/\laea\mathbb{Z}$ such that $(\la \nmid \ma) \lor (\la \nmid \na)$. \alice then computes the isogeny $\pa: E_0 \rightarrow E_{\ba}$ where $E_{\ba} = E_0 / \langle [\ma]\genpa, [\na]\genqa\rangle$ (equivalently, $ker(\pa) = \langle [\ma]\genpa, [\na]\genqa\rangle$). \bob does the same for random elements $\mb, \nb \in \mathbb{Z}/\lbeb\mathbb{Z}$.
@@ -657,7 +657,7 @@ The Fiat-Shamir construction (also frequently referred to as the Fiat-Shamir tra
 
 The construction is rather simple. The idea is to first transform a given interactive identification protocol $\Pi_{\text{ID}}$ into a \emph{non-interactive} identification protocol. To achieve this, instead of allowing input from the verifier $\mathcal{V}$, we have our prover $\mathcal{P}$ generate the challenge $ch$ by itself. In order for the verifier to be able to check that $ch$ was generated honestly, we define $ch = H(com)$, where $H$ is some secure hash function. If we model $H$ as a random oracle, $H(com)$ is assumed truly random; from this it can be shown that it is just as difficult for an impersonator of $\mathcal{P}$ to find an accepting transcript $(com, H(com), resp)$ as it would be for them to successfully impersonate $\mathcal{P}$ in $\Pi_{\text{ID}}$.
 
-Now that we've paired $\Pi_{\text{ID}}$ with $H$ to achieve a non-interactive identification scheme $\Pi_{\text{NID}}$, we need only to factor in some message $m$ from $\mathcal{P}$ to have constructed a signature scheme $\Pi_{\text{ID}}'$. This can be achieved by including $m$ in our calculation of the challenge: $ch = H(com, m)$. Therefore, given Theorem \ref{thm:fiatshamir}, if $(com, H(com), resp)$ is an accepting transcript of $\Pi_{\text{NID}}$, then $(com, H(com, m), resp)$ is a secure signature for the message $m$. Of course, because $H(com, m)$ can be constructed by any passively observing party, it is redundant to include; and so $(com,resp)$ constitutes a valid signature for $m$. A proof of theorem \ref{thm:fiatshamir} can be found in \cite{sigs}. The security of the Fiat-Shamir construction was first proven by Pointcheval \& Stern \cite{fsproof}.
+Now that we have paired $\Pi_{\text{ID}}$ with $H$ to achieve a non-interactive identification scheme $\Pi_{\text{NID}}$, we need only to factor in some message $m$ from $\mathcal{P}$ to have constructed a signature scheme $\Pi_{\text{ID}}'$. This can be achieved by including $m$ in our calculation of the challenge: $ch = H(com, m)$. Therefore, given Theorem \ref{thm:fiatshamir}, if $(com, H(com), resp)$ is an accepting transcript of $\Pi_{\text{NID}}$, then $(com, H(com, m), resp)$ is a secure signature for the message $m$. Of course, because $H(com, m)$ can be constructed by any passively observing party, it is redundant to include; and so $(com,resp)$ constitutes a valid signature for $m$. A proof of theorem \ref{thm:fiatshamir} can be found in \cite{sigs}. The security of the Fiat-Shamir construction was first proven by Pointcheval \& Stern \cite{fsproof}.
 
 \begin{tcolorbox}
 \begin{theorem}[Fiat-Shamir Security]
@@ -719,7 +719,7 @@ Similar to above, we will write $\textbf{Un}(\Pi)$ to denote the result of apply
 
 Since publication of the SIDH suite, there have been several attempts at providing authentication schemes using the same primitives. The post-quantum community had demonstrated undeniable signatures \cite{jvsig}, designated verifier signatures \cite{sunsig}, and undeniable blind signatures \cite{seshsig} all within the framework of isogeny-based systems. It was not until the work of Yoo et al. ((\cite{yoo})), however, that an isogeny-based protocol for general authentication was shown as demonstrably secure. This protocol, particularly its C implementation, is where we have decided to focus our efforts.
 
-Now that we've seen the zero-knowledge proof of identity (ZKPoI) from \cite{djp} as well as Unruh's quantum-safe Fiat-Shamir adaption, we have presented all of the material necessary for an indepth analysis of the isogeny-based signature scheme presented by Yoo et al. The signature protocol, which we'll denote as $\Sigma'$, is an application of Unruh's construction to the SIDH ZKPoI. In this section we will refer to the SIDH ZKPoI as $\Sigma$ (thus we have $\Sigma'$ = \textbf{Un}($\Sigma$)).
+Now that we have seen the zero-knowledge proof of identity (ZKPoI) from \cite{djp} as well as Unruh's quantum-safe Fiat-Shamir adaption, we have presented all of the material necessary for an indepth analysis of the isogeny-based signature scheme presented by Yoo et al. The signature protocol, which we will denote as $\Sigma'$, is an application of Unruh's construction to the SIDH ZKPoI. In this section we will refer to the SIDH ZKPoI as $\Sigma$ (thus we have $\Sigma'$ = \textbf{Un}($\Sigma$)).
 
 $\Sigma'$ is defined in the traditional manner, by a tuple of algorithms for key generation, signing, and verifying: $\Sigma' = (\textbf{KeyGen}, \textbf{Sign}, \textbf{Verify})$. We have $\Sigma'$.\textbf{KeyGen} = $\Sigma$.\textbf{KeyGen}, as for signing and verification, $\Sigma'$.\textbf{Sign} and $\Sigma'$.\textbf{Verify} are defined by applying Unruh's transformation to $\Sigma$.\textbf{Prove} and $\Sigma$.\textbf{Verify}, respectively.
 
@@ -733,7 +733,7 @@ The public parameters used in $\Sigma'$ are the same as outlined above for all o
 It will be useful for us to outline in more detail the procedures of $\Sigma'$, at the very least to ease the transition into our discussion of the C implementation. In this subsection we will look at isogeny-level algorithmic definitions for \textbf{KeyGen()}, \textbf{Prove()}, and \textbf{Verify()}, and then look at how these procedures can be expressed in terms of the procedures of $\Pi_{\text{SIDH}}$.\\
 
 \noindent
-\textbf{KeyGen($\lambda$, $User$)}: As previously mentioned, key generation in $\Sigma'$ is identical to $\Sigma$:\textbf{KeyGen($\lambda$)}, which in turn is identical to $\Pi_{\text{SIDH}}$:\textbf{KeyGen($\lambda$)}. We've included a parameter $User$ equaling either $\alice$ or $\bob$ -- this denotes whether the user running the procedure uses \textcolor{blue}{blue} or \textcolor{red}{red} constants. We've also obfuscated the lower level details in regards to how points are generated and how isogenies can be constructed. We write $P_{User}$ and $Q_{User}$ for $\genpa$ \& $\genqa$ or $\genpb$ \& $\genqb$, depending on $User$.  The result is detailed in Algorithm \ref{alg:keygensig}.
+\textbf{KeyGen($\lambda$, $User$)}: As previously mentioned, key generation in $\Sigma'$ is identical to $\Sigma$:\textbf{KeyGen($\lambda$)}, which in turn is identical to $\Pi_{\text{SIDH}}$:\textbf{KeyGen($\lambda$)}. We have included a parameter $User$ equaling either $\alice$ or $\bob$ -- this denotes whether the user running the procedure uses \textcolor{blue}{blue} or \textcolor{red}{red} constants. We have also obfuscated the lower level details in regards to how points are generated and how isogenies can be constructed. We write $P_{User}$ and $Q_{User}$ for $\genpa$ \& $\genqa$ or $\genpb$ \& $\genqb$, depending on $User$.  The result is detailed in Algorithm \ref{alg:keygensig}.
 
 \begin{algorithm}
 \caption{-- \textbf{KeyGen($\lambda$, $User$)}}
@@ -793,7 +793,7 @@ For \textbf{Sign($sk$, $m$)} and \textbf{Verify($pk$, $m$, $\sigma$)} we assume 
 \end{algorithm}
 
 \noindent
-If we write out \textbf{Sign} using the $\Pi_{\text{SIDH}}$ API, we see that the computation-heavy portions of the procedure are being performed by $\Pi_{\text{SIDH}}$.\textbf{KeyGen} and $\Pi_{\text{SIDH}}$.\textbf{SecAgr}, and our two random oracles \textbf{H} and \textbf{G}.  The rest of the algorithm is merely organizing the information we've generated into the transcript ($com$, $ch$, $resp$) and then finally into $\sigma$.
+If we write out \textbf{Sign} using the $\Pi_{\text{SIDH}}$ API, we see that the computation-heavy portions of the procedure are being performed by $\Pi_{\text{SIDH}}$.\textbf{KeyGen} and $\Pi_{\text{SIDH}}$.\textbf{SecAgr}, and our two random oracles \textbf{H} and \textbf{G}.  The rest of the algorithm is merely organizing the information we have generated into the transcript ($com$, $ch$, $resp$) and then finally into $\sigma$.
 
 \begin{algorithm}
 \caption{-- \textbf{Sign($sk = \rb$, $m$)} via $\Pi_{\text{SIDH}}$}
@@ -976,9 +976,9 @@ Operating at the lowest abstraction level is the module \code{fpx.c}, wherein fu
 
 For functions defined in \code{fpx.c} the notational practice is to prepend function names with either \code{fp} or \code{fp2}, signifying whether the function is defined for elements of $\mathbb{F}_{p}$ or $\mathbb{F}_{p^2}$. Additionally, it is common to append \code{\_mont} to the name of functions which utilize Montgomery arithmetic, and thus expect elements in Montgomery representation. Functions in \code{fpx.c} are largely defined by byte and memory arithmetic, with the exception of slightly higher-level functions (such as field element inversion, \code{fpinv751\_mont(...)}) which are defined in terms of other \code{fpx.c} functions. Furthermore, for efficiency, functions of \code{fpx.c} are defined as \code{\_\_inline} when applicable.
 
-In addition to the \code{fpx.c} functions we've outlined in Figure \ref{fig:fpfuncs} there are of course definitions for addition, copying elements, retrieving the zero element, Montgomery multiplication, squaring, and so on and so forth.
+In addition to the \code{fpx.c} functions we have outlined in Table \ref{fig:fpfuncs} there are of course definitions for addition, copying elements, retrieving the zero element, Montgomery multiplication, squaring, and so on and so forth.
 
-\begin{figure}
+\begin{table}
 \begin{center}
 \begin{tabular}{|c|c|c|}
 	\hline
@@ -1007,11 +1007,11 @@ In addition to the \code{fpx.c} functions we've outlined in Figure \ref{fig:fpfu
 \end{center}
 \caption{Example \code{fpx.c} functions.}
 \label{fig:fpfuncs}
-\end{figure}
+\end{table}
 
-\code{ec\_isogeny.c} functions are defined almost exclusively in terms of \code{fpx.c} functions, with a few occurances of internal function calling. Functions in this module that are significant to our our work are briefly summerized in Figure \ref{fig:ecfuncs}. The implementation specifics of most other \code{ec\_isogeny.c} functions are not critical to our work, and so have been excluded. The design and efficiency of these algorithms do, however, have a rich background and can be further read about in \cite{djp} and \cite{effalg}.
+\code{ec\_isogeny.c} functions are defined almost exclusively in terms of \code{fpx.c} functions, with a few occurances of internal function calling. Functions in this module that are significant to our our work are briefly summerized in Table \ref{fig:ecfuncs}. The implementation specifics of most other \code{ec\_isogeny.c} functions are not critical to our work, and so have been excluded. The design and efficiency of these algorithms do, however, have a rich background and can be further read about in \cite{djp} and \cite{effalg}.
 
-\begin{figure}
+\begin{table}
 \begin{center}
 \begin{tabular}{|c|c|c|}
 	\hline
@@ -1048,11 +1048,11 @@ In addition to the \code{fpx.c} functions we've outlined in Figure \ref{fig:fpfu
 \end{center}
 \caption{Example \code{ec\_isogeny.c} functions.}
 \label{fig:ecfuncs}
-\end{figure}
+\end{table}
 
-The key exchange procedures found in \code{kex.c} are composed entirely of calls to \code{fpx.c} and \code{ec\_isogeny.c} functions, modulo some basic branching logic. All of the functions from this module are relevant to our work - we provide quick debriefings of these functions in Figure \ref{fig:kexfuncs}.
+The key exchange procedures found in \code{kex.c} are composed entirely of calls to \code{fpx.c} and \code{ec\_isogeny.c} functions, modulo some basic branching logic. All of the functions from this module are relevant to our work - we provide quick debriefings of these functions in Table \ref{fig:kexfuncs}.
 
-\begin{figure}
+\begin{table}
 \begin{center}
 \begin{tabular}{|c|c|c|}
 	\hline
@@ -1078,16 +1078,16 @@ The key exchange procedures found in \code{kex.c} are composed entirely of calls
 \end{center}
 \caption{Example \code{kex.c} functions}
 \label{fig:kexfuncs}
-\end{figure}
+\end{table}
 
-The reader may note that, in Figure \ref{fig:kexfuncs}, \code{privateKeyA} (in \code{KeyGeneration\_A}) and \code{kerngen} (in both secret agreements) appear as both inputs and outputs. This is not a mistake. In \code{KeyGeneration\_A}, if \code{generateRandom = false} is passed as an input, then \code{privateKeyA} is expected to be set, and the corresponding public key is computed. In secret agreement, if \code{kerngen} is set to null then the algorithm proceeds normally. If it is set to a valid point, however, it can be used in place of a secret key input (which in such a case is expected to be null). Both of these details are critical to the design of signature functions as they are described below.
+The reader may note that, in Table \ref{fig:kexfuncs}, \code{privateKeyA} (in \code{KeyGeneration\_A}) and \code{kerngen} (in both secret agreements) appear as both inputs and outputs. This is not a mistake. In \code{KeyGeneration\_A}, if \code{generateRandom = false} is passed as an input, then \code{privateKeyA} is expected to be set, and the corresponding public key is computed. In secret agreement, if \code{kerngen} is set to null then the algorithm proceeds normally. If it is set to a valid point, however, it can be used in place of a secret key input (which in such a case is expected to be null). Both of these details are critical to the design of signature functions as they are described below.
 
 \subsection{Signature Layer}
 \label{subsec:sigcode}
 
 Yoo et al. provided, along with their publication of \cite{yoo}, an implementation of their signature scheme as a fork to \sidh. All of their functions are written specifically for an instance of $\Sigma'$ where the signer is assuming the \rb role (meaning that \randall assumes the \ba role), but their algorithms could be trivially modified to provide versions supporting a signer in the \ba role. Their contributions to the \sidh codebase come in the form of the functions listed below.
 
-\begin{figure}
+\begin{table}
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 	\hline
@@ -1117,9 +1117,9 @@ Yoo et al. provided, along with their publication of \cite{yoo}, an implementati
 \end{center}
 \caption{Signature functions added to \sidh}
 \label{fig:sigfuncs}
-\end{figure}
+\end{table}
 
-There are five functions of interest contributed by Yoo et al.: \code{isogeny\_keygen}, \code{isogeny\_sign}, \code{sign\_thread}, \code{isogeny\_verify}, \code{verify\_thread}. The high-level details of these functions are outlined in Figure \ref{fig:sigfuncs}.
+There are five functions of interest contributed by Yoo et al.: \code{isogeny\_keygen}, \code{isogeny\_sign}, \code{sign\_thread}, \code{isogeny\_verify}, \code{verify\_thread}. The high-level details of these functions are outlined in Table \ref{fig:sigfuncs}.
 
 \code{isogeny\_keygen} simply generates the signer's keypair, and has a trivial definition: \code{KeyGeneration\_B} is called and populates the signer's public and private keys. \code{isogeny\_keygen} returns the success status of the call to \code{KeyGeneration\_B}.
 
