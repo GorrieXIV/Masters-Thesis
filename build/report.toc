@@ -21,8 +21,8 @@
 \contentsline {subsection}{\numberline {2.3.1}SIDH Key Exchange}{20}{subsection.2.3.1}
 \contentsline {subsection}{\numberline {2.3.2}Zero-Knowledge Proof of Identity}{22}{subsection.2.3.2}
 \contentsline {section}{\numberline {2.4}Fiat-Shamir Construction}{24}{section.2.4}
-\contentsline {subsection}{\numberline {2.4.1}Unruh's Post-Quantum Adaptation}{24}{subsection.2.4.1}
-\contentsline {section}{\numberline {2.5}Isogeny-based Signatures}{26}{section.2.5}
+\contentsline {subsection}{\numberline {2.4.1}Unruh's Post-Quantum Adaptation}{25}{subsection.2.4.1}
+\contentsline {section}{\numberline {2.5}Isogeny-based Signatures}{25}{section.2.5}
 \contentsline {subsection}{\numberline {2.5.1}Algorithmic Definitions}{26}{subsection.2.5.1}
 \contentsline {section}{\numberline {2.6}Implementations of Isogeny-based Cryptographic Protocols}{29}{section.2.6}
 \contentsline {subsection}{\numberline {2.6.1}Parameters \& Data Representation}{30}{subsection.2.6.1}
