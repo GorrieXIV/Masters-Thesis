@@ -40,7 +40,7 @@ The Pohlig-Hellman algorithm can be applied to solve the discrete logarithm prob
 Azerderakhsh et al. show that an SIDH public key can be compressed in the following way. Taking \alice's SIDH key pair, for example, we have her public key $\pka = (E_{\ba}, \pa(\genpb),\pa(\genqb))$ and her private key $\ska = \ma$ such that $ker(\pa) = \langle \genpa + [\ma]\genqa\rangle$. Because $\{\genpb, \genqb\}$ generates the torsion subgroup $E
 _{\ba}[\lbeb]$, we have that $\pa(\genpb) \in E[\lbeb]$ and $\pa(\genqb) \in E[\lbeb]$. Thus, the Pohlig-Hellman algorithm can be used to resolve $\pa(\genpb) = [\alpha_P] R_1 + [\beta_P] R_2$ and $\pa(\genqb) = \alpha_Q R_1 + \beta_Q R_2$ where $\{R_1, R_2\}$ is a basis for $E_{\ba}[\lbeb]$ \cite{compwr}.
 
-Then, instead of sending \bob $(E_{\ba}, \pa(\genpb),\pa(\genqb))$, \alice can send $(E_{\ba}, \alpha_P, \beta_P, \alpha_Q, \beta_Q)$.\footnote{The approach outlined by Azerderakhsh et al. involves sending the $j$-invariant of $E$, which can be represented with the same amount of space as one $\mathbb{F}_{p^2}$ element. Because we are working in \sidh where we can already represent curves with one $\mathbb{F}_{p^2}$ element, we omit this detail.} And so, as long as \alice and \bob can seperately generate the same $\{R_1, R_2\}$, they can both sufficiently represent one anothers public keys with only $4\log p$ bits.\\
+Then, instead of sending \bob $(E_{\ba}, \pa(\genpb),\pa(\genqb))$, \alice can send $(E_{\ba}, \alpha_P, \beta_P, \alpha_Q,\allowbreak{} \beta_Q)$.\footnote{The approach outlined by Azerderakhsh et al. involves sending the $j$-invariant of $E$, which can be represented with the same amount of space as one $\mathbb{F}_{p^2}$ element. Because we are working in \sidh where we can already represent curves with one $\mathbb{F}_{p^2}$ element, we omit this detail.} And so, as long as \alice and \bob can seperately generate the same $\{R_1, R_2\}$, they can both sufficiently represent one anothers public keys with only $4\log p$ bits.\\
 
 \noindent
 \textit{Constructing the Basis}. Constructing $R_1$ and $R_2$ can be done with a relatively simple yet time consuming process. We will continue to use the compression of \alice's public key, $\pka$, as our example.
@@ -157,7 +157,7 @@ $$
 where
 
 \begin{itemize}
-\item $com$ is a list of $2\lambda$ pairs of supersingular elliptic curves: \allowbreak{$\{(E_{1,1}, E_{2,1}), (E_{1,2}, E_{2,2}), ..., (E_{1,2\lambda}, E_{2,2\lambda})\}$,}
+\item $com$ is a list of $2\lambda$ pairs of supersingular elliptic curves: \allowbreak{$\{(E_{1,1}, E_{2,1}), (E_{1,2},\allowbreak{} E_{2,2}),\allowbreak{} ...,\allowbreak{} (E_{1,2\lambda}, E_{2,2\lambda})\}$,}
 \item $ch$ is a list of $2\lambda$ randomly chosen bits,
 \item $resp$ is a list of size $2\lambda$ where each element is either a single elliptic curve point $\pr(S)$, where $\pr$ is \randall's isogeny and $S$ is the signers secretly generated point, or the pair of points ($\cyr, \phi(\cyr)$), where $\cyr$ is \randall's secretly generated point, and $\phi$ is the signers isogeny.
 \item $h$ is a list of $2\lambda$ queries to a random oracle \textbf{G}, such that $h_{i} = \textbf{G(}resp_{i}\textbf{)}$
@@ -439,7 +439,7 @@ This means that in transmitting \code{compPsiS[r]} in its normalized form we los
 \item $S^{0}$ and $\pr(S)$ having equivalent order implies that they generate the same kernel.
 \end{enumerate}
 
-And so, \code{DecompressPsiS} can be defined to generate the same basis $\{R_1, R_2\}$ as in \code{CompressPsiS} and then compute $S^{0} = R_1 + [\code{compPsiS[r]}]R_2$ if \code{compBit} = 0 and $S^{0} = [\code{compPsiS[r]}]R_1 + R_2$ otherwise. The resulting $S^{0}$ can then be passed to  \code{SecretAgreement\_B} just as in uncompressed verification and the verification will run successfully. Algorithm \ref{alg:decompresspsis} outlines the general functioning of \code{DecompressPsiS} at a high level, for our specific C implementation see Appendix \ref{app:functions}.
+And so, \code{DecompressPsiS} can be defined to generate the same basis $\{R_1, R_2\}$ as in \code{CompressPsiS} and then compute $S^{0} = R_1 + [\code{compPsiS[r]}]R_2$ if \code{compBit} = 0 and $S^{0} = [\code{compPsiS[r]}]R_1 + R_2$ otherwise. The resulting $S^{0}$ is then passed to  \code{SecretAgreement\_B} just as in uncompressed verification and the verification will run successfully. Algorithm \ref{alg:decompresspsis} outlines the general functioning of \code{DecompressPsiS} at a high level, for our specific C implementation see Appendix \ref{app:functions}.
 
 \begin{algorithm}
 \caption{-- \textbf{DecompressPsiS($\gamma$, $b$, $E_{\cyr}$, $User$)}}

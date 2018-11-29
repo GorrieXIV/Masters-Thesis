@@ -9,14 +9,14 @@
 %	year =
 % }
 
-@article{djp,
+@inproceedings{djp,
 	author = {Luca De Feo and David Jao and Jerome Plut},
-	title = {Towards Quantum-Resistant Cryptosystems From Supersingular Elliptic Curvce Isogenies},
+	title = {Towards Quantum-Resistant Cryptosystems From Supersingular Elliptic Curve Isogenies},
 	year = {2012},
 }
-@article{yoo,
+@inproceedings{yoo,
 	author = {Youngho Yoo and Reza Azarderakhsh and Amir Jalali and David Jao and Vladimir Soukharev},
-	title = {A Post-Quantum Digital Signature Scheme Based on SuperSingular Isogenies},
+	title = {A Post-Quantum Digital Signature Scheme Based on Supersingular Isogenies},
 	year = {2012},
 }
 @mastersthesis{yoothesis,
@@ -28,7 +28,7 @@
 
 % ---- 1.1
 
-@article{shor,
+@inproceedings{shor,
 	author = {Peter W. Shor},
 	title = {Polynomial-Time Algorithms for Prime Factorization and Discrete Logarithms on a Quantum Computer},
 	year = {1996},
@@ -40,7 +40,7 @@
 	year = {2007},
 	publisher = {Oxford University Press USA},
 }
-@article{perfcomparison,
+@inproceedings{perfcomparison,
 	author = {Nicholas Jansma and Brandon Arrendondo},
 	title = {Performance Compairson of Elliptic Cruve and RSA Digital Signatures},
 	year = {2004},
@@ -65,13 +65,13 @@
 }
 @misc{yoosigcode,
 	author = {Youngho Yoo and Reza Azarderakhsh and Amir Jalali and David Jao and Vladimir Soukharev},
-	title = {Isogeny Based Signatures From SIDH Library},
+	title = {Isogeny Based Signatures From {SIDH} Library},
 	note = {Available online at \url{https://github.com/yhyoo93/isogenysignature}},
 	year = {2017},
 }
 @misc{sidhcode,
 	author = {Brian LaMacchia and Craig Costello and Karen Easterbrook and Michael Naehrig and Patrick Longa},
-	title = {SIDH Library},
+	title = {{SIDH} Library},
 	note = {Available onlnie at \url{https://www.microsoft.com/en-us/research/project/sidh-library/}},
 	year = {2016},
 }
@@ -99,7 +99,7 @@
 
 % ---- 2.2 Groups, Fields, Curves
 
-@article{silverman,
+@book{silverman,
 	author = {Joseph H. Silverman},
 	title = {The Arithmetic of Elliptic Curves},
 	edition = {2nd Edition},
@@ -111,9 +111,10 @@
 	year = {1985},
 	journal = {Mathematics of Computation},
 }
-@article{pairings,
+@misc{pairings,
 	author = {Craig Costello},
 	title = {Pairings for Beginners},
+  note = {\url{http://craigcostello.com.au/pairings/PairingsForBeginners.pdf}}
 }
 @inproceedings{curvecoords,
 	author = {Henri Cohen and Atsuko Miyaji and Takatoshi Ono},
@@ -133,20 +134,20 @@
 	year = {1996},
 	publisher = {Springer},
 }
-@article{rewinding,
+@inproceedings{rewinding,
 	author = {Andris Ambainis and Ansis Rosmanis and Dominique Unruh},
 	title = {Quantum Attacks on Classical Proof Systems (The Hardness of Quantum Rewinding)},
 	publisher = {IEEE},
 	year = {2014},
 	pages = {474-483},
 }
-@article{unruh,
+@inproceedings{unruh,
    author = {Dominique Unruh},
    title = {Non-Interactive Zero-Knowledge Proofs in the Quantum Random Oracle Model},
    year = {2014},
    publisher = {Heidelberg},
 }
-@article{secureFS,
+@inproceedings{secureFS,
 	author = {Dominique Unruh},
 	title = {Post-Quantum Security of Fiat-Shamir},
 	year = {2017},
@@ -155,18 +156,18 @@
 
 % --- 2.5
 
-@article{sunsig,
+@inproceedings{sunsig,
 	author = {Xi Sun and Haibo Tian and Yumin Wang},
 	title = {Toward Quantum-resistant Strong Designated Verifier Signature from Isogenies},
 	year = {2012},
 	publisher = {International Conference on Intelligent Networking and Collaborative Systems},
 }
-@article{jvsig,
+@inproceedings{jvsig,
  author = {David Jao and Vladimir Soukharev},
  title = {Isogeny-based Quantum Resistant Undeniable Signatures},
  year = {2014},
 }
-@article{seshsig,
+@inproceedings{seshsig,
 	author = {M. Seshadri Srinath and V. Chandrasekaren},
 	title = {Isogeny-based Quantum-resistant Undeniable Blind Signature Scheme},
 	year = {2016},
@@ -175,18 +176,21 @@
 
 % --- 2.6 Implementations
 
-@article{effalg,
+@inproceedings{effalg,
 	author = {Craig Costello and Patrick Longa and Michael Naehrig},
-	title = {Efficient Algorithms for Supersingular Isogeny Diffie-Hellman},
+	title = {Efficient Algorithms for Supersingular Isogeny {Diffie-Hellman}},
 	year = {2016},
-	volume = {IACR-CRYPTO-2016},
+	booktitle = {IACR-CRYPTO-2016},
+  series = {LNCS},
+  volume = {9814},
+  pages = {527 - 601}
 }
 
 % --- 3.0 Batching
 
-@article{batching,
+@inproceedings{batching,
 	author = {Hovav Shacham and Dan Boneh},
-	title = {Improving SSL Handshake Performance via Batching},
+	title = {Improving {SSL} Handshake Performance via Batching},
 	year = {2001},
 }
 
@@ -194,37 +198,37 @@
 
 @article{RSAbatch,
 	author = {Amos Fiat},
-	title = {Batch RSA},
+	title = {Batch {RSA}},
 	year = {1989},
 }
 
 % --- 4.0 Compression
 
-@article{compwr,
+@inproceedings{compwr,
 	author = {Reza Azerderakhsh and David Jao and Kassem Kalach and Brian Koziel and Christopher Leonardi},
 	title = {Key Compression for Isogeny-Based Cryptosystems},
 	year = {2016},
 }
-@article{pkcomp,
+@inproceedings{pkcomp,
 	author = {Craig Costello and David Jao and Patrick Longa and Michael Naehrig and Joost Renes and David Urbanik},
-	title = {Efficient Compression of SIDH Public Keys},
+	title = {Efficient Compression of {SIDH} Public Keys},
 	year = {2017},
 	publisher = {Springer},
 }
 @article{ph,
 	author = {Stephen Pohlig and Martin Hellman},
-	title = {An Improved Algorithm for Computing Logarithms Over GF(p) and Its Cryptographic Significance},
+	title = {An Improved Algorithm for Computing Logarithms Over {GF(p)} and Its Cryptographic Significance},
 	year = {1978},
 	journal = {IEEE Transactions on Information Theory},
 }
 @article{genph,
 	author = {Edlyn Teske},
-	title = {The Pohlig-Hellman Method Generalized for Group Structure Computation},
+	title = {The {Pohlig-Hellman} Method Generalized for Group Structure Computation},
 	year = {1999},
 	publisher = {Academic Press},
 }
 @article{sha3,
 	author = {Morris J. Dworkin},
-	title = {SHA-3 Standard: Premnutation-Based Hash and Extendable-Output Functions},
+	title = {{SHA}-3 Standard: Premnutation-Based Hash and Extendable-Output Functions},
 	year = {2015},
 }

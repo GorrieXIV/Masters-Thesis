@@ -2,7 +2,7 @@ This is BibTeX, Version 0.99d (TeX Live 2017/Debian)
 Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
 The top-level auxiliary file: report.aux
 The style file: alphaurl.bst
-White space in argument---line 305 of file report.aux
+White space in argument---line 308 of file report.aux
  : \bibdata{refs.bib,
  :                    abbrev3, crypto}
 I'm skipping whatever remains of this command
@@ -16,70 +16,62 @@ You're missing a field name---line 3 of file refs.bib.bib
  : % author =
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 169 of file refs.bib.bib
- :  author 
- :         = {Jintai Ding and Ming-Shing Chen and Albrecht Petzoldt and Dieter Schmidt and Bo-Yin Yang},
-I'm skipping whatever remains of this entry
-Warning--I didn't find a database entry for "sidh"
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
-Warning--empty journal in compwr
-Warning--empty journal in rewinding
-Warning--empty journal in pkcomp
-Warning--empty journal in effalg
-Warning--empty journal in pairings
-Warning--empty year in pairings
+Warning--empty booktitle in compwr
+Warning--empty booktitle in rewinding
+Warning--empty booktitle in pkcomp
 Warning--empty journal in sha3
 Warning--empty journal in RSAbatch
-Warning--empty journal in djp
-Warning--empty journal in jvsig
+Warning--empty booktitle in djp
+Warning--empty booktitle in jvsig
 Warning--empty journal in fsproof
-Warning--empty journal in batching
-Warning--empty journal in seshsig
-Warning--empty journal in silverman
+Warning--empty booktitle in batching
+Warning--empty booktitle in seshsig
+Warning--empty booktitle in shor
 Warning--empty year in silverman
-Warning--empty journal in sunsig
+Warning--empty booktitle in sunsig
 Warning--empty journal in genph
-Warning--empty journal in unruh
-Warning--empty journal in yoo
+Warning--empty booktitle in unruh
+Warning--empty booktitle in yoo
 You've used 27 entries,
             3274 wiz_defined-function locations,
-            793 strings with 8614 characters,
-and the built_in function-call counts, 11720 in all, are:
-= -- 1102
-> -- 571
-< -- 13
+            795 strings with 8700 characters,
+and the built_in function-call counts, 12316 in all, are:
+= -- 1161
+> -- 557
+< -- 15
 + -- 182
 - -- 177
-* -- 595
-:= -- 1803
-add.period$ -- 79
+* -- 614
+:= -- 1836
+add.period$ -- 82
 call.type$ -- 27
 change.case$ -- 172
 chr.to.int$ -- 27
-cite$ -- 46
-duplicate$ -- 375
-empty$ -- 944
-format.name$ -- 208
-if$ -- 2832
+cite$ -- 43
+duplicate$ -- 422
+empty$ -- 1088
+format.name$ -- 209
+if$ -- 3024
 int.to.chr$ -- 1
 int.to.str$ -- 0
 missing$ -- 25
-newline$ -- 137
+newline$ -- 139
 num.names$ -- 81
-pop$ -- 334
+pop$ -- 370
 preamble$ -- 1
 purify$ -- 201
 quote$ -- 0
-skip$ -- 852
+skip$ -- 855
 stack$ -- 0
-substring$ -- 242
-swap$ -- 29
-text.length$ -- 13
-text.prefix$ -- 9
+substring$ -- 278
+swap$ -- 56
+text.length$ -- 15
+text.prefix$ -- 10
 top$ -- 0
-type$ -- 208
-warning$ -- 19
-while$ -- 75
+type$ -- 204
+warning$ -- 16
+while$ -- 77
 width$ -- 30
-write$ -- 310
-(There were 3 error messages)
+write$ -- 321
+(There were 2 error messages)

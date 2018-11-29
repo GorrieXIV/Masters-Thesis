@@ -402,10 +402,12 @@ $$
 \end{table}
 
 \noindent
-The following graphs also indicate quite clearly the relationships between these three approaches to performing multiple field element inversions. The steep orange line found in the left-hand plot indicates the cost of performing unbatched field element inversions, scaling as the number of elements increases. The other two lines (found again in the right-hand plot) indicate the scaling performance of \textbf{PartialBatchedInv} (blue) and \textbf{PartialBatchedInv}$_0$ (red).
+The following graphs also indicate quite clearly the relationships between these three approaches to performing multiple field element inversions. The steep orange line found in the left-hand plot indicates the cost of performing unbatched field element inversions, scaling as the number of elements increases. The other two lines (found again in the right-hand plot) indicate the scaling performance of \textbf{PartialBatchedInv} (red) and \textbf{PartialBatchedInv}$_0$ (blue).
 
+\begin{figure}[!h]
 \begin{center}
-\begin{tikzpicture}
+\begin{adjustwidth}{}{-8em}
+\begin{tikzpicture}[scale=.9]
 	\begin{scope}[xshift=-3cm]
 		\begin{axis}[
 			domain=0:10,
@@ -420,6 +422,8 @@ The following graphs also indicate quite clearly the relationships between these
 		\addplot+[mark=none] {7269*x + 826228};
 		\addplot+[mark=none] {829786*x};
 		\end{axis}
+    \draw (4, -1) node {batch size};
+    \draw (-1, 3) node[rotate=90] {millions of clock cycles};
 	\end{scope}
 	\begin{scope}[xshift=5cm]
 		\begin{axis}[
@@ -434,9 +438,13 @@ The following graphs also indicate quite clearly the relationships between these
 		\addplot+[mark=none] {12108*x + 831479};
 		\addplot+[mark=none] {7269*x + 826228};
 		\end{axis}
+    \draw (4, -1) node {batch size};
 	\end{scope}
 \end{tikzpicture}
+\end{adjustwidth}
 \end{center}
+\caption{The projected run-time of \textbf{PartialBatchedInv} (red), \textbf{PartialBatchedInv}$_0$ (blue), and unbatched inversions (yellow) scaling with the number of elements in the batch.}
+\end{figure}
 
 \section{Implementation Details}
 \label{sec:pbinvimplementation}
@@ -618,6 +626,7 @@ Costello et al. have concisely outlined many of the \sidh isogeny and point-wise
 In Figure \ref{fig:threadcallgraph} we illustrate a heavily simplified call-graph for the \code{sign\_thread} and \code{verify\_thread}, demonstrating where in the execution pipeline \code{j\_inv} and \code{inv\_4\_way} occur. The reader may suspect that, in \code{sign\_thread} for example, the inversions in \code{SecretAgreement\_B} and \code{KeyGeneration\_A} could be batched together to form a batch of 512 elements and to reduce the total number of inversions in \code{isogeny\_sign} to one. This is not possible, however, because the valid execution of \code{SecretAgreement\_B} relies on information returned by \code{KeyGeneration\_A}, and so these inversions must occur sequentially.
 
 \begin{figure}[!h]
+\scalebox{0.9}{
 \begin{tikzpicture}
     [auto,
     block/.style={
@@ -693,14 +702,16 @@ In Figure \ref{fig:threadcallgraph} we illustrate a heavily simplified call-grap
 	\draw[->, line width=2.0] (F.east) to [in=90] (14.6,-6.6);
 
 \end{tikzpicture}
+}
 \caption{The execution flow of \code{sign\_thread} and \code{verify\_thread} as originally implemented by Yoo et al.}
 \label{fig:threadcallgraph}
 \end{figure}
 
+
 To enable batching across execution instances of \code{j\_inv} and \code{inv\_4\_way}, we have supplied new functions \code{j\_inv\_batch} and \code{inv\_4\_way\_batch}. These functions, upon reaching what were originally $\mathbb{F}_{p^2}$ inversions (calls to \code{fp2inv751\_mont}), add their elements that are awaiting inversion to a buffer. Once the buffer of elements has reached its predefined capacity, the final thread to add its element executes \code{pb\_inv} on the buffer. Each thread thereafter, having kept track of where in the buffer they entered their element, retrieves their now inverted element from the buffer returned by \code{pb\_inv}.
 
 \begin{figure}[!h]
-\label{fig:batchcallgraph}
+\scalebox{0.9}{
 \begin{tikzpicture}
     [auto,
     block/.style={
@@ -777,7 +788,9 @@ To enable batching across execution instances of \code{j\_inv} and \code{inv\_4\
 	\draw[->, line width=2.0] (F.east) to [in=90] (14.6,-6.6);
 
 \end{tikzpicture}
+}
 \caption{The execution flow of \code{sign\_thread} and \code{verify\_thread} when run with inversion batching enabled}
+\label{fig:batchcallgraph}
 \end{figure}
 
 To properly implement \code{pb\_inv} in these functions, we modify every function along the call stack leading up to \code{j\_inv} and \code{inv\_4\_way}: \code{SecretAgreement\_A}, \code{SecretAgreement\_B}, and \code{KeyGeneration\_A}. Our modifications allow these functions to optionally pass a C struct we have defined which holds all of the information necessary for a successfull execution of \code{pb\_inv}. We refer to this structure as \code{batch\_struct}, and it holds the following: an integer \code{batchSize} denoting the number of elements in the batch, an integer \code{cntr} which tracks how many elements are currently in the batch (and is invariably less than or equal to \code{batchSize}), an \code{f2elm\_t} buffer \code{invArray} for storing the elements to be inverted, and an \code{f2elm\_t} buffer \code{invDest} for storing the inversion results.

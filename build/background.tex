@@ -49,7 +49,7 @@ For certain constructions to be proven secure, it is sometimes necessary or help
 
 \subsection{Key Exchange}
 
-A key exchange protocol, which we will denote as $\Pi_{kex}$, can be represented in some contexts by a pair of polynomial time algorithms \textbf{KeyGen} and \textbf{SecAgr}: $\Pi_{kex} = (\textbf{KeyGen},\textbf{SecAgr})$. Alice and Bob will each run both of these procedures. The first they will run on the same input, $1^\lambda$, a bit string of $\lambda$ 1's. The second, short for ``secret agreement'', they will run on both their outputs of \textbf{KeyGen} and their peers.\\
+A key exchange protocol, which we will denote as $\Pi_{kex}$, can be represented in some contexts by a pair of polynomial time algorithms \textbf{KeyGen} and \textbf{SecAgr}: $\Pi_{kex} = (\textbf{KeyGen},\allowbreak{\textbf{SecAgr})}$. Alice and Bob will each run both of these procedures. The first they will run on the same input, $1^\lambda$, a bit string of $\lambda$ 1's. The second, short for ``secret agreement'', they will run on both their outputs of \textbf{KeyGen} and their peers.\\
 
 Execution of $\Pi_{kex}$ between Alice and Bob involves the following:
 \begin{enumerate}[label=(\roman*)]
@@ -664,7 +664,7 @@ Now that we have paired $\Pi_{\text{ID}}$ with $H$ to achieve a non-interactive 
 \begin{tcolorbox}
 \begin{theorem}[Fiat-Shamir Security]
 \label{thm:fiatshamir}
-Let $\Pi_{\text{ID}} = (\textbf{KeyGen}, \textbf{Commit}, \textbf{Prove}, \textbf{Verify})$ be a canonical identification scheme that is secure against a passive attack. Then, if $H$ is modeled as a random oracle, the signature scheme $\Pi_{\text{ID}}'$ that results from applying the Fiat-Shamir transform to $\Pi_{\text{ID}}$ is \emph{classically} existentially unforgeable under an adaptive chosen-message attack.
+Let $\Pi_{\text{ID}} = (\textbf{KeyGen},\allowbreak{} \textbf{Commit},\allowbreak{} \textbf{Prove},\allowbreak{} \textbf{Verify})$ be a canonical identification scheme that is secure against a passive attack. Then, if $H$ is modeled as a random oracle, the signature scheme $\Pi_{\text{ID}}'$ that results from applying the Fiat-Shamir transform to $\Pi_{\text{ID}}$ is \emph{classically} existentially unforgeable under an adaptive chosen-message attack.
 \end{theorem}
 \end{tcolorbox}
 
@@ -732,10 +732,10 @@ The public parameters used in $\Sigma'$ are the same as outlined above for all o
 \subsection{Algorithmic Definitions}
 \label{subsec:sigalgodefs}
 
-It will be useful for us to outline in more detail the procedures of $\Sigma'$, at the very least to ease the transition into our discussion of the C implementation. In this subsection we will look at isogeny-level algorithmic definitions for \textbf{KeyGen()}, \textbf{Prove()}, and \textbf{Verify()}, and then look at how these procedures can be expressed in terms of the procedures of $\Pi_{\text{SIDH}}$.\\
+It will be useful for us to outline in more detail the procedures of $\Sigma'$, at the very least to ease the transition into our discussion of the C implementation. In this subsection we will look at isogeny-level algorithmic definitions for \textbf{KeyGen}, \textbf{Prove}, and \textbf{Verify}, and then look at how these procedures can be expressed in terms of the procedures of $\Pi_{\text{SIDH}}$.\\
 
 \noindent
-\textbf{KeyGen($\lambda$, $User$)}: As previously mentioned, key generation in $\Sigma'$ is identical to $\Sigma$:\textbf{KeyGen($\lambda$)}, which in turn is identical to $\Pi_{\text{SIDH}}$:\textbf{KeyGen($\lambda$)}. We have included a parameter $User$ equaling either $\alice$ or $\bob$ -- this denotes whether the user running the procedure uses \textcolor{blue}{blue} or \textcolor{red}{red} constants. We have also obfuscated the lower level details in regards to how points are generated and how isogenies can be constructed. We write $P_{User}$ and $Q_{User}$ for $\genpa$ \& $\genqa$ or $\genpb$ \& $\genqb$, depending on $User$.  The result is detailed in Algorithm \ref{alg:keygensig}.
+\textbf{KeyGen}: As previously mentioned, key generation in $\Sigma'$ is identical to $\Sigma$:\textbf{KeyGen($\lambda$)}, which in turn is identical to $\Pi_{\text{SIDH}}$:\textbf{KeyGen($\lambda$)}. We have included a parameter $User$ equaling either $\alice$ or $\bob$ -- this denotes whether the user running the procedure uses \textcolor{blue}{blue} or \textcolor{red}{red} constants. We have also obfuscated the lower level details in regards to how points are generated and how isogenies can be constructed. We write $P_{User}$ and $Q_{User}$ for $\genpa$ \& $\genqa$ or $\genpb$ \& $\genqb$, depending on $User$.  The result is detailed in Algorithm \ref{alg:keygensig}.
 
 \begin{algorithm}
 \caption{-- \textbf{KeyGen($\lambda$, $User$)}}
@@ -765,10 +765,10 @@ We can transcribe this algorithm so that it is defined in terms of $\Pi_{\text{S
 \end{algorithmic}
 \end{algorithm}
 
-For \textbf{Sign($sk$, $m$)} and \textbf{Verify($pk$, $m$, $\sigma$)} we assume \bob to be the signer and \alice to be the verifier, for the sake of simplifying the coming algorithmic definitions. Consequently, we will write the signer's key pair ($sk$, $pk$) as ($\rb$, $\pb$). Algorithms for which the roles are reversed can be constructed simply by replacing \textcolor{red}{red} constants with their \textcolor{blue}{blue} correspondants, and vice-versa.\\
+For \textbf{Sign} and \textbf{Verify} we assume \bob to be the signer and \alice to be the verifier, for the sake of simplifying the coming algorithmic definitions. Consequently, we will write the signer's key pair ($sk$, $pk$) as ($\rb$, $\pb$). Algorithms for which the roles are reversed can be constructed simply by replacing \textcolor{red}{red} constants with their \textcolor{blue}{blue} correspondants, and vice-versa.\\
 
 \noindent
-\textbf{Sign($sk$, $m$)}: The sign procedure, as a consequence of the Unruh construction, makes use of two random oracle functions \textbf{H} and \textbf{G}. In the sign algorithm below, make note of how \bob computes both commitments and their corresponding responses for every iteration $i$ before he computes the challenge values (the bits of $J$). He then uses the $2\lambda$ bits of $J$ to decide which responses to include in $\sigma$.\\
+\textbf{Sign}: The sign procedure, as a consequence of the Unruh construction, makes use of two random oracle functions \textbf{H} and \textbf{G}. In the sign algorithm below, make note of how \bob computes both commitments and their corresponding responses for every iteration $i$ before he computes the challenge values (the bits of $J$). He then uses the $2\lambda$ bits of $J$ to decide which responses to include in $\sigma$.\\
 
 \begin{algorithm}
 \caption{-- \textbf{Sign($sk = \rb$, $m$)}}\label{euclid}
@@ -856,7 +856,7 @@ If we write out \textbf{Sign} using the $\Pi_{\text{SIDH}}$ API, we see that the
 \noindent
 What we are checking for in the verification process is whether or not \bob and \randall performed an honest and valid key exchange. And so, if the challenge bit is 0, we can use SIDH key generation to determine that $\cyr$ and $\pr$ are a valid key pair and then run SIDH secret agreement with $\cyr$ and \bob's public key $\pb$ to confirm that it properly executes outputting an isogeny with kernel generated by $\pb(\cyr)$. If the challenge bit is 1, we can run an instance of SIDH secret agreement to verify that $\pr(\rb)$ generates the kernel of an isogeny with domain $E_{1}$ and codomain $E_{2}$ (refer again to the diagrams outlining \textbf{Prove} in Section 2.3.2).
 
-These observations are formalized in Algorithm \ref{alg:verifyviasidh}, where we rewrite $\Sigma'$:\textbf{Verify()} in terms of $\Pi_{\text{SIDH}}$ procedure calls. Note, in line 10 of Algorithm 6, the call $\Pi_{\text{SIDH}}$:\textbf{SecAgr($\pr(\rb)$, $\pr$)}. It should be noted that $\pr(\rb)$ is not the proper secret key input used by \bob in \textbf{Sign()}, but we will see in the section to follow how we can use $\pr(\rb)$ in the C implementation of \textbf{SecAgr} to perform our verification (without compromising \bob's secret key $\rb$).
+These observations are formalized in Algorithm \ref{alg:verifyviasidh}, where we rewrite $\Sigma'$:\textbf{Verify} in terms of $\Pi_{\text{SIDH}}$ procedure calls. Note, in line 10 of Algorithm 6, the call to $\Pi_{\text{SIDH}}$:\textbf{SecAgr}. It should be noted that $\pr(\rb)$ is not the proper secret key input used by \bob in \textbf{Sign()}, but we will see in the section to follow how we can use $\pr(\rb)$ in the C implementation of \textbf{SecAgr} to perform our verification (without compromising \bob's secret key $\rb$).
 
 \begin{algorithm}[H]
 \caption{-- \textbf{Verify($pk = \pb$, $m$, $\sigma$)} via $\Pi_{\text{SIDH}}$}
@@ -1056,31 +1056,34 @@ The key exchange procedures found in \code{kex.c} are composed entirely of calls
 
 \begin{table}
 \begin{center}
-\begin{tabular}{|c|c|c|}
-	\hline
-	Function & Input & Output\\
-	\hline
-	\code{KeyGeneration\_A} & \code{unsigned char* privateKeyA} & \code{unsigned char* privateKeyA} \\
-	performs key generation & \code{bool generateRandom} & \code{unsigned char* publicKeyA} \\
-	for \alice & &\\
-	\hline
-	\code{KeyGeneration\_B} & & \code{unsigned char* privateKeyB}\\
-	performs key generation & & \code{unsigned char* publicKeyB}\\
-	for \bob & &\\
-	\hline
-	\code{SecretAgreement\_A} & \code{unsigned char* privateKeyA} & \code{unsigned char* sharedSecretA}\\
-	computes the shared secret & \code{unsigned char* publicKeyB} & \code{point\_proj kerngen}\\
-	from \alice's perspective & \code{point\_proj kerngen} &\\
-	\hline
-	\code{SecretAgreement\_B} & \code{unsigned char* privateKeyB} & \code{unsigned char* sharedSecretB}\\
-	computes the shared secret & \code{unsigned char* publicKeyA} & \code{point\_proj kerngen}\\
-	from \bob's perspective & \code{point\_proj kerngen} &\\
-	\hline
-\end{tabular}
+\scalebox{0.85}{
+  \begin{tabular}{|c|c|c|}
+  	\hline
+  	Function & Input & Output\\
+  	\hline
+  	\code{KeyGeneration\_A} & \code{unsigned char* privateKeyA} & \code{unsigned char* privateKeyA} \\
+  	performs key generation & \code{bool generateRandom} & \code{unsigned char* publicKeyA} \\
+  	for \alice & &\\
+  	\hline
+  	\code{KeyGeneration\_B} & & \code{unsigned char* privateKeyB}\\
+  	performs key generation & & \code{unsigned char* publicKeyB}\\
+  	for \bob & &\\
+  	\hline
+  	\code{SecretAgreement\_A} & \code{unsigned char* privateKeyA} & \code{unsigned char* sharedSecretA}\\
+  	computes the shared secret & \code{unsigned char* publicKeyB} & \code{point\_proj kerngen}\\
+  	from \alice's perspective & \code{point\_proj kerngen} &\\
+  	\hline
+  	\code{SecretAgreement\_B} & \code{unsigned char* privateKeyB} & \code{unsigned char* sharedSecretB}\\
+  	computes the shared secret & \code{unsigned char* publicKeyA} & \code{point\_proj kerngen}\\
+  	from \bob's perspective & \code{point\_proj kerngen} &\\
+  	\hline
+  \end{tabular}
+}
 \end{center}
 \caption{Example \code{kex.c} functions}
 \label{fig:kexfuncs}
 \end{table}
+
 
 The reader may note that, in Table \ref{fig:kexfuncs}, \code{privateKeyA} (in \code{KeyGeneration\_A}) and \code{kerngen} (in both secret agreements) appear as both inputs and outputs. This is not a mistake. In \code{KeyGeneration\_A}, if \code{generateRandom = false} is passed as an input, then \code{privateKeyA} is expected to be set, and the corresponding public key is computed. In secret agreement, if \code{kerngen} is set to null then the algorithm proceeds normally. If it is set to a valid point, however, it can be used in place of a secret key input (which in such a case is expected to be null). Both of these details are critical to the design of signature functions as they are described below.
 
@@ -1123,11 +1126,11 @@ Yoo et al. provided, along with their publication of \cite{yoo}, an implementati
 
 There are five functions of interest contributed by Yoo et al.: \code{isogeny\_keygen}, \code{isogeny\_sign}, \code{sign\_thread}, \code{isogeny\_verify}, \code{verify\_thread}. The high-level details of these functions are outlined in Table \ref{fig:sigfuncs}.
 
-\code{isogeny\_keygen} simply generates the signer's keypair, and has a trivial definition: \code{KeyGeneration\_B} is called and populates the signer's public and private keys. \code{isogeny\_keygen} returns the success status of the call to \code{KeyGeneration\_B}.
+\code{isogeny\_keygen} simply generates the signer's keypair, and has a trivial definition: \code{KeyGeneration\_B} is called and populates the signer's public and private keys. The function then returns the success status of \code{KeyGeneration\_B}.
 
 As for the signing procedure, \code{isogeny\_sign} is invoked, initializes the necessary structures, and then spawns $2\lambda$ threads running \code{sign\_thread}. Each instance of \code{sign\_thread} then performs the work of one iteration of the main loop in Algorithm \ref{alg:signviasidh}. The verification procedure works analogously to this, running functions \code{isogeny\_verify} and \code{verify\_thread}.
 
-In their original fork of \sidh, Yoo et al. included these functions in the file \code{kex\_tests.c}. This file was originally intended for testing the functions of \code{kex.c}, and so our fork of the library has placed the signature functions in a new file \code{SIDH\_signature.c}. We have also included a file \code{sig\_tests.c} for testing the contents and performance of \code{SIDH\_signature.c} functions \cite{yoosigcode}.
+In their original fork of \sidh, Yoo et al. included these functions in  \code{kex\_tests.c}. This file was originally intended for testing the functions of \code{kex.c}, and so our fork of the library has placed the signature functions in a new file \code{SIDH\_signature.c}. We have also included a file \code{sig\_tests.c} for testing the contents and performance of \code{SIDH\_signature.c} functions \cite{yoosigcode}.
 
 If we transcribe the procedures $\Sigma'$:\textbf{Sign} and $\Sigma'$:\textbf{Verify} (as described in Section \ref{subsec:sigalgodefs}) to the language of the \sidh API, we have in essence the procedures \textbf{Sign}$_{\code{C}}$ and \textbf{Verify}$_{\code{C}}$ given by Algorithms \ref{alg:signcode} and \ref{alg:verifcode} respectively.\\
 
