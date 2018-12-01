@@ -7,10 +7,10 @@
 
 \subsection{\code{j\_inv}}
 
-\begin{lstlisting}
+\begin{lstlisting}[basicstyle=\tiny]
 void j_inv(const f2elm_t A, const f2elm_t C, f2elm_t jinv) {
 	f2elm_t t0, t1;
-	fp2sqr751_mont(A, jinv);                           // jinv = A^2        
+	fp2sqr751_mont(A, jinv);                           // jinv = A^2
 	fp2sqr751_mont(C, t1);                             // t1 = C^2
 	fp2add751(t1, t1, t0);                             // t0 = t1+t1
 	fp2sub751(jinv, t0, t0);                           // t0 = jinv-t0
@@ -31,16 +31,16 @@ void j_inv(const f2elm_t A, const f2elm_t C, f2elm_t jinv) {
 
 \subsection{\code{j\_inv\_batch}}
 
-\begin{lstlisting}
-void j_inv_batch(f2elm_t A, f2elm_t C, f2elm_t jinv, invBatch* batch) {	
+\begin{lstlisting}[basicstyle=\tiny]
+void j_inv_batch(f2elm_t A, f2elm_t C, f2elm_t jinv, invBatch* batch) {
 	f2elm_t t0, t1;
 \end{lstlisting}
-\vspace{-\baselineskip}
-\begin{lstlisting}[backgroundcolor=\color{light-green}, firstnumber=3]
+\vspace{-0.75\baselineskip}
+\begin{lstlisting}[backgroundcolor=\color{light-green}, firstnumber=3, basicstyle=\tiny]
 	int tempCnt;
 \end{lstlisting}
-\vspace{-\baselineskip}
-\begin{lstlisting}[firstnumber=4]
+\vspace{-0.75\baselineskip}
+\begin{lstlisting}[firstnumber=4, basicstyle=\tiny]
 	fp2sqr751_mont(A, jinv);                           // jinv = A^2
 	fp2sqr751_mont(C, t1);                             // t1 = C^2
 	fp2add751(t1, t1, t0);                             // t0 = t1+t1
@@ -56,19 +56,19 @@ void j_inv_batch(f2elm_t A, f2elm_t C, f2elm_t jinv, invBatch* batch) {
 	fp2add751(t0, t0, t0);                             // t0 = t0+t0
 	fp2add751(t0, t0, t0);                             // t0 = t0+t0
 \end{lstlisting}
-\vspace{-\baselineskip}
-\begin{lstlisting}[backgroundcolor=\color{light-green}, firstnumber=19]
+\vspace{-0.75\baselineskip}
+\begin{lstlisting}[backgroundcolor=\color{light-green}, firstnumber=19, basicstyle=\tiny]
 	pthread_mutex_lock(&batch->arrayLock);
 	fp2copy751(jinv, batch->invArray[batch->cntr]);
 	tempCnt = batch->cntr;
-	batch->cntr++; 
-	pthread_mutex_unlock(&batch->arrayLock);	
+	batch->cntr++;
+	pthread_mutex_unlock(&batch->arrayLock);
 
 	int i;
 	if (tempCnt+1 == batch->batchSize) {
 		partial_batched_inv(batch->invArray, batch->invDest, batch->batchSize);
 		for (i = 0; i < batch->batchSize - 1; i++) {
-			sem_post(&batch->sign_sem);			
+			sem_post(&batch->sign_sem);
 		}
 	} else {
 		sem_wait(&batch->sign_sem);
@@ -77,14 +77,14 @@ void j_inv_batch(f2elm_t A, f2elm_t C, f2elm_t jinv, invBatch* batch) {
 	batch->cntr = 0;
 \end{lstlisting}%
 \vspace{-0.75\baselineskip}
-\begin{lstlisting}[firstnumber=36]
+\begin{lstlisting}[firstnumber=36, basicstyle=\tiny]
 	fp2mul751_mont(jinv, t0, jinv);                    // jinv = t0*jinv
 }
 \end{lstlisting}
 
 \subsection{\code{inv\_4\_way}}
 
-\begin{lstlisting}
+\begin{lstlisting}[basicstyle=\tiny]
 void inv_4_way(f2elm_t z1, f2elm_t z2, f2elm_t z3, f2elm_t z4) {
   	f2elm_t t0, t1, t2;
 	int tempCnt;
@@ -93,8 +93,8 @@ void inv_4_way(f2elm_t z1, f2elm_t z2, f2elm_t z3, f2elm_t z4) {
     fp2mul751_mont(z3, z4, t1);                      // t1 = z3*z4
     fp2mul751_mont(t0, t1, t2);                      // t2 = z1*z2*z3*z4
     fp2inv751_mont(t2);                              // t2 = 1/(z1*z2*z3*z4)
-    fp2mul751_mont(t0, t2, t0);                      // t0 = 1/(z3*z4) 
-    fp2mul751_mont(t1, t2, t1);                      // t1 = 1/(z1*z2) 
+    fp2mul751_mont(t0, t2, t0);                      // t0 = 1/(z3*z4)
+    fp2mul751_mont(t1, t2, t1);                      // t1 = 1/(z1*z2)
     fp2mul751_mont(t0, z3, t2);                      // t2 = 1/z4
     fp2mul751_mont(t0, z4, z3);                      // z3 = 1/z3
     fp2copy751(t2, z4);                              // z4 = 1/z4
@@ -106,7 +106,7 @@ void inv_4_way(f2elm_t z1, f2elm_t z2, f2elm_t z3, f2elm_t z4) {
 
 \subsection{\code{inv\_4\_way\_batch}}
 
-\begin{lstlisting}
+\begin{lstlisting}[basicstyle=\tiny,]
 void inv_4_way_batch(f2elm_t z1, f2elm_t z2, f2elm_t z3, f2elm_t z4, invBatch* batch) {
   	f2elm_t t0, t1, t2;
 	int tempCnt;
@@ -115,18 +115,18 @@ void inv_4_way_batch(f2elm_t z1, f2elm_t z2, f2elm_t z3, f2elm_t z4, invBatch* b
     fp2mul751_mont(z3, z4, t1);                      // t1 = z3*z4
     fp2mul751_mont(t0, t1, t2);                      // t2 = z1*z2*z3*z4
 \end{lstlisting}
-\vspace{-\baselineskip}
-\begin{lstlisting}[backgroundcolor = \color{light-green}, firstnumber=8]
+\vspace{-0.75\baselineskip}
+\begin{lstlisting}[backgroundcolor = \color{light-green}, firstnumber=8, basicstyle=\tiny]
 	pthread_mutex_lock(&batch->arrayLock);
 	fp2copy751(t2, batch->invArray[batch->cntr]);
 	tempCnt = batch->cntr;
-	batch->cntr++; 
+	batch->cntr++;
 	pthread_mutex_unlock(&batch->arrayLock);
-	int i;		
+	int i;
 	if (tempCnt+1 == batch->batchSize) {
 		partial_batched_inv(batch->invArray, batch->invDest, batch->batchSize);
 		for (i = 0; i < batch->batchSize; i++) {
-			sem_post(&batch->sign_sem);			
+			sem_post(&batch->sign_sem);
 		}
 	} else {
 		sem_wait(&batch->sign_sem);
@@ -134,10 +134,10 @@ void inv_4_way_batch(f2elm_t z1, f2elm_t z2, f2elm_t z3, f2elm_t z4, invBatch* b
 	fp2copy751(batch->invDest[tempCnt], t2);
 	batch->cntr = 0;
 \end{lstlisting}
-\vspace{-\baselineskip}
-\begin{lstlisting}[firstnumber=24]
-    fp2mul751_mont(t0, t2, t0);                      // t0 = 1/(z3*z4) 
-    fp2mul751_mont(t1, t2, t1);                      // t1 = 1/(z1*z2) 
+\vspace{-0.9\baselineskip}
+\begin{lstlisting}[firstnumber=24,basicstyle=\tiny]
+    fp2mul751_mont(t0, t2, t0);                      // t0 = 1/(z3*z4)
+    fp2mul751_mont(t1, t2, t1);                      // t1 = 1/(z1*z2)
     fp2mul751_mont(t0, z3, t2);                      // t2 = 1/z4
     fp2mul751_mont(t0, z4, z3);                      // z3 = 1/z3
     fp2copy751(t2, z4);                              // z4 = 1/z4
@@ -149,26 +149,30 @@ void inv_4_way_batch(f2elm_t z1, f2elm_t z2, f2elm_t z3, f2elm_t z4, invBatch* b
 
 \section{Key Exchange Functions}
 
-\begin{lstlisting}[basicstyle=\footnotesize,]
+\begin{lstlisting}[basicstyle=\tiny,]
 CRYPTO_STATUS KeyGeneration_A(unsigned char* pPrivateKeyA,
-                              unsigned char* pPublicKeyA, 
+                              unsigned char* pPublicKeyA,
 							  PCurveIsogenyStruct CurveIsogeny,
-							  bool GenerateRandom, batch_struct* batch) { 
+							  bool GenerateRandom, batch_struct* batch) {
 	unsigned int owords = NBITS_TO_NWORDS(CurveIsogeny->owordbits);
 	unsigned int pwords = NBITS_TO_NWORDS(CurveIsogeny->pwordbits);
 	point_basefield_t P;
-	point_proj_t R, phiP = {0}, phiQ = {0}, phiD = {0}, pts[MAX_INT_POINTS_ALICE];
+	point_proj_t R, phiP = {0}, phiQ = {0}, phiD = {0};
+  point_proj_t pts[MAX_INT_POINTS_ALICE];
 	publickey_t* PublicKeyA = (publickey_t*)pPublicKeyA;
-	unsigned int i, row, m, index = 0, pts_index[MAX_INT_POINTS_ALICE], npts = 0; 
+	unsigned int i, row, m, index = 0, npts = 0;
+  unsigned int pts_index[MAX_INT_POINTS_ALICE];
 	f2elm_t coeff[5], A = {0}, C = {0}, Aout, Cout;
-	CRYPTO_STATUS Status = CRYPTO_ERROR_UNKNOWN; 
+	CRYPTO_STATUS Status = CRYPTO_ERROR_UNKNOWN;
 
-	if (pPrivateKeyA == NULL || pPublicKeyA == NULL || is_CurveIsogenyStruct_null(CurveIsogeny)) {
+	if (pPrivateKeyA == NULL ||
+         pPublicKeyA == NULL  ||
+         is_CurveIsogenyStruct_null(CurveIsogeny)) {
 		return CRYPTO_ERROR_INVALID_PARAMETER;
-	}  
+	}
 
 	if (GenerateRandom) {
-		Status = random_mod_order((digit_t*)pPrivateKeyA, ALICE, CurveIsogeny);    
+		Status = random_mod_order((digit_t*)pPrivateKeyA, ALICE, CurveIsogeny);
 		if (Status != CRYPTO_SUCCESS) {
 			clear_words((void*)pPrivateKeyA, owords);
 			return Status;
@@ -176,7 +180,7 @@ CRYPTO_STATUS KeyGeneration_A(unsigned char* pPrivateKeyA,
 	}
 
 	to_mont((digit_t*)CurveIsogeny->PA, (digit_t*)P);
-	to_mont(((digit_t*)CurveIsogeny->PA)+NWORDS_FIELD, ((digit_t*)P)+NWORDS_FIELD); 
+	to_mont(((digit_t*)CurveIsogeny->PA)+NWORDS_FIELD, ((digit_t*)P)+NWORDS_FIELD);
 
 	Status = secret_pt(P, (digit_t*)pPrivateKeyA, ALICE, R, CurveIsogeny);
 	if (Status != CRYPTO_SUCCESS) {
@@ -185,11 +189,11 @@ CRYPTO_STATUS KeyGeneration_A(unsigned char* pPrivateKeyA,
 	}
 
 	copy_words((digit_t*)CurveIsogeny->PB, (digit_t*)phiP, pwords);
-	fpcopy751((digit_t*)CurveIsogeny->Montgomery_one, (digit_t*)phiP->Z);  
-	to_mont((digit_t*)phiP, (digit_t*)phiP);                                        
+	fpcopy751((digit_t*)CurveIsogeny->Montgomery_one, (digit_t*)phiP->Z);
+	to_mont((digit_t*)phiP, (digit_t*)phiP);
 	copy_words((digit_t*)phiP, (digit_t*)phiQ, pwords);
-	fpneg751(phiQ->X[0]);   
-	fpcopy751((digit_t*)CurveIsogeny->Montgomery_one, (digit_t*)phiQ->Z); 
+	fpneg751(phiQ->X[0]);
+	fpcopy751((digit_t*)CurveIsogeny->Montgomery_one, (digit_t*)phiQ->Z);
 	distort_and_diff(phiP->X[0], phiD, CurveIsogeny);
 
 	fpcopy751(CurveIsogeny->A, A[0]);
@@ -197,12 +201,12 @@ CRYPTO_STATUS KeyGeneration_A(unsigned char* pPrivateKeyA,
 	to_mont(A[0], A[0]);
 	to_mont(C[0], C[0]);
 
-	first_4_isog(phiP, A, Aout, Cout, CurveIsogeny);     
+	first_4_isog(phiP, A, Aout, Cout, CurveIsogeny);
 	first_4_isog(phiQ, A, Aout, Cout, CurveIsogeny);
 	first_4_isog(phiD, A, Aout, Cout, CurveIsogeny);
 	first_4_isog(R, A, A, C, CurveIsogeny);
-    
-	index = 0;        
+
+	index = 0;
 	for (row = 1; row < MAX_Alice; row++) {
 		while (index < MAX_Alice-row) {
 			fp2copy751(R->X, pts[npts]->X);
@@ -213,7 +217,7 @@ CRYPTO_STATUS KeyGeneration_A(unsigned char* pPrivateKeyA,
 			xDBLe(R, R, A, C, (int)(2*m));
 			index += m;
 		}
-		get_4_isog(R, A, C, coeff);        
+		get_4_isog(R, A, C, coeff);
 
 		for (i = 0; i < npts; i++) {
 			eval_4_isog(pts[i], coeff);
@@ -222,13 +226,13 @@ CRYPTO_STATUS KeyGeneration_A(unsigned char* pPrivateKeyA,
 		eval_4_isog(phiQ, coeff);
 		eval_4_isog(phiD, coeff);
 
-		fp2copy751(pts[npts-1]->X, R->X); 
+		fp2copy751(pts[npts-1]->X, R->X);
 		fp2copy751(pts[npts-1]->Z, R->Z);
 		index = pts_index[npts-1];
 		npts -= 1;
 	}
 
-	get_4_isog(R, A, C, coeff); 
+	get_4_isog(R, A, C, coeff);
 	eval_4_isog(phiP, coeff);
 	eval_4_isog(phiQ, coeff);
 	eval_4_isog(phiD, coeff);
@@ -238,7 +242,7 @@ CRYPTO_STATUS KeyGeneration_A(unsigned char* pPrivateKeyA,
 	} else {
 		inv_4_way(C, phiP->Z, phiQ->Z, phiD->Z);
 	}
-	
+
 	fp2mul751_mont(A, C, A);
 	fp2mul751_mont(phiP->X, phiP->Z, phiP->X);
 	fp2mul751_mont(phiQ->X, phiQ->Z, phiQ->X);
@@ -257,9 +261,7 @@ CRYPTO_STATUS KeyGeneration_A(unsigned char* pPrivateKeyA,
 	clear_words((void*)A, 2*pwords);
 	clear_words((void*)C, 2*pwords);
 	clear_words((void*)coeff, 5*2*pwords);
-      
+
 	return Status;
 }
 \end{lstlisting}
-
-\section{Signature Layer Functions}

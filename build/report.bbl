@@ -1,17 +1,24 @@
 \newcommand{\etalchar}[1]{$^{#1}$}
-\begin{thebibliography}{AJK{\etalchar{+}}16}
+\begin{thebibliography}{YAJ{\etalchar{+}}17b}
 
 \bibitem[AJK{\etalchar{+}}16]{compwr}
 Reza Azerderakhsh, David Jao, Kassem Kalach, Brian Koziel, and Christopher
   Leonardi.
 \newblock Key compression for isogeny-based cryptosystems.
-\newblock 2016.
+\newblock In {\em Proceedings of the 3rd ACM International Workshop on ASIA
+  Public-Key Cryptography}, AsiaPKC '16, pages 1--10. ACM, 2016.
+\newblock URL: \url{http://doi.acm.org/10.1145/2898420.2898421}, \href
+  {http://dx.doi.org/10.1145/2898420.2898421}
+  {\path{doi:10.1145/2898420.2898421}}.
 
 \bibitem[ARU14]{rewinding}
 Andris Ambainis, Ansis Rosmanis, and Dominique Unruh.
 \newblock Quantum attacks on classical proof systems (the hardness of quantum
   rewinding).
-\newblock pages 474--483. IEEE, 2014.
+\newblock In {\em Annual IEEE Symposium on Foundations of Computer Science},
+  pages 474--483. IEEE, 2014.
+\newblock \href {http://dx.doi.org/10.1109/FOCS.2014.57}
+  {\path{doi:10.1109/FOCS.2014.57}}.
 
 \bibitem[Ber18]{libpqcrypto}
 Daniel~J. Bernstein.
@@ -22,18 +29,26 @@ Daniel~J. Bernstein.
 Craig Costello, David Jao, Patrick Longa, Michael Naehrig, Joost Renes, and
   David Urbanik.
 \newblock Efficient compression of {SIDH} public keys.
-\newblock Springer, 2017.
+\newblock In {\em EUROCRYPT 2017}, volume 10210 of {\em Lecture Notes in
+  Computer Science}. Springer, Cham, 2017.
+\newblock \href {http://dx.doi.org/10.1007/978-3-319-56620-7_24}
+  {\path{doi:10.1007/978-3-319-56620-7_24}}.
 
 \bibitem[CLN16]{effalg}
 Craig Costello, Patrick Longa, and Michael Naehrig.
 \newblock Efficient algorithms for supersingular isogeny {Diffie-Hellman}.
-\newblock In {\em IACR-CRYPTO-2016}, volume 9814 of {\em LNCS}, pages 527 --
-  601, 2016.
+\newblock In {\em IACR-CRYPTO-2016}, volume 9814 of {\em Lecture Notes in
+  Computer Science}, pages 527--601, 2016.
+\newblock \href {http://dx.doi.org/10.1007/978-3-662-53018-4_21}
+  {\path{doi:10.1007/978-3-662-53018-4_21}}.
 
 \bibitem[CMO98]{curvecoords}
 Henri Cohen, Atsuko Miyaji, and Takatoshi Ono.
 \newblock Efficient elliptic curve exponentiation.
-\newblock In {\em AsiaCrypt}, volume 1514 of {\em LNCS}, pages 51--65, 1998.
+\newblock In {\em AsiaCrypt}, volume 1514 of {\em Lecture Notes in Computer
+  Science}, pages 51--65, 1998.
+\newblock \href {http://dx.doi.org/10.1007/BFb0028484}
+  {\path{doi:10.1007/BFb0028484}}.
 
 \bibitem[Cos]{pairings}
 Craig Costello.
@@ -45,27 +60,38 @@ Morris~J. Dworkin.
 \newblock {SHA}-3 standard: Premnutation-based hash and extendable-output
   functions.
 \newblock 2015.
+\newblock \href {http://dx.doi.org/10.6028/NIST.FIPS.202}
+  {\path{doi:10.6028/NIST.FIPS.202}}.
 
-\bibitem[Fia89]{RSAbatch}
+\bibitem[Fia96]{RSAbatch}
 Amos Fiat.
 \newblock Batch {RSA}.
-\newblock 1989.
+\newblock {\em Journal of Cryptology}, 10:75--88, 1996.
+\newblock \href {http://dx.doi.org/10.1007/s001459900021}
+  {\path{doi:10.1007/s001459900021}}.
 
-\bibitem[FJP12]{djp}
+\bibitem[FJP14]{djp}
 Luca~De Feo, David Jao, and Jerome Plut.
 \newblock Towards quantum-resistant cryptosystems from supersingular elliptic
   curve isogenies.
-\newblock 2012.
+\newblock {\em Journal of Mathematical Cryptology}, 8:209--247, 2014.
+\newblock \href {http://dx.doi.org/10.1007/978-3-642-25405-5_2}
+  {\path{doi:10.1007/978-3-642-25405-5_2}}.
 
 \bibitem[JS14]{jvsig}
 David Jao and Vladimir Soukharev.
 \newblock Isogeny-based quantum resistant undeniable signatures.
-\newblock 2014.
+\newblock In {\em PQCrypto 2014}, volume 8772 of {\em Lecture Notes in Computer
+  Science}, pages 160--179, 2014.
+\newblock \href {http://dx.doi.org/10.1007/978-3-319-11659-4_10}
+  {\path{doi:10.1007/978-3-319-11659-4_10}}.
 
 \bibitem[Kat10]{sigs}
 Jonathan Katz.
 \newblock {\em Digital Signatures}.
-\newblock Springer, 2010.
+\newblock Springer, 1st edition, 2010.
+\newblock \href {http://dx.doi.org/10.1007/978-0-387-27712-7}
+  {\path{doi:10.1007/978-0-387-27712-7}}.
 
 \bibitem[KLM07]{qcintro}
 Phillip Kaye, Raymond Laflamme, and Michele Mosca.
@@ -76,45 +102,62 @@ Phillip Kaye, Raymond Laflamme, and Michele Mosca.
 Brian LaMacchia, Craig Costello, Karen Easterbrook, Michael Naehrig, and
   Patrick Longa.
 \newblock {SIDH} library, 2016.
-\newblock Available onlnie at
+\newblock Available online at
   \url{https://www.microsoft.com/en-us/research/project/sidh-library/}.
 
 \bibitem[Mon85]{mont}
 Peter~L. Montgomery.
 \newblock Modular multiplication without trial division.
-\newblock {\em Mathematics of Computation}, 1985.
+\newblock {\em Mathematics of Computation}, 44:519--521, 1985.
+\newblock \href {http://dx.doi.org/10.1090/S0025-5718-1985-0777282-X}
+  {\path{doi:10.1090/S0025-5718-1985-0777282-X}}.
 
 \bibitem[PH78]{ph}
 Stephen Pohlig and Martin Hellman.
 \newblock An improved algorithm for computing logarithms over {GF(p)} and its
   cryptographic significance.
-\newblock {\em IEEE Transactions on Information Theory}, 1978.
+\newblock {\em IEEE Transactions on Information Theory}, 24:106--110, 1978.
+\newblock \href {http://dx.doi.org/10.1109/TIT.1978.1055817}
+  {\path{doi:10.1109/TIT.1978.1055817}}.
 
 \bibitem[PS96]{fsproof}
 David Pointcheval and Jacques Stern.
 \newblock Security proofs for signature schemes.
-\newblock 1996.
+\newblock {\em EUROCRYPT 1996}, 1070:387--398, 1996.
+\newblock \href {http://dx.doi.org/10.1007/3-540-68339-9_33}
+  {\path{doi:10.1007/3-540-68339-9_33}}.
 
 \bibitem[SB01]{batching}
 Hovav Shacham and Dan Boneh.
 \newblock Improving {SSL} handshake performance via batching.
-\newblock 2001.
+\newblock In {\em Proceedings of the 2001 Conference on Topics in Cryptology:
+  The Cryptographer's Track at RSA}, CT-RSA 2001, pages 28--43.
+  Springer-Verlag, 2001.
+\newblock URL: \url{http://dl.acm.org/citation.cfm?id=646139.680778}, \href
+  {http://dx.doi.org/10.1007/3-540-45353-9_3}
+  {\path{doi:10.1007/3-540-45353-9_3}}.
 
 \bibitem[SC16]{seshsig}
-M.~Seshadri Srinath and V.~Chandrasekaren.
+Srinath~M. S. and V.~Chandrasekaran.
 \newblock Isogeny-based quantum-resistant undeniable blind signature scheme.
-\newblock Cryptology ePrint Archive, 2016.
+\newblock Cryptology ePrint Archive, Report 2016/148, 2016.
+\newblock \url{https://eprint.iacr.org/2016/148}.
 
 \bibitem[Sho96]{shor}
 Peter~W. Shor.
 \newblock Polynomial-time algorithms for prime factorization and discrete
   logarithms on a quantum computer.
-\newblock 1996.
+\newblock {\em SIAM Review}, 41, 1996.
+\newblock \href {http://dx.doi.org/10.1137/S0036144598347011}
+  {\path{doi:10.1137/S0036144598347011}}.
 
-\bibitem[Sil]{silverman}
+\bibitem[Sil09]{silverman}
 Joseph~H. Silverman.
-\newblock {\em The Arithmetic of Elliptic Curves}.
-\newblock Springer, 2nd edition edition.
+\newblock {\em The Arithmetic of Elliptic Curves}, volume 106 of {\em Graduate
+  Texts in Mathematics}.
+\newblock Springer-Verlag New York, 2nd edition, 2009.
+\newblock \href {http://dx.doi.org/10.1007/978-0-387-09494-6}
+  {\path{doi:10.1007/978-0-387-09494-6}}.
 
 \bibitem[SM18]{openqs}
 Douglas Stebila and Michele Mosca.
@@ -125,31 +168,41 @@ Douglas Stebila and Michele Mosca.
 Xi~Sun, Haibo Tian, and Yumin Wang.
 \newblock Toward quantum-resistant strong designated verifier signature from
   isogenies.
-\newblock International Conference on Intelligent Networking and Collaborative
-  Systems, 2012.
+\newblock In {\em International Conference on Intelligent Networking and
+  Collaborative Systems}. IEEE, 2012.
+\newblock \href {http://dx.doi.org/10.1109/iNCoS.2012.70}
+  {\path{doi:10.1109/iNCoS.2012.70}}.
 
 \bibitem[Tes99]{genph}
 Edlyn Teske.
 \newblock The {Pohlig-Hellman} method generalized for group structure
   computation.
-\newblock 1999.
+\newblock {\em Journal of Symbolic Computation}, 27:521--534, 1999.
+\newblock \href {http://dx.doi.org/10.1006/jsco.1999.0279}
+  {\path{doi:10.1006/jsco.1999.0279}}.
 
-\bibitem[Unr14]{unruh}
+\bibitem[Unr15]{unruh}
 Dominique Unruh.
 \newblock Non-interactive zero-knowledge proofs in the quantum random oracle
   model.
-\newblock Heidelberg, 2014.
+\newblock In {\em EUROCRYPT 2015}, volume 9057 of {\em Lecture Notes in
+  Computer Science}, pages 755--784. Springer, Berlin, Heidelberg, 2015.
+\newblock \href {http://dx.doi.org/10.1007/978-3-662-46803-6_25}
+  {\path{doi:10.1007/978-3-662-46803-6_25}}.
 
-\bibitem[YAJ{\etalchar{+}}12]{yoo}
-Youngho Yoo, Reza Azarderakhsh, Amir Jalali, David Jao, and Vladimir Soukharev.
-\newblock A post-quantum digital signature scheme based on supersingular
-  isogenies.
-\newblock 2012.
-
-\bibitem[YAJ{\etalchar{+}}17]{yoosigcode}
+\bibitem[YAJ{\etalchar{+}}17a]{yoosigcode}
 Youngho Yoo, Reza Azarderakhsh, Amir Jalali, David Jao, and Vladimir Soukharev.
 \newblock Isogeny based signatures from {SIDH} library, 2017.
 \newblock Available online at
   \url{https://github.com/yhyoo93/isogenysignature}.
+
+\bibitem[YAJ{\etalchar{+}}17b]{yoo}
+Youngho Yoo, Reza Azarderakhsh, Amir Jalali, David Jao, and Vladimir Soukharev.
+\newblock A post-quantum digital signature scheme based on supersingular
+  isogenies.
+\newblock In {\em Financial Cryptography and Data Security}, volume 10322 of
+  {\em Lecture Notes in Computer Science}, pages 163--181. Springer, 2017.
+\newblock \href {http://dx.doi.org/10.1007/978-3-319-70972-7_9}
+  {\path{doi:10.1007/978-3-319-70972-7_9}}.
 
 \end{thebibliography}

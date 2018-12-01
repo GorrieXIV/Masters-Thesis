@@ -1,56 +1,49 @@
-% @inproceedings{x,
-%	author =
-%   title =
-%   booktitle = {CRYPTO 2018} [CONFERENEC]
-%   editors = not super important
-%   series = {LNCS},
-% 	volume = {4567}
-%   pages =
-%	year =
-% }
-
-@inproceedings{djp,
+@article{djp,
 	author = {Luca De Feo and David Jao and Jerome Plut},
 	title = {Towards Quantum-Resistant Cryptosystems From Supersingular Elliptic Curve Isogenies},
-	year = {2012},
+  journal = {Journal of Mathematical Cryptology},
+  volume = {8},
+  pages = {209-247},
+  year = {2014},
+  doi = {10.1007/978-3-642-25405-5_2},
 }
 @inproceedings{yoo,
 	author = {Youngho Yoo and Reza Azarderakhsh and Amir Jalali and David Jao and Vladimir Soukharev},
 	title = {A Post-Quantum Digital Signature Scheme Based on Supersingular Isogenies},
-	year = {2012},
+	year = {2017},
+  publisher = {Springer},
+  booktitle = {Financial Cryptography and Data Security},
+  series = {Lecture Notes in Computer Science},
+  pages = {163-181},
+  doi = {10.1007/978-3-319-70972-7_9},
+  volume = {10322},
 }
 @mastersthesis{yoothesis,
-	author = {Youngho Yoo},
+	author = {{Youngho, Yoo}},
 	title = {A Post-Quantum Digital Signature Scheme based on Supersingular Isogenies},
 	year = {2017},
 	school = {University of Waterloo},
+  publisher = "UWSpace",
+  url={http://hdl.handle.net/10012/12408},
 }
 
 % ---- 1.1
 
-@inproceedings{shor,
+@article{shor,
 	author = {Peter W. Shor},
 	title = {Polynomial-Time Algorithms for Prime Factorization and Discrete Logarithms on a Quantum Computer},
 	year = {1996},
-	journal = {SIAM Journal on Computing},
+	journal = {SIAM Review},
+  volume = {41},
+  publisher = {Society for Industrial and Applied Mathematics},
+  doi = {10.1137/S0036144598347011},
 }
 @book{qcintro,
 	author = {Phillip Kaye and Raymond Laflamme and Michele Mosca},
 	title = {An Introduction to Quantum Computing},
 	year = {2007},
 	publisher = {Oxford University Press USA},
-}
-@inproceedings{perfcomparison,
-	author = {Nicholas Jansma and Brandon Arrendondo},
-	title = {Performance Compairson of Elliptic Cruve and RSA Digital Signatures},
-	year = {2004},
-}
-@mastersthesis{fishop,
-	author = {Dieter Fishbein},
-	title = {Machine-Level Software Optimization of Cryptographic Protocols},
-	year = {2014},
-	school = {University of Waterloo},
-}
+}s
 @misc{libpqcrypto,
 	author = {Daniel J. Bernstein},
 	title = {libpqcrypto.org},
@@ -72,7 +65,7 @@
 @misc{sidhcode,
 	author = {Brian LaMacchia and Craig Costello and Karen Easterbrook and Michael Naehrig and Patrick Longa},
 	title = {{SIDH} Library},
-	note = {Available onlnie at \url{https://www.microsoft.com/en-us/research/project/sidh-library/}},
+	note = {Available online at \url{https://www.microsoft.com/en-us/research/project/sidh-library/}},
 	year = {2016},
 }
 @misc{sphincs,
@@ -94,7 +87,9 @@
 	author = {Jonathan Katz},
 	title = {Digital Signatures},
 	year = {2010},
+  edition = {1st},
 	publisher = {Springer},
+  doi = {10.1007/978-0-387-27712-7},
 }
 
 % ---- 2.2 Groups, Fields, Curves
@@ -102,14 +97,21 @@
 @book{silverman,
 	author = {Joseph H. Silverman},
 	title = {The Arithmetic of Elliptic Curves},
-	edition = {2nd Edition},
-	publisher = {Springer},
+	edition = {2nd},
+  year = {2009},
+  series = {Graduate Texts in Mathematics},
+  volume = {106},
+	publisher = {Springer-Verlag New York},
+  doi = {10.1007/978-0-387-09494-6},
 }
 @article{mont,
 	author = {Peter L. Montgomery},
 	title = {Modular Multiplication Without Trial Division},
 	year = {1985},
 	journal = {Mathematics of Computation},
+  doi = {10.1090/S0025-5718-1985-0777282-X},
+  pages = {519-521},
+  volume = {44},
 }
 @misc{pairings,
 	author = {Craig Costello},
@@ -122,8 +124,9 @@
 	title = {Efficient Elliptic Curve Exponentiation},
 	year = {1998},
 	pages = {51-65},
-	series = {LNCS},
+	series = {Lecture Notes in Computer Science},
 	volume = {1514},
+  doi = {10.1007/BFb0028484},
 }
 
 % ---- 2.4 Fiat-Shamir
@@ -132,6 +135,11 @@
 	author = {David Pointcheval and Jacques Stern},
 	title = {Security Proofs for Signature Schemes},
 	year = {1996},
+  pages = {387-398},
+  volume = {1070},
+  journal = {EUROCRYPT 1996},
+  series = {Lecture Notes in Computer Science},
+  doi = {10.1007/3-540-68339-9_33},
 	publisher = {Springer},
 }
 @inproceedings{rewinding,
@@ -140,18 +148,29 @@
 	publisher = {IEEE},
 	year = {2014},
 	pages = {474-483},
+  booktitle = {Annual IEEE Symposium on Foundations of Computer Science},
+  doi = {10.1109/FOCS.2014.57},
 }
 @inproceedings{unruh,
    author = {Dominique Unruh},
    title = {Non-Interactive Zero-Knowledge Proofs in the Quantum Random Oracle Model},
-   year = {2014},
-   publisher = {Heidelberg},
+   booktitle = {EUROCRYPT 2015},
+   series = {Lecture Notes in Computer Science},
+   volume = {9057},
+   year = {2015},
+   pages = {755-784},
+   publisher = {Springer, Berlin, Heidelberg},
+   doi = {10.1007/978-3-662-46803-6_25},
 }
 @inproceedings{secureFS,
 	author = {Dominique Unruh},
 	title = {Post-Quantum Security of Fiat-Shamir},
 	year = {2017},
-	publisher = {AsiaCrypt},
+	booktitle = {ASIACRYPT 2017},
+  series = {Lecture Notes in Computer Science},
+  volume = {10624},
+  publisher = {Springer},
+  doi = {10.1007/978-3-319-70694-8_3},
 }
 
 % --- 2.5
@@ -160,18 +179,26 @@
 	author = {Xi Sun and Haibo Tian and Yumin Wang},
 	title = {Toward Quantum-resistant Strong Designated Verifier Signature from Isogenies},
 	year = {2012},
-	publisher = {International Conference on Intelligent Networking and Collaborative Systems},
+	booktitle = {International Conference on Intelligent Networking and Collaborative Systems},
+  publisher = {IEEE},
+  doi = {10.1109/iNCoS.2012.70},
 }
 @inproceedings{jvsig,
  author = {David Jao and Vladimir Soukharev},
  title = {Isogeny-based Quantum Resistant Undeniable Signatures},
+ series = {Lecture Notes in Computer Science},
+ volume = {8772},
+ pages = {160-179},
+ doi = {10.1007/978-3-319-11659-4_10},
+ booktitle = {PQCrypto 2014},
  year = {2014},
 }
-@inproceedings{seshsig,
-	author = {M. Seshadri Srinath and V. Chandrasekaren},
-	title = {Isogeny-based Quantum-resistant Undeniable Blind Signature Scheme},
-	year = {2016},
-	publisher = {Cryptology ePrint Archive},
+@misc{seshsig,
+  author = {Srinath M. S. and V. Chandrasekaran},
+  title = {Isogeny-based Quantum-resistant Undeniable Blind Signature Scheme},
+  howpublished = {Cryptology ePrint Archive, Report 2016/148},
+  year = {2016},
+  note = {\url{https://eprint.iacr.org/2016/148}},
 }
 
 % --- 2.6 Implementations
@@ -181,17 +208,26 @@
 	title = {Efficient Algorithms for Supersingular Isogeny {Diffie-Hellman}},
 	year = {2016},
 	booktitle = {IACR-CRYPTO-2016},
-  series = {LNCS},
+  series = {Lecture Notes in Computer Science},
   volume = {9814},
-  pages = {527 - 601}
+  pages = {527-601},
+  doi = {10.1007/978-3-662-53018-4_21},
 }
 
 % --- 3.0 Batching
 
 @inproceedings{batching,
 	author = {Hovav Shacham and Dan Boneh},
-	title = {Improving {SSL} Handshake Performance via Batching},
-	year = {2001},
+  title = {Improving {SSL} Handshake Performance via Batching},
+  booktitle = {Proceedings of the 2001 Conference on Topics in Cryptology: The Cryptographer's Track at RSA},
+  series = {CT-RSA 2001},
+  year = {2001},
+  doi = {10.1007/3-540-45353-9_3},
+  pages = {28--43},
+  numpages = {16},
+  url = {http://dl.acm.org/citation.cfm?id=646139.680778},
+  acmid = {680778},
+  publisher = {Springer-Verlag},
 }
 
 % --- 3.1 Batching Procedures
@@ -199,7 +235,13 @@
 @article{RSAbatch,
 	author = {Amos Fiat},
 	title = {Batch {RSA}},
-	year = {1989},
+	year = {1996},
+  journal = {Journal of Cryptology},
+  pages = {75-88},
+  volume = {10},
+  issue = {2},
+  publisher = {Springer-Verlag},
+  doi = {10.1007/s001459900021},
 }
 
 % --- 4.0 Compression
@@ -207,28 +249,50 @@
 @inproceedings{compwr,
 	author = {Reza Azerderakhsh and David Jao and Kassem Kalach and Brian Koziel and Christopher Leonardi},
 	title = {Key Compression for Isogeny-Based Cryptosystems},
+  booktitle = {Proceedings of the 3rd ACM International Workshop on ASIA Public-Key Cryptography},
+  series = {AsiaPKC '16},
 	year = {2016},
+  pages = {1--10},
+  numpages = {10},
+  url = {http://doi.acm.org/10.1145/2898420.2898421},
+  doi = {10.1145/2898420.2898421},
+  acmid = {2898421},
+  publisher = {ACM},
 }
 @inproceedings{pkcomp,
 	author = {Craig Costello and David Jao and Patrick Longa and Michael Naehrig and Joost Renes and David Urbanik},
 	title = {Efficient Compression of {SIDH} Public Keys},
+  booktitle = {EUROCRYPT 2017},
+  series = {Lecture Notes in Computer Science},
+  volume = {10210},
 	year = {2017},
-	publisher = {Springer},
+	publisher = {Springer, Cham},
+  doi = {10.1007/978-3-319-56620-7_24},
 }
 @article{ph,
 	author = {Stephen Pohlig and Martin Hellman},
 	title = {An Improved Algorithm for Computing Logarithms Over {GF(p)} and Its Cryptographic Significance},
 	year = {1978},
+  pages = {106-110},
 	journal = {IEEE Transactions on Information Theory},
+  volume = {24},
+  publisher = {IEEE},
+  doi = {10.1109/TIT.1978.1055817},
 }
 @article{genph,
 	author = {Edlyn Teske},
 	title = {The {Pohlig-Hellman} Method Generalized for Group Structure Computation},
 	year = {1999},
+  journal = {Journal of Symbolic Computation},
+  pages = {521-534},
+  volume = {27},
 	publisher = {Academic Press},
+  doi = {10.1006/jsco.1999.0279},
 }
 @article{sha3,
 	author = {Morris J. Dworkin},
 	title = {{SHA}-3 Standard: Premnutation-Based Hash and Extendable-Output Functions},
 	year = {2015},
+  publisher = {NIST},
+  doi = {10.6028/NIST.FIPS.202},
 }

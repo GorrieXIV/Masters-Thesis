@@ -58,6 +58,5 @@
 \contentsline {subsection}{\numberline {A.2.2}\texttt {j\_inv\_batch}}{69}{subsection.a.A.2.2}
 \contentsline {subsection}{\numberline {A.2.3}\texttt {inv\_4\_way}}{70}{subsection.a.A.2.3}
 \contentsline {subsection}{\numberline {A.2.4}\texttt {inv\_4\_way\_batch}}{70}{subsection.a.A.2.4}
-\contentsline {section}{\numberline {A.3}Key Exchange Functions}{71}{section.a.A.3}
-\contentsline {section}{\numberline {A.4}Signature Layer Functions}{73}{section.a.A.4}
-\contentsline {chapter}{\numberline {B}Performance Data}{74}{Appendix.a.B}
+\contentsline {section}{\numberline {A.3}Key Exchange Functions}{70}{section.a.A.3}
+\contentsline {chapter}{\numberline {B}Performance Data}{72}{Appendix.a.B}
